@@ -5,4 +5,6 @@ This folder contains *external data*
 
 ---
 
-<img src="../logo.svg" alt="logo" width="150" style="text-align:center;"/>
+<center>
+<img src="../logo.svg" alt="logo" width="150"/>
+</center>
