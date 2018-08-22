@@ -12,4 +12,4 @@ The whole process is monitored using [**Nextflow**](https://www.nextflow.io/inde
 
 ---
 
-<center><img src="logo.svg" alt="logo" width="150"/></center>x
+<center><img src="logo.svg" alt="logo" width="150"/></center>
