@@ -9,3 +9,5 @@ Steps involved include:
 - cluster analysis (*PCA* and *phylogenetic trees*) using the **R** package **pcadapt**, **PhyML**/**Fasattree2** in combination with **twisst**, and **structure**/**admixture**
 
 The whole process is monitored using **Nextflow** using the pipeline described in `./main.nf`.
+
+<center><img src="logo.svg" alt="logo" width="150"/></center>
