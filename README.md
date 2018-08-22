@@ -1,6 +1,6 @@
 # The **chapter2** repository
 
-This project contains the analysis phylogenetic relationships between hamlet species (*Hypoplectrus* spp) from Belize, Honduras and Panama.
+This project contains the analysis of phylogenetic relationships between hamlet species (*Hypoplectrus* spp) from Belize, Honduras and Panama.
 
 Steps involved include:
 
