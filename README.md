@@ -10,4 +10,6 @@ Steps involved include:
 
 The whole process is monitored using **Nextflow** using the pipeline described in `./main.nf`.
 
+---
+
 <center><img src="logo.svg" alt="logo" width="150"/></center>
