@@ -1,0 +1,92 @@
+---
+title: "The metadata folder"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, root.dir = '.')
+library(tidyverse)
+seq_files <- read_delim('../metadata/file_info.txt', delim = "\t")
+samp_size <- seq_files %>% 
+  mutate(data_size = GB_fwd+GB_rev) %>% 
+  select(data_size, id,label, spec,geo) %>%
+  group_by(id) %>%
+  summarise(data_size = sum(data_size),label = label[1], spec = spec[1],geo = geo[1] )
+```
+
+# The metadata folder
+
+This folder contains metadata which describes the raw sequencing data contained in the *data* folder.
+
+Below is a short summary of the sample compostition:
+
+```{r plot1, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.asp = .6, out.width = "95%"}
+ggplot(seq_files ,aes(x = geo,fill = spec))+
+  geom_bar(aes(y = ..count..),position='dodge',col='black')+
+  scale_fill_manual("Species",values = hypogen::hypo_clr_LGs[0:12*2+1])+
+  labs(x = "Location", 
+       y = "Filecount (n per pair)", 
+       title = "Number of paired-end sequence pairs",
+       subtitle = "Note that some samples have multiple .fq pairs (from different lanes/ runs)")+
+  theme_minimal(base_family = 'xkcd')
+```
+```{r plots, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 12, fig.asp = 1, out.width = "95%"}
+ggplot(samp_size ,aes(x = data_size,fill = spec))+
+  geom_histogram(col='black')+
+  scale_fill_manual("Species",values = hypogen::hypo_clr_LGs[0:12*2+1])+
+  facet_grid(spec ~ geo)+
+  labs(x = "combined file size (GB)", 
+       y = "Filecount (n sample ID)", 
+       title = "Data ammount per sample",
+       subtitle = "Here, the size (GB) of all the .fq files per sample were combined")+
+  theme_minimal(base_family = 'xkcd')
+```
+
+Summary on *per-file* (pair) basis:
+
+```{r perFile, echo = FALSE}
+ktab1 <- seq_files %>% 
+  group_by(geo,spec) %>% 
+  count() %>% 
+  spread(.,key = spec,value = n) %>%
+  ungroup() %>%
+  setNames(.,c(names(.)[1:13],"N/A")) %>%
+  select(-geo) %>%
+  bind_cols(.,tibble(Location = c("Belize","Florida","Honduras","Kuna Yala","Panama","N/A"))) %>%
+  select(Location,abe:`N/A`) %>% 
+  mutate(Total = ((.)%>% rowwise() %>% select(abe:`N/A`) %>% rowSums(.,na.rm = TRUE)) ) %>% 
+  bind_rows(((.) %>% 
+                       select(abe:Total) %>% 
+                       summarise_all(funs(sum),na.rm=TRUE))) %>%
+  mutate(Location = ifelse(is.na(Location),'Total',Location))
+
+ktab1[is.na(ktab1)] <- ""
+  
+ktab1 %>% knitr::kable()
+```
+
+Summary on *per-sample-id* basis:
+
+```{r perSample, echo = FALSE}
+ktab2 <- samp_size %>% 
+  group_by(geo,spec) %>% 
+  count() %>% 
+  spread(.,key = spec,value = n)  %>% 
+  ungroup() %>%
+  setNames(.,c(names(.)[1:13],"N/A")) %>%
+  select(-geo) %>%
+  bind_cols(.,tibble(Location = c("Belize","Florida","Honduras","Kuna Yala","Panama","N/A"))) %>%
+  select(Location,abe:`N/A`) %>% 
+  mutate(Total = ((.)%>% rowwise() %>% select(abe:`N/A`) %>% rowSums(.,na.rm = TRUE)) ) %>% 
+  bind_rows(((.) %>% 
+                       select(abe:Total) %>% 
+                       summarise_all(funs(sum),na.rm=TRUE))) %>%
+  mutate(Location = ifelse(is.na(Location),'Total',Location))
+
+ktab2[is.na(ktab2)] <- ""
+ktab2 %>% knitr::kable()
+```
+
+---
+
+<center><img src="../logo.svg" alt="logo" width="150"/></center>
