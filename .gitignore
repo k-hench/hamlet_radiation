@@ -7,3 +7,5 @@ packrat/src/
 work
 data/*
 !data/RADME.md
+ressources/*
+!ressources/README.md
