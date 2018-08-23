@@ -5,3 +5,5 @@
 packrat/lib*/
 packrat/src/
 work
+data/*
+!data/RADME.md
