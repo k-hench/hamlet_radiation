@@ -10,6 +10,8 @@ Steps involved include:
 
 The whole process is monitored using [**Nextflow**](https://www.nextflow.io/index.html) using the pipeline described in `./main.nf`.
 
+NEWS From github!
+
 ---
 
 <center><img src="logo.svg" alt="logo" width="150"/></center>
