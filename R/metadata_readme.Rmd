@@ -6,6 +6,7 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, root.dir = '.')
 library(tidyverse)
+noNA <- function(x){1 - is.na(x)}
 seq_files <- read_delim('../metadata/file_info.txt', delim = "\t")
 samp_size <- seq_files %>% 
   mutate(data_size = GB_fwd+GB_rev) %>% 
@@ -63,12 +64,14 @@ ktab1 <- seq_files %>%
   spread(.,key = spec,value = n) %>%
   ungroup() %>%
   select(-geo) %>%
-  bind_cols(.,tibble(Location = c("Belize","Florida","Honduras","Kuna Yala","Mexico","Panama"))) %>%
+  bind_cols(.,tibble(Location = c("Belize","Florida","Honduras","Panama"))) %>%
   select(Location,abe:uni) %>% 
-  mutate(Total = ((.)%>% rowwise() %>% select(abe:uni) %>% rowSums(.,na.rm = TRUE)) ) %>% 
+  mutate(Total = ((.)%>% rowwise() %>% select(abe:uni) %>% rowSums(.,na.rm = TRUE)),
+         Species = ((.)%>% rowwise() %>% select(abe:uni) %>% noNA(.) %>% rowSums()) ) %>% 
   bind_rows(((.) %>% 
                        select(abe:Total) %>% 
-                       summarise_all(funs(sum),na.rm=TRUE))) %>%
+                       summarise_all(funs(sum),na.rm=TRUE) %>%
+               bind_cols(.,tibble(Species = 11)))) %>%
   mutate(Location = ifelse(is.na(Location),'Total',Location))
 
 ktab1[is.na(ktab1)] <- ""
@@ -85,12 +88,14 @@ ktab2 <- samp_size %>%
   spread(.,key = spec,value = n)  %>% 
   ungroup() %>%
   select(-geo) %>%
-  bind_cols(.,tibble(Location = c("Belize","Florida","Honduras","Kuna Yala","Mexico","Panama"))) %>%
+  bind_cols(.,tibble(Location = c("Belize","Florida","Honduras","Panama"))) %>%
   select(Location,abe:uni) %>% 
-  mutate(Total = ((.)%>% rowwise() %>% select(abe:uni) %>% rowSums(.,na.rm = TRUE)) ) %>% 
+  mutate(Total = ((.)%>% rowwise() %>% select(abe:uni) %>% rowSums(.,na.rm = TRUE)) ,
+         Species = ((.)%>% rowwise() %>% select(abe:uni) %>% noNA(.) %>% rowSums()) ) %>% 
   bind_rows(((.) %>% 
                        select(abe:Total) %>% 
-                       summarise_all(funs(sum),na.rm=TRUE))) %>%
+                       summarise_all(funs(sum),na.rm=TRUE) %>%
+               bind_cols(.,tibble(Species = 11)))) %>%
   mutate(Location = ifelse(is.na(Location),'Total',Location))
 
 ktab2[is.na(ktab2)] <- ""
