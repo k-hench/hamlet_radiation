@@ -1,4 +1,10 @@
-params.index = 'metadata/file_info.txt'
+#!/usr/bin/env nextflow
+
+/*
+ *  don't forget to comment...
+ */
+
+ params.index = 'metadata/file_info.txt'
 
 Channel
     .fromPath(params.index)
