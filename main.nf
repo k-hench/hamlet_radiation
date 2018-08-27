@@ -22,7 +22,7 @@
      val x from samples_ch
 
      output:
-     file ${x.label}.${x.lane_fwd}.ubam.bam into ubams
+     file "${x.label}.${x.lane_fwd}.ubam.bam" into ubams
 
      script:
      """
