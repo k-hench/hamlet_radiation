@@ -32,15 +32,15 @@
 
      gatk --java-options "-Xmx20G" \
          FastqToSam \
-         SM=${x.label} \
-     		 F1=\$BASE_DIR/${x.file_fwd} \
-         F2=\$BASE_DIR/${x.file_rev} \
-     		 O=${x.label}.${x.lane_fwd}.ubam.bam \
-     		 RG=${x.label}.${x.lane_fwd} \
-     		 LB=${x.label}".lib1" \
-     		 PU=${x.flowcell_id_fwd}.${x.lane_fwd} \
-     		 PL=Illumina \
-     		 CN=${x.company} \
-     		 TMP_DIR=\$BASE_DIR/temp_files;
+         -SM=${x.label} \
+     		 -F1=\$BASE_DIR/data/seqdata/${x.file_fwd} \
+         -F2=\$BASE_DIR/data/seqdata/${x.file_rev} \
+     		 -O=${x.label}.${x.lane_fwd}.ubam.bam \
+     		 -RG=${x.label}.${x.lane_fwd} \
+     		 -LB=${x.label}".lib1" \
+     		 -PU=${x.flowcell_id_fwd}.${x.lane_fwd} \
+     		 -PL=Illumina \
+     		 -CN=${x.company} \
+     		 --TMP_DIR=\$BASE_DIR/temp_files;
      """
  }
