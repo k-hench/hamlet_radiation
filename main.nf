@@ -31,7 +31,7 @@
      echo -e "Flowcell:\t${x.flowcell_id_fwd}\nLane:\t\t${x.lane_fwd}"
      echo -e "Read group:\t${x.flowcell_id_fwd}.${x.lane_fwd}\nCompany:\t${x.company}"
 
-     mkdir -p $BASE_DIR/temp_files
+     mkdir -p \$BASE_DIR/temp_files
 
      gatk --java-options "-Xmx20G" \\
          FastqToSam \\
@@ -44,6 +44,6 @@
      		 PLATFORM_UNIT=${x.flowcell_id_fwd}.${x.lane_fwd} \\
      		 PLATFORM=Illumina \\
      		 SEQUENCING_CENTER=${x.company} \\
-     		 TMP_DIR=$BASE_DIR/temp_files;
+     		 TMP_DIR=\$BASE_DIR/temp_files;
      """
  }
