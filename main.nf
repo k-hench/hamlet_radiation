@@ -1,17 +1,17 @@
 #!/usr/bin/env nextflow
 
-/*
- *  don't forget to comment...
- */
-
+ /* open the pipeline based on the metadata spread sheet that includes all
+  * information necessary to assign read groups to the sequencing data */
  params.index = 'metadata/file_info.txt'
 
+ /* split the spread sheet by row and feed it into a channel */
  Channel
      .fromPath(params.index)
      .splitCsv(header:true, sep:"\t")
      .map{ row -> [ id:row.id, label:row.label, file_fwd:row.file_fwd, file_rev:row.file_rev, flowcell_id_fwd:row.flowcell_id_fwd, lane_fwd:row.lane_fwd, company:row.company] }
      .set { samples_ch }
 
+ /* for every sequencing file, convert into ubam format and assign read groups */
  process split_samples {
      conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
 
@@ -45,6 +45,7 @@
      """
  }
 
+ /* for every ubam file, mark Illumina adapters */
  process mark_adapters {
    conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
 
