@@ -32,7 +32,7 @@ ggplot(seq_files ,aes(x = geo,fill = spec))+
        subtitle = "Note that some samples have multiple .fq pairs (from different lanes/ runs)")+
   theme_minimal()
 ```
-```{r plots2, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 12, fig.asp = 1, out.width = "95%"}
+```{r plot2, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 12, fig.asp = 1, out.width = "95%"}
 ggplot(samp_size ,aes(x = data_size,fill = spec))+
   geom_histogram(col='black')+
   scale_fill_manual("Species",values = hypogen::hypo_clr_LGs[0:12*2+1])+
@@ -44,7 +44,7 @@ ggplot(samp_size ,aes(x = data_size,fill = spec))+
   theme_minimal()
 ```
 
-```{r plots3, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 12, fig.asp = .6, out.width = "95%"}
+```{r plot3, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 12, fig.asp = .6, out.width = "95%"}
 ggplot(samp_size ,aes(x = geo, y= data_size, fill = spec))+
   geom_boxplot(col='black')+
   scale_fill_manual("Species",values = hypogen::hypo_clr_LGs[0:12*2+1])+

@@ -12,9 +12,9 @@ This folder contains metadata which describes the raw sequencing data contained 
 Below is a short summary of the sample compostition:
 
 <img src="figure/plot1-1.png" title="plot of chunk plot1" alt="plot of chunk plot1" width="95%" />
-<img src="figure/plots2-1.png" title="plot of chunk plots2" alt="plot of chunk plots2" width="95%" />
+<img src="figure/plot2-1.png" title="plot of chunk plot2" alt="plot of chunk plot2" width="95%" />
 
-<img src="figure/plots3-1.png" title="plot of chunk plots3" alt="plot of chunk plots3" width="95%" />
+<img src="figure/plot3-1.png" title="plot of chunk plot3" alt="plot of chunk plot3" width="95%" />
 
 Summary on *per-file* (pair) basis:
 
@@ -23,9 +23,9 @@ Summary on *per-file* (pair) basis:
 |--------:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|-----:|-------:|
 |   Belize|    |    |    |  12|  26|  12|  12|    |    |    |  12|    74|       5|
 |  Florida|    |   1|    |    |    |    |    |    |    |    |    |     1|       1|
-| Honduras|  11|    |  12|    |    |  12|  13|   1|  12|    |  11|    72|       7|
+| Honduras|  11|    |  11|    |    |  12|  13|   1|  12|    |  11|    71|       7|
 |   Panama|    |    |    |    |    |  16|  15|    |    |   2|  14|    47|       4|
-|    Total|  11|   1|  12|  12|  26|  40|  40|   1|  12|   2|  37|   194|      11|
+|    Total|  11|   1|  11|  12|  26|  40|  40|   1|  12|   2|  37|   193|      11|
 
 Summary on *per-sample-id* basis:
 
@@ -34,9 +34,9 @@ Summary on *per-sample-id* basis:
 |--------:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|-----:|-------:|
 |   Belize|    |    |    |  12|  10|  12|  12|    |    |    |  12|    58|       5|
 |  Florida|    |   1|    |    |    |    |    |    |    |    |    |     1|       1|
-| Honduras|  11|    |  12|    |    |  12|  13|   1|  12|    |  11|    72|       7|
+| Honduras|  11|    |  11|    |    |  12|  13|   1|  12|    |  11|    71|       7|
 |   Panama|    |    |    |    |    |  13|  13|    |    |   2|  13|    41|       4|
-|    Total|  11|   1|  12|  12|  10|  37|  38|   1|  12|   2|  36|   172|      11|
+|    Total|  11|   1|  11|  12|  10|  37|  38|   1|  12|   2|  36|   171|      11|
 
 ---
 
