@@ -44,3 +44,24 @@
      		 --TMP_DIR=\$BASE_DIR/temp_files;
      """
  }
+
+ process mark_adapters {
+   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+
+   input:
+   file "input.ubam.bam" from ubams
+
+   output:
+   file "output.adapter.bam" into adapter_bams
+   file "output.adapter.metrics.txt" into adapter_metrics
+
+   script:
+   """
+   gatk --java-options ""-Xmx18G" \
+        MarkIlluminaAdapters \
+        -I=input.ubam.bam \
+        -O=output.adapter.bam \
+        -M=output.adapter.metrics.txt \
+        -TMP_DIR=\$BASE_DIR/temp_files;
+   """
+ }
