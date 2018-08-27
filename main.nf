@@ -15,8 +15,8 @@
  process split_samples {
      echo true
      conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
-     memory = { 20.GB * task.attempt }
-     time = { 4.h * task.attempt }
+     memory { 20.GB * task.attempt }
+     time { 4.h * task.attempt }
 
      input:
      val x from samples_ch
