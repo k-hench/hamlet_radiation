@@ -60,7 +60,7 @@
    """
    BASE_FILE=\$( echo ${input} | sed 's/.ubam.bam//g' )
 
-   gatk --java-options ""-Xmx18G" \
+   gatk --java-options "-Xmx18G" \
         MarkIlluminaAdapters \
         -I=${input} \
         -O=\$BASE_FILE.adapter.bam \
