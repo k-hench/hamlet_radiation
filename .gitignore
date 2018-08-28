@@ -6,6 +6,7 @@
 packrat/lib*/
 packrat/src/
 work
+temp_files
 data/*
 !data/RADME.md
 ressources/*
