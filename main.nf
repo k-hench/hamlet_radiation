@@ -50,19 +50,21 @@
    conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
 
    input:
-   file "input.ubam.bam" from ubams
+   file input from ubams
 
    output:
-   file "output.adapter.bam" into adapter_bams
-   file "output.adapter.metrics.txt" into adapter_metrics
+   file "*.adapter.bam" into adapter_bams
+   file "*.adapter.metrics.txt" into adapter_metrics
 
    script:
    """
+   BASE_FILE=\$( echo ${input} | sed 's/.ubam.bam//g' )
+
    gatk --java-options ""-Xmx18G" \
         MarkIlluminaAdapters \
-        -I=input.ubam.bam \
-        -O=output.adapter.bam \
-        -M=output.adapter.metrics.txt \
+        -I=${input} \
+        -O=\$BASE_FILE.adapter.bam \
+        -M=\$BASE_FILE.adapter.metrics.txt \
         -TMP_DIR=\$BASE_DIR/temp_files;
    """
  }
