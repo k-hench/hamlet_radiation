@@ -68,3 +68,47 @@
         -TMP_DIR=\$BASE_DIR/temp_files;
    """
  }
+
+
+
+ /* for every ubam file, mark Illumina adapters */
+ process map_and_merge {
+   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+
+   input:
+   file input from adapter_bams
+
+   output:
+   file "*.mapped.bam" into mapped_bams
+
+   script:
+   """
+   BASE_FILE=\$( echo ${input} | sed 's/.adapter.bam//g' )
+
+  gatk --java-options "-Xmx38G" \
+        SamToFastq \
+        -I=${input} \
+        -FASTQ=/dev/stdout \
+        -CLIPPING_ATTRIBUTE=XT \
+        -CLIPPING_ACTION=2 \
+        -INTERLEAVE=true \
+        -NON_PF=true \
+        -TMP_DIR=\$BASE_DIR/temp_files | \
+    bwa mem -M -t 8 -p \$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz /dev/stdin | \
+    gatk --java-options "-Xmx50G" \
+        -MergeBamAlignment \
+        -ALIGNED_BAM=/dev/stdin \
+        -UNMAPPED_BAM=$WORK/2_output/01_Ubams_BH/${BASH_REMATCH[1]}.bam \
+        -OUTPUT=\$BASE_FILE.mapped.bam \
+        -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz \
+        -CREATE_INDEX=true \
+        -ADD_MATE_CIGAR=true \
+        -CLIP_ADAPTERS=false \
+        -CLIP_OVERLAPPING_READS=true \
+        -INCLUDE_SECONDARY_ALIGNMENTS=true \
+        -MAX_INSERTIONS_OR_DELETIONS=-1 \
+        -PRIMARY_ALIGNMENT_STRATEGY=MostDistant \
+        -ATTRIBUTES_TO_RETAIN=XS \
+        -TMP_DIR=\$BASE_DIR/temp_files;
+   """
+ }
