@@ -170,8 +170,7 @@
    """
  }
 
- /* for every mapped sample,sort and mark duplicates
- * (intermediate step is required to create .bai file) */
+ /* index al bam files */
 process index_bam {
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   tag "${sample}"
@@ -190,10 +189,12 @@ process index_bam {
   """
 }
 
+ /* collect all bam files for each sample */
 indexed_bams
   .groupTuple()
   .set {tubbled}
 
+ /* create one *.g.vcf file per sample */
 process receive_tuple {
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   tag "${sample}"
@@ -217,6 +218,7 @@ process receive_tuple {
   """
 }
 
+ /* collect and combine all *.g.vcf files */
 process gather_gvcfs {
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   echo true
@@ -240,6 +242,7 @@ process gather_gvcfs {
   """
 }
 
+/* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
@@ -269,8 +272,12 @@ process joint_genotype_snps {
   """
 }
 
+/* generate a LG channel */
 LG_ids1 = Channel.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 
+/* actual genotyping step
+ * (all callable sites,
+ *  one process per LG) */
 process joint_genotype_acs {
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
@@ -303,6 +310,7 @@ process joint_genotype_acs {
   """
 }
 
+/* produce metrics table to determine filtering thresholds*/
 process joint_genotype_metrics {
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
