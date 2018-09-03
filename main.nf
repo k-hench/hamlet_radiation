@@ -134,7 +134,7 @@
    set val( sample ), file( input ) from mapped_bams
 
    output:
-   set val( sample ), file( "*.dedup.bam") into dedup_bams
+   set val { sample  - ~/\.(\d+)/ }, val( sample ), file( "*.dedup.bam") into dedup_bams
    file "*.dedup.metrics.txt" into dedup_metrics
 
    script:
@@ -169,3 +169,182 @@
    rm intermediate*
    """
  }
+
+ /* for every mapped sample,sort and mark duplicates
+ * (intermediate step is required to create .bai file) */
+process index_bam {
+  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+  tag "${sample}"
+
+  input:
+  set val( sample ), file( input ) from dedup_bams
+
+  output:
+  set val( sample ), file( input ), file( "*.bai") into indexed_bams
+
+  script:
+  """
+  gatk --java-options "-Xmx30G" \
+  BuildBamIndex \
+  -INPUT=${input}
+  """
+}
+
+process transform {
+  input:
+  set val( sample ), file( bam ), file( bai ) from indexed_bams
+
+  output:
+  set val { sample  - ~/\.(\d+)/ }, val( sample ), file( bam ), file( bai ) into transformed
+
+  script:
+  """
+  """
+}
+
+transformed
+  .groupTuple()
+  .set {tubbled}
+
+process receive_tuple {
+  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+  tag "${sample}"
+
+  input:
+  set sample, sample_lane, bam, bai from tubbled
+
+  output:
+  file( "*.g.vcf.gz") into gvcfs
+  file( "*.vcf.gz.tbi") into tbis
+
+  script:
+  """
+  INPUT=\$(echo ${bam}  | sed  's/\\[/-I /g; s/\\]//g; s/,/ -I/g')
+
+  gatk --java-options "-Xmx35g" HaplotypeCaller  \
+    -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+    \$INPUT \
+    -O ${sample}.g.vcf.gz \
+    -ERC GVCF
+  """
+}
+
+process gather_gvcfs {
+  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+  echo true
+
+  input:
+  file( gvcf ) from gvcfs.collect()
+  file( tbi ) from tbis.collect()
+
+  output:
+  set file( "cohort.g.vcf.gz" ), file( "cohort.g.vcf.gz.tbi" ) into gcvf_snps, gvcf_acs
+
+  script:
+  """
+  GVCF=\$(echo " ${gvcf}" | sed 's/ /-V /g; s/vcf.gz/vcf.gz /g')
+
+  gatk --java-options "-Xmx150g" \
+  CombineGVCFs \
+  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+  \$GVCF \
+  -O cohort.g.vcf.gz
+  """
+}
+
+process joint_genotype_snps {
+  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+  publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
+
+  input:
+  set file( vcf ), file( tbi ) from gcvf_snps
+
+  output:
+  set file( "raw_var_sites.vcf.gz" ), file( "raw_var_sites.vcf.gz.tbi" ) into raw_var_sites, raw_var_sites_to_metrics
+
+  script:
+  """
+  gatk --java-options "-Xmx50g" \
+  GenotypeGVCFs \
+  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+  -V=${vcf} \
+  -O=intermediate.vcf.gz
+
+  gatk --java-options "-Xmx50G" \
+  SelectVariants \
+  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+  -V=intermediate.vcf.gz \
+  --select-type-to-include=SNP \
+  -O=raw_var_sites.vcf.gz
+
+  rm intermediate.*
+  """
+}
+
+LG_ids1 = Channel.from( 01..24 )
+
+process transform_LG_id {
+  input:
+  set val( id_in ) from LG_ids1
+
+  output:
+  val { id_in.toString().padLeft( 2, '0' ) } into LG_ids2
+
+  script:
+  """
+  """
+}
+
+process joint_genotype_acs {
+  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+  publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
+
+  input:
+  set file( vcf ), file( tbi ) from gvcf_acs
+  val LGid from LG_ids2
+
+  output:
+  file( "raw_gvcf_acs.*" ) into raw_acs_by_ls
+
+  script:
+  """
+  gatk --java-options "-Xmx100g" \
+  GenotypeGVCFs \
+  --includeNonVariantSites \
+  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+  -V ${vcf} \
+  -L LG${LGid} \
+  -O intermediate.vcf.gz
+
+  gatk --java-options "-Xmx100G" \
+  SelectVariants \
+  -R \$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+  -V intermediate.vcf.gz \
+  --select-type-to-include=SNP \
+  -O=raw_gvcf_acs.LG${LGid}.vcf.gz
+
+  rm intermediate.*
+  """
+}
+
+process joint_genotype_metrics {
+  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+  publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
+
+  input:
+  set file( vcf ), file( tbi ) from raw_var_sites_to_metrics
+
+  output:
+  file( "${vcf}.table.txt" ) into raw_metrics
+
+  script:
+  """
+  gatk --java-options "-Xmx25G" \
+  VariantsToTable \
+  --variant=${vcf} \
+  --output=${vcf}.table.txt \
+  -F=CHROM -F=POS -F=MQ \
+  -F=QD -F=FS -F=MQRankSum -F=ReadPosRankSum \
+  --show-filtered
+  """
+}
