@@ -244,7 +244,7 @@ process gather_gvcfs {
   """
   GVCF=\$(echo " ${gvcf}" | sed 's/ /-V /g; s/vcf.gz/vcf.gz /g')
 
-  gatk --java-options "-Xmx150g" \
+  gatk --java-options "-Xmx85g" \
   CombineGVCFs \
   -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
   \$GVCF \
@@ -264,13 +264,13 @@ process joint_genotype_snps {
 
   script:
   """
-  gatk --java-options "-Xmx50g" \
+  gatk --java-options "-Xmx85g" \
   GenotypeGVCFs \
   -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
   -V=${vcf} \
   -O=intermediate.vcf.gz
 
-  gatk --java-options "-Xmx50G" \
+  gatk --java-options "-Xmx85G" \
   SelectVariants \
   -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
   -V=intermediate.vcf.gz \
@@ -281,19 +281,7 @@ process joint_genotype_snps {
   """
 }
 
-LG_ids1 = Channel.from( 01..24 )
-
-process transform_LG_id {
-  input:
-  set val( id_in ) from LG_ids1
-
-  output:
-  val { id_in.toString().padLeft( 2, '0' ) } into LG_ids2
-
-  script:
-  """
-  """
-}
+LG_ids1 = Channel.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 
 process joint_genotype_acs {
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
@@ -301,7 +289,7 @@ process joint_genotype_acs {
 
   input:
   set file( vcf ), file( tbi ) from gvcf_acs
-  val LGid from LG_ids2
+  val LGid from LG_ids1
 
   output:
   file( "raw_gvcf_acs.*" ) into raw_acs_by_ls
