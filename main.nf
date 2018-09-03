@@ -177,10 +177,10 @@ process index_bam {
   tag "${sample}"
 
   input:
-  set val( sample ), file( input ) from dedup_bams
+  set val( sample ), val( sample_lane ), file( input ) from dedup_bams
 
   output:
-  set val( sample ), file( input ), file( "*.bai") into indexed_bams
+  set val( sample ), val( sample_lane ), file( input ), file( "*.bai") into indexed_bams
 
   script:
   """
@@ -190,19 +190,7 @@ process index_bam {
   """
 }
 
-process transform {
-  input:
-  set val( sample ), file( bam ), file( bai ) from indexed_bams
-
-  output:
-  set val { sample  - ~/\.(\d+)/ }, val( sample ), file( bam ), file( bai ) into transformed
-
-  script:
-  """
-  """
-}
-
-transformed
+indexed_bams
   .groupTuple()
   .set {tubbled}
 
