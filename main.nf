@@ -90,7 +90,7 @@
    script:
    """
    set -o pipefail
-   gatk --java-options "-Xmx48G" \
+   gatk --java-options "-Xmx68G" \
         SamToFastq \
         -I=${adapter_bam_input} \
         -FASTQ=/dev/stdout \
@@ -98,7 +98,7 @@
         -NON_PF=true \
         -TMP_DIR=\$BASE_DIR/temp_files | \
     bwa mem -M -t 8 -p \$BASE_DIR/ressources/HP_genome_unmasked_01.fa /dev/stdin |
-    gatk --java-options "-Xmx48G" \
+    gatk --java-options "-Xmx68G" \
         MergeBamAlignment \
          --VALIDATION_STRINGENCY SILENT \
          --EXPECTED_ORIENTATIONS FR \
@@ -310,7 +310,7 @@ process joint_genotype_acs {
   """
 }
 
-/* produce metrics table to determine filtering thresholds*/
+/* produce metrics table to determine filtering thresholds */
 process joint_genotype_metrics {
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
