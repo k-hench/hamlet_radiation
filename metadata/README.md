@@ -21,11 +21,11 @@ Summary on *per-file* (pair) basis:
 
 | Location| abe| flo| gum| ind| may| nig| pue| ran| tab| tor| uni| Total| Species|
 |--------:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|-----:|-------:|
-|   Belize|    |    |    |  12|  26|  12|  12|    |    |    |  12|    74|       5|
+|   Belize|    |    |    |  12|  13|  12|  12|    |    |    |  12|    61|       5|
 |  Florida|    |   1|    |    |    |    |    |    |    |    |    |     1|       1|
 | Honduras|  10|    |  11|    |    |  12|  13|  12|   1|    |  11|    70|       7|
 |   Panama|    |    |    |    |    |  16|  15|    |    |   2|  14|    47|       4|
-|    Total|  10|   1|  11|  12|  26|  40|  40|  12|   1|   2|  37|   192|      11|
+|    Total|  10|   1|  11|  12|  13|  40|  40|  12|   1|   2|  37|   179|      11|
 
 Summary on *per-sample-id* basis:
 
