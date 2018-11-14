@@ -13,6 +13,7 @@
 
  /* for every sequencing file, convert into ubam format and assign read groups */
  process split_samples {
+     label 'L_20g2h_split_samples'
      conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
 
      input:
@@ -47,6 +48,7 @@
 
  /* for every ubam file, mark Illumina adapters */
  process mark_adapters {
+   label 'L_20g2h_mark_adapters'
    conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
    tag "${sample}"
 
@@ -77,7 +79,9 @@
   *  - mapping aginst the reference genome_file
   *  - merging with the basuch ubams to include
        read group information */
+
  process map_and_merge {
+   label 'L_75g24h8t_map_and_merge'
    conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
    tag "${sample}"
 
@@ -126,6 +130,7 @@
  /* for every mapped sample,sort and mark duplicates
  * (intermediate step is required to create .bai file) */
  process mark_duplicates {
+   label 'L_32g30h_mark_duplicates'
    conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
    publishDir "1_genotyping/0_sorted_bams/", mode: 'symlink'
    tag "${sample}"
@@ -172,6 +177,7 @@
 
  /* index al bam files */
 process index_bam {
+  label 'L_32g1h_index_bam'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   tag "${sample}"
 
@@ -196,6 +202,7 @@ indexed_bams
 
  /* create one *.g.vcf file per sample */
 process receive_tuple {
+  label 'L_36g47h_receive_tuple'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   tag "${sample}"
 
@@ -220,6 +227,7 @@ process receive_tuple {
 
  /* collect and combine all *.g.vcf files */
 process gather_gvcfs {
+  label 'L_88g30h_gather_gvcfs'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   echo true
 
@@ -244,6 +252,7 @@ process gather_gvcfs {
 
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
+  label 'L_88g30h_joint_genotype'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
 
@@ -279,6 +288,7 @@ LG_ids1 = Channel.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
  * (all callable sites,
  *  one process per LG) */
 process joint_genotype_acs {
+  label 'L_105g30h_joint_genotype_acs'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
 
@@ -312,6 +322,7 @@ process joint_genotype_acs {
 
 /* produce metrics table to determine filtering thresholds */
 process joint_genotype_metrics {
+  label 'L_28g5h_genotype_metrics'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
 
