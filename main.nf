@@ -227,7 +227,7 @@ process receive_tuple {
 
  /* collect and combine all *.g.vcf files */
 process gather_gvcfs {
-  label 'L_88g30h_gather_gvcfs'
+  label 'L_O88g90h_gather_gvcfs'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   echo true
 
