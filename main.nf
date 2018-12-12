@@ -252,7 +252,7 @@ process gather_gvcfs {
 
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
-  label 'L_88g30h_joint_genotype'
+  label 'L_O88g90h_joint_genotype'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
 
