@@ -260,7 +260,7 @@ process joint_genotype_snps {
   set file( vcf ), file( tbi ) from gcvf_snps
 
   output:
-  set file( "raw_var_sites.vcf.gz" ), file( "raw_var_sites.vcf.gz.tbi" ) into raw_var_sites, raw_var_sites_to_metrics
+  set file( "raw_var_sites.vcf.gz" ), file( "raw_var_sites.vcf.gz.tbi" ) into ( raw_var_sites, raw_var_sites_to_metrics )
 
   script:
   """
@@ -282,11 +282,13 @@ process joint_genotype_snps {
 }
 
 /* generate a LG channel */
+/*
 LG_ids1 = Channel.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
-
+*/
 /* actual genotyping step
  * (all callable sites,
  *  one process per LG) */
+/*
 process joint_genotype_acs {
   label 'L_105g30h_joint_genotype_acs'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
@@ -319,7 +321,7 @@ process joint_genotype_acs {
   rm intermediate.*
   """
 }
-
+*/
 /* produce metrics table to determine filtering thresholds */
 process joint_genotype_metrics {
   label 'L_28g5h_genotype_metrics'
