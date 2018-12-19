@@ -326,7 +326,7 @@ process joint_genotype_acs {
 process joint_genotype_metrics {
   label 'L_28g5h_genotype_metrics'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
-  publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
+  publishDir "1_genotyping/1_raw_vcfs/", mode: 'move'
 
   input:
   set file( vcf ), file( tbi ) from raw_var_sites_to_metrics
