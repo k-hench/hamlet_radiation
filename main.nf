@@ -350,6 +350,7 @@ process joint_genotype_metrics {
    and type (bi-allelic only) */
 process filterSNPs {
   label 'L_78g10h_filter_Snps'
+	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/2_gatk_filtered/", mode: 'symlink'
 
   input:
@@ -369,11 +370,11 @@ process filterSNPs {
 		--filter-name "filter_QD" \
 		--filter-expression "FS > 25.0" \
 		--filter-name "filter_FS" \
-		--filter-expression "MQ < 52 || MQ > 65" \
+		--filter-expression "MQ < 52. || MQ > 65." \
 		--filter-name "filter_MQ" \
 		--filter-expression "MQRankSum < -0.2 || MQRankSum > 0.2" \
 		--filter-name "filter_MQRankSum" \
-		--filter-expression "ReadPosRankSum < -2 || ReadPosRankSum > 2 " \
+		--filter-expression "ReadPosRankSum < -2. || ReadPosRankSum > 2. " \
 		--filter-name "filter_ReadPosRankSum"
 
 		gatk --java-options "-Xmx75G" \
