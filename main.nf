@@ -322,7 +322,7 @@ process joint_genotype_acs {
   """
 }
 */
-/* produce metrics table to determine filtering thresholds */
+/* produce metrics table to determine filtering thresholds - ups forgot to extract SNPS first*/
 process joint_genotype_metrics {
   label 'L_28g5h_genotype_metrics'
   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
@@ -345,3 +345,57 @@ process joint_genotype_metrics {
   --show-filtered
   """
 }
+
+
+/* produce metrics table to determine filtering thresholds */
+process filterSNPs {
+  label 'L_78g10h_filter_Snps'
+  publishDir "1_genotyping/2_gatk_filtered/", mode: 'symlink'
+
+  input:
+  set file( vcf ), file( tbi ) from raw_var_sites
+
+  output:
+  set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
+
+  script:
+  """
+  gatk --java-options "-Xmx75G" \
+		VariantFiltration \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V ${vcf} \
+		-O=intermediate.vcf.gz \
+		--filter-expression "QD < 2.5" \
+		--filter-name "filter_QD" \
+		--filter-expression "FS > 25.0" \
+		--filter-name "filter_FS" \
+		--filter-expression "MQ < 52 || MQ > 65" \
+		--filter-name "filter_MQ" \
+		--filter-expression "MQRankSum < -0.2 || MQRankSum > 0.2" \
+		--filter-name "filter_MQRankSum" \
+		--filter-expression "ReadPosRankSum < -2 || ReadPosRankSum > 2 " \
+		--filter-name "filter_ReadPosRankSum"
+
+		gatk --java-options "-Xmx75G" \
+	  SelectVariants \
+	  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+	  -V=intermediate.vcf.gz \
+		-O=intermediate.filterd.vcf.gz \
+		--select-type-to-include=SNP
+		--exclude-filtered
+
+		vcftools \
+			--gzvcf intermediate.filterd.vcf.gz \
+			--max-missing-count 17 \
+			--max-alleles 2 \
+			--stdout  \
+			--recode | \
+			bgzip > filterd_bi-allelic.vcf.gz
+
+		tabix -p vcf filterd_bi-allelic.vcf.gz
+
+	  rm intermediate.*
+  """
+}
+
+
