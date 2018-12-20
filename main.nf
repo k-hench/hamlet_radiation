@@ -346,8 +346,8 @@ process joint_genotype_metrics {
   """
 }
 
-
-/* produce metrics table to determine filtering thresholds */
+/* filter snps basaed on locus annotations, missingness
+   and type (bi-allelic only) */
 process filterSNPs {
   label 'L_78g10h_filter_Snps'
   publishDir "1_genotyping/2_gatk_filtered/", mode: 'symlink'
