@@ -400,11 +400,9 @@ process filterSNPs {
   """
 }
 
-
 process extractPirs {
   label 'L_78g10h_extract_pirs'
 	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
-  publishDir "1_genotyping/2_gatk_filtered/", mode: 'symlink'
 
   input:
 	val( lg ) from LG_ids2
@@ -412,7 +410,7 @@ process extractPirs {
   set file( vcf ), file( tbi ) from filtered_snps
 
   output:
-  set val( lg ), file( "filterd_bi-allelic.LG${lg}.vcf.gz" ), file( "filterd_bi-allelic.LG${lg}.vcf.gz.tbi" ), file( "PIRsList-LG${lg}.txt" ) into filtered_snps
+  set val( lg ), file( "filterd_bi-allelic.LG${lg}.vcf.gz" ), file( "filterd_bi-allelic.LG${lg}.vcf.gz.tbi" ), file( "PIRsList-LG${lg}.txt" ) into pirs_lg
 
   script:
 	"""
@@ -421,14 +419,12 @@ process extractPirs {
 
 	vcftools \
 		--gzvcf ${vcf} \
-		--chr LG${lg} \
+		--chr \$LG \
 		--stdout \
 		--recode | \
 		bgzip > filterd_bi-allelic.LG${lg}.vcf.gz
 
-	gatk --java-options "-Xmx30G" \
-	  BuildBamIndex \
-	  -INPUT=filterd_bi-allelic.LG${lg}.vcf.gz
+	tabix -p vcf filterd_bi-allelic.LG${lg}.vcf.gz
 
 	extractPIRs \
 		--bam bamlist.txt \
@@ -436,5 +432,64 @@ process extractPirs {
 		--out PIRsList-LG${lg}.txt \
 		--base-quality 20 \
 		--read-quality 15
+	"""
+}
+
+process run_shapeit {
+  label 'L_75g24h8t_run_shapeit'
+	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+
+  input:
+	set val( lg ), file( vcf ), file( tbi ), file( pirs ) from pirs_lg
+
+  output:
+	set val( lg ), file( "phased-LG${lg}.vcf.gz" ) into phased_lgs
+
+  script:
+	"""
+	LG="LG${lg}"
+
+	shapeit \
+		-assemble \
+		--input-vcf ${vcf} \
+		--input-pir ${pirs} \
+		--thread 8 \
+		-O phased-LG${lg}
+
+	shapeit \
+		-convert \
+		--input-hap phased-LG${lg} \
+		--output-vcf phased-LG${lg}.vcf
+
+	bgzip phased-LG${lg}.vcf
+
+	"""
+}
+
+process merge_phased {
+  label 'L_28g5h_merge_phased_vcf'
+	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+  publishDir "1_genotyping/4_phased/", mode: 'symlink'
+
+  input:
+	set val( lg ), file( vcf ) from phased_lgs
+
+  output:
+	set file( "phased.vcf.vcf.gz" ), file( "phased.vcf.vcf.gz.tbi" ) into phased_vcf
+	set file( "phased_mac2.vcf.gz" ), file( "phased_mac2.vcf.gz.tbi" ) into phased_mac2_vcf
+
+  script:
+	"""
+	vcf-concat \
+		phased-LG* | \
+		grep -v ^\$ | \
+		tee phased.vcf | \
+		vcftools --vcf - --mac 2 --recode --stdout | \
+		bgzip > phased_mac2.vcf.gz
+
+	bgzip phased.vcf
+
+	tabix -p vcf phased.vcf.vcf.gz
+	tabix -p vcf phased_mac2.vcf.gz
 	"""
 }
