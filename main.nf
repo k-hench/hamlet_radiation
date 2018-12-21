@@ -382,7 +382,6 @@ process filterSNPs {
 	  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
 	  -V=intermediate.vcf.gz \
 		-O=intermediate.filterd.vcf.gz \
-		--select-type-to-include=SNP
 		--exclude-filtered
 
 		vcftools \
