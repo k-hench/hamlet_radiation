@@ -468,7 +468,7 @@ process run_shapeit {
 process merge_phased {
   label 'L_28g5h_merge_phased_vcf'
 	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
-  publishDir "1_genotyping/4_phased/", mode: 'symlink'
+  publishDir "1_genotyping/4_phased/", mode: 'move'
 
   input:
 	set val( lg ), file( vcf ) from phased_lgs
