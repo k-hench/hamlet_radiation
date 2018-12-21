@@ -185,7 +185,7 @@ process index_bam {
   set val( sample ), val( sample_lane ), file( input ) from dedup_bams
 
   output:
-  set val( sample ), val( sample_lane ), file( input ), file( "*.bai") into indexed_bams
+  set val( sample ), val( sample_lane ), file( input ), file( "*.bai") into ( indexed_bams, pir_bams )
 
   script:
   """
@@ -282,9 +282,11 @@ process joint_genotype_snps {
 }
 
 /* generate a LG channel */
-/*
-LG_ids1 = Channel.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
-*/
+
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.into{ LG_ids1; LG_ids2 }
+
 /* actual genotyping step
  * (all callable sites,
  *  one process per LG) */
@@ -399,3 +401,40 @@ process filterSNPs {
 }
 
 
+process extractPirs {
+  label 'L_78g10h_extract_pirs'
+	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+  publishDir "1_genotyping/2_gatk_filtered/", mode: 'symlink'
+
+  input:
+	val( lg ) from LG_ids2
+  set val( sample ), val( sample_lane ), file( input ), file( index ) from pir_bams.collect()
+  set file( vcf ), file( tbi ) from filtered_snps
+
+  output:
+  set val( lg ), file( "filterd_bi-allelic.LG${lg}.vcf.gz" ), file( "filterd_bi-allelic.LG${lg}.vcf.gz.tbi" ), file( "PIRsList-LG${lg}.txt" ) into filtered_snps
+
+  script:
+	"""
+	LG="LG${lg}"
+	awk -v OFS='\t' -v dir=\$PWD -v lg=\$LG '{print \$1,dir"/"\$2,lg}' \$BASE_DIR/metadata/bamlist_proto.txt > bamlist.txt
+
+	vcftools \
+		--gzvcf ${vcf} \
+		--chr LG${lg} \
+		--stdout \
+		--recode | \
+		bgzip > filterd_bi-allelic.LG${lg}.vcf.gz
+
+	gatk --java-options "-Xmx30G" \
+	  BuildBamIndex \
+	  -INPUT=filterd_bi-allelic.LG${lg}.vcf.gz
+
+	extractPIRs \
+		--bam bamlist.txt \
+		--vcf filterd_bi-allelic.LG${lg}.vcf.gz \
+		--out PIRsList-LG${lg}.txt \
+		--base-quality 20 \
+		--read-quality 15
+	"""
+}
