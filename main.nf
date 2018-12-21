@@ -462,7 +462,6 @@ process run_shapeit {
 		--output-vcf phased-LG${lg}.vcf
 
 	bgzip phased-LG${lg}.vcf
-
 	"""
 }
 
