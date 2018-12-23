@@ -474,7 +474,7 @@ process merge_phased {
 	set val( lg ), file( vcf ) from phased_lgs.collect()
 
   output:
-	set file( "phased.vcf.vcf.gz" ), file( "phased.vcf.vcf.gz.tbi" ) into phased_vcf
+	set file( "phased.vcf.gz" ), file( "phased.vcf.gz.tbi" ) into phased_vcf
 	set file( "phased_mac2.vcf.gz" ), file( "phased_mac2.vcf.gz.tbi" ) into phased_mac2_vcf
 
   script:
@@ -488,7 +488,7 @@ process merge_phased {
 
 	bgzip phased.vcf
 
-	tabix -p vcf phased.vcf.vcf.gz
+	tabix -p vcf phased.vcf.gz
 	tabix -p vcf phased_mac2.vcf.gz
 	"""
 }
