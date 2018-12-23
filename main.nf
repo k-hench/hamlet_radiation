@@ -471,7 +471,7 @@ process merge_phased {
   publishDir "1_genotyping/4_phased/", mode: 'move'
 
   input:
-	set val( lg ), file( vcf ) from phased_lgs
+	set val( lg ), file( vcf ) from phased_lgs.collect()
 
   output:
 	set file( "phased.vcf.vcf.gz" ), file( "phased.vcf.vcf.gz.tbi" ) into phased_vcf
