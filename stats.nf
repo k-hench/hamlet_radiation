@@ -16,7 +16,7 @@ process subset_vcf_by_location {
 		 set vcfId, file( vcf ) from vcf_locations
 
 	   output:
-	   set file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ), file( "*.pca.pdf" ), file( "*.snp_loadings.pdf"), file( "*.top_snps.txt.gz" ) into pca_bel_output
+	   set val( loc ) file( "${loc}.vcf.gz" ) into ( vcf_loc_pca, vcf_loc_fst, vcf_loc_admix )
 
 	   script:
 	   """
@@ -28,7 +28,11 @@ process subset_vcf_by_location {
 	    --mac 1 \
 	    --recode \
 	    --stdout | bgzip > ${loc}.vcf.gz
-
-	   Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${loc}.vcf.gz \$BASE_DIR/metadata/sample_info.txt 8
 	   """
 	 }
+
+/*
+"""
+Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${loc}.vcf.gz \$BASE_DIR/metadata/sample_info.txt 8
+"""
+*/
