@@ -443,7 +443,7 @@ process run_shapeit {
 	set val( lg ), file( vcf ), file( tbi ), file( pirs ) from pirs_lg
 
   output:
-	set val( lg ), file( "phased-LG${lg}.vcf.gz" ) into phased_lgs
+	file( "phased-LG${lg}.vcf.gz" ) into phased_lgs
 
   script:
 	"""
@@ -471,7 +471,7 @@ process merge_phased {
   publishDir "1_genotyping/4_phased/", mode: 'move'
 
   input:
-	set val( lg ), file( vcf ) from phased_lgs.collect()
+	file( vcf ) from phased_lgs.collect()
 
   output:
 	set file( "phased.vcf.gz" ), file( "phased.vcf.gz.tbi" ) into phased_vcf
