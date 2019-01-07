@@ -14,7 +14,6 @@
  /* for every sequencing file, convert into ubam format and assign read groups */
  process split_samples {
      label 'L_20g2h_split_samples'
-     conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
 
      input:
      val x from samples_ch
@@ -49,7 +48,6 @@
  /* for every ubam file, mark Illumina adapters */
  process mark_adapters {
    label 'L_20g2h_mark_adapters'
-   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
    tag "${sample}"
 
    input:
@@ -82,7 +80,6 @@
 
  process map_and_merge {
    label 'L_75g24h8t_map_and_merge'
-   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
    tag "${sample}"
 
    input:
@@ -131,7 +128,6 @@
  * (intermediate step is required to create .bai file) */
  process mark_duplicates {
    label 'L_32g30h_mark_duplicates'
-   conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
    publishDir "1_genotyping/0_sorted_bams/", mode: 'symlink'
    tag "${sample}"
 
@@ -178,7 +174,6 @@
  /* index al bam files */
 process index_bam {
   label 'L_32g1h_index_bam'
-  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   tag "${sample}"
 
   input:
@@ -203,7 +198,7 @@ indexed_bams
  /* create one *.g.vcf file per sample */
 process receive_tuple {
   label 'L_36g47h_receive_tuple'
-  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+	publishDir "1_genotyping/1_gvcfs/", mode: 'symlink'
   tag "${sample}"
 
   input:
@@ -228,7 +223,7 @@ process receive_tuple {
  /* collect and combine all *.g.vcf files */
 process gather_gvcfs {
   label 'L_O88g90h_gather_gvcfs'
-  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
+	publishDir "1_genotyping/1_gvcfs/", mode: 'symlink'
   echo true
 
   input:
@@ -253,8 +248,7 @@ process gather_gvcfs {
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
   label 'L_O88g90h_joint_genotype'
-  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
-  publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
+  publishDir "1_genotyping/2_raw_vcfs/", mode: 'symlink'
 
   input:
   set file( vcf ), file( tbi ) from gcvf_snps
@@ -327,8 +321,7 @@ process joint_genotype_acs {
 /* produce metrics table to determine filtering thresholds - ups forgot to extract SNPS first*/
 process joint_genotype_metrics {
   label 'L_28g5h_genotype_metrics'
-  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
-  publishDir "1_genotyping/1_raw_vcfs/", mode: 'move'
+  publishDir "1_genotyping/2_raw_vcfs/", mode: 'move'
 
   input:
   set file( vcf ), file( tbi ) from raw_var_sites_to_metrics
@@ -352,8 +345,7 @@ process joint_genotype_metrics {
    and type (bi-allelic only) */
 process filterSNPs {
   label 'L_78g10h_filter_Snps'
-	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
-  publishDir "1_genotyping/2_gatk_filtered/", mode: 'symlink'
+  publishDir "1_genotyping/3_gatk_filtered/", mode: 'symlink'
 
   input:
   set file( vcf ), file( tbi ) from raw_var_sites
@@ -402,7 +394,6 @@ process filterSNPs {
 
 process extractPirs {
   label 'L_78g10h_extract_pirs'
-	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
 
   input:
 	val( lg ) from LG_ids2
@@ -437,7 +428,6 @@ process extractPirs {
 
 process run_shapeit {
   label 'L_75g24h8t_run_shapeit'
-	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
 
   input:
 	set val( lg ), file( vcf ), file( tbi ), file( pirs ) from pirs_lg
@@ -467,7 +457,6 @@ process run_shapeit {
 
 process merge_phased {
   label 'L_28g5h_merge_phased_vcf'
-	conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
   publishDir "1_genotyping/4_phased/", mode: 'move'
 
   input:
