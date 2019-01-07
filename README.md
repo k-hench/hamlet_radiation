@@ -13,7 +13,8 @@ The whole process is monitored using [**Nextflow**](https://www.nextflow.io/inde
 - genotyping (including varian calling and phasing) is done in `./genotyping.nf`
 - population genetic analysis happens in `./analysis.nf`
 
-Additional information can be found in th `./docs` folder.
+Additional information about the input data is located in the `./metadata` folder,
+a summary of the nextflow processes can be found in the `./docs` folder.
 
 ---
 
