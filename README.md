@@ -11,7 +11,7 @@ Steps involved include:
 The whole process is monitored using [**Nextflow**](https://www.nextflow.io/index.html) and distributed over several pipelines:
 
 - genotyping (including varian calling and phasing) is done in `./genotyping.nf`
-- population genetic anallysis happens in `./stats.nf`
+- population genetic anallysis happens in `./analysis.nf`
 
 Additional information can be found in th `./docs` folder.
 
