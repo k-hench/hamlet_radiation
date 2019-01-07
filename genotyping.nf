@@ -1,4 +1,12 @@
 #!/usr/bin/env nextflow
+/* ===============================================================
+   Disclaimer: This pipeline needs a lot of time & memory to run:
+   All in all we used roughly 10 TB and ran for about 1 Month 
+	 (mainly due to limited bandwidth on the cluster durint the
+	 "receive_tuple step)
+	 ===============================================================
+*/
+
 
  /* open the pipeline based on the metadata spread sheet that includes all
   * information necessary to assign read groups to the sequencing data */
