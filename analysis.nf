@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 Channel
-	.fromFilePairs('\$BASE_DIR/1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}')
+	.fromFilePairs("1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_phylo; vcf_locations; vcf_all_samples_pca }
 
 Channel
