@@ -8,12 +8,13 @@ Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
+vcf_location_combo = locations_ch.combine( vcf_locations )
+
 process subset_vcf_by_location {
 	   label "L_20g2h_subset_vcf"
 
 	   input:
-		 val( loc ) from locations_ch
-		 set vcfId, file( vcf ) from vcf_locations
+		 set val( loc ) vcfId, file( vcf ) from vcf_location_combo
 
 	   output:
 	   set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pca, vcf_loc_fst, vcf_loc_admix )
