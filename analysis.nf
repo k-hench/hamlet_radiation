@@ -48,7 +48,7 @@ process subset_vcf_by_location {
 			awk '{print \$1"\\t"\$1}' ${loc}.pop | \
 				sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > ${loc}.pop.txt
 
-			Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf} \$BASE_DIR/R/project_config.R ${loc}.pop.txt 6
+			Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R ${loc}.pop.txt 6
 			"""
 	}
 
@@ -60,16 +60,14 @@ process pca_all {
 		file( vcf ) from vcf_all_samples_pca
 
 		output:
-		set file( "all.prime_pca.pdf" ), file( "all.pca.pdf" ), file( "all.exp_var.txt.gz" ), file( "all.scores.txt.gz" ) into pca_all_out
+		set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
 
 		script:
 		"""
-		vcfsamplenames ${vcf} | \
+		vcfsamplenames ${vcf[0]} | \
 			'{print \$1"\\t"\$1}' | \
 			sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > all.pop.txt
 
-		mv ${vcf} all.vcf.gz
-
-		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R all.vcf.gz \$BASE_DIR/R/project_config.R all.pop.txt 6
+		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R all.pop.txt 6
 		"""
 }
