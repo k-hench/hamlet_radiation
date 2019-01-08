@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 Channel
-	.fromFilePairs("\$BASE_DIR/1_genotyping/4_phased/phased_mac2.vcf.{gz,.gz.tbi}")
+	.fromFilePairs('\$BASE_DIR/1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}')
 	.into{ vcf_phylo; vcf_locations; vcf_all_samples_pca }
 
 Channel
@@ -9,30 +9,6 @@ Channel
 	.set{ locations_ch }
 
 vcf_location_combo = locations_ch.combine( vcf_locations )
-
-
-process foo {
-	echo true
-	label "L_loc_subset_vcf"
-
-	input:
-	set val( loc ), vcfId, file( txt ) from vcf_location_combo
-
-	script:
-	"""
-	echo "vvvvvvvvvvvvvvvvvv"
-	echo ${vcfId}
-	echo ${loc}
-	echo " ------ 1 ------ "
-	echo ${txt[0]}
-	echo " ------ 2 ------ "
-	echo ${txt[1]}
-	echo "^^^^^^^^^^^^^^^^^^"
-
-	"""
-}
-
-/*
 
 process subset_vcf_by_location {
 	   label "L_20g2h_subset_vcf"
@@ -57,7 +33,6 @@ process subset_vcf_by_location {
 	    --stdout | bgzip > ${loc}.vcf.gz
 	   """
 	 }
-	*/
 /*
 	process pca_location {
 			label "L_20g15h_pca_location"
