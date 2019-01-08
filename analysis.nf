@@ -32,7 +32,7 @@ process subset_vcf_by_location {
 	    --stdout | bgzip > ${loc}.vcf.gz
 	   """
 	 }
-
+/*
 	process pca_location {
 			label "L_20g15h_pca_location"
 			publishDir "figures/pca", mode: 'move'
@@ -71,3 +71,4 @@ process pca_all {
 		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R all.pop.txt 6
 		"""
 }
+*/
