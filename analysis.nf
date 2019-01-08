@@ -33,32 +33,32 @@ process subset_vcf_by_location {
 	    --stdout | bgzip > ${loc}.vcf.gz
 	   """
 	 }
-/*
-	process pca_location {
-			label "L_20g15h_pca_location"
-			publishDir "figures/pca", mode: 'move'
 
-			input:
-			set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
+process pca_location {
+		label "L_20g15h_pca_location"
+		publishDir "figures/pca", mode: 'move'
 
-			output:
-			set file( "${loc}.prime_pca.pdf" ), file( "${loc}.pca.pdf" ), file( "${loc}.exp_var.txt.gz" ), file( "${loc}.scores.txt.gz" ) into pca_loc_out
+		input:
+		set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
 
-			script:
-			"""
-			awk '{print \$1"\\t"\$1}' ${loc}.pop | \
-				sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > ${loc}.pop.txt
+		output:
+		set file( "${loc}.prime_pca.pdf" ), file( "${loc}.pca.pdf" ), file( "${loc}.exp_var.txt.gz" ), file( "${loc}.scores.txt.gz" ) into pca_loc_out
 
-			Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R ${loc}.pop.txt 6
-			"""
-	}
+		script:
+		"""
+		awk '{print \$1"\\t"\$1}' ${loc}.pop | \
+			sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > ${loc}.pop.txt
+
+		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R ${loc}.pop.txt 6
+		"""
+}
 
 process pca_all {
 		label "L_20g15h_pca_all"
 		publishDir "figures/pca", mode: 'move'
 
 		input:
-		file( vcf ) from vcf_all_samples_pca
+		set vcfId, file( vcf ) from vcf_all_samples_pca
 
 		output:
 		set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
@@ -72,4 +72,4 @@ process pca_all {
 		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R all.pop.txt 6
 		"""
 }
-*/
+
