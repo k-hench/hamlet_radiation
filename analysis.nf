@@ -1,8 +1,9 @@
 #!/usr/bin/env nextflow
+admx_ch = Channel.from( 1..15 )
 
 Channel
 	.fromFilePairs("1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.into{ vcf_phylo; vcf_locations; vcf_all_samples_pca }
+	.into{ vcf_phylo; vcf_locations; vcf_all_samples_pca; vcf_admx; vcf_geno }
 
 Channel
 	.from( "bel", "hon", "pan")
@@ -66,10 +67,156 @@ process pca_all {
 		script:
 		"""
 		vcfsamplenames ${vcf[0]} | \
-			'{print \$1"\\t"\$1}' | \
+			awk '{print \$1"\\t"\$1}' | \
 			sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > all.pop.txt
 
 		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R all.pop.txt 6
 		"""
 }
 
+process plink12 {
+ label 'L_20g2h_plink12'
+
+ input:
+ set vcfId, file( vcf ) fromfrom vcf_admx
+
+ output:
+ set file( "hapmap.ped" ), file( "hapmap.map" ), file( "hapmap.nosex" ) into admx_plink
+
+ script:
+ """
+ vcftools | \
+ 		--gzvcf ${vcf[0]} | \
+		--plink | \
+		--out intermediate_plink
+
+ plink | \
+ 		--file intermediate_plink | \
+		--recode12 | \
+		--out hapmap
+ """
+}
+
+admx_prep  = admx_ch.combine( admx_plink )
+
+process admixture {
+    label 'L_32g15h_admixture'
+    publishDir "2_analysis/admixture/", mode: 'symlink'
+
+    input:
+    set val( x ), file( ped ), file( map ), file( nosex ) from admx_prep
+
+    output:
+    set file( "hapmap.${x}.Q" ), file( "hapmap.${x}.P" ) into admx_output
+		file( "log${x}.out" ) into admx_log
+
+    script:
+    """
+    admixture --cv ${ped} ${x} | tee log${x}.out
+    """
+}
+
+process admixture_log {
+  label 'L_20g2h_admixture_log'
+  publishDir "2_analysis/admixture/", mode: 'symlink'
+
+  input:
+  file( logs ) from admx_log.collect()
+
+  output:
+  file( "admixture_report.txt" ) into admxR_output
+  script:
+  """
+  grep -h CV log*.out > admixture_report.txt
+  """
+}
+/*
+process admixture_plot {
+  label 'L_20g2h_admixture_plot'
+  publishDir "figures/admixture/", mode: 'symlink'
+
+  input:
+  file( report ) from admxR_output
+  file( qs ) from admxQ_output.collect()
+
+  output:
+  file( "${name}.admixture.pdf") into admxR_plot
+
+  script:
+  """
+  Rscript --vanilla \$BASE_DIR/R/plot_admixture.R ${report} \$BASE_DIR/vcf_samples.txt ${name}
+  """
+}
+*/
+process vcf2geno {
+  label 'L_20g2h_vcf2geno'
+
+  input:
+  set vcfId, file( vcf ) from vcf_geno
+
+  output:
+  file( "output.geno.gz" ) into geno_output
+
+  script:
+  """
+  python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
+    -i ${vcf[0]} | gzip > output.geno.gz
+  """
+}
+
+process geno_snp {
+  label 'L_32g1h4t_geno_snp'
+
+  input:
+  file( geno ) from geno_output
+
+  output:
+  file( "output.geno.SNP.gz" ) into ( snp_geno_twisst, snp_gene_tree )
+
+  script:
+  """
+  python \$SFTWR/genomics_general/filterGenotypes.py \
+     -i ${geno} \
+     --minAlleles 2 \
+     -o output.geno.SNP.gz \
+     --threads 4
+ """
+}
+
+process fasttree {
+  label 'L_105g30h_fasttree'
+  publishDir "2_analysis/fasttree/", mode: 'symlink'
+
+  input:
+  file( geno ) from snp_gene_tree
+
+  output:
+  file( "output.SNP.tree" ) into ( fasttree_output )
+
+  script:
+  """
+  python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
+      -s output.SNP.phylip \
+      -f phylip \
+      --splitPhased
+  fasttree -nt output.SNP.phylip > output.SNP.tree
+  """
+}
+/*--------- tree construction -----------*/
+/*
+process plot_tree {
+  label '32g1h.fasttree_plot'
+  publishDir "out/fasttree/", mode: 'symlink'
+
+  input:
+  file( tree ) from fasttree_output
+
+  output:
+  file( "*.pdf" ) into fasttree_plot
+
+  script:
+  """
+  Rscript --vanilla \$BASE_DIR/R/plot_tree.R ${tree} \$BASE_DIR/vcf_samples.txt
+  """
+}
+*/
