@@ -78,7 +78,7 @@ process plink12 {
  label 'L_20g2h_plink12'
 
  input:
- set vcfId, file( vcf ) fromfrom vcf_admx
+ set vcfId, file( vcf ) from vcf_admx
 
  output:
  set file( "hapmap.ped" ), file( "hapmap.map" ), file( "hapmap.nosex" ) into admx_plink
