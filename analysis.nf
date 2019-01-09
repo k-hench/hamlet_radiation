@@ -37,7 +37,8 @@ process subset_vcf_by_location {
 
 process pca_location {
 		label "L_20g15h_pca_location"
-		publishDir "figures/pca", mode: 'move'
+		publishDir "figures/pca", mode: 'move' , pattern: "*.pdf"
+		publishDir "2_analysis/pca", mode: 'move' , pattern: "*.gz"
 
 		input:
 		set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
@@ -56,7 +57,8 @@ process pca_location {
 
 process pca_all {
 		label "L_20g15h_pca_all"
-		publishDir "figures/pca", mode: 'move'
+		publishDir "figures/pca", mode: 'move' , pattern: "*.pdf"
+		publishDir "2_analysis/pca", mode: 'move' , pattern: "*.gz"
 
 		input:
 		set vcfId, file( vcf ) from vcf_all_samples_pca
