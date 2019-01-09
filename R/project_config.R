@@ -12,6 +12,29 @@ clr <- c(
   uni = "#ffffff"
 )
 
+clr2 <- c(
+  abe = "#E5E5A1",
+  flo = "#ABA7C4",
+  gum = "#E3A258",
+  ind = "#739FBD",
+  may = "#C3C3C3",
+  nig = "#000000",
+  pue = "#E17366",
+  ran = "#7EBDB3",
+  tab = "#A1C75E",
+  tor = "#E2B8CE",
+  uni = "#CCCCCC"
+)
+
+v6 <- function(x){viridis::viridis(6)[x]}
+
+fll = c( pop_1 = v6(1),
+         pop_2 = v6(2),
+         pop_3 = v6(3),
+         pop_4 = v6(4),
+         pop_5 = v6(5),
+         pop_6 = v6(6) )
+
 sp_labs <- c(
   abe = expression(italic(H.~aberrans)),
   flo = expression(italic(H.~floridae)),
