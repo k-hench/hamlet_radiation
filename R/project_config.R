@@ -1,9 +1,9 @@
 clr <- c(
   abe = "#E5E5A1",
-  flo = "#C3C3C3",
+  flo = "#ABA7C4",
   gum = "#E3A258",
   ind = "#739FBD",
-  may = "#ABA7C4",
+  may = "#C3C3C3",
   nig = "#000000",
   pue = "#E17366",
   ran = "#7EBDB3",
@@ -42,7 +42,8 @@ sp_names <- c(
 
 shps <- c(bel = 21,
           hon = 23,
-          pan = 22)
+          pan = 22,
+          flo = 24)
 
 loc_labs <- c( bel = "Belize",
                hon = "Honduras",

@@ -6,7 +6,7 @@
 # The number of PCs considdered can be varied.
 # ---------------------------------------------------------------
 # The produced output contains:
-#  - 2 plots 
+#  - 2 plots
 #     - 1 combination of "%exp var" ~ "PC" and a grid of all possible "PCy" ~ "PCx"
 #     - 1 "PC2" ~ "PC1" with the repective 9 SNPs with top loadings for PC1 & PC2 indicated
 # - 3 tables
@@ -84,7 +84,7 @@ genofile <- snpgdsOpen(str_c(base_name,'.gds'))
 snpset <- snpgdsLDpruning(genofile, ld.threshold = 0.2, autosome.only = FALSE)
 snpset.id <- unlist(snpset)
 
-snpset.tbl <- tibble(CHROM = names(snpset.id) %>% 
+snpset.tbl <- tibble(CHROM = names(snpset.id) %>%
                        str_extract(.,'(LG|Contig)[0-9]{2}'),
                      POS = snpset.id) %>%
   mutate(snpid = str_c(CHROM,":",POS))
@@ -118,13 +118,13 @@ p1 <- ggplot(pc_percent,aes(x=EV_nr,y=exp_var)) +
   scale_x_continuous(name =NULL,breaks = pc_percent$EV_nr,labels = pc_percent$EV) +
   scale_y_continuous(name = 'Explained Variation (%)',
                      limits = c(0,max(pc_percent$exp_var))) +
-  thm_base 
+  thm_base
 
 # plot all combinations of PCs
 p2 <- ggplot(df_result,aes(x,y,fill=spec)) +
   geom_point(aes(shape = loc)) +
   scale_fill_manual("Species", values = clr, labels = sp_labs) +
-  scale_shape_manual("Location", values = shps, labels = loc_labs) + 
+  scale_shape_manual("Location", values = shps, labels = loc_labs) +
   facet_grid(run_y~run_x, scales = 'free') +
   guides(fill = guide_legend(override.aes = list(shape = 21, size = 3)),
          shape = guide_legend(override.aes = list(fill = 'black', size = 3))) +
@@ -144,16 +144,16 @@ system(str_c("gzip ",str_c(base_name,'.scores.txt')))
 # Primary PCA (PC1 ~ PC2)
 
 p3 <- ggplot()+
-   geom_point(data = tab %>% 
+   geom_point(data = tab %>%
                 left_join(.,id_labs),
               aes(EV01, EV02, fill = spec, shape = loc)) +
    scale_fill_manual(values = clr, guide = FALSE) +
-   scale_shape_manual("Location", values = shps, labels = loc_labs) + 
+   scale_shape_manual("Location", values = shps, labels = loc_labs) +
    guides(shape = guide_legend(override.aes = list(fill = 'black', size = 3))) +
    labs(x = levels(factor(c(df_result$run_x,df_result$run_y)))[1],
         y = levels(factor(c(df_result$run_x,df_result$run_y)))[2]) +
   theme(legend.position = 'bottom') +
-  thm_base 
+  thm_base
 
 sp_list <- (tab %>% left_join(.,id_labs))$spec %>% factor() %>% levels()
 legend_grob_pair <- hypo_legend_single(species = sp_names[sp_list],
@@ -161,7 +161,7 @@ legend_grob_pair <- hypo_legend_single(species = sp_names[sp_list],
                                        circle_color = 'black',
                                        plot_names = TRUE,
                                        circle_lwd = .5,
-                                       ncol = min(length(sp_list),5)) %>%
+                                       ncol = min(length(sp_list),6)) %>%
   ggplotGrob()
 
 p_prime <- cowplot::plot_grid(p3,legend_grob_pair,ncol = 1,rel_heights = c(1,.15))

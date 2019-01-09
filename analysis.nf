@@ -29,7 +29,7 @@ process subset_vcf_by_location {
 
 	   vcftools --gzvcf ${vcf[0]} \
 	    --keep ${loc}.pop \
-	    --mac 1 \
+	    --mac 3 \
 	    --recode \
 	    --stdout | bgzip > ${loc}.vcf.gz
 	   """
@@ -85,14 +85,14 @@ process plink12 {
 
  script:
  """
- vcftools | \
- 		--gzvcf ${vcf[0]} | \
-		--plink | \
+ vcftools \
+ 		--gzvcf ${vcf[0]} \
+		--plink \
 		--out intermediate_plink
 
- plink | \
- 		--file intermediate_plink | \
-		--recode12 | \
+ plink \
+ 		--file intermediate_plink \
+		--recode12 \
 		--out hapmap
  """
 }
@@ -149,7 +149,7 @@ process admixture_plot {
 }
 */
 process vcf2geno {
-  label 'L_20g2h_vcf2geno'
+  label 'L_20g15h_vcf2geno'
 
   input:
   set vcfId, file( vcf ) from vcf_geno
