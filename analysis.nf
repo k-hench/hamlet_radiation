@@ -326,7 +326,7 @@ pan_pairs_ch = Channel.from( "pan" ).join( vcf_loc_pair3 ).combine(pan_spec1_ch)
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 process fst_run {
-		label 'L_32g1h_fst_run'
+		label 'L_32g4h_fst_run'
 		publishDir "2_analysis/fst/50k", mode: 'symlink' , pattern: "*.50k.windowed.weir.fst.gz"
 		publishDir "2_analysis/fst/10k", mode: 'symlink' , pattern: "*.10k.windowed.weir.fst.gz"
 		publishDir "2_analysis/fst/logs", mode: 'symlink' , pattern: "${spec1}-${spec2}.log"
