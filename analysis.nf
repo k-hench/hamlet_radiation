@@ -119,7 +119,7 @@ process admixture {
 }
 
 process admixture_log {
-  label 'L_20g2h_admixture_log'
+  label 'L_78g5h_admixture_log'
   publishDir "2_analysis/admixture/", mode: 'symlink'
 
   input:
