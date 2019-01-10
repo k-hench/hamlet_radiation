@@ -11,6 +11,10 @@ Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
+Channel.from( "ind", "may", "nig", "pue", "uni" ).into{ bel_spec1_ch, bel_spec2_ch }
+Channel.from( "abe", "gum", "nig", "pue", "ran", "uni" ).into{ hon_spec1_ch; hon_spec2_ch }
+Channel.from( "nig", "pue", "uni" ).into{ pan_spec1_ch; pan_spec2_ch }
+
 vcf_location_combo = locations_ch.combine( vcf_locations )
 
 process subset_vcf_by_location {
@@ -20,7 +24,7 @@ process subset_vcf_by_location {
 		 set val( loc ), vcfId, file( vcf ) from vcf_location_combo
 
 	   output:
-	   set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pca, vcf_loc_fst, vcf_loc_admix )
+	   set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pca, vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3, vcf_loc_admix )
 
 	   script:
 	   """
@@ -36,6 +40,7 @@ process subset_vcf_by_location {
 	    --stdout | bgzip > ${loc}.vcf.gz
 	   """
 	 }
+
 /* 1) PCA section ============== */
 /* 1a) PCA (local) -------------- */
 process pca_location {
@@ -129,7 +134,7 @@ admx_prep  = admx_ch.combine( admx_plink )
 
 process admixture {
     label 'L_78g10h_admixture'
-    publishDir "2_analysis/admixture/", mode: 'symlink'
+    publishDir "2_analysis/admixture/", mode: 'symlink' , pattern: "*.Q"
 
     input:
     set val( x ), file( ped ), file( map ), file( nosex ) from admx_prep
@@ -187,7 +192,7 @@ admx_loc_prep  = admx_loc_ch.combine( admx_loc_plink )
 
 process admixture_loc {
     label 'L_78g10h_admixture_loc'
-    publishDir "2_analysis/admixture/${loc}", mode: 'symlink'
+    publishDir "2_analysis/admixture/${loc}", mode: 'symlink' , pattern: "*.Q"
 
     input:
     set val( x ), val( loc ), file( ped ), file( map ), file( nosex ) from admx_loc_prep
@@ -309,3 +314,12 @@ process plot_tree {
   """
 }
 */
+
+/* 4) Fst section ============== */
+/* Preparation: create all possible species pairs depending on location
+   and combine with genotype subset (for the respective location)*/
+/* channel content after joinig: set [0:loc, 1:vcf, 2:pop, 3:spec1, 4:spec2]*/
+bel_pairs_ch = Channel.from( "bel" ).join( vcf_loc_pair1 ).combine(bel_spec1_ch).combine(bel_spec2_ch).filter{ it[3] != it[4] }
+hon_pairs_ch = Channel.from( "hon" ).join( vcf_loc_pair2 ).combine(hon_spec1_ch).combine(hon_spec2_ch).filter{ it[3] != it[4] }
+pan_pairs_ch = Channel.from( "pan" ).join( vcf_loc_pair3 ).combine(pan_spec1_ch).combine(pan_spec2_ch).filter{ it[3] != it[4] }
+bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
