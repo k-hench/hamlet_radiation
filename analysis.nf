@@ -101,9 +101,6 @@ process pca_all {
 }
 /* 2) Admixture section ============== */
 
-admx_prep  = admx_ch.combine( admx_plink )
-admx_loc_prep  = admx_loc_ch.combine( admx_loc_plink )
-
 /* 2a) Admixture (global) -------------- */
 process plink12 {
  label 'L_20g2h_plink12'
@@ -127,6 +124,8 @@ process plink12 {
 		--out hapmap
  """
 }
+
+admx_prep  = admx_ch.combine( admx_plink )
 
 process admixture {
     label 'L_78g10h_admixture'
@@ -183,6 +182,8 @@ process plink12_loc {
 		--out hapmap.${loc}
  """
 }
+
+admx_loc_prep  = admx_loc_ch.combine( admx_loc_plink )
 
 process admixture_loc {
     label 'L_78g10h_admixture_loc'
