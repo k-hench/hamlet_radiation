@@ -164,7 +164,7 @@ process plink12_loc {
  label 'L_20g2h_plink12_loc'
 
  input:
- set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
+ set val( loc ), file( vcf ), file( pop ) from vcf_loc_admix
 
  output:
  set val( loc ), file( "hapmap.${loc}.ped" ), file( "hapmap.${loc}.map" ), file( "hapmap.${loc}.nosex" ) into admx_loc_plink
