@@ -318,8 +318,46 @@ process plot_tree {
 /* 4) Fst section ============== */
 /* Preparation: create all possible species pairs depending on location
    and combine with genotype subset (for the respective location)*/
-/* channel content after joinig: set [0:loc, 1:vcf, 2:pop, 3:spec1, 4:spec2]*/
+
+/* channel content after joinig: set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]*/
 bel_pairs_ch = Channel.from( "bel" ).join( vcf_loc_pair1 ).combine(bel_spec1_ch).combine(bel_spec2_ch).filter{ it[3] != it[4] }
 hon_pairs_ch = Channel.from( "hon" ).join( vcf_loc_pair2 ).combine(hon_spec1_ch).combine(hon_spec2_ch).filter{ it[3] != it[4] }
 pan_pairs_ch = Channel.from( "pan" ).join( vcf_loc_pair3 ).combine(pan_spec1_ch).combine(pan_spec2_ch).filter{ it[3] != it[4] }
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
+
+process fst_run {
+		label 'L_32g1h_fst_run'
+		publishDir "2_analysis/fst/50k", mode: 'symlink' , pattern: "*.50k.windowed.weir.fst.gz"
+		publishDir "2_analysis/fst/10k", mode: 'symlink' , pattern: "*.10k.windowed.weir.fst.gz"
+		publishDir "2_analysis/fst/logs", mode: 'symlink' , pattern: "${spec1}-${spec2}.log"
+
+		input:
+		set val( loc ), file( vcf ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
+
+		output:
+		file( "*.50k.windowed.weir.fst.gz" ) into fst_50k_output
+		file( "*.10k.windowed.weir.fst.gz" ) into fst_10k_output
+		file( "${spec1}-${spec2}.log" ) into fst_logs
+
+		script:
+		"""
+		grep ${spec1} ${pop} > pop1.txt
+		grep ${spec2} ${pop} > pop2.txt
+
+		vcftools --gzvcf ${vcf} \
+			--weir-fst-pop pop1.txt \
+			--weir-fst-pop pop2.txt \
+			--fst-window-step 5000 \
+			--fst-window-size 50000 \
+			--out ${spec1}-${spec2}.50k 2> ${spec1}-${spec2}.log
+
+		vcftools --gzvcf ${vcf} \
+			--weir-fst-pop pop1.txt \
+			--weir-fst-pop pop2.txt \
+			--fst-window-size 10000 \
+			--fst-window-step 1000 \
+			--out ${spec1}-${spec2}.10k
+
+		gzip *.windowed.weir.fst
+		"""
+}
