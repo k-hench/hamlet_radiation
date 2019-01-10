@@ -85,11 +85,11 @@ process pca_all {
 
 		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R all.pop.txt 6
 
-		vcfsamplenames phased_mac2.vcf.gz | \
+		vcfsamplenames ${vcf[0]} | \
 			grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" > outgroup.pop
 
-		vcfsamplenames phased_mac2.vcf.gz | \
-			grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" | \
+		vcfsamplenames ${vcf[0]} | \
+			grep "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" | \
 				awk '{print \$1"\\t"\$1}' | \
 				sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > hamlets_only.pop.txt
 
