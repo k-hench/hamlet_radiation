@@ -210,7 +210,7 @@ process admixture_loc_log {
   set val( loc ), file( logs ) from admx_loc_log.collect()
 
   output:
-  file( "admixture_report.${loc}.txt" ) into admxR_output
+  file( "admixture_report.${loc}.txt" ) into admxR_loc_output
 
   script:
   """
