@@ -1,5 +1,7 @@
 #!/usr/bin/env nextflow
-admx_ch = Channel.from( 1..15 )
+Channel
+	.from( 1..15 )
+	.into{ admx_ch; admx_loc_ch }
 
 Channel
 	.fromFilePairs("1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
@@ -34,7 +36,8 @@ process subset_vcf_by_location {
 	    --stdout | bgzip > ${loc}.vcf.gz
 	   """
 	 }
-
+/* 1) PCA section ============== */
+/* 1a) PCA (local) -------------- */
 process pca_location {
 		label "L_20g15h_pca_location"
 		publishDir "figures/pca", mode: 'move' , pattern: "*.pdf"
@@ -55,16 +58,19 @@ process pca_location {
 		"""
 }
 
+/* 1b) PCA (global) -------------- */
 process pca_all {
 		label "L_20g15h_pca_all"
 		publishDir "figures/pca", mode: 'move' , pattern: "*.pdf"
-		publishDir "2_analysis/pca", mode: 'move' , pattern: "*.gz"
+		publishDir "2_analysis/pca", mode: 'move' , pattern: "*.txt.gz"
+		publishDir "1_genotyping/4_phased/", mode: 'move' , pattern: "*.vcf.gz"
 
 		input:
 		set vcfId, file( vcf ) from vcf_all_samples_pca
 
 		output:
 		set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
+		file( "hamlets_only.vcf.gz*" ) into vcf_hamlets_only
 
 		script:
 		"""
@@ -73,9 +79,32 @@ process pca_all {
 			sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > all.pop.txt
 
 		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R all.pop.txt 6
+
+		vcfsamplenames phased_mac2.vcf.gz | \
+			grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" > outgroup.pop
+
+		vcfsamplenames phased_mac2.vcf.gz | \
+			grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" | \
+				awk '{print \$1"\\t"\$1}' | \
+				sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > hamlets_only.pop.txt
+
+		vcftools \
+			--gzvcf ${vcf[0]} \
+			--remove outgroup.pop \
+			--recode \
+			--stdout | bgzip > hamlets_only.vcf.gz
+
+		tabix hamlets_only.vcf.gz
+
+		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.vcf.gz \$BASE_DIR/R/project_config.R hamlets_only.pop.txt 6
 		"""
 }
+/* 2) Admixture section ============== */
 
+admx_prep  = admx_ch.combine( admx_plink )
+admx_loc_prep  = admx_loc_ch.combine( admx_loc_plink )
+
+/* 2a) Admixture (global) -------------- */
 process plink12 {
  label 'L_20g2h_plink12'
 
@@ -99,10 +128,8 @@ process plink12 {
  """
 }
 
-admx_prep  = admx_ch.combine( admx_plink )
-
 process admixture {
-    label 'L_32g15h_admixture'
+    label 'L_78g10h_admixture'
     publishDir "2_analysis/admixture/", mode: 'symlink'
 
     input:
@@ -119,7 +146,7 @@ process admixture {
 }
 
 process admixture_log {
-  label 'L_78g5h_admixture_log'
+  label 'L_loc_admixture_log'
   publishDir "2_analysis/admixture/", mode: 'symlink'
 
   input:
@@ -132,6 +159,64 @@ process admixture_log {
   grep -h CV log*.out > admixture_report.txt
   """
 }
+
+/* 2b) Admixture (local) -------------- */
+process plink12_loc {
+ label 'L_20g2h_plink12_loc'
+
+ input:
+ set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
+
+ output:
+ set val( loc ), file( "hapmap.${loc}.ped" ), file( "hapmap.${loc}.map" ), file( "hapmap.${loc}.nosex" ) into admx_loc_plink
+
+ script:
+ """
+ vcftools \
+ 		--gzvcf ${vcf} \
+		--plink \
+		--out intermediate_plink
+
+ plink \
+ 		--file intermediate_plink \
+		--recode12 \
+		--out hapmap.${loc}
+ """
+}
+
+process admixture_loc {
+    label 'L_78g10h_admixture_loc'
+    publishDir "2_analysis/admixture/${loc}", mode: 'symlink'
+
+    input:
+    set val( x ), val( loc ), file( ped ), file( map ), file( nosex ) from admx_loc_prep
+
+    output:
+    set val( loc ), file( "*.Q" ), file( "*.P" ) into admx_loc_output
+		set val( loc ),file( "*.out" ) into admx_loc_log
+
+    script:
+    """
+    admixture --cv ${ped} ${x} | tee log${x}.out
+    """
+}
+
+process admixture_loc_log {
+  label 'L_loc_admixture_log_loc'
+  publishDir "2_analysis/admixture/${loc}", mode: 'symlink'
+
+  input:
+  set val( loc ), file( logs ) from admx_loc_log.collect()
+
+  output:
+  file( "admixture_report.${loc}.txt" ) into admxR_output
+
+  script:
+  """
+  grep -h CV log*.out > admixture_report.${loc}.txt
+  """
+}
+/* ============== */
 /*
 process admixture_plot {
   label 'L_20g2h_admixture_plot'
@@ -150,6 +235,7 @@ process admixture_plot {
   """
 }
 */
+/* 3) fasttree section ============== */
 process vcf2geno {
   label 'L_20g15h_vcf2geno'
 
@@ -167,7 +253,7 @@ process vcf2geno {
 }
 
 process geno_snp {
-  label 'L_32g1h4t_geno_snp'
+  label 'L_32g4h4t_geno_snp'
 
   input:
   file( geno ) from geno_output
