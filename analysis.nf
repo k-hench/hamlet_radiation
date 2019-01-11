@@ -342,9 +342,9 @@ bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 process fst_run {
 		label 'L_32g4h_fst_run'
-		publishDir "2_analysis/fst/50k", mode: 'symlink' , pattern: "*.50k.windowed.weir.fst.gz"
-		publishDir "2_analysis/fst/10k", mode: 'symlink' , pattern: "*.10k.windowed.weir.fst.gz"
-		publishDir "2_analysis/fst/logs", mode: 'symlink' , pattern: "${spec1}-${spec2}.log"
+		publishDir "2_analysis/fst/50k/${loc}", mode: 'symlink' , pattern: "*.50k.windowed.weir.fst.gz"
+		publishDir "2_analysis/fst/10k/${loc}", mode: 'symlink' , pattern: "*.10k.windowed.weir.fst.gz"
+		publishDir "2_analysis/fst/logs/${loc}", mode: 'symlink' , pattern: "${spec1}-${spec2}.log"
 
 		input:
 		set val( loc ), file( vcf ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
@@ -352,7 +352,7 @@ process fst_run {
 		output:
 		file( "*.50k.windowed.weir.fst.gz" ) into fst_50k_output
 		file( "*.10k.windowed.weir.fst.gz" ) into fst_10k_output
-		file( "${spec1}-${spec2}.log" ) into fst_logs
+		file( "${loc}-${spec1}-${spec2}.log" ) into fst_logs
 
 		script:
 		"""
@@ -364,14 +364,14 @@ process fst_run {
 			--weir-fst-pop pop2.txt \
 			--fst-window-step 5000 \
 			--fst-window-size 50000 \
-			--out ${spec1}-${spec2}.50k 2> ${spec1}-${spec2}.log
+			--out ${loc}-${spec1}-${spec2}.50k 2> ${loc}-${spec1}-${spec2}.log
 
 		vcftools --gzvcf ${vcf} \
 			--weir-fst-pop pop1.txt \
 			--weir-fst-pop pop2.txt \
 			--fst-window-size 10000 \
 			--fst-window-step 1000 \
-			--out ${spec1}-${spec2}.10k
+			--out ${loc}-${spec1}-${spec2}.10k
 
 		gzip *.windowed.weir.fst
 		"""
