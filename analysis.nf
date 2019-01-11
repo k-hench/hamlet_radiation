@@ -11,9 +11,9 @@ Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
-Channel.from( "ind", "may", "nig", "pue", "uni" ).into{ bel_spec1_ch, bel_spec2_ch }
-Channel.from( "abe", "gum", "nig", "pue", "ran", "uni" ).into{ hon_spec1_ch; hon_spec2_ch }
-Channel.from( "nig", "pue", "uni" ).into{ pan_spec1_ch; pan_spec2_ch }
+Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
+Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
+Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
 vcf_location_combo = locations_ch.combine( vcf_locations )
 
@@ -132,8 +132,8 @@ process plink12 {
 
 admx_prep  = admx_ch.combine( admx_plink )
 
-process admixture {
-    label 'L_78g10h_admixture'
+process admixture_all {
+    label 'L_88g30h_admixture_all'
     publishDir "2_analysis/admixture/", mode: 'symlink' , pattern: "*.Q"
 
     input:
@@ -320,9 +320,24 @@ process plot_tree {
    and combine with genotype subset (for the respective location)*/
 
 /* channel content after joinig: set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]*/
-bel_pairs_ch = Channel.from( "bel" ).join( vcf_loc_pair1 ).combine(bel_spec1_ch).combine(bel_spec2_ch).filter{ it[3] != it[4] }
-hon_pairs_ch = Channel.from( "hon" ).join( vcf_loc_pair2 ).combine(hon_spec1_ch).combine(hon_spec2_ch).filter{ it[3] != it[4] }
-pan_pairs_ch = Channel.from( "pan" ).join( vcf_loc_pair3 ).combine(pan_spec1_ch).combine(pan_spec2_ch).filter{ it[3] != it[4] }
+bel_pairs_ch = Channel.from( "bel" )
+	.join( vcf_loc_pair1 )
+	.combine(bel_spec1_ch)
+	.combine(bel_spec2_ch)
+	.filter{ it[3] < it[5] }
+	.map{ it[0,1,2,4,6]}
+hon_pairs_ch = Channel.from( "hon" )
+	.join( vcf_loc_pair2 )
+	.combine(hon_spec1_ch)
+	.combine(hon_spec2_ch)
+	.filter{ it[3] < it[5] }
+	.map{ it[0,1,2,4,6]}
+pan_pairs_ch = Channel.from( "pan" )
+	.join( vcf_loc_pair3 )
+	.combine(pan_spec1_ch)
+	.combine(pan_spec2_ch)
+	.filter{ it[3] < it[5] }
+	.map{ it[0,1,2,4,6]}
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 process fst_run {
