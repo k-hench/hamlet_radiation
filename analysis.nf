@@ -249,7 +249,7 @@ process vcf2geno {
   set vcfId, file( vcf ) from vcf_geno
 
   output:
-  file( "output.geno.gz" ) into geno_output
+  file( "output.geno.gz" ) into ( snp_geno_twisst, snp_gene_tree ) /*geno_output*/
 
   script:
   """
@@ -257,7 +257,7 @@ process vcf2geno {
     -i ${vcf[0]} | gzip > output.geno.gz
   """
 }
-
+/*
 process geno_snp {
   label 'L_32g4h4t_geno_snp'
 
@@ -275,7 +275,7 @@ process geno_snp {
      -o output.geno.SNP.gz \
      --threads 4
  """
-}
+}*/
 
 process fasttree {
   label 'L_105g30h_fasttree'
