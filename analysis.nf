@@ -344,13 +344,13 @@ process fst_run {
 		label 'L_32g4h_fst_run'
 		publishDir "2_analysis/fst/50k/${loc}", mode: 'symlink' , pattern: "*.50k.windowed.weir.fst.gz"
 		publishDir "2_analysis/fst/10k/${loc}", mode: 'symlink' , pattern: "*.10k.windowed.weir.fst.gz"
-		publishDir "2_analysis/fst/logs/${loc}", mode: 'symlink' , pattern: "${spec1}-${spec2}.log"
+		publishDir "2_analysis/fst/logs/${loc}", mode: 'symlink' , pattern: "${loc}-${spec1}-${spec2}.log"
 
 		input:
 		set val( loc ), file( vcf ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
 
 		output:
-		file( "*.50k.windowed.weir.fst.gz" ) into fst_50k_output
+		set val( loc ), file( "*.50k.windowed.weir.fst.gz" ), file( "${loc}-${spec1}-${spec2}.log" ) into ( fst_50k_bel, fst_50k_hon, fst_50k_pan )
 		file( "*.10k.windowed.weir.fst.gz" ) into fst_10k_output
 		file( "${loc}-${spec1}-${spec2}.log" ) into fst_logs
 
@@ -375,4 +375,68 @@ process fst_run {
 
 		gzip *.windowed.weir.fst
 		"""
+}
+
+/* collect the VCFtools logs to crate a table with the
+   genome wide fst values */
+process fst_globals {
+  label 'L_loc_fst_globals'
+  publishDir "2_analysis/fst/logs/${loc}", mode: 'move'
+
+  input:
+  file( log ) from fst_logs.collect()
+
+  output:
+  file( "fst_globals.txt" ) into fst_glob
+
+  script:
+  """
+  cat *.log | \
+  grep -E 'Weir and Cockerham|--out' | \
+  grep -A 3 50k | \
+  sed '/^--/d; s/^.*--out //g; s/.50k//g; /^Output/d; s/Weir and Cockerham //g; s/ Fst estimate: /\t/g' | \
+  paste - - - | \
+  cut -f 1,3,5 | \
+  sed 's/^\\(...\\)-/\\1\\t/g' > fst_globals.txt
+  """
+}
+
+Channel
+	.from([['a', 1], ['c', 2], ['a', 1], ['b', 4], ['b', 5], ['c', 6]])
+	.into{ ch_1; ch_2; ch_3 }
+
+fst_50k_bel.filter{ it[0] == 'bel'}.map{ it[1,2] }.collect().set{ bel_fst_1 }
+fst_50k_hon.filter{ it[0] == 'hon'}.map{ it[1,2] }.collect().set{ hon_fst_1 }
+fst_50k_pan.filter{ it[0] == 'pan'}.map{ it[1,2] }.collect().set{ pan_fst_1 }
+
+Channel.from('bel').combine( bel_fst_1 ).set{ bel_fst_2 }
+Channel.from('hon').combine( hon_fst_1 ).set{ hon_fst_2 }
+Channel.from('pan').combine( pan_fst_1 ).set{ pan_fst_2 }
+
+bel_fst_2.concat(hon_fst_2, pan_fst_2).set{ fst_results_by_loc }
+
+process results {
+	label 'L_20g2h_plot_fst'
+	publishDir "figures/fst", mode: 'move' , pattern: "*.png"
+
+	/*this might lead to arnings because the incomming
+	set might will be longer than declared at this point*/
+	input:
+	set val( loc ), file(first_fst), val(first_log) from fst_results_by_loc
+
+	output:
+	file( "*.png" ) into fst_plots
+
+	script:
+	"""cat *.log | \
+  grep -E 'Weir and Cockerham|--out' | \
+  grep -A 3 50k | \
+  sed '/^--/d; s/^.*--out //g; s/.50k//g; /^Output/d; s/Weir and Cockerham //g; s/ Fst estimate: /\t/g' | \
+  paste - - - | \
+  cut -f 1,3,5 | \
+  sed 's/^\\(...\\)-/\\1\\t/g' > fst_${loc}.txt
+
+
+	Rscript --vanilla \$BASE_DIR/R/plot_fst.R ${loc} fst_${loc}.txt \$BASE_DIR/R/fst_functions.R \$BASE_DIR/R/project_config.R
+	"""
 }

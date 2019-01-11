@@ -26,6 +26,12 @@ clr2 <- c(
   uni = "#CCCCCC"
 )
 
+loc_names <- c(
+	bel = "Belize",
+	hon = "Honduras",
+	pan = "Panama"
+)
+
 v6 <- function(x){viridis::viridis(6)[x]}
 
 fll = c( pop_1 = v6(1),
