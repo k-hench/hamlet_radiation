@@ -114,10 +114,16 @@ process plink12 {
  set vcfId, file( vcf ) from vcf_admx
 
  output:
- set file( "hapmap.ped" ), file( "hapmap.map" ), file( "hapmap.nosex" ) into admx_plink
+ set file( "hapmap.ped" ), file( "hapmap.map" ), file( "hapmap.nosex" ), file( "pop.txt" ) into admx_plink
 
  script:
  """
+ vcfsamplenames ${vcf[0]} | \
+ 		grep -v -v "tor\\|tab\\|flo" | \
+		awk '{print \$1"\\t"$1}' | \
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > pop.txt
+
+
  vcftools \
  		--gzvcf ${vcf[0]} \
 		--plink \
@@ -137,30 +143,32 @@ process admixture_all {
     publishDir "2_analysis/admixture/", mode: 'symlink' , pattern: "*.Q"
 
     input:
-    set val( x ), file( ped ), file( map ), file( nosex ) from admx_prep
+    set val( x ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_prep
 
     output:
-    set file( "hapmap.${x}.Q" ), file( "hapmap.${x}.P" ) into admx_output
-		file( "log${x}.out" ) into admx_log
+    file( "hapmap.all.${x}.P" ) into admx_output
+		set file( "log${x}.out" ), file( "hapmap.all.${x}.Q" ), file( pop ) into admx_log
 
     script:
     """
-    admixture --cv ${ped} ${x} | tee log${x}.out
+    admixture --cv ${ped} all.${x} | tee log.${x}-all.out
     """
 }
 
 process admixture_log {
   label 'L_loc_admixture_log'
   publishDir "2_analysis/admixture/", mode: 'symlink'
+	publishDir "2_analysis/admixture/", mode: 'move' , pattern: "*.pdf"
 
   input:
-  file( logs ) from admx_log.collect()
+  set file( logs ), file( admxQ ), file( pop ) from admx_log.collect()
 
   output:
   file( "admixture_report.txt" ) into admxR_output
   script:
   """
   grep -h CV log*.out > admixture_report.txt
+	Rscript --vanilla \$BASE_DIR/R/plot_admixture.R admixture_report.txt pop.txt \$BASE_DIR/R/project_config.R .all 8
   """
 }
 
@@ -214,7 +222,7 @@ admxQL_loc
 process admixture_loc_log {
   label 'L_loc_admixture_log_loc'
   publishDir "2_analysis/admixture/${loc}", mode: 'symlink' , pattern: "admixture_report*"
-	publishDir "2_analysis/admixture/${loc}", mode: 'symlink' , pattern: "*.pdf"
+	publishDir "2_analysis/admixture/${loc}", mode: 'move' , pattern: "*.pdf"
 
   input:
   set val( loc ), file( admxQ ), file( logs ), file( pop ) from admx_loc_log_sorted
