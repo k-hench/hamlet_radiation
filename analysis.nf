@@ -119,8 +119,8 @@ process plink12 {
  script:
  """
  vcfsamplenames ${vcf[0]} | \
- 		grep -v -v "tor\\|tab\\|flo" | \
-		awk '{print \$1"\\t"$1}' | \
+ 		grep -v "tor\\|tab\\|flo" | \
+		awk '{print \$1"\\t"\$1}' | \
 		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > pop.txt
 
 
