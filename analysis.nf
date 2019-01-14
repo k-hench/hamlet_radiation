@@ -241,26 +241,7 @@ process admixture_loc_log {
   """
 	/*input: 1:admixture_reports, 2: sample_ids, 3: project_config, 4:location, 5: max_admixture_K */
 }
-/* ============== */
-/*
-process admixture_plot {
-  label 'L_20g2h_admixture_plot'
-  publishDir "figures/admixture/", mode: 'symlink'
 
-  input:
-  file( report ) from admxR_output
-  file( qs ) from admxQ_output.collect()
-
-  output:
-  file( "${name}.admixture.pdf") into admxR_plot
-
-  script:
-  """
-	Rscript --vanilla bel_admix.R admixture_report.bel.txt pop.bel.txt test.biallelic.phased ~/Desktop/chapter2/R/project_config.R .bel 8
-  Rscript --vanilla \$BASE_DIR/R/plot_admixture.R ${report} \$BASE_DIR/vcf_samples.txt ${name}
-  """
-}
-*/
 /* 3) fasttree section ============== */
 process vcf2geno {
   label 'L_20g15h_vcf2geno'
