@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 Channel
-	.from( 1..15 )
+	.from( 2..15 )
 	.into{ admx_ch; admx_loc_ch }
 
 Channel
