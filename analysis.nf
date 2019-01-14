@@ -406,12 +406,6 @@ process fst_globals {
   """
 }
 
-
-
-Channel
-	.from([['a', 1], ['c', 2], ['a', 1], ['b', 4], ['b', 5], ['c', 6]])
-	.into{ ch_1; ch_2; ch_3 }
-
 fst_50k_bel.filter{ it[0] == 'bel'}.map{ it[1,2] }.collect().set{ bel_fst_1 }
 fst_50k_hon.filter{ it[0] == 'hon'}.map{ it[1,2] }.collect().set{ hon_fst_1 }
 fst_50k_pan.filter{ it[0] == 'pan'}.map{ it[1,2] }.collect().set{ pan_fst_1 }
