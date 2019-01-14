@@ -40,14 +40,8 @@ clr_loc = c(
 	pan = "#FDE725FF"
 )
 
-v6 <- function(x){viridis::viridis(6)[x]}
-
-fll = c( pop_1 = v6(1),
-         pop_2 = v6(2),
-         pop_3 = v6(3),
-         pop_4 = v6(4),
-         pop_5 = v6(5),
-         pop_6 = v6(6) )
+fll_fun <- function(n){viridis::inferno(n)}
+fll_n <- function(n){fll_fun(n) %>% setNames(., nm = str_c("pop_",1:n)) }
 
 sp_labs <- c(
   abe = expression(italic(H.~aberrans)),

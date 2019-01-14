@@ -172,7 +172,7 @@ process plink12_loc {
  set val( loc ), file( vcf ), file( pop ) from vcf_loc_admix
 
  output:
- set val( loc ), file( "hapmap.${loc}.ped" ), file( "hapmap.${loc}.map" ), file( "hapmap.${loc}.nosex" ) into admx_loc_plink
+ set val( loc ), file( "hapmap.${loc}.ped" ), file( "hapmap.${loc}.map" ), file( "hapmap.${loc}.nosex" ), file( pop ) into admx_loc_plink
 
  script:
  """
@@ -195,32 +195,42 @@ process admixture_loc {
     publishDir "2_analysis/admixture/${loc}", mode: 'symlink' , pattern: "*.Q"
 
     input:
-    set val( x ), val( loc ), file( ped ), file( map ), file( nosex ) from admx_loc_prep
+    set val( x ), val( loc ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_loc_prep
 
     output:
-    set val( loc ), file( "*.Q" ), file( "*.P" ) into admx_loc_output
-		set val( loc ),file( "*.out" ) into admx_loc_log
+    set val( loc ), file( "*.P" ) into admxP_loc
+		set val( loc ), file( "*.Q" ),file( "log*.out" ), file( pop ) into admxQL_loc
 
     script:
     """
-    admixture --cv ${ped} ${x} | tee log${x}.out
+    admixture --cv ${ped} ${x} | tee log${x}-${loc}.out
     """
 }
+
+admxQL_loc
+	.groupTuple()
+	.set { admx_loc_log_sorted }
 
 process admixture_loc_log {
   label 'L_loc_admixture_log_loc'
   publishDir "2_analysis/admixture/${loc}", mode: 'symlink'
 
   input:
-  set val( loc ), file( logs ) from admx_loc_log.collect()
+  set val( loc ), file( admxQ ), file( logs ), file( pop ) from admx_loc_log_sorted
 
   output:
   file( "admixture_report.${loc}.txt" ) into admxR_loc_output
 
   script:
   """
+	cat ${pop} | \
+		awk '{print \$1"\\t"\$1}' | \
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\2/g' > pop.txt
+
   grep -h CV log*.out > admixture_report.${loc}.txt
+	Rscript --vanilla \$BASE_DIR/R/plot_admixture.R admixture_report.${loc}.txt pop.txt \$BASE_DIR/R/project_config.R .${loc} 8
   """
+	/*input: 1:admixture_reports, 2: sample_ids, 3: project_config, 4:location, 5: max_admixture_K*/
 }
 /* ============== */
 /*
@@ -237,6 +247,7 @@ process admixture_plot {
 
   script:
   """
+	Rscript --vanilla bel_admix.R admixture_report.bel.txt pop.bel.txt test.biallelic.phased ~/Desktop/chapter2/R/project_config.R .bel 8
   Rscript --vanilla \$BASE_DIR/R/plot_admixture.R ${report} \$BASE_DIR/vcf_samples.txt ${name}
   """
 }
