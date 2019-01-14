@@ -213,7 +213,8 @@ admxQL_loc
 
 process admixture_loc_log {
   label 'L_loc_admixture_log_loc'
-  publishDir "2_analysis/admixture/${loc}", mode: 'symlink'
+  publishDir "2_analysis/admixture/${loc}", mode: 'symlink' , pattern: "admixture_report*"
+	publishDir "2_analysis/admixture/${loc}", mode: 'symlink' , pattern: "*.pdf"
 
   input:
   set val( loc ), file( admxQ ), file( logs ), file( pop ) from admx_loc_log_sorted
@@ -230,7 +231,7 @@ process admixture_loc_log {
   grep -h CV log*.out > admixture_report.${loc}.txt
 	Rscript --vanilla \$BASE_DIR/R/plot_admixture.R admixture_report.${loc}.txt pop.txt \$BASE_DIR/R/project_config.R .${loc} 8
   """
-	/*input: 1:admixture_reports, 2: sample_ids, 3: project_config, 4:location, 5: max_admixture_K*/
+	/*input: 1:admixture_reports, 2: sample_ids, 3: project_config, 4:location, 5: max_admixture_K */
 }
 /* ============== */
 /*
@@ -291,7 +292,7 @@ process geno_snp {
 }*/
 
 process fasttree {
-  label 'L_105g30h_fasttree'
+  label 'L_190g30h_fasttree'
   publishDir "2_analysis/fasttree/", mode: 'symlink'
 
   input:
