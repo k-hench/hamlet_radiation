@@ -2,7 +2,7 @@
 # run from terminal:
 # Rscript --vanilla plot_fst.R ${location} ${globals.file.txt} fst_functions.R project_config.R
 # ===============================================================
-# This script 
+# This script
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('hon','hon.logs.txt','fst_functions.R','~/Desktop/chapter2/R/project_config.R')
@@ -29,10 +29,10 @@ globals <- read_delim(globals_file, delim = '\t',
                       col_names = c('loc','run','mean','weighted')) %>%
   mutate(loc_run = str_c(loc,'_',run),
          run = fct_reorder(run,weighted),
-         loc_run = fct_reorder(loc_run,weighted)) 
+         loc_run = fct_reorder(loc_run,weighted))
 
 data <- purrr::pmap(tibble(file = files,run = run_files),
-                    hypo_import_windows) %>% 
+                    hypo_import_windows) %>%
   bind_rows() %>%
   mutate(loc_run = str_c(loc,'_',RUN))
 
@@ -45,11 +45,11 @@ global_bar <- globals %>%
   bind_rows()
 
 # annotaton ---------------------------
-runs <- globals %>% 
-  group_by(loc_run) %>% 
-  count() %>% ungroup() %>% 
-  select(-n) %>% 
-  mutate(pre = loc_run) %>% 
+runs <- globals %>%
+  group_by(loc_run) %>%
+  count() %>% ungroup() %>%
+  select(-n) %>%
+  mutate(pre = loc_run) %>%
 #  mutate(loc_run = str_remove(as.character(loc_run),'^..._')) %>%
   separate(pre,into = c('loc','right_short','left_short')) %>%
   mutate(loc_run = as.character(loc_run),
@@ -66,7 +66,6 @@ grob_tibble$loc_run <- refactor(grob_tibble, globals)
 global_bar$loc_run <- refactor(global_bar,globals)
 
 # plotting ---------------
-plot_clr <- rgb(.2,.2,.2)
 p1_1 <- ggplot()+
   facet_grid( loc_run~., as.table = TRUE)+
   geom_hypo_LG()+
@@ -92,11 +91,11 @@ p1_2 <- ggplot()+
                      breaks = rescale_fst(x_fst),labels = x_fst,position = "top")+
   scale_y_continuous(sec.axis = sec_axis(~ . , name = "y2"),limits = c(-.1,1))+
  # scale_color_manual(values = clr)+
-  theme_bw(base_size = 10, base_family = "Helvetica") %+replace% 
+  theme_bw(base_size = 10, base_family = "Helvetica") %+replace%
   theme(plot.background = element_blank(),
         panel.background = element_blank(),
         panel.grid = element_blank(),
-        panel.border = element_blank(), 
+        panel.border = element_blank(),
         #axis.title.x = element_blank(),
         axis.line = element_line(),
         axis.line.y = element_line(color = hypogen::hypo_clr_lg),
@@ -105,7 +104,7 @@ p1_2 <- ggplot()+
         axis.title.y = element_blank(),
         axis.ticks.y = element_blank(),
         strip.background = element_rect(fill = NA,color = hypo_clr_lg),
-        legend.background = element_rect(fill = "transparent", 
+        legend.background = element_rect(fill = "transparent",
                                          color = NA),
         legend.key = element_rect(fill = "transparent",color = NA),
         strip.text = element_blank(),

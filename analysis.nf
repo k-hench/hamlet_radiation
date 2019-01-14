@@ -257,6 +257,8 @@ process vcf2geno {
     -i ${vcf[0]} | gzip > output.geno.gz
   """
 }
+/* Section removed (script doesn't finish, alsoSNPs
+   filtering condition should allready be fullfilled)*/
 /*
 process geno_snp {
   label 'L_32g4h4t_geno_snp'
@@ -285,15 +287,15 @@ process fasttree {
   file( geno ) from snp_gene_tree
 
   output:
-  file( "output.SNP.tree" ) into ( fasttree_output )
+  file( " all_samples.SNP.tree" ) into ( fasttree_output )
 
   script:
   """
   python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
-      -s output.SNP.phylip \
+      -s  all_samples.SNP.phylip \
       -f phylip \
       --splitPhased
-  fasttree -nt output.SNP.phylip > output.SNP.tree
+  fasttree -nt  all_samples.SNP.phylip > all_samples.SNP.tree
   """
 }
 /*--------- tree construction -----------*/
@@ -381,7 +383,8 @@ process fst_run {
    genome wide fst values */
 process fst_globals {
   label 'L_loc_fst_globals'
-  publishDir "2_analysis/fst/logs/${loc}", mode: 'move'
+  publishDir "2_analysis/fst/logs/", mode: 'move' , pattern: "fst_globals.txt"
+	publishDir "figures/fst", mode: 'move' , pattern: "global_fst.pdf"
 
   input:
   file( log ) from fst_logs.collect()
@@ -397,9 +400,13 @@ process fst_globals {
   sed '/^--/d; s/^.*--out //g; s/.50k//g; /^Output/d; s/Weir and Cockerham //g; s/ Fst estimate: /\t/g' | \
   paste - - - | \
   cut -f 1,3,5 | \
+
   sed 's/^\\(...\\)-/\\1\\t/g' > fst_globals.txt
+	Rscript --vanilla \$BASE_DIR/R/plot_global_fst.R fst_globals.txt \$BASE_DIR/R/fst_functions.R \$BASE_DIR/R/project_config.R
   """
 }
+
+
 
 Channel
 	.from([['a', 1], ['c', 2], ['a', 1], ['b', 4], ['b', 5], ['c', 6]])
@@ -415,7 +422,7 @@ Channel.from('pan').combine( pan_fst_1 ).set{ pan_fst_2 }
 
 bel_fst_2.concat(hon_fst_2, pan_fst_2).set{ fst_results_by_loc }
 
-process results {
+process plot_fst {
 	label 'L_20g2h_plot_fst'
 	publishDir "figures/fst", mode: 'move' , pattern: "*.png"
 

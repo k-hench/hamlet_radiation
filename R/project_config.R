@@ -26,10 +26,18 @@ clr2 <- c(
   uni = "#CCCCCC"
 )
 
+plot_clr <- rgb(.2,.2,.2)
+
 loc_names <- c(
 	bel = "Belize",
 	hon = "Honduras",
 	pan = "Panama"
+)
+
+clr_loc = c(
+	bel = "#440154FF",
+	hon = "#21908CFF",
+	pan = "#FDE725FF"
 )
 
 v6 <- function(x){viridis::viridis(6)[x]}
