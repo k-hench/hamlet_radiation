@@ -254,7 +254,7 @@ process vcf2geno {
   script:
   """
   python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-    -i ${vcf[0]} --ploidy 2 | gzip > output.geno.gz
+    -i ${vcf[0]} | gzip > output.geno.gz
   """
 }
 /* Section removed (script doesn't finish, alsoSNPs
@@ -295,6 +295,7 @@ process fasttree {
       -s  all_samples.SNP.phylip \
       -f phylip \
       --splitPhased
+
   fasttree -nt  all_samples.SNP.phylip > all_samples.SNP.tree
   """
 }
@@ -414,8 +415,6 @@ process plot_fst {
 	label 'L_20g2h_plot_fst'
 	publishDir "figures/fst", mode: 'move' , pattern: "*.png"
 
-	/*this might lead to arnings because the incomming
-	set might will be longer than declared at this point*/
 	input:
 	set val( loc ), file( first_fst ), file( first_log ) from fst_50k_sorted
 
@@ -430,7 +429,6 @@ process plot_fst {
   paste - - - | \
   cut -f 1,3,5 | \
   sed 's/^\\(...\\)-/\\1\\t/g' > fst_${loc}.txt
-
 
 	Rscript --vanilla \$BASE_DIR/R/plot_fst.R ${loc} fst_${loc}.txt \$BASE_DIR/R/fst_functions.R \$BASE_DIR/R/project_config.R
 	"""
