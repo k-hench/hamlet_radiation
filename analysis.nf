@@ -254,7 +254,7 @@ process vcf2geno {
   script:
   """
   python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-    -i ${vcf[0]} | gzip > output.geno.gz
+    -i ${vcf[0]} --ploidy 2 | gzip > output.geno.gz
   """
 }
 /* Section removed (script doesn't finish, alsoSNPs
@@ -352,7 +352,7 @@ process fst_run {
 		set val( loc ), file( vcf ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
 
 		output:
-		set val( loc ), file( "*.50k.windowed.weir.fst.gz" ), file( "${loc}-${spec1}-${spec2}.log" ) into ( fst_50k_bel, fst_50k_hon, fst_50k_pan )
+		set val( loc ), file( "*.50k.windowed.weir.fst.gz" ), file( "${loc}-${spec1}-${spec2}.log" ) into fst_50k
 		file( "*.10k.windowed.weir.fst.gz" ) into fst_10k_output
 		file( "${loc}-${spec1}-${spec2}.log" ) into fst_logs
 
@@ -406,15 +406,9 @@ process fst_globals {
   """
 }
 
-fst_50k_bel.filter{ it[0] == 'bel'}.map{ it[1,2] }.collect().set{ bel_fst_1 }
-fst_50k_hon.filter{ it[0] == 'hon'}.map{ it[1,2] }.collect().set{ hon_fst_1 }
-fst_50k_pan.filter{ it[0] == 'pan'}.map{ it[1,2] }.collect().set{ pan_fst_1 }
-
-Channel.from('bel').combine( bel_fst_1 ).set{ bel_fst_2 }
-Channel.from('hon').combine( hon_fst_1 ).set{ hon_fst_2 }
-Channel.from('pan').combine( pan_fst_1 ).set{ pan_fst_2 }
-
-bel_fst_2.concat(hon_fst_2, pan_fst_2).set{ fst_results_by_loc }
+fst_50k
+	.groupTuple()
+	.set { fst_50k_sorted }
 
 process plot_fst {
 	label 'L_20g2h_plot_fst'
@@ -423,7 +417,7 @@ process plot_fst {
 	/*this might lead to arnings because the incomming
 	set might will be longer than declared at this point*/
 	input:
-	set val( loc ), file(first_fst), val(first_log) from fst_results_by_loc
+	set val( loc ), file( first_fst ), file( first_log ) from fst_50k_sorted
 
 	output:
 	file( "*.png" ) into fst_plots
