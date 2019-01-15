@@ -165,7 +165,7 @@ process admixture_all {
 
     output:
     file( "hapmap.all.${x}.P" ) into admx_output
-		set file( "log${x}.out" ), file( "hapmap.all.${x}.Q" ), file( pop ) into admx_log
+		set file( "log${x}-all.out" ), file( "hapmap.all.${x}.Q" ), file( pop ) into admx_log
 
     script:
     """
