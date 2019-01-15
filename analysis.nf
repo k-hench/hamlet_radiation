@@ -481,7 +481,7 @@ process twisst {
   publishDir "2_analysis/twisst/", mode: 'symlink'
 
   input:
-  set val( loc ), file( geno ), file( pop ); val( twisst_w ) from twisst_input_ch
+  set val( loc ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch
 
 	output:
   set val( loc ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
