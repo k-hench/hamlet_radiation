@@ -227,10 +227,11 @@ process admixture_loc {
 
     output:
     set val( loc ), file( "*.P" ) into admxP_loc
-		set val( loc ), file( "*.Q" ),file( "log*.out" ), file( pop ) into admxQL_loc
+		set val( loc ), file( "*.Q" ),file( "log*.out" ), file( "${x}${pop}" ) into admxQL_loc
 
     script:
     """
+		mv ${pop} ${x}${pop}
     admixture --cv ${ped} ${x} | tee log${x}-${loc}.out
     """
 }
@@ -252,7 +253,7 @@ process admixture_loc_log {
 
   script:
   """
-	cat ${pop} | \
+	cat ${pop[0]} | \
 		awk '{print \$1"\\t"\$1}' | \
 		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\2/g' > pop.txt
 
