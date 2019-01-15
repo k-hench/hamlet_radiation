@@ -74,7 +74,7 @@ p1_1 <- ggplot()+
   scale_x_hypo_LG(name = loc_names[loc])+
   scale_y_continuous(name = expression(italic('F'[ST])),limits = c(-.1,1))+
  # scale_color_manual(values = clr)+
-	theme_bw(base_size = 10) %+replace% 
+	theme_bw(base_size = 10) + 
 			 theme(..., plot.background = element_blank(),
 					 panel.background = element_blank(), panel.grid = element_blank(),
 					 panel.border = element_blank(), axis.title.x = element_blank(),
@@ -97,7 +97,7 @@ p1_2 <- ggplot()+
                      breaks = rescale_fst(x_fst),labels = x_fst,position = "top")+
   scale_y_continuous(sec.axis = sec_axis(~ . , name = "y2"),limits = c(-.1,1))+
  # scale_color_manual(values = clr)+
-  theme_bw(base_size = 10) %+replace%
+  theme_bw(base_size = 10) +
   theme(plot.background = element_blank(),
         panel.background = element_blank(),
         panel.grid = element_blank(),
