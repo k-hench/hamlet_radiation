@@ -507,7 +507,7 @@ process twisst {
    python \$SFTWR/twisst/run_twisst_parallel.py \
       --method complete \
       --threads 6 \
-      -t ${loc}.SNP.w50.phyml_bionj.trees.gz \
+      -t ${loc}.w${twisst_w}.phyml_bionj.trees.gz \
       \$TWISST_POPS \
       --groupsFile ${loc}.twisst_pop.txt | \
       gzip > ${loc}.w${twisst_w}.phyml_bionj.weights.tsv.gz
