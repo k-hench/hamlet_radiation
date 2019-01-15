@@ -108,7 +108,7 @@ process pca_all {
 
 		# PCA without indtgo or gumigutta ---------------
 
-		grep -v "ind\|gum" hamlets_only.pop.txt > oscar_special.pop.txt
+		grep -v "ind\\|gum" hamlets_only.pop.txt > oscar_special.pop.txt
 		cut -f 1 oscar_special.pop.txt > oscar_special.pop
 
 		vcftools \
@@ -169,7 +169,9 @@ process admixture_all {
 
     script:
     """
-    admixture --cv ${ped} all.${x} | tee log.${x}-all.out
+    admixture --cv ${ped} ${x} | tee log.${x}-all.out
+		mv hapmap.${x}.P hapmap.all.${x}.P
+		mv hapmap.${x}.Q hapmap.all.${x}.Q
     """
 }
 
