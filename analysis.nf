@@ -498,7 +498,7 @@ process twisst {
       --threads 6
 
 	awk '{print \$1"\\t"\$1}' ${pop} | \
-		sed 's/\\(...\\)\(...\\)\$/\\t\\1\\t\\2/g' | \
+		sed 's/\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' | \
 		cut -f 1,3 | \
 		awk '{print \$1"_A\\t"\$2"\\n"\$1"_B\\t"\$2}' > ${loc}.twisst_pop.txt
 
