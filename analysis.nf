@@ -15,7 +15,7 @@ Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).int
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
-vcf_location_combo = locations_ch.combine( vcf_locations )
+locations_ch.combine( vcf_locations ).set{ vcf_location_combo }
 
 process subset_vcf_by_location {
 	   label "L_20g2h_subset_vcf"
@@ -24,7 +24,7 @@ process subset_vcf_by_location {
 		 set val( loc ), vcfId, file( vcf ) from vcf_location_combo
 
 	   output:
-	   set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pca, vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3, vcf_loc_admix )
+	   set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pca, vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3, vcf_loc_admix, vcf_loc_twisst  )
 
 	   script:
 	   """
@@ -271,7 +271,7 @@ process vcf2geno {
   set vcfId, file( vcf ) from vcf_geno
 
   output:
-  file( "output.geno.gz" ) into ( snp_geno_twisst, snp_gene_tree ) /*geno_output*/
+  file( "output.geno.gz" ) into snp_geno_tree /*geno_output*/
 
   script:
   """
@@ -306,7 +306,7 @@ process fasttree {
   publishDir "2_analysis/fasttree/", mode: 'symlink'
 
   input:
-  file( geno ) from snp_gene_tree
+  file( geno ) from snp_geno_tree
 
   output:
   file( " all_samples.SNP.tree" ) into ( fasttree_output )
@@ -455,3 +455,61 @@ process plot_fst {
 	Rscript --vanilla \$BASE_DIR/R/plot_fst.R ${loc} fst_${loc}.txt \$BASE_DIR/R/fst_functions.R \$BASE_DIR/R/project_config.R
 	"""
 }
+
+/* 5) Twisst section ============== */
+process vcf2geno_loc {
+  label 'L_20g15h_vcf2geno'
+
+  input:
+	set val( loc ), file( vcf ), file( pop ) from vcf_loc_twisst
+
+  output:
+  set val(loc), file( "${loc}.geno.gz" ), file( pop ) into snp_geno_twisst
+
+  script:
+  """
+  python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
+    -i ${vcf} | gzip > ${loc}.geno.gz
+  """
+}
+
+Channel.from(50, 100, 200).set( twisst_window_types )
+snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
+
+process twisst {
+  label 'L_120g30h6t_run_twisst'
+  publishDir "2_analysis/twisst/", mode: 'symlink'
+
+  input:
+  set val( loc ), file( geno ), file( pop ); val( twisst_w ) from twisst_input_ch
+
+	output:
+  set val( loc ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
+
+  script:
+   """
+   python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
+      -g ${geno} \
+      --windType sites \
+      -w ${twisst_w} \
+      --prefix ${loc}.w${twisst_w}.phyml_bionj \
+      --model HKY85 \
+      --optimise n \
+      --threads 6
+
+	awk '{print \$1"\\t"\$1}' ${pop} | \
+		sed 's/\\(...\\)\(...\\)\$/\\t\\1\\t\\2/g' | \
+		cut -f 1,3 | \
+		awk '{print \$1"_A\\t"\$2"\\n"\$1"_B\\t"\$2}' > ${loc}.twisst_pop.txt
+
+	TWISST_POPS=\$( cut -f 2 ${loc}.twisst_pop.txt | sort | uniq | echo \$( cat ) | sed 's/ / -g /g; s/^/-g /' )
+
+   python \$SFTWR/twisst/run_twisst_parallel.py \
+      --method complete \
+      --threads 6 \
+      -t ${loc}.SNP.w50.phyml_bionj.trees.gz \
+      \$TWISST_POPS \
+      --groupsFile ${loc}.twisst_pop.txt | \
+      gzip > ${loc}.w${twisst_w}.phyml_bionj.weights.tsv.gz
+    """
+  }
