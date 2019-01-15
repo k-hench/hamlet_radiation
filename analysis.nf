@@ -79,11 +79,14 @@ process pca_all {
 
 		script:
 		"""
+		# complete PCA, all samples ------------
 		vcfsamplenames ${vcf[0]} | \
 			awk '{print \$1"\\t"\$1}' | \
 			sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > all.pop.txt
 
 		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R all.pop.txt 6
+
+		# PCA without outgroups ---------------
 
 		vcfsamplenames ${vcf[0]} | \
 			grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" > outgroup.pop
@@ -102,6 +105,21 @@ process pca_all {
 		tabix hamlets_only.vcf.gz
 
 		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.vcf.gz \$BASE_DIR/R/project_config.R hamlets_only.pop.txt 6
+
+		# PCA without indtgo or gumigutta ---------------
+
+		grep -v "ind\|gum" hamlets_only.pop.txt > oscar_special.pop.txt
+		cut -f 1 oscar_special.pop.txt > oscar_special.pop
+
+		vcftools \
+			--gzvcf ${vcf[0]} \
+			--keep oscar_special.pop \
+			--recode \
+			--stdout | bgzip > oscar_special.vcf.gz
+
+		tabix oscar_special.vcf.gz
+
+		Rscript --vanilla \$BASE_DIR/R/vcf2pca.R oscar_special.vcf.gz \$BASE_DIR/R/project_config.R oscar_special.pop.txt 6
 		"""
 }
 /* 2) Admixture section ============== */
@@ -293,11 +311,11 @@ process fasttree {
   script:
   """
   python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
-      -s  all_samples.SNP.phylip \
-      -f phylip \
+      -s  all_samples.SNP.fa \
+      -f fasta \
       --splitPhased
 
-  fasttree -nt  all_samples.SNP.phylip > all_samples.SNP.tree
+  fasttree -nt  all_samples.SNP.fa > all_samples.SNP.tree
   """
 }
 /*--------- tree construction -----------*/
