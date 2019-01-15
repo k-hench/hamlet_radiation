@@ -473,7 +473,7 @@ process vcf2geno_loc {
   """
 }
 
-Channel.from( 50, 100, 200 ).set( twisst_window_types )
+Channel.from( 50, 100, 200 ).set{ twisst_window_types }
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 
 process twisst {
