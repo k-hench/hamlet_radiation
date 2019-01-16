@@ -177,14 +177,16 @@ process admixture_all {
 
 process admixture_log {
   label 'L_loc_admixture_log'
-  publishDir "2_analysis/admixture/", mode: 'symlink'
-	publishDir "2_analysis/admixture/", mode: 'move' , pattern: "*.pdf"
+  publishDir "2_analysis/admixture/", mode: 'symlink' , pattern: "admixture_report*"
+	publishDir "figures/admixture", mode: 'move' , pattern: "*.pdf"
 
   input:
   set file( logs ), file( admxQ ), file( pop ) from admx_log.collect()
 
   output:
   file( "admixture_report.txt" ) into admxR_output
+	file( "admixture*.pdf" ) into admx_plot_all
+
   script:
   """
   grep -h CV log*.out > admixture_report.txt
@@ -243,13 +245,14 @@ admxQL_loc
 process admixture_loc_log {
   label 'L_loc_admixture_log_loc'
   publishDir "2_analysis/admixture/${loc}", mode: 'symlink' , pattern: "admixture_report*"
-	publishDir "2_analysis/admixture/${loc}", mode: 'move' , pattern: "*.pdf"
+	publishDir "figures/admixture", mode: 'move' , pattern: "*.pdf"
 
   input:
   set val( loc ), file( admxQ ), file( logs ), file( pop ) from admx_loc_log_sorted
 
   output:
   file( "admixture_report.${loc}.txt" ) into admxR_loc_output
+	file( "admixture*.pdf" ) into admx_plot_loc
 
   script:
   """
