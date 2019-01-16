@@ -302,7 +302,7 @@ process geno_snp {
 }*/
 
 process fasttree_prep {
-  label 'L_32g4h_fasttree'
+  label 'L_78g5h_fasttree'
 
   input:
   file( geno ) from snp_geno_tree
