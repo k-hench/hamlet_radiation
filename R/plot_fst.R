@@ -74,14 +74,16 @@ p1_1 <- ggplot()+
   scale_x_hypo_LG(name = loc_names[loc])+
   scale_y_continuous(name = expression(italic('F'[ST])),limits = c(-.1,1))+
  # scale_color_manual(values = clr)+
-	theme_bw(base_size = 10) +
-			 theme(plot.background = element_blank(),
-					 panel.background = element_blank(), panel.grid = element_blank(),
-					 panel.border = element_blank(), axis.title.x = element_blank(),
-					 axis.line = element_line(), strip.background = element_rect(fill = NA,
-							 color = hypo_clr_lg), legend.background = element_rect(fill = "transparent",
-							 color = NA), legend.key = element_rect(fill = "transparent",
-							 color = NA),strip.text = element_blank(),
+  theme_bw(base_size = 10) +
+  theme(plot.background = element_blank(),
+        panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.border = element_blank(),
+        axis.line = element_line(), 
+        strip.background = element_rect(fill = NA,color = hypo_clr_lg), 
+        legend.background = element_rect(fill = "transparent", color = NA), 
+        legend.key = element_rect(fill = "transparent",color = NA),
+        strip.text = element_blank(),
         legend.position = 'none',
         axis.title.x = element_text())
 
@@ -102,7 +104,6 @@ p1_2 <- ggplot()+
         panel.background = element_blank(),
         panel.grid = element_blank(),
         panel.border = element_blank(),
-        #axis.title.x = element_blank(),
         axis.line = element_line(),
         axis.line.y = element_line(color = hypogen::hypo_clr_lg),
         axis.line.y.right = element_line(color = hypogen::hypo_clr_lg),
@@ -110,8 +111,7 @@ p1_2 <- ggplot()+
         axis.title.y = element_blank(),
         axis.ticks.y = element_blank(),
         strip.background = element_rect(fill = NA,color = hypo_clr_lg),
-        legend.background = element_rect(fill = "transparent",
-                                         color = NA),
+        legend.background = element_rect(fill = "transparent",color = NA),
         legend.key = element_rect(fill = "transparent",color = NA),
         strip.text = element_blank(),
         legend.position = 'none')
