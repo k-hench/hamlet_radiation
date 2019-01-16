@@ -74,8 +74,8 @@ p1_1 <- ggplot()+
   scale_x_hypo_LG(name = loc_names[loc])+
   scale_y_continuous(name = expression(italic('F'[ST])),limits = c(-.1,1))+
  # scale_color_manual(values = clr)+
-	theme_bw(base_size = 10) + 
-			 theme(..., plot.background = element_blank(),
+	theme_bw(base_size = 10) +
+			 theme(plot.background = element_blank(),
 					 panel.background = element_blank(), panel.grid = element_blank(),
 					 panel.border = element_blank(), axis.title.x = element_blank(),
 					 axis.line = element_line(), strip.background = element_rect(fill = NA,

@@ -169,7 +169,7 @@ process admixture_all {
 
     script:
     """
-    admixture --cv ${ped} ${x} | tee log.${x}-all.out
+    admixture --cv ${ped} ${x} | tee log${x}-all.out
 		mv hapmap.${x}.P hapmap.all.${x}.P
 		mv hapmap.${x}.Q hapmap.all.${x}.Q
     """
@@ -301,15 +301,14 @@ process geno_snp {
  """
 }*/
 
-process fasttree {
-  label 'L_190g30h_fasttree'
-  publishDir "2_analysis/fasttree/", mode: 'symlink'
+process fasttree_prep {
+  label 'L_32g4h_fasttree'
 
   input:
   file( geno ) from snp_geno_tree
 
   output:
-  file( " all_samples.SNP.tree" ) into ( fasttree_output )
+  file( "all_samples.SNP.fa" ) into ( fasttree_prep_ch )
 
   script:
   """
@@ -319,6 +318,22 @@ process fasttree {
       --splitPhased
 
   fasttree -nt  all_samples.SNP.fa > all_samples.SNP.tree
+  """
+}
+
+process fasttree_run {
+  label 'L_300g30h_fasttree'
+  publishDir "2_analysis/fasttree/", mode: 'symlink'
+
+  input:
+  file( fa ) from fasttree_prep_ch
+
+  output:
+  file( " all_samples.SNP.tree" ) into ( fasttree_output )
+
+  script:
+  """
+  fasttree -nt ${fa} > all_samples.SNP.tree
   """
 }
 /*--------- tree construction -----------*/
