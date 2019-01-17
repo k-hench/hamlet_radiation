@@ -28,7 +28,7 @@ process subset_vcf_by_location {
 
 	   script:
 	   """
-			vcfsamplenames phased_mac2.vcf.gz | \
+			vcfsamplenames ${vcf[0]} | \
 				grep ${loc} | \
 				grep -v tor | \
 				grep -v tab > ${loc}.pop
