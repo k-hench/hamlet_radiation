@@ -319,8 +319,6 @@ process fasttree_prep {
       -s  all_samples.SNP.fa \
       -f fasta \
       --splitPhased
-
-  fasttree -nt  all_samples.SNP.fa > all_samples.SNP.tree
   """
 }
 
