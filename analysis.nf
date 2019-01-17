@@ -5,34 +5,7 @@ Channel
 
 Channel
 	.fromFilePairs("1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.set{ vcf_raw }
-/* START prep reassignment input ---- > */
-/*	.into{ vcf_phylo; vcf_locations; vcf_all_samples_pca; vcf_admx; vcf_geno } */
-
-/* vcf_prep process only needed to correct worng  species assingment
-  discovered after geneotyping (s. early repo stages prior to
-	commit 76fa994d662856db88fcfbeece7632bf59fdf70f).
-	If genotyping is re-run this process can be skiped! */
-
-process vcf_prep {
-		   label "L_20g15h_vcf_prep"
-
-		   input:
-			 set vcfId, file( vcf ) from vcf_raw
-
-		   output:
-		   set val( vcfId ), file( "phased_mac2.vcf.reassigned.vcf.gz*") into ( vcf_phylo, vcf_locations, vcf_all_samples_pca, vcf_admx, vcf_geno )
-
-		   script:
-		   """
-			 zcat ${vcf[0]} | \
-			 		sed 's/20644puehon/20644abehon/g' | \
-					bgzip >  phased_mac2.vcf.reassigned.vcf.gz
-
-		   tabix phased_mac2.vcf.reassigned.vcf.gz
-		   """
-		 }
-	/* < END prep reassignment input ---- */
+	.into{ vcf_phylo; vcf_locations; vcf_all_samples_pca; vcf_admx; vcf_geno }
 
 Channel
 	.from( "bel", "hon", "pan")
