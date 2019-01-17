@@ -493,14 +493,13 @@ Channel.from( 50, 100, 200 ).set{ twisst_window_types }
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 
 process twisst {
-  label 'L_120g30h6t_run_twisst'
-  publishDir "2_analysis/twisst/", mode: 'symlink'
+  label 'L_120g30h6t_prep_twisst'
 
   input:
   set val( loc ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch
 
 	output:
-  set val( loc ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
+	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( "${loc}.w${twisst_w}.phyml_bionj.trees.gz" ) into twisst_prep_ch
 
   script:
    """
@@ -512,7 +511,21 @@ process twisst {
       --model HKY85 \
       --optimise n \
       --threads 6
+			"""
+}
 
+process twisst {
+  label 'L_120g30h6t_run_twisst'
+  publishDir "2_analysis/twisst/", mode: 'symlink'
+
+  input:
+	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( tree ) from twisst_prep_ch
+
+	output:
+  set val( loc ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
+
+  script:
+   """
 	awk '{print \$1"\\t"\$1}' ${pop} | \
 		sed 's/\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' | \
 		cut -f 1,3 | \
@@ -523,7 +536,7 @@ process twisst {
    python \$SFTWR/twisst/run_twisst_parallel.py \
       --method complete \
       --threads 6 \
-      -t ${loc}.w${twisst_w}.phyml_bionj.trees.gz \
+      -t ${tree} \
       \$TWISST_POPS \
       --groupsFile ${loc}.twisst_pop.txt | \
       gzip > ${loc}.w${twisst_w}.phyml_bionj.weights.tsv.gz
