@@ -45,8 +45,8 @@ process subset_vcf_by_location {
 /* 1a) PCA (local) -------------- */
 process pca_location {
 		label "L_20g15h_pca_location"
-		publishDir "figures/pca", mode: 'move' , pattern: "*.pdf"
-		publishDir "2_analysis/pca", mode: 'move' , pattern: "*.gz"
+		publishDir "figures/pca", mode: 'copy' , pattern: "*.pdf"
+		publishDir "2_analysis/pca", mode: 'copy' , pattern: "*.gz"
 
 		input:
 		set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
@@ -66,9 +66,9 @@ process pca_location {
 /* 1b) PCA (global) -------------- */
 process pca_all {
 		label "L_20g15h_pca_all"
-		publishDir "figures/pca", mode: 'move' , pattern: "*.pdf"
-		publishDir "2_analysis/pca", mode: 'move' , pattern: "*.txt.gz"
-		publishDir "1_genotyping/4_phased/", mode: 'move' , pattern: "*.vcf.gz"
+		publishDir "figures/pca", mode: 'copy' , pattern: "*.pdf"
+		publishDir "2_analysis/pca", mode: 'copy' , pattern: "*.txt.gz"
+		publishDir "1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
 
 		input:
 		set vcfId, file( vcf ) from vcf_all_samples_pca
@@ -158,7 +158,7 @@ admx_prep  = admx_ch.combine( admx_plink )
 
 process admixture_all {
     label 'L_88g30h_admixture_all'
-    publishDir "2_analysis/admixture/", mode: 'symlink' , pattern: "*.Q"
+    publishDir "2_analysis/admixture/", mode: 'copy' , pattern: "*.Q"
 
     input:
     set val( x ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_prep
@@ -177,8 +177,8 @@ process admixture_all {
 
 process admixture_log {
   label 'L_loc_admixture_log'
-  publishDir "2_analysis/admixture/", mode: 'symlink' , pattern: "admixture_report*"
-	publishDir "figures/admixture", mode: 'move' , pattern: "*.pdf"
+  publishDir "2_analysis/admixture/", mode: 'copy' , pattern: "admixture_report*"
+	publishDir "figures/admixture", mode: 'copy' , pattern: "*.pdf"
 
   input:
   set file( logs ), file( admxQ ), file( pop ) from admx_log.collect()
@@ -222,7 +222,7 @@ admx_loc_prep  = admx_loc_ch.combine( admx_loc_plink )
 
 process admixture_loc {
     label 'L_78g10h_admixture_loc'
-    publishDir "2_analysis/admixture/${loc}", mode: 'symlink' , pattern: "*.Q"
+    publishDir "2_analysis/admixture/${loc}", mode: 'copy' , pattern: "*.Q"
 
     input:
     set val( x ), val( loc ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_loc_prep
@@ -244,8 +244,8 @@ admxQL_loc
 
 process admixture_loc_log {
   label 'L_loc_admixture_log_loc'
-  publishDir "2_analysis/admixture/${loc}", mode: 'symlink' , pattern: "admixture_report*"
-	publishDir "figures/admixture", mode: 'move' , pattern: "*.pdf"
+  publishDir "2_analysis/admixture/${loc}", mode: 'copy' , pattern: "admixture_report*"
+	publishDir "figures/admixture", mode: 'copy' , pattern: "*.pdf"
 
   input:
   set val( loc ), file( admxQ ), file( logs ), file( pop ) from admx_loc_log_sorted
@@ -324,7 +324,7 @@ process fasttree_prep {
 
 process fasttree_run {
   label 'L_300g30h_fasttree'
-  publishDir "2_analysis/fasttree/", mode: 'symlink'
+  publishDir "2_analysis/fasttree/", mode: 'copy'
 
   input:
   file( fa ) from fasttree_prep_ch
@@ -383,9 +383,9 @@ bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 process fst_run {
 		label 'L_32g4h_fst_run'
-		publishDir "2_analysis/fst/50k/${loc}", mode: 'symlink' , pattern: "*.50k.windowed.weir.fst.gz"
-		publishDir "2_analysis/fst/10k/${loc}", mode: 'symlink' , pattern: "*.10k.windowed.weir.fst.gz"
-		publishDir "2_analysis/fst/logs/${loc}", mode: 'symlink' , pattern: "${loc}-${spec1}-${spec2}.log"
+		publishDir "2_analysis/fst/50k/${loc}", mode: 'copy' , pattern: "*.50k.windowed.weir.fst.gz"
+		publishDir "2_analysis/fst/10k/${loc}", mode: 'copy' , pattern: "*.10k.windowed.weir.fst.gz"
+		publishDir "2_analysis/fst/logs/${loc}", mode: 'copy' , pattern: "${loc}-${spec1}-${spec2}.log"
 
 		input:
 		set val( loc ), file( vcf ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
@@ -422,8 +422,8 @@ process fst_run {
    genome wide fst values */
 process fst_globals {
   label 'L_loc_fst_globals'
-  publishDir "2_analysis/fst/logs/", mode: 'move' , pattern: "fst_globals.txt"
-	publishDir "figures/fst", mode: 'move' , pattern: "global_fst.pdf"
+  publishDir "2_analysis/fst/logs/", mode: 'copy' , pattern: "fst_globals.txt"
+	publishDir "figures/fst", mode: 'copy' , pattern: "global_fst.pdf"
 
   input:
   file( log ) from fst_logs.collect()
@@ -451,7 +451,7 @@ fst_50k
 
 process plot_fst {
 	label 'L_20g2h_plot_fst'
-	publishDir "figures/fst", mode: 'move' , pattern: "*.png"
+	publishDir "figures/fst", mode: 'copy' , pattern: "*.png"
 
 	input:
 	set val( loc ), file( first_fst ), file( first_log ) from fst_50k_sorted
@@ -516,7 +516,7 @@ process twisst_prep {
 
 process twisst_run {
   label 'L_120g30h6t_run_twisst'
-  publishDir "2_analysis/twisst/", mode: 'symlink'
+  publishDir "2_analysis/twisst/", mode: 'copy'
 
   input:
 	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( tree ) from twisst_prep_ch
