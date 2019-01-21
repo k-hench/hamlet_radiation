@@ -5,17 +5,16 @@ Channel
 
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
-	.set{ LG_ids_ch }
+	.set{ ch_LG_ids }
 
-LG_ids_ch.combine( vcf_cohort ).set{ vcf_lg_combo }
+ch_LG_ids.combine( vcf_cohort ).set{ vcf_lg_combo }
 
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
   label "L_O88g90h_LGs_genotype"
-  publishDir "1_genotyping/2_raw_vcfs/", mode: 'symlink'
 
   input:
-  set val( lg ), file( vcf ) from vcf_lg_combo
+  set val( lg ), vcfId, file( vcf ) from vcf_lg_combo
 
   output:
   set val( lg ), file( "all_site*.vcf.gz" ), file( "all_site*.vcf.gz.tbi" ) into all_bp_by_location
