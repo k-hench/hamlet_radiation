@@ -11,7 +11,7 @@ LG_ids_ch.combine( vcf_cohort ).set{ vcf_lg_combo }
 
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
-  label "L_O88g90h_LG${lg}_genotype"
+  label "L_O88g90h_LGs_genotype"
   publishDir "1_genotyping/2_raw_vcfs/", mode: 'symlink'
 
   input:
