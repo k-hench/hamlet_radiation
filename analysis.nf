@@ -305,7 +305,7 @@ process geno_snp {
 }*/
 
 process fasttree_prep {
-  label 'L_190g4h_fasttree'
+  label 'L_190g15h_fasttree_prep'
 
   input:
   file( geno ) from snp_geno_tree
@@ -323,7 +323,7 @@ process fasttree_prep {
 }
 
 process fasttree_run {
-  label 'L_300g30h_fasttree'
+  label 'L_300g30h_fasttree_run'
   publishDir "2_analysis/fasttree/", mode: 'copy'
 
   input:
@@ -489,11 +489,12 @@ process vcf2geno_loc {
   """
 }
 
-Channel.from( 50, 100, 200 ).set{ twisst_window_types }
+Channel.from( 50 ).set{ twisst_window_types }
+
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 
 process twisst_prep {
-  label 'L_120g30h6t_prep_twisst'
+  label 'L_120g40h_prep_twisst'
 
   input:
   set val( loc ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch
@@ -509,13 +510,12 @@ process twisst_prep {
       -w ${twisst_w} \
       --prefix ${loc}.w${twisst_w}.phyml_bionj \
       --model HKY85 \
-      --optimise n \
-      --threads 6
+      --optimise n
 	 """
 }
 
 process twisst_run {
-  label 'L_120g30h6t_run_twisst'
+  label 'L_120g40h_run_twisst'
   publishDir "2_analysis/twisst/", mode: 'copy'
 
   input:
@@ -535,7 +535,6 @@ process twisst_run {
 
    python \$SFTWR/twisst/run_twisst_parallel.py \
       --method complete \
-      --threads 6 \
       -t ${tree} \
       \$TWISST_POPS \
       --groupsFile ${loc}.twisst_pop.txt | \
