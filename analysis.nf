@@ -589,7 +589,7 @@ process gemma_run {
  set val( trait ), file( bed ), file( bim ), file( fam ) from trait_plink_combo
 
  output:
- file("*.assoc.txt.gz") into gemma_results
+ file("*.GxP.txt.gz") into gemma_results
 
  script:
 	"""
@@ -606,8 +606,10 @@ process gemma_run {
 	# 4) fit linear mixed model using gemma (-lmm)
 	gemma -bfile \$BASE_NAME -k output/${trait}-gemma.cXX.txt -lmm 4 -o ${trait}.lmm
 
-	# 5) move and zip output
-	mv output/*.assoc.txt ./
-	gzip *.assoc.txt
+	# 5) reformat output
+	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/LG\\1\\t/g' output/${trait}.lm.assoc.txt | \
+		cut -f 2,3,9-14 | gzip > ${trait}.lm.GxP.txt.gz
+	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/LG\\1\\t/g' output/${trait}.lmm.assoc.txt | \
+		cut -f 2,3,8-10,13-15 | gzip > ${trait}.lmm.GxP.txt.gz
 	"""
 }
