@@ -1,4 +1,6 @@
 ID	Bars	Lines	Snout	Peduncle	Blue	Yellow	Orange	Tail_transparent
+16_21-30nigpan	NA	NA	NA	NA	NA	NA	NA	NA
+16_31-40unipan	NA	NA	NA	NA	NA	NA	NA	NA
 17996indbel	1	0	0	0	1	0	0	1
 17997indbel	1	0	0	0	1	0	0	1
 17998indbel	1	0	0	0	1	0	0	1
@@ -94,6 +96,7 @@ ID	Bars	Lines	Snout	Peduncle	Blue	Yellow	Orange	Tail_transparent
 20429ranhon	0	1	1	0	1	1	0	0
 20430ranhon	0	1	1	0	1	1	0	0
 20433abehon	0	0	0	0	0	1	0	0
+20478tabhon	NA	NA	NA	NA	NA	NA	NA	NA
 20551puehon	1	1	0	0	1	1	0	1
 20552puehon	1	1	0	0	1	1	0	1
 20553puehon	1	1	0	0	1	1	0	1
@@ -153,6 +156,7 @@ ID	Bars	Lines	Snout	Peduncle	Blue	Yellow	Orange	Tail_transparent
 20923ranhon	0	1	1	0	1	0	1	0
 20980ranhon	0	0	1	0	0	0	1	1
 27678puepan	1	1	0	0	1	1	0	1
+28393torpan	NA	NA	NA	NA	NA	NA	NA	NA
 PL17_101maybel	0	0	0	0	1	0	0	1
 PL17_119maybel	0	0	0	0	1	0	0	1
 PL17_120maybel	0	0	0	0	1	0	0	1
@@ -164,3 +168,4 @@ PL17_126maybel	0	0	0	0	1	0	0	1
 PL17_160floflo	1	1	0	0	1	1	0	1
 PL17_89maybel	0	0	0	0	1	0	0	1
 PL17_95maybel	0	0	0	0	1	0	0	1
+s_tort_3torpan	NA	NA	NA	NA	NA	NA	NA	NA
