@@ -133,6 +133,7 @@ process plink12 {
 
  output:
  set file( "hapmap.ped" ), file( "hapmap.map" ), file( "hapmap.nosex" ), file( "pop.txt" ) into admx_plink
+ set file( "GxP_plink.map" ), file( "GxP_plink.ped" ) into plink_GxP
 
  script:
  """
@@ -141,14 +142,13 @@ process plink12 {
 		awk '{print \$1"\\t"\$1}' | \
 		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > pop.txt
 
-
  vcftools \
  		--gzvcf ${vcf[0]} \
 		--plink \
-		--out intermediate_plink
+		--out GxP_plink
 
  plink \
- 		--file intermediate_plink \
+ 		--file GxP_plink \
 		--recode12 \
 		--out hapmap
  """
@@ -528,29 +528,86 @@ process twisst_prep {
 }
 
 process twisst_run {
-  label 'L_120g40h_run_twisst'
-  publishDir "2_analysis/twisst/", mode: 'copy'
+	label 'L_120g40h_run_twisst'
+	publishDir "2_analysis/twisst/", mode: 'copy'
 
-  input:
+	input:
 	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( tree ) from twisst_prep_ch
 
 	output:
-  set val( loc ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
+	set val( loc ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
 
-  script:
-   """
+	script:
+	"""
 	awk '{print \$1"\\t"\$1}' ${pop} | \
-		sed 's/\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' | \
-		cut -f 1,3 | \
-		awk '{print \$1"_A\\t"\$2"\\n"\$1"_B\\t"\$2}' > ${loc}.twisst_pop.txt
+	sed 's/\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' | \
+	cut -f 1,3 | \
+	awk '{print \$1"_A\\t"\$2"\\n"\$1"_B\\t"\$2}' > ${loc}.twisst_pop.txt
 
 	TWISST_POPS=\$( cut -f 2 ${loc}.twisst_pop.txt | sort | uniq | echo \$( cat ) | sed 's/ / -g /g; s/^/-g /' )
 
-   python \$SFTWR/twisst/run_twisst_parallel.py \
-      --method complete \
-      -t ${tree} \
-      \$TWISST_POPS \
-      --groupsFile ${loc}.twisst_pop.txt | \
-      gzip > ${loc}.w${twisst_w}.phyml_bionj.weights.tsv.gz
-    """
-  }
+	python \$SFTWR/twisst/run_twisst_parallel.py \
+	  --method complete \
+	  -t ${tree} \
+	  \$TWISST_POPS \
+	  --groupsFile ${loc}.twisst_pop.txt | \
+	  gzip > ${loc}.w${twisst_w}.phyml_bionj.weights.tsv.gz
+	"""
+}
+
+/* 6) G x P section ============== */
+process GxP_run {
+	label 'L_20g2h_GxP_binary'
+
+	input:
+	set file( map ), file( ped ) from plink_GxP
+
+	output:
+	set file( "*.bed" ), file( "*.bim" ),file( "*.fam" ) into plink_binary
+
+	script:
+	"""
+	# convert genotypes into binary format (bed/bim/fam)
+	plink \
+		--noweb \
+		--file GxP_plink \
+		--make-bed \
+		--out GxP_plink_binary
+	"""
+}
+
+Channel
+	.from("Bars", "Lines", "Snout", "Peduncle", "Blue", "Yellow", "Orange", "Tail_transparent")
+	.set{ traits_ch }
+
+traits_ch.combine( plink_binary ).set{ trait_plink_combo }
+
+process gemma_run {
+ label 'L_20g2h_GxP_run'
+
+ input:
+ set val( trait ), file( bed ), file( bim ), file( fam ) from trait_plink_combo
+
+ output:
+ file("*.assoc.txt.gz") into gemma_results
+
+ script:
+	"""
+	BASE_NAME=\$(echo  ${fam} | sed 's/.fam//g')
+	# 1) replace the phenotype values
+	Rscript --vanilla \$BASE_DIR/R/assign_phenotypes.R ${fam} \$BASE_DIR/metadata/phenotypes.txt ${trait}
+
+	# 2) create relatedness matrix of samples using gemma
+	gemma -bfile \$BASE_NAME -gk 1 -o ${trait}-gemma
+
+	# 3) fit linear model using gemma (-lm)
+	gemma -bfile \$BASE_NAME -lm 4 -miss 0.1 -notsnp -o ${trait}.lm
+
+	# 4) fit linear mixed model using gemma (-lmm)
+	gemma -bfile \$BASE_NAME -k output/${trait}-gemma.cXX.txt -lmm 4 -o ${trait}.lmm
+
+	# 5) move and zip output
+	mv output/*.assoc.txt ./
+	gzip *.assoc.txt
+	"""
+}
