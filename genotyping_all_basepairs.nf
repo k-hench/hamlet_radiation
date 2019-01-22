@@ -44,14 +44,14 @@ process merge_genotypes {
 	label 'L_78g5h_merge_genotypes'
 
 	input:
-	set val( lg ), file( vcf ), file( tbi ) from all_bp_by_location
+	set val( lg ), file( vcf ), file( tbi ) from all_bp_by_location.collect()
 
 	output:
 	set file( "all_sites.vcf.gz" ), file( "all_sites.vcf.gz.tbi" ) into all_bp_merged
 
 	script:
 	"""
-	INPUT=\$(echo ${vcf}  | sed  's/\\[/-I /g; s/\\]//g; s/,/ -I/g')
+	INPUT=\$(ls -1 *vcf.gz | sed 's/^/ -I /g' | cat \$( echo ))
 
 	gatk --java-options "-Xmx85g" \
 			-T GatherVcfs \
