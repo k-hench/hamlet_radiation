@@ -587,7 +587,7 @@ process gemma_run {
  publishDir "2_analysis/GxP/bySNP/", mode: 'copy'
 
  input:
- set  val( trait ), file( bed ), file( bim ), file( fam ) from trait_plink_combo
+ set  val( pheno ), file( bed ), file( bim ), file( fam ) from trait_plink_combo
 
  output:
  file("*.GxP.txt.gz") into gemma_results
@@ -596,22 +596,22 @@ process gemma_run {
 	"""
 	BASE_NAME=\$(echo  ${fam} | sed 's/.fam//g')
 	# 1) replace the phenotype values
-	Rscript --vanilla \$BASE_DIR/R/assign_phenotypes.R ${fam} \$BASE_DIR/metadata/phenotypes.txt ${trait}
+	Rscript --vanilla \$BASE_DIR/R/assign_phenotypes.R ${fam} \$BASE_DIR/metadata/phenotypes.txt ${pheno}
 
 	# 2) create relatedness matrix of samples using gemma
-	gemma -bfile \$BASE_NAME -gk 1 -o ${trait}-gemma
+	gemma -bfile \$BASE_NAME -gk 1 -o ${pheno}-gemma
 
 	# 3) fit linear model using gemma (-lm)
-	gemma -bfile \$BASE_NAME -lm 4 -miss 0.1 -notsnp -o ${trait}.lm
+	gemma -bfile \$BASE_NAME -lm 4 -miss 0.1 -notsnp -o ${pheno}.lm
 
 	# 4) fit linear mixed model using gemma (-lmm)
-	gemma -bfile \$BASE_NAME -k output/${trait}-gemma.cXX.txt -lmm 4 -o ${trait}.lmm
+	gemma -bfile \$BASE_NAME -k output/${pheno}-gemma.cXX.txt -lmm 4 -o ${pheno}.lmm
 
 	# 5) reformat output
-	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/LG\\1\\t/g' output/${trait}.lm.assoc.txt | \
-		cut -f 2,3,9-14 | gzip > ${trait}.lm.GxP.txt.gz
-	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/LG\\1\\t/g' output/${trait}.lmm.assoc.txt | \
-		cut -f 2,3,8-10,13-15 | gzip > ${trait}.lmm.GxP.txt.gz
+	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/LG\\1\\t/g' output/${pheno}.lm.assoc.txt | \
+		cut -f 2,3,9-14 | gzip > ${pheno}.lm.GxP.txt.gz
+	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/LG\\1\\t/g' output/${pheno}.lmm.assoc.txt | \
+		cut -f 2,3,8-10,13-15 | gzip > ${pheno}.lmm.GxP.txt.gz
 	"""
 }
 
