@@ -480,7 +480,7 @@ process vcf2geno_loc {
 	set val( loc ), file( vcf ), file( pop ) from vcf_loc_twisst
 
   output:
-  set val(loc), file( "${loc}.geno.gz" ), file( pop ) into snp_geno_twisst
+  set val( loc ), file( "${loc}.geno.gz" ), file( pop ) into snp_geno_twisst
 
   script:
   """
@@ -584,10 +584,10 @@ traits_ch.combine( plink_binary ).set{ trait_plink_combo }
 
 process gemma_run {
  label 'L_32g4h_GxP_run'
- publishDir "2_analysis/GxP/bySNP/", mode: 'copy' 
+ publishDir "2_analysis/GxP/bySNP/", mode: 'copy'
 
  input:
- set val( trait ), file( bed ), file( bim ), file( fam ) from trait_plink_combo
+ set  val( trait ), file( bed ), file( bim ), file( fam ) from trait_plink_combo
 
  output:
  file("*.GxP.txt.gz") into gemma_results
@@ -629,7 +629,7 @@ process gemma_smooth {
 	set file( txt ), val( win ), val( step ) from gxp_smoothing_input
 
 	output:
-	file("*k.txt.gz") into gxp_smoothing_output
+	file( "*k.txt.gz" ) into gxp_smoothing_output
 
 	script:
 	"""
