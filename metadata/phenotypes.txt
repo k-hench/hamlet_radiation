@@ -1,166 +1,166 @@
-id	label	spec	geo	Bars	Lines	Snout	Peduncle	Blue	Yellow	Orange	Tail_transparent
-17996	17996indbel	ind	bel	1	0	0	0	1	0	0	1
-17997	17997indbel	ind	bel	1	0	0	0	1	0	0	1
-17998	17998indbel	ind	bel	1	0	0	0	1	0	0	1
-17999	17999indbel	ind	bel	1	0	0	0	1	0	0	0
-18000	18000indbel	ind	bel	1	0	0	0	1	0	0	0
-18151	18151nigbel	nig	bel	0	0	0	0	0	0	0	0
-18152	18152puebel	pue	bel	1	1	0	0	1	1	0	1
-18153	18153nigbel	nig	bel	0	0	0	0	0	0	0	0
-18154	18154puebel	pue	bel	1	1	0	0	1	1	0	1
-18155	18155nigbel	nig	bel	0	0	0	0	1	0	0	0
-18156	18156nigbel	nig	bel	0	1	0	0	0	0	0	0
-18157	18157nigbel	nig	bel	0	0	0	0	0	0	0	0
-18158	18158nigbel	nig	bel	0	0	0	0	0	0	0	0
-18159	18159nigbel	nig	bel	0	0	0	0	0	0	0	0
-18161	18161puebel	pue	bel	1	1	0	0	1	1	0	1
-18162	18162nigbel	nig	bel	0	0	0	0	0	0	0	0
-18163	18163unibel	uni	bel	0	1	0	1	1	1	0	1
-18165	18165nigbel	nig	bel	0	0	0	0	0	0	0	0
-18166	18166puebel	pue	bel	1	1	0	0	1	1	0	1
-18169	18169puebel	pue	bel	1	1	0	0	1	1	0	1
-18171	18171nigbel	nig	bel	0	0	0	0	0	0	0	0
-18172	18172puebel	pue	bel	1	1	0	0	1	1	0	0
-18174	18174puebel	pue	bel	1	1	0	0	1	1	0	1
-18175	18175puebel	pue	bel	1	1	0	0	1	1	0	1
-18176	18176puebel	pue	bel	1	1	0	0	1	1	0	0
-18178	18178puebel	pue	bel	1	1	0	0	1	1	0	1
-18179	18179puebel	pue	bel	1	1	0	1	1	1	0	1
-18180	18180puebel	pue	bel	1	1	0	0	1	1	0	0
-18185	18185nigbel	nig	bel	0	0	0	0	0	0	0	0
-18187	18187nigbel	nig	bel	0	0	0	0	0	0	0	0
-18195	18195indbel	ind	bel	1	0	0	0	1	0	0	1
-18222	18222indbel	ind	bel	1	0	0	0	1	0	0	1
-18225	18225indbel	ind	bel	1	0	0	0	1	0	0	1
-18226	18226indbel	ind	bel	1	0	0	0	1	0	0	1
-18227	18227indbel	ind	bel	1	0	0	0	1	0	0	0
-18237	18237indbel	ind	bel	1	1	0	0	1	0	0	1
-18238	18238indbel	ind	bel	1	0	0	0	1	0	0	0
-18261	18261unibel	uni	bel	0	1	0	1	1	1	0	1
-18267	18267unibel	uni	bel	0	1	0	1	1	1	0	1
-18274	18274unibel	uni	bel	0	1	0	1	1	1	1	1
-18276	18276unibel	uni	bel	0	1	1	1	1	1	0	1
-18418	18418nigpan	nig	pan	0	0	0	0	0	0	0	1
-18419	18419puepan	pue	pan	1	1	0	1	0	1	0	1
-18420	18420unipan	uni	pan	0	1	1	1	0	1	0	1
-18421	18421puepan	pue	pan	1	1	0	0	0	1	0	1
-18422	18422puepan	pue	pan	1	1	0	0	0	1	0	1
-18424	18424nigpan	nig	pan	0	0	0	0	0	0	0	0
-18426	18426puepan	pue	pan	1	1	0	0	0	1	0	1
-18427	18427puepan	pue	pan	1	1	0	1	0	1	0	1
-18428	18428nigpan	nig	pan	0	0	0	0	0	0	0	0
-18429	18429puepan	pue	pan	1	1	0	0	0	1	0	1
-18430	18430puepan	pue	pan	1	1	0	0	0	1	0	1
-18432	18432puepan	pue	pan	1	1	0	0	0	1	0	1
-18434	18434puepan	pue	pan	1	1	0	0	0	1	0	1
-18435	18435unipan	uni	pan	0	1	1	1	1	1	0	1
-18436	18436nigpan	nig	pan	0	0	0	0	0	0	0	0
-18439	18439unipan	uni	pan	0	1	1	1	0	1	0	1
-18440	18440unipan	uni	pan	0	1	1	1	0	1	0	1
-18441	18441unipan	uni	pan	0	1	1	1	0	1	0	1
-18442	18442unipan	uni	pan	0	1	1	1	0	1	0	1
-18445	18445unipan	uni	pan	0	1	1	1	1	1	0	1
-18446	18446unipan	uni	pan	0	1	1	1	1	1	0	1
-18447	18447unipan	uni	pan	0	1	1	1	1	1	0	1
-18448	18448unipan	uni	pan	0	1	1	1	1	1	0	1
-18450	18450unipan	uni	pan	0	1	1	1	1	1	0	1
-18454	18454unipan	uni	pan	0	1	1	1	1	1	0	1
-18901	18901nigpan	nig	pan	0	0	0	0	0	0	0	0
-18902	18902nigpan	nig	pan	0	0	0	0	0	0	0	1
-18903	18903nigpan	nig	pan	0	0	0	0	0	0	0	0
-18904	18904nigpan	nig	pan	0	0	0	0	0	0	0	0
-18905	18905nigpan	nig	pan	0	0	0	0	0	0	0	0
-18906	18906nigpan	nig	pan	0	0	0	0	0	0	0	1
-18907	18907nigpan	nig	pan	0	0	0	0	0	0	0	1
-18909	18909nigpan	nig	pan	0	0	0	0	0	0	0	1
-18912	18912puepan	pue	pan	1	1	0	0	0	1	0	1
-18915	18915puepan	pue	pan	1	1	0	0	1	1	0	1
-18917	18917puepan	pue	pan	1	1	0	0	0	1	0	0
-19881	19881unibel	uni	bel	0	1	0	1	0	1	0	1
-20092	20092unibel	uni	bel	0	1	0	1	1	1	0	1
-20120	20120unibel	uni	bel	0	1	0	1	0	1	0	1
-20126	20126unibel	uni	bel	0	1	0	1	1	1	0	1
-20128	20128unibel	uni	bel	0	1	0	1	1	1	0	1
-20135	20135unibel	uni	bel	0	1	0	1	0	1	0	1
-20149	20149unibel	uni	bel	0	1	0	1	0	1	0	1
-20418	20418gumhon	gum	hon	0	1	0	0	1	0	1	0
-20419	20419gumhon	gum	hon	0	1	1	0	1	0	1	0
-20420	20420gumhon	gum	hon	0	1	1	0	1	0	1	0
-20421	20421ranhon	ran	hon	0	0	0	0	0	0	0	0
-20425	20425abehon	abe	hon	0	0	0	0	0	1	0	0
-20426	20426gumhon	gum	hon	0	1	1	0	1	0	1	0
-20427	20427gumhon	gum	hon	0	1	1	0	1	0	1	0
-20428	20428gumhon	gum	hon	0	1	1	0	1	0	1	0
-20429	20429ranhon	ran	hon	0	1	1	0	1	1	0	0
-20430	20430ranhon	ran	hon	0	1	1	0	1	1	0	0
-20433	20433abehon	abe	hon	0	0	0	0	0	1	0	0
-20551	20551puehon	pue	hon	1	1	0	0	1	1	0	1
-20552	20552puehon	pue	hon	1	1	0	0	1	1	0	1
-20553	20553puehon	pue	hon	1	1	0	0	1	1	0	1
-20554	20554puehon	pue	hon	1	1	0	0	1	1	0	1
-20555	20555puehon	pue	hon	1	1	0	0	1	1	0	1
-20556	20556puehon	pue	hon	1	1	0	0	1	1	0	1
-20558	20558puehon	pue	hon	1	1	0	0	1	1	0	1
-20559	20559puehon	pue	hon	1	1	0	0	1	1	0	1
-20560	20560unihon	uni	hon	0	1	0	1	1	1	0	1
-20561	20561unihon	uni	hon	0	1	0	1	1	1	0	1
-20562	20562unihon	uni	hon	0	1	0	1	1	1	0	1
-20563	20563unihon	uni	hon	0	1	0	1	1	1	0	1
-20564	20564unihon	uni	hon	0	1	0	1	1	1	0	1
-20565	20565unihon	uni	hon	0	1	0	1	1	1	0	1
-20566	20566unihon	uni	hon	0	1	0	1	1	1	0	1
-20567	20567unihon	uni	hon	0	1	0	1	1	1	0	1
-20568	20568unihon	uni	hon	0	1	0	1	1	1	0	1
-20571	20571unihon	uni	hon	0	1	0	1	1	1	0	1
-20572	20572unihon	uni	hon	0	1	0	1	1	1	0	1
-20599	20599nighon	nig	hon	0	0	0	0	1	0	0	0
-20600	20600nighon	nig	hon	0	0	0	0	0	0	0	0
-20601	20601nighon	nig	hon	0	0	0	0	0	0	0	0
-20602	20602nighon	nig	hon	0	0	0	0	0	0	0	0
-20603	20603nighon	nig	hon	0	0	0	0	0	0	0	0
-20604	20604nighon	nig	hon	0	0	0	0	0	0	0	0
-20605	20605nighon	nig	hon	0	0	0	0	0	0	0	0
-20606	20606nighon	nig	hon	0	0	0	0	0	0	0	0
-20607	20607nighon	nig	hon	0	0	0	0	0	0	0	0
-20608	20608nighon	nig	hon	0	0	0	0	0	0	0	0
-20609	20609nighon	nig	hon	0	0	0	0	0	0	0	0
-20610	20610nighon	nig	hon	0	0	0	0	0	0	0	0
-20613	20613ranhon	ran	hon	0	1	1	0	1	1	0	0
-20615	20615gumhon	gum	hon	0	1	1	0	1	0	1	0
-20617	20617gumhon	gum	hon	0	1	1	0	1	0	1	0
-20625	20625puehon	pue	hon	1	1	0	0	1	1	0	1
-20633	20633puehon	pue	hon	1	1	0	0	1	1	0	1
-20635	20635puehon	pue	hon	1	1	0	0	1	1	0	1
-20638	20638puehon	pue	hon	1	1	0	0	1	1	0	1
-20641	20641gumhon	gum	hon	0	1	1	0	1	0	1	1
-20642	20642gumhon	gum	hon	0	1	1	0	1	0	1	1
-20643	20643gumhon	gum	hon	0	1	1	0	1	0	1	1
-20644	20644abehon	abe	hon	0	0	0	0	0	1	0	0
-20696	20696ranhon	ran	hon	0	0	1	0	1	1	0	0
-20759	20759abehon	abe	hon	0	0	0	1	0	0	1	1
-20761	20761abehon	abe	hon	0	0	0	0	0	0	1	1
-20762	20762abehon	abe	hon	0	0	0	0	0	0	1	1
-20861	20861abehon	abe	hon	0	0	0	0	0	0	1	1
-20862	20862abehon	abe	hon	0	0	0	0	0	0	1	1
-20864	20864abehon	abe	hon	0	0	1	0	0	0	1	1
-20866	20866abehon	abe	hon	0	0	0	0	0	0	1	1
-20867	20867abehon	abe	hon	0	0	0	0	0	0	1	1
-20892	20892ranhon	ran	hon	0	0	1	0	0	1	0	1
-20893	20893ranhon	ran	hon	0	0	1	0	0	1	0	1
-20894	20894ranhon	ran	hon	0	0	1	0	0	1	0	1
-20896	20896ranhon	ran	hon	0	0	1	0	0	1	0	1
-20922	20922ranhon	ran	hon	0	1	1	1	1	0	1	1
-20923	20923ranhon	ran	hon	0	1	1	0	1	0	1	0
-20980	20980ranhon	ran	hon	0	0	1	0	0	0	1	1
-27678	27678puepan	pue	pan	1	1	0	0	1	1	0	1
-PL17_101	PL17_101maybel	may	bel	0	0	0	0	1	0	0	1
-PL17_119	PL17_119maybel	may	bel	0	0	0	0	1	0	0	1
-PL17_120	PL17_120maybel	may	bel	0	0	0	0	1	0	0	1
-PL17_121	PL17_121maybel	may	bel	0	0	0	0	1	0	0	1
-PL17_122	PL17_122maybel	may	bel	0	0	0	0	1	0	0	0
-PL17_123	PL17_123maybel	may	bel	0	0	0	0	1	0	0	1
-PL17_124	PL17_124maybel	may	bel	0	0	0	0	1	0	0	1
-PL17_126	PL17_126maybel	may	bel	0	0	0	0	1	0	0	1
-PL17_160	PL17_160floflo	flo	flo	1	1	0	0	1	1	0	1
-PL17_89	PL17_89maybel	may	bel	0	0	0	0	1	0	0	1
-PL17_95	PL17_95maybel	may	bel	0	0	0	0	1	0	0	1
+ID	Bars	Lines	Snout	Peduncle	Blue	Yellow	Orange	Tail_transparent
+17996indbel	1	0	0	0	1	0	0	1
+17997indbel	1	0	0	0	1	0	0	1
+17998indbel	1	0	0	0	1	0	0	1
+17999indbel	1	0	0	0	1	0	0	0
+18000indbel	1	0	0	0	1	0	0	0
+18151nigbel	0	0	0	0	0	0	0	0
+18152puebel	1	1	0	0	1	1	0	1
+18153nigbel	0	0	0	0	0	0	0	0
+18154puebel	1	1	0	0	1	1	0	1
+18155nigbel	0	0	0	0	1	0	0	0
+18156nigbel	0	1	0	0	0	0	0	0
+18157nigbel	0	0	0	0	0	0	0	0
+18158nigbel	0	0	0	0	0	0	0	0
+18159nigbel	0	0	0	0	0	0	0	0
+18161puebel	1	1	0	0	1	1	0	1
+18162nigbel	0	0	0	0	0	0	0	0
+18163unibel	0	1	0	1	1	1	0	1
+18165nigbel	0	0	0	0	0	0	0	0
+18166puebel	1	1	0	0	1	1	0	1
+18169puebel	1	1	0	0	1	1	0	1
+18171nigbel	0	0	0	0	0	0	0	0
+18172puebel	1	1	0	0	1	1	0	0
+18174puebel	1	1	0	0	1	1	0	1
+18175puebel	1	1	0	0	1	1	0	1
+18176puebel	1	1	0	0	1	1	0	0
+18178puebel	1	1	0	0	1	1	0	1
+18179puebel	1	1	0	1	1	1	0	1
+18180puebel	1	1	0	0	1	1	0	0
+18185nigbel	0	0	0	0	0	0	0	0
+18187nigbel	0	0	0	0	0	0	0	0
+18195indbel	1	0	0	0	1	0	0	1
+18222indbel	1	0	0	0	1	0	0	1
+18225indbel	1	0	0	0	1	0	0	1
+18226indbel	1	0	0	0	1	0	0	1
+18227indbel	1	0	0	0	1	0	0	0
+18237indbel	1	1	0	0	1	0	0	1
+18238indbel	1	0	0	0	1	0	0	0
+18261unibel	0	1	0	1	1	1	0	1
+18267unibel	0	1	0	1	1	1	0	1
+18274unibel	0	1	0	1	1	1	1	1
+18276unibel	0	1	1	1	1	1	0	1
+18418nigpan	0	0	0	0	0	0	0	1
+18419puepan	1	1	0	1	0	1	0	1
+18420unipan	0	1	1	1	0	1	0	1
+18421puepan	1	1	0	0	0	1	0	1
+18422puepan	1	1	0	0	0	1	0	1
+18424nigpan	0	0	0	0	0	0	0	0
+18426puepan	1	1	0	0	0	1	0	1
+18427puepan	1	1	0	1	0	1	0	1
+18428nigpan	0	0	0	0	0	0	0	0
+18429puepan	1	1	0	0	0	1	0	1
+18430puepan	1	1	0	0	0	1	0	1
+18432puepan	1	1	0	0	0	1	0	1
+18434puepan	1	1	0	0	0	1	0	1
+18435unipan	0	1	1	1	1	1	0	1
+18436nigpan	0	0	0	0	0	0	0	0
+18439unipan	0	1	1	1	0	1	0	1
+18440unipan	0	1	1	1	0	1	0	1
+18441unipan	0	1	1	1	0	1	0	1
+18442unipan	0	1	1	1	0	1	0	1
+18445unipan	0	1	1	1	1	1	0	1
+18446unipan	0	1	1	1	1	1	0	1
+18447unipan	0	1	1	1	1	1	0	1
+18448unipan	0	1	1	1	1	1	0	1
+18450unipan	0	1	1	1	1	1	0	1
+18454unipan	0	1	1	1	1	1	0	1
+18901nigpan	0	0	0	0	0	0	0	0
+18902nigpan	0	0	0	0	0	0	0	1
+18903nigpan	0	0	0	0	0	0	0	0
+18904nigpan	0	0	0	0	0	0	0	0
+18905nigpan	0	0	0	0	0	0	0	0
+18906nigpan	0	0	0	0	0	0	0	1
+18907nigpan	0	0	0	0	0	0	0	1
+18909nigpan	0	0	0	0	0	0	0	1
+18912puepan	1	1	0	0	0	1	0	1
+18915puepan	1	1	0	0	1	1	0	1
+18917puepan	1	1	0	0	0	1	0	0
+19881unibel	0	1	0	1	0	1	0	1
+20092unibel	0	1	0	1	1	1	0	1
+20120unibel	0	1	0	1	0	1	0	1
+20126unibel	0	1	0	1	1	1	0	1
+20128unibel	0	1	0	1	1	1	0	1
+20135unibel	0	1	0	1	0	1	0	1
+20149unibel	0	1	0	1	0	1	0	1
+20418gumhon	0	1	0	0	1	0	1	0
+20419gumhon	0	1	1	0	1	0	1	0
+20420gumhon	0	1	1	0	1	0	1	0
+20421ranhon	0	0	0	0	0	0	0	0
+20425abehon	0	0	0	0	0	1	0	0
+20426gumhon	0	1	1	0	1	0	1	0
+20427gumhon	0	1	1	0	1	0	1	0
+20428gumhon	0	1	1	0	1	0	1	0
+20429ranhon	0	1	1	0	1	1	0	0
+20430ranhon	0	1	1	0	1	1	0	0
+20433abehon	0	0	0	0	0	1	0	0
+20551puehon	1	1	0	0	1	1	0	1
+20552puehon	1	1	0	0	1	1	0	1
+20553puehon	1	1	0	0	1	1	0	1
+20554puehon	1	1	0	0	1	1	0	1
+20555puehon	1	1	0	0	1	1	0	1
+20556puehon	1	1	0	0	1	1	0	1
+20558puehon	1	1	0	0	1	1	0	1
+20559puehon	1	1	0	0	1	1	0	1
+20560unihon	0	1	0	1	1	1	0	1
+20561unihon	0	1	0	1	1	1	0	1
+20562unihon	0	1	0	1	1	1	0	1
+20563unihon	0	1	0	1	1	1	0	1
+20564unihon	0	1	0	1	1	1	0	1
+20565unihon	0	1	0	1	1	1	0	1
+20566unihon	0	1	0	1	1	1	0	1
+20567unihon	0	1	0	1	1	1	0	1
+20568unihon	0	1	0	1	1	1	0	1
+20571unihon	0	1	0	1	1	1	0	1
+20572unihon	0	1	0	1	1	1	0	1
+20599nighon	0	0	0	0	1	0	0	0
+20600nighon	0	0	0	0	0	0	0	0
+20601nighon	0	0	0	0	0	0	0	0
+20602nighon	0	0	0	0	0	0	0	0
+20603nighon	0	0	0	0	0	0	0	0
+20604nighon	0	0	0	0	0	0	0	0
+20605nighon	0	0	0	0	0	0	0	0
+20606nighon	0	0	0	0	0	0	0	0
+20607nighon	0	0	0	0	0	0	0	0
+20608nighon	0	0	0	0	0	0	0	0
+20609nighon	0	0	0	0	0	0	0	0
+20610nighon	0	0	0	0	0	0	0	0
+20613ranhon	0	1	1	0	1	1	0	0
+20615gumhon	0	1	1	0	1	0	1	0
+20617gumhon	0	1	1	0	1	0	1	0
+20625puehon	1	1	0	0	1	1	0	1
+20633puehon	1	1	0	0	1	1	0	1
+20635puehon	1	1	0	0	1	1	0	1
+20638puehon	1	1	0	0	1	1	0	1
+20641gumhon	0	1	1	0	1	0	1	1
+20642gumhon	0	1	1	0	1	0	1	1
+20643gumhon	0	1	1	0	1	0	1	1
+20644abehon	0	0	0	0	0	1	0	0
+20696ranhon	0	0	1	0	1	1	0	0
+20759abehon	0	0	0	1	0	0	1	1
+20761abehon	0	0	0	0	0	0	1	1
+20762abehon	0	0	0	0	0	0	1	1
+20861abehon	0	0	0	0	0	0	1	1
+20862abehon	0	0	0	0	0	0	1	1
+20864abehon	0	0	1	0	0	0	1	1
+20866abehon	0	0	0	0	0	0	1	1
+20867abehon	0	0	0	0	0	0	1	1
+20892ranhon	0	0	1	0	0	1	0	1
+20893ranhon	0	0	1	0	0	1	0	1
+20894ranhon	0	0	1	0	0	1	0	1
+20896ranhon	0	0	1	0	0	1	0	1
+20922ranhon	0	1	1	1	1	0	1	1
+20923ranhon	0	1	1	0	1	0	1	0
+20980ranhon	0	0	1	0	0	0	1	1
+27678puepan	1	1	0	0	1	1	0	1
+PL17_101maybel	0	0	0	0	1	0	0	1
+PL17_119maybel	0	0	0	0	1	0	0	1
+PL17_120maybel	0	0	0	0	1	0	0	1
+PL17_121maybel	0	0	0	0	1	0	0	1
+PL17_122maybel	0	0	0	0	1	0	0	0
+PL17_123maybel	0	0	0	0	1	0	0	1
+PL17_124maybel	0	0	0	0	1	0	0	1
+PL17_126maybel	0	0	0	0	1	0	0	1
+PL17_160floflo	1	1	0	0	1	1	0	1
+PL17_89maybel	0	0	0	0	1	0	0	1
+PL17_95maybel	0	0	0	0	1	0	0	1
