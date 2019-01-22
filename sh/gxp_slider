@@ -6,7 +6,7 @@
 # !!   (hence, if too many windows are created, the array index maximum is early entries are being overwritten     !!
 # -------------------------------------------------------------------------------------------------------------------
 # $1 = infile; $2 = windowsize; $3 = increment
-j=$(echo $1 | sed 's/-gemma.*//g')
+j=$(echo $1 | sed 's/.GxP.txt.gz//g')
 WIN=$2;
 STEP=$3;
 WIN_LAB=$(($WIN/1000));

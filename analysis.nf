@@ -583,7 +583,8 @@ Channel
 traits_ch.combine( plink_binary ).set{ trait_plink_combo }
 
 process gemma_run {
- label 'L_20g2h_GxP_run'
+ label 'L_32g4h_GxP_run'
+ publishDir "2_analysis/GxP/bySNP/", mode: 'copy' 
 
  input:
  set val( trait ), file( bed ), file( bim ), file( fam ) from trait_plink_combo
@@ -611,5 +612,27 @@ process gemma_run {
 		cut -f 2,3,9-14 | gzip > ${trait}.lm.GxP.txt.gz
 	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/LG\\1\\t/g' output/${trait}.lmm.assoc.txt | \
 		cut -f 2,3,8-10,13-15 | gzip > ${trait}.lmm.GxP.txt.gz
+	"""
+}
+
+Channel
+	.from([[50000, 5000], [10000, 1000]])
+	.set{ gxp_smoothing_levels }
+
+gemma_results.combine( gxp_smoothing_levels ).set{ gxp_smoothing_input }
+
+process gemma_smooth {
+	label 'L_20g2h_GxP_smooth'
+	publishDir "2_analysis/GxP/", mode: 'copy'
+
+	input:
+	set file( txt ), val( win ), val( step ) from gxp_smoothing_input
+
+	output:
+	file("*k.txt.gz") into gxp_smoothing_output
+
+	script:
+	"""
+	\$BASE_DIR/sh/gxp_slider ${txt} ${win} ${step}
 	"""
 }
