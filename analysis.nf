@@ -586,12 +586,7 @@ process gemma_run {
 
  script:
 	"""
-	body() {
-    IFS= read -r header
-    printf '%s\n' "$header"
-    "$@"
-	}
-
+	source \$BASE_DIR/sh/body.sh
 	BASE_NAME=\$(echo  ${fam} | sed 's/.fam//g')
 
 	mv ${fam} \$BASE_NAME-old.fam
