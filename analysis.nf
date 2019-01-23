@@ -587,6 +587,10 @@ process gemma_run {
  script:
 	"""
 	BASE_NAME=\$(echo  ${fam} | sed 's/.fam//g')
+
+	mv ${fam} \$BASE_NAME_old.fam
+	cp \$BASE_NAME_old.fam ${fam}
+
 	# 1) replace the phenotype values
 	Rscript --vanilla \$BASE_DIR/R/assign_phenotypes.R ${fam} \$BASE_DIR/metadata/phenotypes.txt ${pheno}
 
