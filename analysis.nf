@@ -596,13 +596,13 @@ process gemma_run {
 	Rscript --vanilla \$BASE_DIR/R/assign_phenotypes.R ${fam} \$BASE_DIR/metadata/phenotypes.txt ${pheno}
 
 	# 2) create relatedness matrix of samples using gemma
-	gemma -bfile \$BASE_NAME -gk 1 -o ${pheno}-gemma
+	gemma -bfile \$BASE_NAME -gk 1 -o ${pheno}
 
 	# 3) fit linear model using gemma (-lm)
 	gemma -bfile \$BASE_NAME -lm 4 -miss 0.1 -notsnp -o ${pheno}.lm
 
 	# 4) fit linear mixed model using gemma (-lmm)
-	gemma -bfile \$BASE_NAME -k output/${pheno}-gemma.cXX.txt -lmm 4 -o ${pheno}.lmm
+	gemma -bfile \$BASE_NAME -k output/${pheno}.cXX.txt -lmm 4 -o ${pheno}.lmm
 
 	# 5) reformat output
 	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/\\1\\t/g' output/${pheno}.lm.assoc.txt | \
@@ -623,13 +623,14 @@ process gemma_smooth {
 	publishDir "2_analysis/GxP/", mode: 'copy'
 
 	input:
-	set file( txt ), val( win ), val( step ) from gxp_smoothing_input
+	set file( lm ), file( lmm ), val( win ), val( step ) from gxp_smoothing_input
 
 	output:
 	file( "*k.txt.gz" ) into gxp_smoothing_output
 
 	script:
 	"""
-	\$BASE_DIR/sh/gxp_slider ${txt} ${win} ${step}
+	\$BASE_DIR/sh/gxp_slider ${lm} ${win} ${step}
+	\$BASE_DIR/sh/gxp_slider ${lmm} ${win} ${step}
 	"""
 }
