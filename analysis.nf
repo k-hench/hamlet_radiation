@@ -507,23 +507,15 @@ process twisst_prep {
 	 # I encoutered issues with more recent versions of
 	 # the repository: when running within nextflow, the
 	 # scripts get hun up in the exiting stage
+	 # git checkout 54b0d75a79a6d4023bbc0e4cfc0c9719678bdde6
 
-	 cd \$SFTWR/genomics_general
-	 git checkout 54b0d75a79a6d4023bbc0e4cfc0c9719678bdde6
-	 cd -
-
-   python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
+   python \$SFTWR/genomics_general_old/phylo/phyml_sliding_windows.py \
       -g ${geno} \
       --windType sites \
       -w ${twisst_w} \
       --prefix ${loc}.w${twisst_w}.phyml_bionj \
       --model HKY85 \
       --optimise n
-
-	 # reset the genomics_general repo
-	 cd \$SFTWR/genomics_general
- 	 git pull origin master
- 	 cd -
 	 """
 }
 
