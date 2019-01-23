@@ -604,10 +604,10 @@ process gemma_run {
 	gemma -bfile \$BASE_NAME -k output/${pheno}-gemma.cXX.txt -lmm 4 -o ${pheno}.lmm
 
 	# 5) reformat output
-	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/LG\\1\\t/g' output/${pheno}.lm.assoc.txt | \
-		cut -f 2,3,9-14 | gzip > ${pheno}.lm.GxP.txt.gz
-	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/LG\\1\\t/g' output/${pheno}.lmm.assoc.txt | \
-		cut -f 2,3,8-10,13-15 | gzip > ${pheno}.lmm.GxP.txt.gz
+	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/\\1\\t/g' output/${pheno}.lm.assoc.txt | \
+		cut -f 2,3,9-14 | body sort -k1,1 -k2,2n | gzip > ${pheno}.lm.GxP.txt.gz
+	sed 's/\\trs\\t/\\tCHROM\\tPOS\\t/g; s/\\([0-2][0-9]\\):/\\1\\t/g' output/${pheno}.lmm.assoc.txt | \
+		cut -f 2,3,8-10,13-15 | body sort -k1,1 -k2,2n | gzip > ${pheno}.lmm.GxP.txt.gz
 	"""
 }
 
