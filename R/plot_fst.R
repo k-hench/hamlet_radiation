@@ -69,19 +69,20 @@ global_bar$loc_run <- refactor(global_bar,globals)
 p1_1 <- ggplot()+
   facet_grid( loc_run~., as.table = TRUE)+
   geom_hypo_LG()+
-  geom_point(data = data, aes(x = GPOS, y = WEIGHTED_FST),size=.4,color = plot_clr) +
+  geom_point(data = data, aes(x = GPOS, y = WEIGHTED_FST),
+	           size = plot_size, color = plot_clr) +
   scale_fill_hypo_LG_bg() +
   scale_x_hypo_LG(name = loc_names[loc])+
   scale_y_continuous(name = expression(italic('F'[ST])),limits = c(-.1,1))+
  # scale_color_manual(values = clr)+
   theme_bw(base_size = 10) +
   theme(plot.background = element_blank(),
-        panel.background = element_blank(), 
+        panel.background = element_blank(),
         panel.grid = element_blank(),
         panel.border = element_blank(),
-        axis.line = element_line(), 
-        strip.background = element_rect(fill = NA,color = hypo_clr_lg), 
-        legend.background = element_rect(fill = "transparent", color = NA), 
+        axis.line = element_line(),
+        strip.background = element_rect(fill = NA,color = hypo_clr_lg),
+        legend.background = element_rect(fill = "transparent", color = NA),
         legend.key = element_rect(fill = "transparent",color = NA),
         strip.text = element_blank(),
         legend.position = 'none',

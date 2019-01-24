@@ -569,17 +569,39 @@ process GxP_run {
 }
 
 Channel
-	.from("Bars", "Lines", "Snout", "Peduncle", "Blue", "Yellow", "Orange", "Tail_transparent")
+	.fromPath("metadata/phenotypes.sc")
+	.set{ phenotypes_raw }
+
+process phenotye_pca {
+	label "L_loc_phenotype_pca"
+	publishDir "figures/phenotype", mode: 'copy' , pattern: "*.pdf"
+	publishDir "2_analysis/phenotype", mode: 'copy' , pattern: "*.gz"
+
+	input:
+	file( sc ) from phenotypes_raw
+
+	output:
+	file( "phenotypes.txt" ) into phenotype_file
+	file( "phenotype_pca*.pdf" ) into  phenotype_pca
+
+	script:
+	"""
+	Rscript --vanilla \$BASE_DIR/R/phenotypes_pca.R ${sc} \$BASE_DIR/R/project_config.R
+	"""
+}
+
+Channel
+	.from("Bars", "Lines", "Snout", "Peduncle", "Blue", "Yellow", "Orange", "Tail_transparent","PC1", "PC2", "PC_d1", "abe", "gum", "ind", "may", "nig", "pue", "ran", "uni")
 	.set{ traits_ch }
 
-traits_ch.combine( plink_binary ).set{ trait_plink_combo }
+traits_ch.combine( plink_binary ).combine( phenotype_file ).set{ trait_plink_combo }
 
 process gemma_run {
  label 'L_32g4h_GxP_run'
  publishDir "2_analysis/GxP/bySNP/", mode: 'copy'
 
  input:
- set  val( pheno ), file( bed ), file( bim ), file( fam ) from trait_plink_combo
+ set  val( pheno ), file( bed ), file( bim ), file( fam ), file( pheno_file ) from trait_plink_combo
 
  output:
  file("*.GxP.txt.gz") into gemma_results
@@ -593,7 +615,7 @@ process gemma_run {
 	cp \${BASE_NAME}-old.fam ${fam}
 
 	# 1) replace the phenotype values
-	Rscript --vanilla \$BASE_DIR/R/assign_phenotypes.R ${fam} \$BASE_DIR/metadata/phenotypes.txt ${pheno}
+	Rscript --vanilla \$BASE_DIR/R/assign_phenotypes.R ${fam} ${pheno_file} ${pheno}
 
 	# 2) create relatedness matrix of samples using gemma
 	gemma -bfile \$BASE_NAME -gk 1 -o ${pheno}
