@@ -323,7 +323,7 @@ process fasttree_prep {
 }
 
 process fasttree_run {
-  label 'L_300g60h_fasttree_run'
+  label 'L_300g99h_fasttree_run'
   publishDir "2_analysis/fasttree/", mode: 'copy'
 
   input:
@@ -500,7 +500,7 @@ process twisst_prep {
   set val( loc ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch
 
 	output:
-	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( "${loc}.w${twisst_w}.phyml_bionj.trees.gz" ) into twisst_prep_ch
+	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
 
   script:
    """
@@ -509,7 +509,10 @@ process twisst_prep {
 	 # scripts get hun up in the exiting stage
 	 # git checkout 54b0d75a79a6d4023bbc0e4cfc0c9719678bdde6
 
-   python \$SFTWR/genomics_general_old/phylo/phyml_sliding_windows.py \
+	 cp \$SFTWR/genomics_general_old/genomics.py ./
+	 cp \$SFTWR/genomics_general_old/phylo/phyml_sliding_windows.py ./
+
+   python phyml_sliding_windows.py \
       -g ${geno} \
       --windType sites \
       -w ${twisst_w} \
@@ -524,7 +527,7 @@ process twisst_run {
 	publishDir "2_analysis/twisst/", mode: 'copy'
 
 	input:
-	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( tree ) from twisst_prep_ch
+	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( tree ), file( data ) from twisst_prep_ch
 
 	output:
 	set val( loc ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
@@ -656,3 +659,107 @@ process gemma_smooth {
 	\$BASE_DIR/sh/gxp_slider ${lmm} ${win} ${step}
 	"""
 }
+
+/* 7) Msmc section ============== */
+/* split vcf by individual ----------------------------- *//*
+"""
+java -Xmx50G -jar $GATK \
+	    -T SelectVariants \
+	    -R $WORK/0_data/0_resources/HP_genome_unmasked_01.fa \
+	    -V 1_output/1.11_phased_variants/5_phased-$L.vcf.gz \
+	    -sn $i \
+	    -o $WORK/3_output/3.2_split_inds/XXspeciesXX/${i}_${L}_phasedSNPs.vcf
+"""
+*//* gather depth per individual ----------------------------- *//*
+"""
+vcftools --gzvcf $WORK/1_output/1.11_phased_variants/5_phased.vcf.gz --depth --out phased_snps
+"""
+"""
+for i in $(cat $WORK/0_data/0_resources/XXspeciesXX.txt); do
+FULL=$(grep $i $WORK/0_data/0_resources/fullnames.txt)
+for k in {01..24}; do
+L="LG"$k;
+DEPTH=$( grep $i phased_snps.idepth | awk '{print $3}')
+
+echo $i", "$L
+
+samtools mpileup -q 25 -Q 20 -C 50 -u -r $L -f $WORK/0_data/0_resources/HP_genome_unmasked_01.fa $INDIR/$FULL-dedup.bam | \
+	bcftools call -c -V indels | \
+	$WORK/0_data/2_scripts/bamHamletCaller.py $DEPTH $OUTDIR/${FULL}_${L}_coverage.mask.bed.gz | \
+	gzip -c > $OUTDIR/${FULL}_${L}_segsites.vcf.gz
+"""
+*//* generating MSMC input files (4 inds per species) ----------- *//*
+"""
+for i in $(cat $WORK/0_data/0_resources/XXspeciesXX.txt); do
+for k in {01..24}; do
+cat $INDIR/${i}_${L}_phasedSNPs.vcf | \
+	vcfAllSiteParser.py $L $OUTDIR/covered_sites_${i}_${L}.bed.txt.gz | \
+	gzip -c > $OUTDIR/segsites_${i}_${L}.vcf.gz
+"""
+*//* ----------------------------- *//*
+"""
+generate_multihetsep.py \
+	--mask=$COVDIR/XXind1XX_${L}_coverage.mask.bed.gz \
+	--mask=$COVDIR/XXind2XX_${L}_coverage.mask.bed.gz \
+	--mask=$COVDIR/XXind3XX_${L}_coverage.mask.bed.gz \
+	--mask=$COVDIR/XXind4XX_${L}_coverage.mask.bed.gz \
+	--mask=$WORK/0_data/0_resources/mappability_masks/v2_01_$L.mapmask.bed.txt.gz \
+	--negative_mask=$WORK/3_output/3.1_indel_mask/5_indel_mask_$L.bed.gz \
+	$INDIR/segsites_XXind1XX_$L.vcf.gz \
+	$INDIR/segsites_XXind2XX_$L.vcf.gz \
+	$INDIR/segsites_XXind3XX_$L.vcf.gz \
+	$INDIR/segsites_XXind4XX_$L.vcf.gz \
+	> $OUTDIR/$L.XXrunXX.multihetsep.txt
+"""
+*//* run msmc ------------------ *//*
+"""
+msmc_2.0.0_linux64bit \
+	-m 0.00254966 -t 8 \
+	-p 1*2+25*1+1*2+1*3 \
+	-o $OUTDIR/XXrunXX.msmc2 \
+	-I 0,1,2,3,4,5,6,7 \
+	$INDIR/LG01.XXrunXX.multihetsep.txt \
+	...
+	$INDIR/LG24.XXrunXX.multihetsep.txt
+"""
+*//* generating MSMC cross coalescence input files (2 inds x 2 species) ----------- *//*
+"""
+for k in {01..24}; do
+L="LG"$k;
+echo $OUTDIR', '$L;
+
+generate_multihetsep.py \
+	--mask=$COV1DIR/PL17_142gemflo2_${L}_coverage.mask.bed.gz \
+	...
+	--mask=$COV1DIR/PL17_153gemflo2_${L}_coverage.mask.bed.gz \
+	--mask=$COV2DIR/PL17_89maybel1_${L}_coverage.mask.bed.gz \ # + pop2
+	...
+	--mask=$COV2DIR/PL17_126maybel8_${L}_coverage.mask.bed.gz \
+	--mask=$WORK/0_data/0_resources/mappability_masks/v2_01_$L.mapmask.bed.txt.gz \
+	--negative_mask=$WORK/3_output/3.1_indel_mask/5_indel_mask_$L.bed.gz \
+	$IN1DIR/segsites_PL17_142_$L.vcf.gz \
+	...
+	$IN1DIR/segsites_PL17_153_$L.vcf.gz \
+	$IN2DIR/segsites_PL17_89_$L.vcf.gz \ # + pop2
+	...
+	$IN2DIR/segsites_PL17_126_$L.vcf.gz \
+	> $OUTDIR/$L.gemmay.multihetsep.txt
+"""
+*//* run cross coalescence -------------- *//*
+"""
+msmc_2.0.0_linux64bit \
+	-m 0.00255863 -t 24 \
+	-p 1*2+25*1+1*2+1*3 \
+	-o $OUTDIR/XXrunXX_XXspec1XX.msmc \
+	-I XXhap1XX,XXhap2XX,XXhap3XX,XXhap4XX \
+	$INDIR/LG01.XXspec1XXXXspec2XX.multihetsep.txt \
+	...
+	$INDIR/LG24.XXspec1XXXXspec2XX.multihetsep.txt
+
+combineCrossCoal.py \
+	XXrunXX_cross.msmc.final.txt \
+	XXrunXX_XXspec1XX.msmc.final.txt \
+	XXrunXX_XXspec2XX.msmc.final.txt | \
+	gzip > combined_XXrunXX_msmc.final.txt.gz
+"""
+*/
