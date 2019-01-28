@@ -2,7 +2,7 @@
 # run from terminal:
 # Rscript --vanilla assign_phenotypes.R ${fam_file} ${trait}
 # ===============================================================
-# This script 
+# This script
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('plink_test_binary.fam', 'inds.txt', 'pheno1')
@@ -19,8 +19,9 @@ phenotypes <- read_delim(file = pheno_file,delim = '\t')
 
 
 data <- read_delim(infile,delim = ' ',
-                   col_names = c("ID", "Within_family_ID", "ID_father", "ID_mother", "Sex", "Phenotype")) %>%
+                   col_names = c("label", "Within_family_ID", "ID_father", "ID_mother", "Sex", "Phenotype")) %>%
   left_join(phenotypes) %>%
-  select(ID:Sex,trait)
+  select(label:Sex,trait) %>%
+	setNames(., nm = c("ID", "Within_family_ID", "ID_father", "ID_mother", "Sex", trait))
 
 write_delim(x = data, path = infile, delim = ' ', col_names = FALSE)
