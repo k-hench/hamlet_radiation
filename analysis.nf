@@ -5,7 +5,7 @@ Channel
 
 Channel
 	.fromFilePairs("1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.into{ vcf_phylo; vcf_locations; vcf_all_samples_pca; vcf_admx; vcf_geno }
+	.into{ vcf_phylo; vcf_locations; vcf_all_samples_pca; vcf_admx; vcf_geno; vcf_msmc }
 
 Channel
 	.from( "bel", "hon", "pan")
@@ -661,19 +661,65 @@ process gemma_smooth {
 }
 
 /* 7) Msmc section ============== */
-/* split vcf by individual ----------------------------- *//*
-"""
-java -Xmx50G -jar $GATK \
-	    -T SelectVariants \
-	    -R $WORK/0_data/0_resources/HP_genome_unmasked_01.fa \
-	    -V 1_output/1.11_phased_variants/5_phased-$L.vcf.gz \
-	    -sn $i \
-	    -o $WORK/3_output/3.2_split_inds/XXspeciesXX/${i}_${L}_phasedSNPs.vcf
-"""
-*//* gather depth per individual ----------------------------- *//*
-"""
-vcftools --gzvcf $WORK/1_output/1.11_phased_variants/5_phased.vcf.gz --depth --out phased_snps
-"""
+Channel
+	.fromFilePairs("1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.{gz,gz.tbi}")
+	.set{ vcf_depth }
+
+/* gather depth per individual ----------------------------- */
+process gather_depth {
+	label 'L_20g2h_split_by_sample'
+	publishDir "metadata", mode: 'copy'
+
+	input:
+	file( vcf ) from vcf_depth
+
+	output:
+	file( "depth_by_sample.txt" ) into depth_ch
+	script:
+	"""
+	vcfsamplenames ${vcf[0]} | \
+		 grep -v "tor\\|tab\\|flo" > pop.txt
+
+	vcftools \
+		--gzvcf ${vcf[0]} \
+		--keep pop.txt \
+		--depth \
+		--stdout > depth_by_sample.txt
+	"""
+}
+
+depth_ch
+	.splitCsv(header:true, sep:"\t")
+	.map{ row -> [ id:row.INDV, sites:row.N_SITES, depth:row.MEAN_DEPTH] }
+	.set { depth_by_sample_ch }
+
+	Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.map{ "LG" + it }
+	.set{ lg_ch }
+
+depth_by_sample_ch.combine( vcf_msmc ).combine( lg_ch ).set{ samples_msmc }
+
+/* split vcf by individual ----------------------------- */
+process split_vcf_by_individual {
+	input:
+	set val( id ), val( sites ), val( depth ), file( vcf ), val( lg ) from samples_msmc
+
+	output:
+	set val( id ), val( depth ), file( "phased_mac2.${id}.${L}.vcf.gz" ) into sample_vcf
+
+	script:
+	"""
+	gatk --java-options "-Xmx10G"
+	SelectVariants \
+	-R \$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz \
+	-V ${vcf} \
+	-sn ${id} \
+	-L ${lg}\
+	-o phased_mac2.${id}.${L}.vcf.gz
+	"""
+}
+/*
 """
 for i in $(cat $WORK/0_data/0_resources/XXspeciesXX.txt); do
 FULL=$(grep $i $WORK/0_data/0_resources/fullnames.txt)
