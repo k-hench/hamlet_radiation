@@ -702,22 +702,22 @@ depth_by_sample_ch.combine( vcf_msmc ).combine( lg_ch ).set{ samples_msmc }
 
 /* split vcf by individual ----------------------------- */
 process split_vcf_by_individual {
-	input:
-	set val( id ), val( sites ), val( depth ), file( vcf ), val( lg ) from samples_msmc
+		input:
+		set val( id ), val( sites ), val( depth ), file( vcf ), val( lg ) from samples_msmc
 
-	output:
-	set val( id ), val( depth ), file( "phased_mac2.${id}.${L}.vcf.gz" ) into sample_vcf
+		output:
+		set val( id ), val( depth ), file( "phased_mac2.${id}.${L}.vcf.gz" ) into sample_vcf
 
-	script:
-	"""
-	gatk --java-options "-Xmx10G"
-	SelectVariants \
-	-R \$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz \
-	-V ${vcf} \
-	-sn ${id} \
-	-L ${lg}\
-	-o phased_mac2.${id}.${L}.vcf.gz
-	"""
+		script:
+		"""
+		gatk --java-options "-Xmx10G"
+		SelectVariants \
+		-R \$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz \
+		-V ${vcf} \
+		-sn ${id} \
+		-L ${lg}\
+		-o phased_mac2.${id}.${L}.vcf.gz
+		"""
 }
 /*
 """
