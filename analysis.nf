@@ -689,60 +689,99 @@ process gather_depth {
 }
 
 depth_ch
+/* create channel out of sequencing depth table */
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ id:row.INDV, sites:row.N_SITES, depth:row.MEAN_DEPTH] }
 	.set { depth_by_sample_ch }
 
-	Channel
+/* create channel from bam files and add sample id */
+Channel
+	.fromPath( '1_genotyping/0_dedup_bams/*.bam' )
+	.map{ file ->
+				def key = file.name.toString().tokenize('.').get(0)
+				return tuple(key, file)}
+				.set{ sample_bams }
+
+/* combine sample bams and sequencing depth */
+sample_bams
+	.join(depth_by_sample_ch)
+	.set{ sample_bam_and_depth }
+
+/* create channel of linkage groups */
+Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
 	.set{ lg_ch }
 
-depth_by_sample_ch.combine( vcf_msmc ).combine( lg_ch ).set{ samples_msmc }
+/* multiply the sample channel by the linkage groups */
+sample_bam_and_depth
+	.combine( vcf_msmc )
+	.combine( lg_ch )
+	.set{ samples_msmc }
 
 /* split vcf by individual ----------------------------- */
 process split_vcf_by_individual {
-		input:
-		set val( id ), val( sites ), val( depth ), file( vcf ), val( lg ) from samples_msmc
+	input:
+	set val( id ), file( bam ), val( sites ), val( depth ), file( vcf ), val( lg ) from samples_msmc
 
-		output:
-		set val( id ), val( depth ), file( "phased_mac2.${id}.${L}.vcf.gz" ) into sample_vcf
+	output:
+	set val( id ), val( lg ), file( bam ), val( depth ), file( "phased_mac2.${id}.${L}.vcf.gz" ) into ( sample_vcf, sample_vcf2 )
 
-		script:
-		"""
-		gatk --java-options "-Xmx10G"
+	script:
+	"""
+	gatk --java-options "-Xmx10G"
 		SelectVariants \
-		-R \$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz \
+		-R \$REF_GENOME \
 		-V ${vcf} \
 		-sn ${id} \
 		-L ${lg}\
 		-o phased_mac2.${id}.${L}.vcf.gz
-		"""
+	"""
 }
+
+process bam_caller {
+	input:
+	set val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) from sample_vcf
+
+	output:
+	set val( id ), val( lg ), file( "*.bam_caller.vcf.gz" ), file( "*.coverage_mask.bed.gz" ) into segsites_ch
+
+	script:
+	"""
+	samtools mpileup -q 25 -Q 20 -C 50 -u -r ${lg} -f \$REF_GENOME ${bam} | \
+		bcftools call -c -V indels | \
+		\$BASE_DIR/py/bamHamletCaller.py ${depth} ${ID}.${LG}.coverage_mask.bed.gz | \
+		gzip -c > ${ID}.${LG}.bam_caller.vcf.gz
+	"""
+}
+
 /*
-"""
-for i in $(cat $WORK/0_data/0_resources/XXspeciesXX.txt); do
-FULL=$(grep $i $WORK/0_data/0_resources/fullnames.txt)
-for k in {01..24}; do
-L="LG"$k;
-DEPTH=$( grep $i phased_snps.idepth | awk '{print $3}')
+ put bhind segsites (coverage mask not need)
+*/
+sample_vcf2
+	.map{ [it[0]+"."+it[1], it]}
+	.join( segsites_ch.map{ [it[0]+"."+it[1], it]} )
+	.set{ samples_lg_segsites }
 
-echo $i", "$L
+process generate_segsites {
 
-samtools mpileup -q 25 -Q 20 -C 50 -u -r $L -f $WORK/0_data/0_resources/HP_genome_unmasked_01.fa $INDIR/$FULL-dedup.bam | \
-	bcftools call -c -V indels | \
-	$WORK/0_data/2_scripts/bamHamletCaller.py $DEPTH $OUTDIR/${FULL}_${L}_coverage.mask.bed.gz | \
-	gzip -c > $OUTDIR/${FULL}_${L}_segsites.vcf.gz
-"""
-*//* generating MSMC input files (4 inds per species) ----------- *//*
-"""
-for i in $(cat $WORK/0_data/0_resources/XXspeciesXX.txt); do
-for k in {01..24}; do
-cat $INDIR/${i}_${L}_phasedSNPs.vcf | \
-	vcfAllSiteParser.py $L $OUTDIR/covered_sites_${i}_${L}.bed.txt.gz | \
-	gzip -c > $OUTDIR/segsites_${i}_${L}.vcf.gz
-"""
-*//* ----------------------------- *//*
+	/* sample_vcf2: val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) */
+	/* segsites_ch: val( id ), val( lg ), file( vcf ), file( bed ) */
+	input:
+	set idlg, in_sample, in_segsites from samples_lg_segsites
+
+	output:
+	set val( idlg ), val( id ), val( lg ), file( in_segsites[3] ), file( in_sample[] )
+	script:
+	"""
+	zcat ${in_sample[4]} | \
+		vcfAllSiteParser.py ${in_sample[1]} ${idlg}.covered_sites.bed.txt.gz | \
+		gzip -c > ${idlg}.segsites.vcf.gz
+	"""
+}
+/* generating MSMC input files (4 inds per species) ----------- *//*
+
+/*Idenl kḿaks still needed*//*
 """
 generate_multihetsep.py \
 	--mask=$COVDIR/XXind1XX_${L}_coverage.mask.bed.gz \
