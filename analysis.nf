@@ -157,7 +157,7 @@ process plink12 {
 admx_prep  = admx_ch.combine( admx_plink )
 
 process admixture_all {
-    label 'L_88g30h_admixture_all'
+    label 'L_O88g90h_admixture_all'
     publishDir "2_analysis/admixture/", mode: 'copy' , pattern: "*.Q"
 
     input:
