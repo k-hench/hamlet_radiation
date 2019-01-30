@@ -935,14 +935,14 @@ lg_ch3
 /* generating MSMC input files (4 inds per species) ----------- */
 process generate_multihetsep {
 label "L_120g40h_msmc_generate_multihetsep"
-publishDir "2_analysis/msmc/run_${msmc_gr.msmc_run}", mode: 'copy' , pattern "*.multihetsep.txt"
+publishDir "2_analysis/msmc/input/run_${msmc_gr.msmc_run}", mode: 'copy' , pattern "*.multihetsep.txt"
 
 input:
 /* content msmc_gr: val( msmc_run ), val( spec ), val( geo ), val( group_nr ), val( group_size ), val( samples ) */
 set val( lg ), msmc_gr, coverage, segsites from msmc_grouping_after_segsites
 
 output:
-set val( msmc_gr.msmc_run ), val( lg ), file( "msmc_run.${msmc_gr.msmc_run}.${lg}.multihetsep.txt" ) into msmc_input
+set val( msmc_gr.msmc_run ), val( lg ), val( msmc_gr.spec ), val( msmc_gr.geo ), file( "msmc_run.*.multihetsep.txt" ) into msmc_input_lg
 
 """
 COVDIR="\$BASE_DIR/ressources/coverage_masks/"
@@ -962,21 +962,36 @@ generate_multihetsep.py \
 	--mask=\$BASE_DIR/ressources/mappability_masks/${lg}.mapmask.bed.txt.gz \
 	--negative_mask=\$BASE_DIR/ressources/indel_masks/indel_mask.${lg}.bed.gz \
 	\$SEG \ # (\${SEGDIR}/{sample}.{lg}.covered_sites.bed.txt.gz ...)
-	> msmc_run.${msmc_gr.msmc_run}.${lg}.multihetsep.txt
+	> msmc_run.${msmc_gr.msmc_run}.${msmc_gr.spec}.${msmc_gr.geo}.${lg}.multihetsep.txt
 """
 }
-/* run msmc ------------------ *//*
-"""
-msmc_2.0.0_linux64bit \
-	-m 0.00254966 -t 8 \
-	-p 1*2+25*1+1*2+1*3 \
-	-o $OUTDIR/XXrunXX.msmc2 \
-	-I 0,1,2,3,4,5,6,7 \
-	$INDIR/LG01.XXrunXX.multihetsep.txt \
-	...
-	$INDIR/LG24.XXrunXX.multihetsep.txt
-"""
-*//* generating MSMC cross coalescence input files (2 inds x 2 species) ----------- *//*
+
+msmc_input_lg
+  .groupTuple()
+	.set {msmc_input}
+
+/* run msmc ------------------ */
+process msmc_run {
+	label "L_190g100h_msmc_run"
+	publishDir "2_analysis/msmc/output/", mode: 'copy'
+
+	input:
+	set msmc_run, lg , spec, geo, file( hetsep ) from msmc_input
+
+	output:
+	file("*.msmc2") into msmc_output
+
+	"""
+	INFILES=\$( echo ${hetsep} )
+	msmc_2.0.0_linux64bit \
+		-m 0.00254966 -t 8 \
+		-p 1*2+25*1+1*2+1*3 \
+		-o run${msmc_run}.${spec[0]}.${geo[0]}.msmc2 \
+		-I 0,1,2,3,4,5,6,7 \
+		\$INFILES
+	"""
+}
+/* generating MSMC cross coalescence input files (2 inds x 2 species) ----------- *//*
 """
 for k in {01..24}; do
 L="LG"$k;
