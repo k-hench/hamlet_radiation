@@ -663,6 +663,130 @@ process gemma_smooth {
 }
 
 /* 7) Msmc section ============== */
+
+
+Channel
+	.fromFilePairs("1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
+	.set{ cohort_gvcf }
+
+process joint_genotype_indel {
+  label 'L_O88g90h_genotype_indel'
+  publishDir "1_genotyping/2_raw_vcfs/", mode: 'copy'
+
+  input:
+  file( vcf ) from cohort_gvcf
+
+  output:
+  set file( "raw_var_indel.vcf.gz" ), file( "raw_var_indel.vcf.gz.tbi" ) into ( raw_indel, raw_indel_to_metrics )
+
+  script:
+  """
+  gatk --java-options "-Xmx85g" \
+  GenotypeGVCFs \
+  -R=\$REF_GENOME \
+  -V=${vcf[0]} \
+  -O=intermediate.vcf.gz
+
+  gatk --java-options "-Xmx85G" \
+  SelectVariants \
+  -R=\$REF_GENOME \
+  -V=intermediate.vcf.gz \
+  --select-type-to-include=INDEL \
+  -O=raw_var_indel.vcf.gz
+
+  rm intermediate.*
+  """
+}
+
+process indel_metrics {
+  label 'L_28g5h_genotype_metrics'
+  publishDir "1_genotyping/2_raw_vcfs/", mode: 'copy'
+
+  input:
+  set file( vcf ), file( tbi ) from raw_indel_to_metrics
+
+  output:
+  file( "${vcf}.table.txt" ) into raw_indel_metrics
+
+  script:
+  """
+  gatk --java-options "-Xmx25G" \
+  VariantsToTable \
+  --variant=${vcf} \
+  --output=${vcf}.table.txt \
+  -F=CHROM -F=POS -F=MQ \
+  -F=QD -F=FS -F=MQRankSum -F=ReadPosRankSum \
+  --show-filtered
+  """
+}
+
+process filterIndels {
+  label 'L_78g10h_filter_indels'
+  publishDir "1_genotyping/3_gatk_filtered/", mode: 'copy'
+
+  input:
+  set file( vcf ), file( tbi ) from raw_indel
+
+  output:
+  set file( "filterd.indel.vcf.gz" ), file( "filterd.indel.vcf.gz.tbi" ) into filtered_indel
+	file( "indel_mask.bed.gz" ) into indel_mask_ch
+
+  script:
+  """
+  gatk --java-options "-Xmx75G" \
+		VariantFiltration \
+		-R=\$REF_GENOME \
+		-V ${vcf} \
+		-O=intermediate.vcf.gz \
+		--filter-expression "QD < 2.5" \
+		--filter-name "filter_QD" \
+		--filter-expression "FS > 25.0" \
+		--filter-name "filter_FS" \
+		--filter-expression "MQ < 52.0 || MQ > 65.0" \
+		--filter-name "filter_MQ" \
+		--filter-expression "MQRankSum < -0.2 || MQRankSum > 0.2" \
+		--filter-name "filter_MQRankSum" \
+		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
+		--filter-name "filter_ReadPosRankSum"
+
+		gatk --java-options "-Xmx75G" \
+	  SelectVariants \
+	  -R=\$REF_GENOME \
+	  -V=intermediate.vcf.gz \
+		-O=filterd.indel.vcf.gz \
+		--exclude-filtered
+
+		awk '! /\\#/' filterd.indel.vcf.gz | \
+		awk '{if(length(\$4) > length(\$5)) print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$4)+4);  else print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$5)+4)}' | \
+		gzip -c > indel_mask.bed.gz
+
+	  rm intermediate.*
+  """
+}
+
+/* create channel of linkage groups */
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.map{ "LG" + it }
+	.into{ lg_ch, lg_ch2 }
+
+lg_ch.combine( filtered_indel ).set{ filtered_indel_lg }
+
+process split_indel_mask {
+	input:
+	set val( lg ), file( bed ) from filtered_indel_lg
+
+	output:
+	set val( lg ), file( "indel_mask.${lg}.bed.gz " ) into lg_indel_mask
+
+	script:
+	"""
+		gzip -cd ${bed} | \
+		grep ${lg} | \
+		gzip -c > indel_mask.${lg}.bed.gz
+	"""
+}
+
 Channel
 	.fromFilePairs("1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.{gz,gz.tbi}")
 	.set{ vcf_depth }
@@ -709,16 +833,10 @@ sample_bams
 	.join(depth_by_sample_ch)
 	.set{ sample_bam_and_depth }
 
-/* create channel of linkage groups */
-Channel
-	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
-	.map{ "LG" + it }
-	.set{ lg_ch }
-
 /* multiply the sample channel by the linkage groups */
 sample_bam_and_depth
 	.combine( vcf_msmc )
-	.combine( lg_ch )
+	.combine( lg_ch2 )
 	.set{ samples_msmc }
 
 /* split vcf by individual ----------------------------- */
@@ -757,33 +875,37 @@ process bam_caller {
 	"""
 }
 
-/*
- put bhind segsites (coverage mask not need)
-*/
-sample_vcf2
-	.map{ [it[0]+"."+it[1], it]}
-	.join( segsites_ch.map{ [it[0]+"."+it[1], it]} )
-	.set{ samples_lg_segsites }
-
 process generate_segsites {
-
 	/* sample_vcf2: val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) */
 	/* segsites_ch: val( id ), val( lg ), file( vcf ), file( bed ) */
 	input:
-	set idlg, in_sample, in_segsites from samples_lg_segsites
+	set val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) from sample_vcf2
 
 	output:
-	set val( idlg ), val( id ), val( lg ), file( in_segsites[3] ), file( in_sample[] )
+	set val( id ), val( lg ), file( "*.segsites.vcf.gz" ), file( ".covered_sites.bed.txt.gz" ) into segsites_by_sample_lg
+
 	script:
 	"""
-	zcat ${in_sample[4]} | \
-		vcfAllSiteParser.py ${in_sample[1]} ${idlg}.covered_sites.bed.txt.gz | \
-		gzip -c > ${idlg}.segsites.vcf.gz
+	zcat ${vcf} | \
+		vcfAllSiteParser.py ${id} ${id}.${lg}.covered_sites.bed.txt.gz | \
+		gzip -c > ${id}.${lg}.segsites.vcf.gz
 	"""
 }
+/*
+ put bhind segsites (coverage mask not need)
+*/
+segsites_by_sample_lg
+	.map{ [it[0]+"."+it[1], it]}
+	.join( segsites_ch.map{ [it[0]+"."+it[1], it]} )
+	.set{ samples_lg_segsites_and_coverage }
 /* generating MSMC input files (4 inds per species) ----------- *//*
 
-/*Idenl kḿaks still needed*//*
+/* Indel ḿask + mapability mask still needed*/
+/* join individuals by run */
+/* copy individual output and collect channel to
+   deal with uneven number of sample involvement */
+process generate_multihetsep {
+set idlg, in_sample, in_segsites from samples_lg_segsites
 """
 generate_multihetsep.py \
 	--mask=$COVDIR/XXind1XX_${L}_coverage.mask.bed.gz \
@@ -798,7 +920,8 @@ generate_multihetsep.py \
 	$INDIR/segsites_XXind4XX_$L.vcf.gz \
 	> $OUTDIR/$L.XXrunXX.multihetsep.txt
 """
-*//* run msmc ------------------ *//*
+}
+/* run msmc ------------------ *//*
 """
 msmc_2.0.0_linux64bit \
 	-m 0.00254966 -t 8 \
