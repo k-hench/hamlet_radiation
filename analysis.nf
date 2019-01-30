@@ -850,7 +850,7 @@ process generate_multihetsep {
 }
 
 msmc_input_lg
-  .groupTuple()
+	.groupTuple()
 	.set {msmc_input}
 
 /* run msmc ------------------ */
