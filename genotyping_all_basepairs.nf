@@ -11,33 +11,33 @@ ch_LG_ids.combine( vcf_cohort ).set{ vcf_lg_combo }
 
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
-  label "L_O88g90h_LGs_genotype"
+	label "L_O88g90h_LGs_genotype"
 
-  input:
-  set val( lg ), vcfId, file( vcf ) from vcf_lg_combo
+	input:
+	set val( lg ), vcfId, file( vcf ) from vcf_lg_combo
 
-  output:
-  set val( lg ), file( "all_site*.vcf.gz" ), file( "all_site*.vcf.gz.tbi" ) into all_bp_by_location
+	output:
+	set val( lg ), file( "all_site*.vcf.gz" ), file( "all_site*.vcf.gz.tbi" ) into all_bp_by_location
 
-  script:
-  """
-  gatk --java-options "-Xmx85g" \
-  GenotypeGVCFs \
-  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-	-L=LG${lg} \
-  -V=${vcf[0]} \
-  -O=intermediate.vcf.gz \
-	--include-non-variant-sites=true
+	script:
+	"""
+	gatk --java-options "-Xmx85g" \
+		GenotypeGVCFs \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-L=LG${lg} \
+		-V=${vcf[0]} \
+		-O=intermediate.vcf.gz \
+		--include-non-variant-sites=true
 
-  gatk --java-options "-Xmx85G" \
-  	SelectVariants \
-  	-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-  	-V=intermediate.vcf.gz \
-  	--select-type-to-exclude=INDEL \
-  	-O=all_sites.LG${lg}.vcf.gz
+	gatk --java-options "-Xmx85G" \
+		SelectVariants \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V=intermediate.vcf.gz \
+		--select-type-to-exclude=INDEL \
+		-O=all_sites.LG${lg}.vcf.gz
 
-  rm intermediate.*
-  """
+	rm intermediate.*
+	"""
 }
 
 process merge_genotypes {
@@ -54,25 +54,25 @@ process merge_genotypes {
 	INPUT=\$(ls -1 *vcf.gz | sed 's/^/ -I /g' | cat \$( echo ))
 
 	gatk --java-options "-Xmx85g" \
-			-T GatherVcfs \
-	    \$INPUT \
-	    O=all_sites.vcf.gz
+		-T GatherVcfs \
+		\$INPUT \
+		O=all_sites.vcf.gz
 	"""
 }
 
 process filterSNPs {
-  label 'L_105g30h_filter_genotypes'
-  publishDir "1_genotyping/3_gatk_filtered/", mode: 'copy'
+	label 'L_105g30h_filter_genotypes'
+	publishDir "1_genotyping/3_gatk_filtered/", mode: 'copy'
 
-  input:
-  set file( vcf ), file( tbi ) from all_bp_merged
+	input:
+	set file( vcf ), file( tbi ) from all_bp_merged
 
-  output:
-  set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
+	output:
+	set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
 
-  script:
-  """
-  gatk --java-options "-Xmx75G" \
+	script:
+	"""
+	gatk --java-options "-Xmx75G" \
 		VariantFiltration \
 		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
 		-V ${vcf} \
@@ -88,23 +88,23 @@ process filterSNPs {
 		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
 		--filter-name "filter_ReadPosRankSum"
 
-		gatk --java-options "-Xmx75G" \
-	  SelectVariants \
-	  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-	  -V=intermediate.vcf.gz \
+	gatk --java-options "-Xmx75G" \
+		SelectVariants \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V=intermediate.vcf.gz \
 		-O=intermediate.filterd.vcf.gz \
 		--exclude-filtered
 
-		vcftools \
-			--gzvcf intermediate.filterd.vcf.gz \
-			--max-missing-count 17 \
-			--max-alleles 2 \
-			--stdout  \
-			--recode | \
-			bgzip > filterd_bi-allelic.allBP.vcf.gz
+	vcftools \
+		--gzvcf intermediate.filterd.vcf.gz \
+		--max-missing-count 17 \
+		--max-alleles 2 \
+		--stdout  \
+		--recode | \
+		bgzip > filterd_bi-allelic.allBP.vcf.gz
 
-		tabix -p vcf filterd_bi-allelic.allBP.vcf.gz
+	tabix -p vcf filterd_bi-allelic.allBP.vcf.gz
 
-	  rm intermediate.*
-  """
+	rm intermediate.*
+	"""
 }

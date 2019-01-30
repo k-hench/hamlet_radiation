@@ -8,279 +8,279 @@
 */
 
 
- /* open the pipeline based on the metadata spread sheet that includes all
-  * information necessary to assign read groups to the sequencing data */
- params.index = 'metadata/file_info.txt'
+/* open the pipeline based on the metadata spread sheet that includes all
+* information necessary to assign read groups to the sequencing data */
+params.index = 'metadata/file_info.txt'
 
- /* split the spread sheet by row and feed it into a channel */
- Channel
-     .fromPath(params.index)
-     .splitCsv(header:true, sep:"\t")
-     .map{ row -> [ id:row.id, label:row.label, file_fwd:row.file_fwd, file_rev:row.file_rev, flowcell_id_fwd:row.flowcell_id_fwd, lane_fwd:row.lane_fwd, company:row.company] }
-     .set { samples_ch }
+/* split the spread sheet by row and feed it into a channel */
+Channel
+	.fromPath(params.index)
+	.splitCsv(header:true, sep:"\t")
+	.map{ row -> [ id:row.id, label:row.label, file_fwd:row.file_fwd, file_rev:row.file_rev, flowcell_id_fwd:row.flowcell_id_fwd, lane_fwd:row.lane_fwd, company:row.company] }
+	.set { samples_ch }
 
- /* for every sequencing file, convert into ubam format and assign read groups */
- process split_samples {
-     label 'L_20g2h_split_samples'
+/* for every sequencing file, convert into ubam format and assign read groups */
+process split_samples {
+	label 'L_20g2h_split_samples'
 
-     input:
-     val x from samples_ch
+	input:
+	val x from samples_ch
 
-     output:
-     set val( "${x.label}.${x.lane_fwd}" ), file( "${x.label}.${x.lane_fwd}.ubam.bam" ) into ubams_mark, ubams_merge
+	output:
+	set val( "${x.label}.${x.lane_fwd}" ), file( "${x.label}.${x.lane_fwd}.ubam.bam" ) into ubams_mark, ubams_merge
 
-     script:
-     """
-     echo -e "---------------------------------"
-     echo -e "Label:\t\t${x.label}\nFwd:\t\t${x.file_fwd}\nRev:\t\t${x.file_rev}"
-     echo -e "Flowcell:\t${x.flowcell_id_fwd}\nLane:\t\t${x.lane_fwd}"
-     echo -e "Read group:\t${x.flowcell_id_fwd}.${x.lane_fwd}\nCompany:\t${x.company}"
+	script:
+	"""
+	echo -e "---------------------------------"
+	echo -e "Label:\t\t${x.label}\nFwd:\t\t${x.file_fwd}\nRev:\t\t${x.file_rev}"
+	echo -e "Flowcell:\t${x.flowcell_id_fwd}\nLane:\t\t${x.lane_fwd}"
+	echo -e "Read group:\t${x.flowcell_id_fwd}.${x.lane_fwd}\nCompany:\t${x.company}"
 
-     mkdir -p \$BASE_DIR/temp_files
+	mkdir -p \$BASE_DIR/temp_files
 
-     gatk --java-options "-Xmx20G" \
-         FastqToSam \
-         -SM=${x.label} \
-     		 -F1=\$BASE_DIR/data/seqdata/${x.file_fwd} \
-         -F2=\$BASE_DIR/data/seqdata/${x.file_rev} \
-     		 -O=${x.label}.${x.lane_fwd}.ubam.bam \
-     		 -RG=${x.label}.${x.lane_fwd} \
-     		 -LB=${x.label}".lib1" \
-     		 -PU=${x.flowcell_id_fwd}.${x.lane_fwd} \
-     		 -PL=Illumina \
-     		 -CN=${x.company} \
-     		 --TMP_DIR=\$BASE_DIR/temp_files;
-     """
- }
+	gatk --java-options "-Xmx20G" \
+		FastqToSam \
+		-SM=${x.label} \
+		-F1=\$BASE_DIR/data/seqdata/${x.file_fwd} \
+		-F2=\$BASE_DIR/data/seqdata/${x.file_rev} \
+		-O=${x.label}.${x.lane_fwd}.ubam.bam \
+		-RG=${x.label}.${x.lane_fwd} \
+		-LB=${x.label}".lib1" \
+		-PU=${x.flowcell_id_fwd}.${x.lane_fwd} \
+		-PL=Illumina \
+		-CN=${x.company} \
+		--TMP_DIR=\$BASE_DIR/temp_files;
+	"""
+}
 
- /* for every ubam file, mark Illumina adapters */
- process mark_adapters {
-   label 'L_20g2h_mark_adapters'
-   tag "${sample}"
+/* for every ubam file, mark Illumina adapters */
+process mark_adapters {
+	label 'L_20g2h_mark_adapters'
+	tag "${sample}"
 
-   input:
-   set val( sample ), file( input ) from ubams_mark
+	input:
+	set val( sample ), file( input ) from ubams_mark
 
-   output:
-   set val( sample ), file( "*.adapter.bam") into adapter_bams
-   file "*.adapter.metrics.txt" into adapter_metrics
+	output:
+	set val( sample ), file( "*.adapter.bam") into adapter_bams
+	file "*.adapter.metrics.txt" into adapter_metrics
 
-   script:
-   """
-  gatk --java-options "-Xmx18G" \
-        MarkIlluminaAdapters \
-        -I=${input} \
-        -O=${sample}.adapter.bam \
-        -M=${sample}.adapter.metrics.txt \
-        -TMP_DIR=\$BASE_DIR/temp_files;
-   """
- }
+	script:
+	"""
+	gatk --java-options "-Xmx18G" \
+		MarkIlluminaAdapters \
+		-I=${input} \
+		-O=${sample}.adapter.bam \
+		-M=${sample}.adapter.metrics.txt \
+		-TMP_DIR=\$BASE_DIR/temp_files;
+	"""
+}
 
- adapter_bams
-     .combine(ubams_merge, by:0)
-     .set {merge_input}
+adapter_bams
+	.combine(ubams_merge, by:0)
+	.set {merge_input}
 
- /* this step includes a 3 step pipeline:
-  *  - re-transformatikon into fq format
-  *  - mapping aginst the reference genome_file
-  *  - merging with the basuch ubams to include
-       read group information */
+/* this step includes a 3 step pipeline:
+*  - re-transformatikon into fq format
+*  - mapping aginst the reference genome_file
+*  - merging with the basuch ubams to include
+		read group information */
 
- process map_and_merge {
-   label 'L_75g24h8t_map_and_merge'
-   tag "${sample}"
+process map_and_merge {
+	label 'L_75g24h8t_map_and_merge'
+	tag "${sample}"
 
-   input:
-   set val( sample ), file( adapter_bam_input ), file( ubam_input ) from merge_input
+	input:
+	set val( sample ), file( adapter_bam_input ), file( ubam_input ) from merge_input
 
-   output:
-   set val( sample ), file( "*.mapped.bam" ) into mapped_bams
+	output:
+	set val( sample ), file( "*.mapped.bam" ) into mapped_bams
 
-   script:
-   """
-   set -o pipefail
-   gatk --java-options "-Xmx68G" \
-        SamToFastq \
-        -I=${adapter_bam_input} \
-        -FASTQ=/dev/stdout \
-        -INTERLEAVE=true \
-        -NON_PF=true \
-        -TMP_DIR=\$BASE_DIR/temp_files | \
-    bwa mem -M -t 8 -p \$BASE_DIR/ressources/HP_genome_unmasked_01.fa /dev/stdin |
-    gatk --java-options "-Xmx68G" \
-        MergeBamAlignment \
-         --VALIDATION_STRINGENCY SILENT \
-         --EXPECTED_ORIENTATIONS FR \
-         --ATTRIBUTES_TO_RETAIN X0 \
-         -ALIGNED_BAM=/dev/stdin \
-         -UNMAPPED_BAM=${ubam_input} \
-         -OUTPUT=${sample}.mapped.bam \
-         --REFERENCE_SEQUENCE=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz \
-         -PAIRED_RUN true \
-         --SORT_ORDER "unsorted" \
-         --IS_BISULFITE_SEQUENCE false \
-         --ALIGNED_READS_ONLY false \
-         --CLIP_ADAPTERS false \
-         --MAX_RECORDS_IN_RAM 2000000 \
-         --ADD_MATE_CIGAR true \
-         --MAX_INSERTIONS_OR_DELETIONS -1 \
-         --PRIMARY_ALIGNMENT_STRATEGY MostDistant \
-         --UNMAPPED_READ_STRATEGY COPY_TO_TAG \
-         --ALIGNER_PROPER_PAIR_FLAGS true \
-         --UNMAP_CONTAMINANT_READS true \
-         -TMP_DIR=\$BASE_DIR/temp_files
-   """
- }
+	script:
+	"""
+	set -o pipefail
+	gatk --java-options "-Xmx68G" \
+		SamToFastq \
+		-I=${adapter_bam_input} \
+		-FASTQ=/dev/stdout \
+		-INTERLEAVE=true \
+		-NON_PF=true \
+		-TMP_DIR=\$BASE_DIR/temp_files | \
+	bwa mem -M -t 8 -p \$BASE_DIR/ressources/HP_genome_unmasked_01.fa /dev/stdin |
+	gatk --java-options "-Xmx68G" \
+		MergeBamAlignment \
+		--VALIDATION_STRINGENCY SILENT \
+		--EXPECTED_ORIENTATIONS FR \
+		--ATTRIBUTES_TO_RETAIN X0 \
+		-ALIGNED_BAM=/dev/stdin \
+		-UNMAPPED_BAM=${ubam_input} \
+		-OUTPUT=${sample}.mapped.bam \
+		--REFERENCE_SEQUENCE=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz \
+		-PAIRED_RUN true \
+		--SORT_ORDER "unsorted" \
+		--IS_BISULFITE_SEQUENCE false \
+		--ALIGNED_READS_ONLY false \
+		--CLIP_ADAPTERS false \
+		--MAX_RECORDS_IN_RAM 2000000 \
+		--ADD_MATE_CIGAR true \
+		--MAX_INSERTIONS_OR_DELETIONS -1 \
+		--PRIMARY_ALIGNMENT_STRATEGY MostDistant \
+		--UNMAPPED_READ_STRATEGY COPY_TO_TAG \
+		--ALIGNER_PROPER_PAIR_FLAGS true \
+		--UNMAP_CONTAMINANT_READS true \
+		-TMP_DIR=\$BASE_DIR/temp_files
+	"""
+}
 
- /* for every mapped sample,sort and mark duplicates
- * (intermediate step is required to create .bai file) */
- process mark_duplicates {
-   label 'L_32g30h_mark_duplicates'
-   publishDir "1_genotyping/0_sorted_bams/", mode: 'symlink'
-   tag "${sample}"
+/* for every mapped sample,sort and mark duplicates
+* (intermediate step is required to create .bai file) */
+process mark_duplicates {
+	label 'L_32g30h_mark_duplicates'
+	publishDir "1_genotyping/0_sorted_bams/", mode: 'symlink'
+	tag "${sample}"
 
-   input:
-   set val( sample ), file( input ) from mapped_bams
+	input:
+	set val( sample ), file( input ) from mapped_bams
 
-   output:
-   set val { sample  - ~/\.(\d+)/ }, val( sample ), file( "*.dedup.bam") into dedup_bams
-   file "*.dedup.metrics.txt" into dedup_metrics
+	output:
+	set val { sample  - ~/\.(\d+)/ }, val( sample ), file( "*.dedup.bam") into dedup_bams
+	file "*.dedup.metrics.txt" into dedup_metrics
 
-   script:
-   """
-   set -o pipefail
-   gatk --java-options "-Xmx30G" \
-        SortSam \
-        -I=${input} \
-        -O=/dev/stdout \
-        --SORT_ORDER="coordinate" \
-        --CREATE_INDEX=false \
-        --CREATE_MD5_FILE=false \
-        -TMP_DIR=\$BASE_DIR/temp_files \
-        | \
-  gatk --java-options "-Xmx30G" \
-      SetNmAndUqTags \
-      --INPUT=/dev/stdin \
-      --OUTPUT=intermediate.bam \
-      --CREATE_INDEX=true \
-      --CREATE_MD5_FILE=true \
-      -TMP_DIR=\$BASE_DIR/temp_files \
-      --REFERENCE_SEQUENCE=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz
+	script:
+	"""
+	set -o pipefail
+	gatk --java-options "-Xmx30G" \
+		SortSam \
+		-I=${input} \
+		-O=/dev/stdout \
+		--SORT_ORDER="coordinate" \
+		--CREATE_INDEX=false \
+		--CREATE_MD5_FILE=false \
+		-TMP_DIR=\$BASE_DIR/temp_files \
+		| \
+	gatk --java-options "-Xmx30G" \
+		SetNmAndUqTags \
+		--INPUT=/dev/stdin \
+		--OUTPUT=intermediate.bam \
+		--CREATE_INDEX=true \
+		--CREATE_MD5_FILE=true \
+		-TMP_DIR=\$BASE_DIR/temp_files \
+		--REFERENCE_SEQUENCE=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz
 
-   gatk --java-options "-Xmx30G" \
-        MarkDuplicates \
-        -I=intermediate.bam \
-        -O=${sample}.dedup.bam \
-        -M=${sample}.dedup.metrics.txt \
-        -MAX_FILE_HANDLES=1000  \
-        -TMP_DIR=\$BASE_DIR/temp_files
+	gatk --java-options "-Xmx30G" \
+		MarkDuplicates \
+		-I=intermediate.bam \
+		-O=${sample}.dedup.bam \
+		-M=${sample}.dedup.metrics.txt \
+		-MAX_FILE_HANDLES=1000  \
+		-TMP_DIR=\$BASE_DIR/temp_files
 
-   rm intermediate*
-   """
- }
+	rm intermediate*
+	"""
+}
 
- /* index al bam files */
+/* index al bam files */
 process index_bam {
-  label 'L_32g1h_index_bam'
-  tag "${sample}"
+	label 'L_32g1h_index_bam'
+	tag "${sample}"
 
-  input:
-  set val( sample ), val( sample_lane ), file( input ) from dedup_bams
+	input:
+	set val( sample ), val( sample_lane ), file( input ) from dedup_bams
 
-  output:
-  set val( sample ), val( sample_lane ), file( input ), file( "*.bai") into ( indexed_bams, pir_bams )
+	output:
+	set val( sample ), val( sample_lane ), file( input ), file( "*.bai") into ( indexed_bams, pir_bams )
 
-  script:
-  """
-  gatk --java-options "-Xmx30G" \
-  BuildBamIndex \
-  -INPUT=${input}
-  """
+	script:
+	"""
+	gatk --java-options "-Xmx30G" \
+		BuildBamIndex \
+		-INPUT=${input}
+	"""
 }
 
- /* collect all bam files for each sample */
+/* collect all bam files for each sample */
 indexed_bams
-  .groupTuple()
-  .set {tubbled}
+	.groupTuple()
+	.set {tubbled}
 
- /* create one *.g.vcf file per sample */
+/* create one *.g.vcf file per sample */
 process receive_tuple {
-  label 'L_36g47h_receive_tuple'
+	label 'L_36g47h_receive_tuple'
 	publishDir "1_genotyping/1_gvcfs/", mode: 'symlink'
-  tag "${sample}"
+	tag "${sample}"
 
-  input:
-  set sample, sample_lane, bam, bai from tubbled
+	input:
+	set sample, sample_lane, bam, bai from tubbled
 
-  output:
-  file( "*.g.vcf.gz") into gvcfs
-  file( "*.vcf.gz.tbi") into tbis
+	output:
+	file( "*.g.vcf.gz") into gvcfs
+	file( "*.vcf.gz.tbi") into tbis
 
-  script:
-  """
-  INPUT=\$(echo ${bam}  | sed  's/\\[/-I /g; s/\\]//g; s/,/ -I/g')
+	script:
+	"""
+	INPUT=\$(echo ${bam}  | sed  's/\\[/-I /g; s/\\]//g; s/,/ -I/g')
 
-  gatk --java-options "-Xmx35g" HaplotypeCaller  \
-    -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-    \$INPUT \
-    -O ${sample}.g.vcf.gz \
-    -ERC GVCF
-  """
+	gatk --java-options "-Xmx35g" HaplotypeCaller  \
+	  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+	  \$INPUT \
+	  -O ${sample}.g.vcf.gz \
+	  -ERC GVCF
+	"""
 }
 
- /* collect and combine all *.g.vcf files */
+/* collect and combine all *.g.vcf files */
 process gather_gvcfs {
-  label 'L_O88g90h_gather_gvcfs'
+	label 'L_O88g90h_gather_gvcfs'
 	publishDir "1_genotyping/1_gvcfs/", mode: 'symlink'
-  echo true
+	echo true
 
-  input:
-  file( gvcf ) from gvcfs.collect()
-  file( tbi ) from tbis.collect()
+	input:
+	file( gvcf ) from gvcfs.collect()
+	file( tbi ) from tbis.collect()
 
-  output:
-  set file( "cohort.g.vcf.gz" ), file( "cohort.g.vcf.gz.tbi" ) into ( gcvf_snps, gvcf_acs, gvcf_indel )
+	output:
+	set file( "cohort.g.vcf.gz" ), file( "cohort.g.vcf.gz.tbi" ) into ( gcvf_snps, gvcf_acs, gvcf_indel )
 
-  script:
-  """
-  GVCF=\$(echo " ${gvcf}" | sed 's/ /-V /g; s/vcf.gz/vcf.gz /g')
+	script:
+	"""
+	GVCF=\$(echo " ${gvcf}" | sed 's/ /-V /g; s/vcf.gz/vcf.gz /g')
 
-  gatk --java-options "-Xmx85g" \
-  CombineGVCFs \
-  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-  \$GVCF \
-  -O cohort.g.vcf.gz
-  """
+	gatk --java-options "-Xmx85g" \
+	CombineGVCFs \
+	-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+	\$GVCF \
+	-O cohort.g.vcf.gz
+	"""
 }
 
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
-  label 'L_O88g90h_joint_genotype'
-  publishDir "1_genotyping/2_raw_vcfs/", mode: 'symlink'
+	label 'L_O88g90h_joint_genotype'
+	publishDir "1_genotyping/2_raw_vcfs/", mode: 'symlink'
 
-  input:
-  set file( vcf ), file( tbi ) from gcvf_snps
+	input:
+	set file( vcf ), file( tbi ) from gcvf_snps
 
-  output:
-  set file( "raw_var_sites.vcf.gz" ), file( "raw_var_sites.vcf.gz.tbi" ) into ( raw_var_sites, raw_var_sites_to_metrics )
+	output:
+	set file( "raw_var_sites.vcf.gz" ), file( "raw_var_sites.vcf.gz.tbi" ) into ( raw_var_sites, raw_var_sites_to_metrics )
 
-  script:
-  """
-  gatk --java-options "-Xmx85g" \
-  GenotypeGVCFs \
-  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-  -V=${vcf} \
-  -O=intermediate.vcf.gz
+	script:
+	"""
+	gatk --java-options "-Xmx85g" \
+		GenotypeGVCFs \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V=${vcf} \
+		-O=intermediate.vcf.gz
 
-  gatk --java-options "-Xmx85G" \
-  SelectVariants \
-  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-  -V=intermediate.vcf.gz \
-  --select-type-to-include=SNP \
-  -O=raw_var_sites.vcf.gz
+	gatk --java-options "-Xmx85G" \
+		SelectVariants \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V=intermediate.vcf.gz \
+		--select-type-to-include=SNP \
+		-O=raw_var_sites.vcf.gz
 
-  rm intermediate.*
-  """
+	rm intermediate.*
+	"""
 }
 
 /* generate a LG channel */
@@ -289,81 +289,44 @@ Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.into{ LG_ids1; LG_ids2 }
 
-/* actual genotyping step
- * (all callable sites,
- *  one process per LG) */
-/*
-process joint_genotype_acs {
-  label 'L_105g30h_joint_genotype_acs'
-  conda '/sfs/fs6/home-geomar/smomw287/miniconda2/envs/gatk'
-  publishDir "1_genotyping/1_raw_vcfs/", mode: 'symlink'
-
-  input:
-  set file( vcf ), file( tbi ) from gvcf_acs
-  val LGid from LG_ids1
-
-  output:
-  file( "raw_gvcf_acs.*" ) into raw_acs_by_ls
-
-  script:
-  """
-  gatk --java-options "-Xmx100g" \
-  GenotypeGVCFs \
-  --includeNonVariantSites \
-  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-  -V ${vcf} \
-  -L LG${LGid} \
-  -O intermediate.vcf.gz
-
-  gatk --java-options "-Xmx100G" \
-  SelectVariants \
-  -R \$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-  -V intermediate.vcf.gz \
-  --select-type-to-include=SNP \
-  -O=raw_gvcf_acs.LG${LGid}.vcf.gz
-
-  rm intermediate.*
-  """
-}
-*/
 /* produce metrics table to determine filtering thresholds - ups forgot to extract SNPS first*/
 process joint_genotype_metrics {
-  label 'L_28g5h_genotype_metrics'
-  publishDir "1_genotyping/2_raw_vcfs/", mode: 'move'
+	label 'L_28g5h_genotype_metrics'
+	publishDir "1_genotyping/2_raw_vcfs/", mode: 'move'
 
-  input:
-  set file( vcf ), file( tbi ) from raw_var_sites_to_metrics
+	input:
+	set file( vcf ), file( tbi ) from raw_var_sites_to_metrics
 
-  output:
-  file( "${vcf}.table.txt" ) into raw_metrics
+	output:
+	file( "${vcf}.table.txt" ) into raw_metrics
 
-  script:
-  """
-  gatk --java-options "-Xmx25G" \
-  VariantsToTable \
-  --variant=${vcf} \
-  --output=${vcf}.table.txt \
-  -F=CHROM -F=POS -F=MQ \
-  -F=QD -F=FS -F=MQRankSum -F=ReadPosRankSum \
-  --show-filtered
-  """
+	script:
+	"""
+	gatk --java-options "-Xmx25G" \
+		VariantsToTable \
+		--variant=${vcf} \
+		--output=${vcf}.table.txt \
+		-F=CHROM -F=POS -F=MQ \
+		-F=QD -F=FS -F=MQRankSum -F=ReadPosRankSum \
+		--show-filtered
+	"""
 }
 
 /* filter snps basaed on locus annotations, missingness
    and type (bi-allelic only) */
 process filterSNPs {
-  label 'L_78g10h_filter_Snps'
-  publishDir "1_genotyping/3_gatk_filtered/", mode: 'symlink'
+	label 'L_78g10h_filter_Snps'
+	publishDir "1_genotyping/3_gatk_filtered/", mode: 'symlink'
 
-  input:
-  set file( vcf ), file( tbi ) from raw_var_sites
+	input:
+	set file( vcf ), file( tbi ) from raw_var_sites
 
-  output:
-  set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
+	output:
+	set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
 
-  script:
-  """
-  gatk --java-options "-Xmx75G" \
+	script:
+	"""
+	gatk --java-options "-Xmx75G" \
 		VariantFiltration \
 		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
 		-V ${vcf} \
@@ -379,39 +342,39 @@ process filterSNPs {
 		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
 		--filter-name "filter_ReadPosRankSum"
 
-		gatk --java-options "-Xmx75G" \
-	  SelectVariants \
-	  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-	  -V=intermediate.vcf.gz \
+	gatk --java-options "-Xmx75G" \
+		SelectVariants \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V=intermediate.vcf.gz \
 		-O=intermediate.filterd.vcf.gz \
 		--exclude-filtered
 
-		vcftools \
-			--gzvcf intermediate.filterd.vcf.gz \
-			--max-missing-count 17 \
-			--max-alleles 2 \
-			--stdout  \
-			--recode | \
-			bgzip > filterd_bi-allelic.vcf.gz
+	vcftools \
+		--gzvcf intermediate.filterd.vcf.gz \
+		--max-missing-count 17 \
+		--max-alleles 2 \
+		--stdout  \
+		--recode | \
+		bgzip > filterd_bi-allelic.vcf.gz
 
-		tabix -p vcf filterd_bi-allelic.vcf.gz
+	tabix -p vcf filterd_bi-allelic.vcf.gz
 
-	  rm intermediate.*
-  """
+	rm intermediate.*
+	"""
 }
 
 process extractPirs {
-  label 'L_78g10h_extract_pirs'
+	label 'L_78g10h_extract_pirs'
 
-  input:
+	input:
 	val( lg ) from LG_ids2
-  set val( sample ), val( sample_lane ), file( input ), file( index ) from pir_bams.collect()
-  set file( vcf ), file( tbi ) from filtered_snps
+	set val( sample ), val( sample_lane ), file( input ), file( index ) from pir_bams.collect()
+	set file( vcf ), file( tbi ) from filtered_snps
 
-  output:
-  set val( lg ), file( "filterd_bi-allelic.LG${lg}.vcf.gz" ), file( "filterd_bi-allelic.LG${lg}.vcf.gz.tbi" ), file( "PIRsList-LG${lg}.txt" ) into pirs_lg
+	output:
+	set val( lg ), file( "filterd_bi-allelic.LG${lg}.vcf.gz" ), file( "filterd_bi-allelic.LG${lg}.vcf.gz.tbi" ), file( "PIRsList-LG${lg}.txt" ) into pirs_lg
 
-  script:
+	script:
 	"""
 	LG="LG${lg}"
 	awk -v OFS='\t' -v dir=\$PWD -v lg=\$LG '{print \$1,dir"/"\$2,lg}' \$BASE_DIR/metadata/bamlist_proto.txt > bamlist.txt
@@ -435,15 +398,15 @@ process extractPirs {
 }
 
 process run_shapeit {
-  label 'L_75g24h8t_run_shapeit'
+	label 'L_75g24h8t_run_shapeit'
 
-  input:
+	input:
 	set val( lg ), file( vcf ), file( tbi ), file( pirs ) from pirs_lg
 
-  output:
+	output:
 	file( "phased-LG${lg}.vcf.gz" ) into phased_lgs
 
-  script:
+	script:
 	"""
 	LG="LG${lg}"
 
@@ -464,17 +427,17 @@ process run_shapeit {
 }
 
 process merge_phased {
-  label 'L_28g5h_merge_phased_vcf'
-  publishDir "1_genotyping/4_phased/", mode: 'move'
+	label 'L_28g5h_merge_phased_vcf'
+	publishDir "1_genotyping/4_phased/", mode: 'move'
 
-  input:
+	input:
 	file( vcf ) from phased_lgs.collect()
 
-  output:
+	output:
 	set file( "phased.vcf.gz" ), file( "phased.vcf.gz.tbi" ) into phased_vcf
 	set file( "phased_mac2.vcf.gz" ), file( "phased_mac2.vcf.gz.tbi" ) into phased_mac2_vcf
 
-  script:
+	script:
 	"""
 	vcf-concat \
 		phased-LG* | \
@@ -490,78 +453,79 @@ process merge_phased {
 	"""
 }
 
+/* ========================================= */
 /* appendix: generate indel masks for msmc: */
 Channel
 	.fromFilePairs("1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
 	.set{ cohort_gvcf }
 
 process joint_genotype_indel {
-  label 'L_O88g90h_genotype_indel'
-  publishDir "1_genotyping/2_raw_vcfs/", mode: 'copy'
+	label 'L_O88g90h_genotype_indel'
+	publishDir "1_genotyping/2_raw_vcfs/", mode: 'copy'
 
-  input:
-  set file( vcf ), file( tbi ) from gvcf_indel
+	input:
+	set file( vcf ), file( tbi ) from gvcf_indel
 
-  output:
-  set file( "raw_var_indel.vcf.gz" ), file( "raw_var_indel.vcf.gz.tbi" ) into ( raw_indel, raw_indel_to_metrics )
+	output:
+	set file( "raw_var_indel.vcf.gz" ), file( "raw_var_indel.vcf.gz.tbi" ) into ( raw_indel, raw_indel_to_metrics )
 
-  script:
-  """
-  gatk --java-options "-Xmx85g" \
-  GenotypeGVCFs \
-  -R=\$REF_GENOME \
-  -V=${vcf} \
-  -O=intermediate.vcf.gz
+	script:
+	"""
+	gatk --java-options "-Xmx85g" \
+		GenotypeGVCFs \
+		-R=\$REF_GENOME \
+		-V=${vcf} \
+		-O=intermediate.vcf.gz
 
-  gatk --java-options "-Xmx85G" \
-  SelectVariants \
-  -R=\$REF_GENOME \
-  -V=intermediate.vcf.gz \
-  --select-type-to-include=INDEL \
-  -O=raw_var_indel.vcf.gz
+	gatk --java-options "-Xmx85G" \
+		SelectVariants \
+		-R=\$REF_GENOME \
+		-V=intermediate.vcf.gz \
+		--select-type-to-include=INDEL \
+		-O=raw_var_indel.vcf.gz
 
-  rm intermediate.*
-  """
+	rm intermediate.*
+	"""
 }
 
 process indel_metrics {
-  label 'L_28g5h_genotype_metrics'
-  publishDir "1_genotyping/2_raw_vcfs/", mode: 'copy'
+	label 'L_28g5h_genotype_metrics'
+	publishDir "1_genotyping/2_raw_vcfs/", mode: 'copy'
 
-  input:
-  set file( vcf ), file( tbi ) from raw_indel_to_metrics
+	input:
+	set file( vcf ), file( tbi ) from raw_indel_to_metrics
 
-  output:
-  file( "${vcf}.table.txt" ) into raw_indel_metrics
+	output:
+	file( "${vcf}.table.txt" ) into raw_indel_metrics
 
-  script:
-  """
-  gatk --java-options "-Xmx25G" \
-  VariantsToTable \
-  --variant=${vcf} \
-  --output=${vcf}.table.txt \
-  -F=CHROM -F=POS -F=MQ \
-  -F=QD -F=FS -F=MQRankSum -F=ReadPosRankSum \
-  --show-filtered
-  """
+	script:
+	"""
+	gatk --java-options "-Xmx25G" \
+		VariantsToTable \
+		--variant=${vcf} \
+		--output=${vcf}.table.txt \
+		-F=CHROM -F=POS -F=MQ \
+		-F=QD -F=FS -F=MQRankSum -F=ReadPosRankSum \
+		--show-filtered
+	"""
 }
 
 process filterIndels {
-  label 'L_78g10h_filter_indels'
-  publishDir "1_genotyping/3_gatk_filtered/", mode: 'copy'
+	label 'L_78g10h_filter_indels'
+	publishDir "1_genotyping/3_gatk_filtered/", mode: 'copy'
 
-  input:
-  set file( vcf ), file( tbi ) from raw_indel
+	input:
+	set file( vcf ), file( tbi ) from raw_indel
 
-  output:
-  set file( "filterd.indel.vcf.gz" ), file( "filterd.indel.vcf.gz.tbi" ) into filtered_indel
+	output:
+	set file( "filterd.indel.vcf.gz" ), file( "filterd.indel.vcf.gz.tbi" ) into filtered_indel
 	file( "indel_mask.bed.gz" ) into indel_mask_ch
 
 	/* FILTER THRESHOLDS NEED TO BE UPDATED */
 
-  script:
-  """
-  gatk --java-options "-Xmx75G" \
+	script:
+	"""
+	gatk --java-options "-Xmx75G" \
 		VariantFiltration \
 		-R=\$REF_GENOME \
 		-V ${vcf} \
@@ -577,26 +541,26 @@ process filterIndels {
 		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
 		--filter-name "filter_ReadPosRankSum"
 
-		gatk --java-options "-Xmx75G" \
-	  SelectVariants \
-	  -R=\$REF_GENOME \
-	  -V=intermediate.vcf.gz \
+	gatk --java-options "-Xmx75G" \
+		SelectVariants \
+		-R=\$REF_GENOME \
+		-V=intermediate.vcf.gz \
 		-O=filterd.indel.vcf.gz \
 		--exclude-filtered
 
-		awk '! /\\#/' filterd.indel.vcf.gz | \
+	awk '! /\\#/' filterd.indel.vcf.gz | \
 		awk '{if(length(\$4) > length(\$5)) print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$4)+4);  else print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$5)+4)}' | \
 		gzip -c > indel_mask.bed.gz
 
-	  rm intermediate.*
-  """
+	rm intermediate.*
+	"""
 }
 
 /* create channel of linkage groups */
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
-	.into{ lg_ch, lg_ch2, lg_ch3 }
+	.into{ lg_ch }
 
 lg_ch.combine( filtered_indel ).set{ filtered_indel_lg }
 
