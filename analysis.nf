@@ -663,8 +663,6 @@ process gemma_smooth {
 }
 
 /* 7) Msmc section ============== */
-
-
 Channel
 	.fromFilePairs("1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
 	.set{ cohort_gvcf }
@@ -731,6 +729,8 @@ process filterIndels {
   set file( "filterd.indel.vcf.gz" ), file( "filterd.indel.vcf.gz.tbi" ) into filtered_indel
 	file( "indel_mask.bed.gz" ) into indel_mask_ch
 
+	/* FILTER THRESHOLDS NEED TO BE UPDATED */
+
   script:
   """
   gatk --java-options "-Xmx75G" \
@@ -768,11 +768,14 @@ process filterIndels {
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
-	.into{ lg_ch, lg_ch2 }
+	.into{ lg_ch, lg_ch2, lg_ch3 }
 
 lg_ch.combine( filtered_indel ).set{ filtered_indel_lg }
 
 process split_indel_mask {
+	label 'L_loc_split_indel_mask'
+	publishDir "ressources/indel_masks/", mode: 'copy'
+
 	input:
 	set val( lg ), file( bed ) from filtered_indel_lg
 
@@ -860,11 +863,14 @@ process split_vcf_by_individual {
 }
 
 process bam_caller {
+	label 'L_36g47h_bam_caller'
+	publishDir "ressources/coverage_masks", mode: 'copy' , pattern: "*.coverage_mask.bed.gz"
+
 	input:
 	set val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) from sample_vcf
 
 	output:
-	set val( id ), val( lg ), file( "*.bam_caller.vcf.gz" ), file( "*.coverage_mask.bed.gz" ) into segsites_ch
+	set val( id ), val( lg ), file( "*.bam_caller.vcf.gz" ), file( "*.coverage_mask.bed.gz" ) into coverage_by_sample_lg
 
 	script:
 	"""
@@ -876,13 +882,14 @@ process bam_caller {
 }
 
 process generate_segsites {
-	/* sample_vcf2: val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) */
-	/* segsites_ch: val( id ), val( lg ), file( vcf ), file( bed ) */
+	label "L_36g47h_msmc_generate_segsites"
+	publishDir "2_analysis/msmc/segsites", mode: 'copy' , pattern: "*.covered_sites.bed.txt.gz"
+
 	input:
 	set val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) from sample_vcf2
 
 	output:
-	set val( id ), val( lg ), file( "*.segsites.vcf.gz" ), file( ".covered_sites.bed.txt.gz" ) into segsites_by_sample_lg
+	set val( id ), val( lg ), file( "*.segsites.vcf.gz" ), file( "*.covered_sites.bed.txt.gz" ) into segsites_by_sample_lg
 
 	script:
 	"""
@@ -891,34 +898,71 @@ process generate_segsites {
 		gzip -c > ${id}.${lg}.segsites.vcf.gz
 	"""
 }
-/*
- put bhind segsites (coverage mask not need)
-*/
-segsites_by_sample_lg
-	.map{ [it[0]+"."+it[1], it]}
-	.join( segsites_ch.map{ [it[0]+"."+it[1], it]} )
-	.set{ samples_lg_segsites_and_coverage }
-/* generating MSMC input files (4 inds per species) ----------- *//*
 
-/* Indel ḿask + mapability mask still needed*/
-/* join individuals by run */
-/* copy individual output and collect channel to
-   deal with uneven number of sample involvement */
+process msmc_sample_grouping {
+	label "L_loc_msmc_grouping"
+	publishDir "2_analysis/msmc/setup", mode: 'copy'
+
+	output:
+	file( "msmc_grouping.txt" ) into msmc_grouping
+	file( "msmc_cc_grouping.txt" ) into  cc_grouping
+
+	script:
+	"""
+	Rscript --vanilla \$BASE_DIR/R/sample_assignment_msmc.R \
+	\$BASE_DIR/R/distribute_samples_msmc_and_cc.R \
+	\$BASE_DIR/R/cross_cc.R \
+	\$BASE_DIR/metadata/sample_info.txt \
+	msmc
+	"""
+}
+
+msmc_grouping
+	.splitCsv(header:true, sep:"\t")
+	.map{ row -> [ msmc_run:row.msmc_run, spec:row.spec, geo:row.geo, group_nr:row.group_nr, group_size:row.group_size, samples:row.samples ] }
+	.set { msmc_runs }
+
+/* wait for bam_caller and generate_segsites to finish: */
+coverage_by_sample_lg.collect().map{ [ it ] }.set{ coverage_done }
+segsites_by_sample_lg.collect().map{ [ it ] }.set{ segsites_done }
+
+lg_ch3
+	.combine( msmc_runs )
+	.combine( coverage_done )
+	.combine( segsites_done )
+	.set{ msmc_grouping_after_segsites }
+
+/* generating MSMC input files (4 inds per species) ----------- */
 process generate_multihetsep {
-set idlg, in_sample, in_segsites from samples_lg_segsites
+label "L_120g40h_msmc_generate_multihetsep"
+publishDir "2_analysis/msmc/run_${msmc_gr.msmc_run}", mode: 'copy' , pattern "*.multihetsep.txt"
+
+input:
+/* content msmc_gr: val( msmc_run ), val( spec ), val( geo ), val( group_nr ), val( group_size ), val( samples ) */
+set val( lg ), msmc_gr, coverage, segsites from msmc_grouping_after_segsites
+
+output:
+set val( msmc_gr.msmc_run ), val( lg ), file( "msmc_run.${msmc_gr.msmc_run}.${lg}.multihetsep.txt" ) into msmc_input
+
 """
+COVDIR="\$BASE_DIR/ressources/coverage_masks/"
+SMP=\$(echo ${msmc_gr.samples}  | \
+	sed "s|, |\\n--mask=\${COVDIR}|g; s|^|--mask=\${COVDIR}|g" | \
+	sed "s/\$/.${lg}.coverage_mask.bed.gz/g" | \
+	echo \$( cat ) )
+
+SEGDIR="\$BASE_DIR/2_analysis/msmc/segsites/"
+SEG=\$(echo ${msmc_gr.samples}  | \
+	sed "s|, |\\n\${SEGDIR}|g; s|^|\${SEGDIR}|g" | \
+	sed "s/\$/.${lg}.covered_sites.bed.txt.gz/g" | \
+	echo \$( cat ) )
+
 generate_multihetsep.py \
-	--mask=$COVDIR/XXind1XX_${L}_coverage.mask.bed.gz \
-	--mask=$COVDIR/XXind2XX_${L}_coverage.mask.bed.gz \
-	--mask=$COVDIR/XXind3XX_${L}_coverage.mask.bed.gz \
-	--mask=$COVDIR/XXind4XX_${L}_coverage.mask.bed.gz \
-	--mask=$WORK/0_data/0_resources/mappability_masks/v2_01_$L.mapmask.bed.txt.gz \
-	--negative_mask=$WORK/3_output/3.1_indel_mask/5_indel_mask_$L.bed.gz \
-	$INDIR/segsites_XXind1XX_$L.vcf.gz \
-	$INDIR/segsites_XXind2XX_$L.vcf.gz \
-	$INDIR/segsites_XXind3XX_$L.vcf.gz \
-	$INDIR/segsites_XXind4XX_$L.vcf.gz \
-	> $OUTDIR/$L.XXrunXX.multihetsep.txt
+	\$SMP \ # (--mask=\$COV/{sample}.{lg}.coverage_mask.bed.gz ...)
+	--mask=\$BASE_DIR/ressources/mappability_masks/${lg}.mapmask.bed.txt.gz \
+	--negative_mask=\$BASE_DIR/ressources/indel_masks/indel_mask.${lg}.bed.gz \
+	\$SEG \ # (\${SEGDIR}/{sample}.{lg}.covered_sites.bed.txt.gz ...)
+	> msmc_run.${msmc_gr.msmc_run}.${lg}.multihetsep.txt
 """
 }
 /* run msmc ------------------ *//*
