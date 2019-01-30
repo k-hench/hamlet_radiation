@@ -494,7 +494,7 @@ Channel.from( 50 ).set{ twisst_window_types }
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 
 process twisst_prep {
-  label 'L_120g40h_prep_twisst'
+  label 'L_G120g40h_prep_twisst'
 
   input:
   set val( loc ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch
@@ -504,6 +504,8 @@ process twisst_prep {
 
   script:
    """
+	 module load intel17.0.4 intelmpi17.0.4
+
 	 # I encoutered issues with more recent versions of
 	 # the repository: when running within nextflow, the
 	 # scripts get hun up in the exiting stage
@@ -512,7 +514,7 @@ process twisst_prep {
 	 cp \$SFTWR/genomics_general_old/genomics.py ./
 	 cp \$SFTWR/genomics_general_old/phylo/phyml_sliding_windows.py ./
 
-   python phyml_sliding_windows.py \
+   mpirun \$NQSII_MPIOPTS -np 1 python phyml_sliding_windows.py \
       -g ${geno} \
       --windType sites \
       -w ${twisst_w} \
