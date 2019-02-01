@@ -667,7 +667,7 @@ process gemma_smooth {
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
-	.into{ lg_ch1, lg_ch2, lg_ch3 }
+	.into{ lg_ch1; lg_ch2; lg_ch3 }
 
 Channel
 	.fromFilePairs("1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.{gz,gz.tbi}")
