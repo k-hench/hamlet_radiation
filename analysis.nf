@@ -679,7 +679,7 @@ process gather_depth {
 	publishDir "metadata", mode: 'copy'
 
 	input:
-	file( vcf ) from vcf_depth
+	set vcfID, file( vcf ) from vcf_depth
 
 	output:
 	file( "depth_by_sample.txt" ) into depth_ch
