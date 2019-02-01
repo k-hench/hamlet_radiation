@@ -760,7 +760,7 @@ process bam_caller {
 		gzip -c > ${ID}.${LG}.bam_caller.vcf.gz
 	"""
 }
-
+/*
 process generate_segsites {
 	label "L_36g47h_msmc_generate_segsites"
 	publishDir "2_analysis/msmc/segsites", mode: 'copy' , pattern: "*.covered_sites.bed.txt.gz"
@@ -802,8 +802,9 @@ msmc_grouping
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ msmc_run:row.msmc_run, spec:row.spec, geo:row.geo, group_nr:row.group_nr, group_size:row.group_size, samples:row.samples ] }
 	.set { msmc_runs }
-
+*/
 /* wait for bam_caller and generate_segsites to finish: */
+/*
 coverage_by_sample_lg.collect().map{ [ it ] }.into{ coverage_done, coverage_cc }
 segsites_by_sample_lg.collect().map{ [ it ] }.into{ segsites_done, segsites_cc }
 
@@ -812,8 +813,9 @@ lg_ch2
 	.combine( coverage_done )
 	.combine( segsites_done )
 	.set{ msmc_grouping_after_segsites }
-
+*/
 /* generating MSMC input files (4 inds per species) ----------- */
+/*
 process generate_multihetsep {
 	label "L_120g40h_msmc_generate_multihetsep"
 	publishDir "2_analysis/msmc/input/run_${msmc_gr.msmc_run}", mode: 'copy' , pattern "*.multihetsep.txt"
@@ -821,6 +823,7 @@ process generate_multihetsep {
 
 	input:
 	/* content msmc_gr: val( msmc_run ), val( spec ), val( geo ), val( group_nr ), val( group_size ), val( samples ) */
+	/*
 	set val( lg ), msmc_gr, coverage, segsites from msmc_grouping_after_segsites
 
 	output:
@@ -852,8 +855,9 @@ process generate_multihetsep {
 msmc_input_lg
 	.groupTuple()
 	.set {msmc_input}
-
+*/
 /* run msmc ------------------ */
+/*
 process msmc_run {
 	label "L_190g100h_msmc_run"
 	publishDir "2_analysis/msmc/output/", mode: 'copy'
@@ -877,8 +881,9 @@ process msmc_run {
 		\${INFILES}
 	"""
 }
+*/
 /* generating MSMC cross coalescence input files (2 inds x 2 species) ----------- */
-
+/*
 cc_grouping
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ run_nr:row.run_nr, geo:row.geo, spec_1:row.spec_1, spec_2:row.spec_2, contrast_nr:row.contrast_nr, samples_1:row.samples_1, samples_2:row.samples_2 ] }
@@ -889,21 +894,25 @@ lg_ch3
 	.combine( coverage_cc )
 	.combine( segsites_cc )
 	.set{ cc_grouping_after_segsites }
-
+*/
+/*
 process generate_multihetsep_cc {
 	label "L_105g30h_cc_generate_multihetsep"
 	publishDir "2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
+*/
 	/* content cc_gr: val( run_nr ), val( geo ), val( spec_1 ), val( spec_2 ), val( contrast_nr ), val( samples_1 ), val( samples_2 ) */
+/*
 	set val( lg ), cc_gr, coverage, segsites from cc_grouping_after_segsites
 
 	output:
 	set val( cc_gr.run_nr ), val( lg ), val( cc_gr.spec_1 ), val( cc_gr.spec_2 ), val( cc_gr.geo ), val( cc_gr.contrast_nr ), val( cc_gr.samples_1 ), val( cc_gr.samples_2 ), file( "cc_run.*.multihetsep.txt" ) into cc_input_lg
-
+*/
 	/* !! CHECK: hetsep  using ALL samples of species? */
 	/* !! CHECK: also - pipe at indel script broken? (filter_indels)  */
+/*
 	script:
 	"""
 	COVDIR="\$BASE_DIR/ressources/coverage_masks/"
@@ -940,9 +949,9 @@ process generate_multihetsep_cc {
 cc_input_lg
   .groupTuple()
 	.set {cc_input}
-
+*/
 /* run cross coalescence -------------- */
-process cc_run {
+/*process cc_run {
 	label "L_190g30ht24_cc_run"
 	publishDir "2_analysis/cross_coalescence/output/", mode: 'copy'
 	conda "$HOME/miniconda2/envs/py3"
@@ -952,9 +961,10 @@ process cc_run {
 
 	output:
 	file("cc_run.*.final.txt.gz") into cc_output
-
+*/
 	/* !! CHECK: using hetsep index for -I flag? (currently sample ID is used)?
 		# --> replaced by index */
+/*
 	script:
 	"""
 	INFILES=\$( echo ${hetsep} )
@@ -990,3 +1000,4 @@ process cc_run {
 		gzip > cc_run.${cc_run[0]}.final.txt.gz
 	"""
 }
+*/
