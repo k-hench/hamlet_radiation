@@ -541,7 +541,7 @@ process twisst_run {
 	cut -f 1,3 | \
 	awk '{print \$1"_A\\t"\$2"\\n"\$1"_B\\t"\$2}' > ${loc}.twisst_pop.txt
 
-	TWISST_POPS=\$( cut -f 2 ${loc}.twisst_pop.txt | sort | uniq | echo \$( cat ) | sed 's/ / -g /g; s/^/-g /' )
+	TWISST_POPS=\$( cut -f 2 ${loc}.twisst_pop.txt | sort | uniq | paste -s -d',' | sed 's/,/ -g /g; s/^/-g /' )
 
 	python \$SFTWR/twisst/run_twisst_parallel.py \
 	  --method complete \
