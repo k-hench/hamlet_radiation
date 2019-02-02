@@ -723,6 +723,8 @@ sample_bam_and_depth
 
 /* split vcf by individual ----------------------------- */
 process split_vcf_by_individual {
+	label 'L_20g15h_split_by_vcf'
+	
 	input:
 	set val( id ), file( bam ), val( sites ), val( depth ), file( vcf ), val( lg ) from samples_msmc
 
