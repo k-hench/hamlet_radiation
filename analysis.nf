@@ -497,7 +497,7 @@ process twisst_prep {
   label 'L_G120g40h_prep_twisst'
 
   input:
-  set val( loc ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch
+  set val( loc ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch.filter { it[0] != 'pan' }
 
 	output:
 	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
@@ -536,6 +536,8 @@ process twisst_run {
 
 	script:
 	"""
+	module load intel17.0.4 intelmpi17.0.4
+
 	awk '{print \$1"\\t"\$1}' ${pop} | \
 	sed 's/\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' | \
 	cut -f 1,3 | \
@@ -543,9 +545,10 @@ process twisst_run {
 
 	TWISST_POPS=\$( cut -f 2 ${loc}.twisst_pop.txt | sort | uniq | paste -s -d',' | sed 's/,/ -g /g; s/^/-g /' )
 
-	python \$SFTWR/twisst/run_twisst_parallel.py \
+	mpirun \$NQSII_MPIOPTS -np 1 python \$SFTWR/twisst/run_twisst_parallel.py \
 	  --method complete \
 	  -t ${tree} \
+	  -T 1 \
 	  \$TWISST_POPS \
 	  --groupsFile ${loc}.twisst_pop.txt | \
 	  gzip > ${loc}.w${twisst_w}.phyml_bionj.weights.tsv.gz
