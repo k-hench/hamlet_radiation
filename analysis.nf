@@ -157,7 +157,7 @@ process plink12 {
 admx_prep  = admx_ch.combine( admx_plink )
 
 process admixture_all {
-	label 'L_O88g90h_admixture_all'
+	label 'L_O88g200h_admixture_all'
 	publishDir "2_analysis/admixture/", mode: 'copy' , pattern: "*.Q"
 
 	input:
@@ -724,7 +724,7 @@ sample_bam_and_depth
 /* split vcf by individual ----------------------------- */
 process split_vcf_by_individual {
 	label 'L_20g15h_split_by_vcf'
-	
+
 	input:
 	set val( id ), file( bam ), val( sites ), val( depth ), file( vcf ), val( lg ) from samples_msmc
 
