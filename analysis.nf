@@ -315,7 +315,7 @@ process fasttree_prep {
 
 	script:
 	"""
-	python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
+	python \$SFTWR/genomics_general_old/genoToSeq.py -g ${geno} \
 		-s  all_samples.SNP.fa \
 		-f fasta \
 		--splitPhased
@@ -525,7 +525,7 @@ process twisst_prep {
 }
 
 process twisst_run {
-	label 'L_120g40h_run_twisst'
+	label 'L_G120g40h_run_twisst'
 	publishDir "2_analysis/twisst/", mode: 'copy'
 
 	input:
