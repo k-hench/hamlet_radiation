@@ -315,7 +315,7 @@ process fasttree_prep {
 
 	script:
 	"""
-	python \$SFTWR/genomics_general_old/genoToSeq.py -g ${geno} \
+	python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
 		-s  all_samples.SNP.fa \
 		-f fasta \
 		--splitPhased
@@ -460,7 +460,8 @@ process plot_fst {
 	file( "*.png" ) into fst_plots
 
 	script:
-	"""cat *.log | \
+	"""
+	cat *.log | \
 		grep -E 'Weir and Cockerham|--out' | \
 		grep -A 3 50k | \
 		sed '/^--/d; s/^.*--out //g; s/.50k//g; /^Output/d; s/Weir and Cockerham //g; s/ Fst estimate: /\t/g' | \
@@ -506,15 +507,8 @@ process twisst_prep {
    """
 	 module load intel17.0.4 intelmpi17.0.4
 
-	 # I encoutered issues with more recent versions of
-	 # the repository: when running within nextflow, the
-	 # scripts get hun up in the exiting stage
-	 # git checkout 54b0d75a79a6d4023bbc0e4cfc0c9719678bdde6
-
-	 cp \$SFTWR/genomics_general_old/genomics.py ./
-	 cp \$SFTWR/genomics_general_old/phylo/phyml_sliding_windows.py ./
-
-   mpirun \$NQSII_MPIOPTS -np 1 python phyml_sliding_windows.py \
+   mpirun \$NQSII_MPIOPTS -np 1 | \
+	python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
       -g ${geno} \
       --windType sites \
       -w ${twisst_w} \
@@ -545,7 +539,8 @@ process twisst_run {
 
 	TWISST_POPS=\$( cut -f 2 ${loc}.twisst_pop.txt | sort | uniq | paste -s -d',' | sed 's/,/ -g /g; s/^/-g /' )
 
-	mpirun \$NQSII_MPIOPTS -np 1 python \$SFTWR/twisst/run_twisst_parallel.py \
+	mpirun \$NQSII_MPIOPTS -np 1 | \
+	python \$SFTWR/twisst/run_twisst_parallel.py \
 	  --method complete \
 	  -t ${tree} \
 	  -T 1 \
