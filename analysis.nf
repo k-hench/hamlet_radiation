@@ -525,7 +525,7 @@ process twisst_prep {
    """
 	module load intel17.0.4 intelmpi17.0.4
 
-   mpirun \$NQSII_MPIOPTS -np 1 | \
+   mpirun \$NQSII_MPIOPTS -np 1 \
 	python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
       -g ${geno} \
       --windType sites \
@@ -557,7 +557,7 @@ process twisst_run {
 
 	TWISST_POPS=\$( cut -f 2 ${loc}.${lg}.twisst_pop.txt | sort | uniq | paste -s -d',' | sed 's/,/ -g /g; s/^/-g /' )
 
-	mpirun \$NQSII_MPIOPTS -np 1 | \
+	mpirun \$NQSII_MPIOPTS -np 1 \
 	python \$SFTWR/twisst/run_twisst_parallel.py \
 	  --method complete \
 	  -t ${tree} \
