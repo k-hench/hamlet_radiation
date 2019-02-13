@@ -523,7 +523,7 @@ process twisst_prep {
 
   script:
    """
-	 module load intel17.0.4 intelmpi17.0.4
+	module load intel17.0.4 intelmpi17.0.4
 
    mpirun \$NQSII_MPIOPTS -np 1 | \
 	python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
