@@ -1,4 +1,10 @@
 #!/usr/bin/env nextflow
+/* create channel of linkage groups */
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.map{ "LG" + it }
+	.into{ lg_ch1; lg_ch2; lg_ch3; lg_twisst }
+
 Channel
 	.from( 2..15 )
 	.into{ admx_ch; admx_loc_ch }
@@ -473,20 +479,32 @@ process plot_fst {
 	"""
 }
 
+vcf_loc_twisst
+	.combine( lg_twisst )
+	.set{ vcf_loc_lg_twisst }
+
+
 /* 5) Twisst section ============== */
 process vcf2geno_loc {
 	label 'L_20g15h_vcf2geno'
 
 	input:
-	set val( loc ), file( vcf ), file( pop ) from vcf_loc_twisst
+	set val( loc ), file( vcf ), file( pop ), val( lg )  from vcf_loc_lg_twisst
 
 	output:
-	set val( loc ), file( "${loc}.geno.gz" ), file( pop ) into snp_geno_twisst
+	set val( loc ), val( lg ), file( "${loc}.${lg}.geno.gz" ), file( pop ) into snp_geno_twisst
 
 	script:
 	"""
+	vcftools \
+		--gzvcf ${vcf} \
+		--chr ${lg} \
+		--recode \
+		--stdout |
+		gzip > intermediate.vcf.gz
+
 	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-	  -i ${vcf} | gzip > ${loc}.geno.gz
+	  -i intermediate.vcf.gz | gzip > ${loc}.${lg}.geno.gz
 	"""
 }
 
@@ -498,10 +516,10 @@ process twisst_prep {
   label 'L_G120g40h_prep_twisst'
 
   input:
-  set val( loc ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch.filter { it[0] != 'pan' }
+  set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch.filter { it[0] != 'pan' }
 
 	output:
-	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
+	set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ), file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
 
   script:
    """
@@ -512,7 +530,7 @@ process twisst_prep {
       -g ${geno} \
       --windType sites \
       -w ${twisst_w} \
-      --prefix ${loc}.w${twisst_w}.phyml_bionj \
+      --prefix ${loc}.${lg}.w${twisst_w}.phyml_bionj \
       --model HKY85 \
       --optimise n
 	 """
@@ -523,10 +541,10 @@ process twisst_run {
 	publishDir "2_analysis/twisst/", mode: 'copy'
 
 	input:
-	set val( loc ), file( geno ), file( pop ), val( twisst_w ), file( tree ), file( data ) from twisst_prep_ch
+	set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ), file( tree ), file( data ) from twisst_prep_ch
 
 	output:
-	set val( loc ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
+	set val( loc ), val( lg ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
 
 	script:
 	"""
@@ -535,9 +553,9 @@ process twisst_run {
 	awk '{print \$1"\\t"\$1}' ${pop} | \
 	sed 's/\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' | \
 	cut -f 1,3 | \
-	awk '{print \$1"_A\\t"\$2"\\n"\$1"_B\\t"\$2}' > ${loc}.twisst_pop.txt
+	awk '{print \$1"_A\\t"\$2"\\n"\$1"_B\\t"\$2}' > ${loc}.${lg}.twisst_pop.txt
 
-	TWISST_POPS=\$( cut -f 2 ${loc}.twisst_pop.txt | sort | uniq | paste -s -d',' | sed 's/,/ -g /g; s/^/-g /' )
+	TWISST_POPS=\$( cut -f 2 ${loc}.${lg}.twisst_pop.txt | sort | uniq | paste -s -d',' | sed 's/,/ -g /g; s/^/-g /' )
 
 	mpirun \$NQSII_MPIOPTS -np 1 | \
 	python \$SFTWR/twisst/run_twisst_parallel.py \
@@ -545,8 +563,8 @@ process twisst_run {
 	  -t ${tree} \
 	  -T 1 \
 	  \$TWISST_POPS \
-	  --groupsFile ${loc}.twisst_pop.txt | \
-	  gzip > ${loc}.w${twisst_w}.phyml_bionj.weights.tsv.gz
+	  --groupsFile ${loc}.${lg}.twisst_pop.txt | \
+	  gzip > ${loc}.${lg}.w${twisst_w}.phyml_bionj.weights.tsv.gz
 	"""
 }
 
@@ -661,11 +679,6 @@ process gemma_smooth {
 }
 
 /* 7) Msmc section ============== */
-/* create channel of linkage groups */
-Channel
-	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
-	.map{ "LG" + it }
-	.into{ lg_ch1; lg_ch2; lg_ch3 }
 
 Channel
 	.fromFilePairs("1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.{gz,gz.tbi}")
