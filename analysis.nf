@@ -511,7 +511,7 @@ process vcf2geno_loc {
 Channel.from( 50 ).set{ twisst_window_types }
 
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
-
+/*
 process twisst_prep {
   label 'L_G120g40h_prep_twisst'
 
@@ -532,10 +532,12 @@ process twisst_prep {
       -w ${twisst_w} \
       --prefix ${loc}.${lg}.w${twisst_w}.phyml_bionj \
       --model HKY85 \
-      --optimise n
+      --optimise n \
+		--threads 1
 	 """
 }
-
+*/
+/*
 process twisst_run {
 	label 'L_G120g40h_run_twisst'
 	publishDir "2_analysis/twisst/", mode: 'copy'
@@ -558,7 +560,7 @@ process twisst_run {
 	TWISST_POPS=\$( cut -f 2 ${loc}.${lg}.twisst_pop.txt | sort | uniq | paste -s -d',' | sed 's/,/ -g /g; s/^/-g /' )
 
 	mpirun \$NQSII_MPIOPTS -np 1 \
-	python \$SFTWR/twisst/run_twisst_parallel.py \
+	python \$SFTWR/twisst/twisst.py \
 	  --method complete \
 	  -t ${tree} \
 	  -T 1 \
@@ -567,7 +569,7 @@ process twisst_run {
 	  gzip > ${loc}.${lg}.w${twisst_w}.phyml_bionj.weights.tsv.gz
 	"""
 }
-
+*/
 /* 6) G x P section ============== */
 process GxP_run {
 	label 'L_20g2h_GxP_binary'
