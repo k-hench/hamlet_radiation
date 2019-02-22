@@ -775,7 +775,7 @@ process bam_caller {
 		gzip -c > ${ID}.${LG}.bam_caller.vcf.gz
 	"""
 }
-/*
+
 process generate_segsites {
 	label "L_36g47h_msmc_generate_segsites"
 	publishDir "2_analysis/msmc/segsites", mode: 'copy' , pattern: "*.covered_sites.bed.txt.gz"
@@ -817,18 +817,18 @@ msmc_grouping
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ msmc_run:row.msmc_run, spec:row.spec, geo:row.geo, group_nr:row.group_nr, group_size:row.group_size, samples:row.samples ] }
 	.set { msmc_runs }
-*/
+
 /* wait for bam_caller and generate_segsites to finish: */
-/*
-coverage_by_sample_lg.collect().map{ [ it ] }.into{ coverage_done, coverage_cc }
-segsites_by_sample_lg.collect().map{ [ it ] }.into{ segsites_done, segsites_cc }
+
+coverage_by_sample_lg.collect().map{ [ it ] }.into{ coverage_done; coverage_cc }
+segsites_by_sample_lg.collect().map{ [ it ] }.into{ segsites_done; segsites_cc }
 
 lg_ch2
 	.combine( msmc_runs )
 	.combine( coverage_done )
 	.combine( segsites_done )
 	.set{ msmc_grouping_after_segsites }
-*/
+
 /* generating MSMC input files (4 inds per species) ----------- */
 /*
 process generate_multihetsep {
