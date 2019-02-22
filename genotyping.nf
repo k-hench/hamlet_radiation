@@ -536,10 +536,10 @@ process filterIndels {
 		--filter-name "filter_FS" \
 		--filter-expression "MQ < 52.0 || MQ > 65.0" \
 		--filter-name "filter_MQ" \
-		--filterExpression "SOR > 3.0" \
-		--filterName "filter_SOR" \
-		--filterExpression "InbreedingCoeff < -0.25" \
-		--filterName "filter_InbreedingCoeff" \
+		--filter-expression "SOR > 3.0" \
+		--filter-name "filter_SOR" \
+		--filter-expression "InbreedingCoeff < -0.25" \
+		--filter-name "filter_InbreedingCoeff" \
 		--filter-expression "MQRankSum < -0.2 || MQRankSum > 0.2" \
 		--filter-name "filter_MQRankSum" \
 		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
