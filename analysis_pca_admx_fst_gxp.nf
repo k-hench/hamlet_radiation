@@ -194,7 +194,7 @@ process admixture_log {
 	script:
 	"""
 	grep -h CV log*.out > admixture_report.txt
-	Rscript --vanilla \$BASE_DIR/R/plot_admixture.R admixture_report.txt pop.txt \$BASE_DIR/R/project_config.R .all 8
+	Rscript --vanilla \$BASE_DIR/R/plot_admixture.R admixture_report.txt ${pop[0]} \$BASE_DIR/R/project_config.R .all 12
 	"""
 }
 
