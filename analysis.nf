@@ -167,11 +167,11 @@ process admixture_all {
 	publishDir "2_analysis/admixture/", mode: 'copy' , pattern: "*.Q"
 
 	input:
-	set val( x ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_prep
+	set  val( x ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_prep
 
 	output:
 	file( "hapmap.all.${x}.P" ) into admx_output
-	set file( "log${x}-all.out" ), file( "hapmap.all.${x}.Q" ), file( pop ) into admx_log
+	set vall( "dummy" ), file( "log${x}-all.out" ), file( "hapmap.all.${x}.Q" ), file( pop ) into admx_log
 
 	script:
 	"""
@@ -187,7 +187,7 @@ process admixture_log {
 	publishDir "figures/admixture", mode: 'copy' , pattern: "*.pdf"
 
 	input:
-	set file( logs ), file( admxQ ), file( pop ) from admx_log.collect()
+	set vall( dummy ), file( logs ), file( admxQ ), file( pop ) from admx_log.groupTuple()
 
 	output:
 	file( "admixture_report.txt" ) into admxR_output
