@@ -169,10 +169,11 @@ process admixture_all {
 
 	output:
 	file( "hapmap.all.${x}.P" ) into admx_output
-	set val( "dummy" ), file( "log${x}-all.out" ), file( "hapmap.all.${x}.Q" ), file( pop ) into admx_log
+	set val( "dummy" ), file( "log${x}-all.out" ), file( "hapmap.all.${x}.Q" ), file( "pop.${x}.txt" ) into admx_log
 
 	script:
 	"""
+	mv ${pop} pop.${x}.txt
 	admixture --cv ${ped} ${x} | tee log${x}-all.out
 	mv hapmap.${x}.P hapmap.all.${x}.P
 	mv hapmap.${x}.Q hapmap.all.${x}.Q
