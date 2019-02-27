@@ -40,7 +40,7 @@ process subset_vcf_by_location {
 		--keep ${loc}.pop \
 		--mac 3 \
 		--recode \
-		--stdout | bgzip > ${loc}.vcf.gz
+		--stdout | gzip > ${loc}.vcf.gz
 	"""
 }
 
@@ -103,9 +103,7 @@ process pca_all {
 		--gzvcf ${vcf[0]} \
 		--remove outgroup.pop \
 		--recode \
-		--stdout | bgzip > hamlets_only.vcf.gz
-
-	tabix hamlets_only.vcf.gz
+		--stdout | gzip > hamlets_only.vcf.gz
 
 	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.vcf.gz \$BASE_DIR/R/project_config.R hamlets_only.pop.txt 6
 
@@ -118,9 +116,7 @@ process pca_all {
 		--gzvcf ${vcf[0]} \
 		--keep core_hamlets.pop \
 		--recode \
-		--stdout | bgzip > core_hamlets.vcf.gz
-
-	tabix core_hamlets.vcf.gz
+		--stdout | gzip > core_hamlets.vcf.gz
 
 	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R core_hamlets.vcf.gz \$BASE_DIR/R/project_config.R core_hamlets.pop.txt 6
 	"""

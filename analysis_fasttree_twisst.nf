@@ -37,7 +37,7 @@ process subset_vcf_by_location {
 		--keep ${loc}.pop \
 		--mac 3 \
 		--recode \
-		--stdout | bgzip > ${loc}.vcf.gz
+		--stdout | gzip > ${loc}.vcf.gz
 	"""
 }
 
