@@ -10,7 +10,7 @@ Channel
 	.into{ vcf_locations;  vcf_geno }
 
 Channel
-	.from( "bel", "hon", "pan")
+	.from( "bel", "hon" )
 	.set{ locations_ch }
 
 locations_ch
