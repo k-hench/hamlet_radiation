@@ -3,7 +3,7 @@
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
-	.into{ lg_twisst }
+	.into{ lg_fasttree; lg_twisst }
 
 Channel
 	.fromFilePairs("1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
@@ -47,15 +47,23 @@ process vcf2geno {
 	label 'L_20g15h_vcf2geno'
 
 	input:
-	set vcfId, file( vcf ) from vcf_geno
+	set vcfId, file( vcf ); val( lg ) from vcf_geno.combine( lg_fasttree )
 
 	output:
-	file( "output.geno.gz" ) into snp_geno_tree
+	set val( lg ), file( "output.${lg}.geno.gz" ) into snp_geno_tree
 
 	script:
 	"""
+	vcftools \
+	--gzvcf ${vcf[0]} \
+	--chr ${lg} \
+	--recode \
+	--stdout | gzip > intermediate.vcf.gz
+
 	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-		-i ${vcf[0]} | gzip > output.geno.gz
+		-i  intermediate.vcf.gz | gzip > output.${lg}.geno.gz
+
+	rm intermediate.vcf.gz
 	"""
 }
 
@@ -63,15 +71,15 @@ process fasttree_prep {
 	label 'L_190g15h_fasttree_prep'
 
 	input:
-	file( geno ) from snp_geno_tree
+	set val( lg ), file( geno ) from snp_geno_tree
 
 	output:
-	file( "all_samples.SNP.fa" ) into ( fasttree_prep_ch )
+	set val( lg ), file( "all_samples.${lg}.SNP.fa" ) into ( fasttree_prep_ch )
 
 	script:
 	"""
 	python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
-		-s  all_samples.SNP.fa \
+		-s  all_samples.${lg}.SNP.fa \
 		-f fasta \
 		--splitPhased
 	"""
@@ -82,14 +90,14 @@ process fasttree_run {
 	publishDir "2_analysis/fasttree/", mode: 'copy'
 
 	input:
-	file( fa ) from fasttree_prep_ch
+	set val( lg ), file( fa ) from fasttree_prep_ch
 
 	output:
-	file( " all_samples.SNP.tree" ) into ( fasttree_output )
+	file( " all_samples.${lg}.SNP.tree" ) into ( fasttree_output )
 
 	script:
 	"""
-	fasttree -nt ${fa} > all_samples.SNP.tree
+	fasttree -nt ${fa} > all_samples.${lg}.SNP.tree
 	"""
 }
 /*--------- tree construction -----------*/
@@ -111,16 +119,20 @@ process plot_tree {
 }
 */
 
+/* 2) Twisst section ============== */
+
+/* MUTE:
 vcf_loc_twisst
 	.combine( lg_twisst )
 	.set{ vcf_loc_lg_twisst }
+*/
 
-/* 2) Twisst section ============== */
+/* MUTE: python thread conflict - run locally and feed into ressources/plugin
 process vcf2geno_loc {
 	label 'L_20g15h_vcf2geno'
 
 	input:
-	set val( loc ), file( vcf ), file( pop ), val( lg )  from vcf_loc_lg_twisst
+	set val( loc ), file( vcf ), file( pop ), val( lg ) from vcf_loc_lg_twisst
 
 	output:
 	set val( loc ), val( lg ), file( "${loc}.${lg}.geno.gz" ), file( pop ) into snp_geno_twisst
@@ -138,10 +150,12 @@ process vcf2geno_loc {
 	  -i intermediate.vcf.gz | gzip > ${loc}.${lg}.geno.gz
 	"""
 }
-
+*/
+/* MUTE: python thread conflict - run locally and feed into ressources/plugin
 Channel.from( 50 ).set{ twisst_window_types }
 
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
+*/
 /*
 process twisst_prep {
   label 'L_G120g40h_prep_twisst'
@@ -168,7 +182,7 @@ process twisst_prep {
 	 """
 }
 */
-/*
+/* MUTE: python thread conflict - run locally and feed into ressources/plugin
 process twisst_run {
 	label 'L_G120g40h_run_twisst'
 	publishDir "2_analysis/twisst/", mode: 'copy'
@@ -201,3 +215,35 @@ process twisst_run {
 	"""
 }
 */
+
+process twisst_plugin {
+	label 'L_G120g40h_twisst_plugin'
+	publishDir "2_analysis/twisst/", mode: 'copy'
+
+	input:
+	set val( loc ), file( vcf ), file( pop ), val( lg ) from vcf_loc_twisst.combine( lg_twisst )
+
+	output:
+	set val( loc ), val( lg ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
+
+	script:
+	"""
+	module load intel17.0.4 intelmpi17.0.4
+
+	awk '{print \$1"\\t"\$1}' ${pop} | \
+	sed 's/\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' | \
+	cut -f 1,3 | \
+	awk '{print \$1"_A\\t"\$2"\\n"\$1"_B\\t"\$2}' > ${loc}.${lg}.twisst_pop.txt
+
+	TWISST_POPS=\$( cut -f 2 ${loc}.${lg}.twisst_pop.txt | sort | uniq | paste -s -d',' | sed 's/,/ -g /g; s/^/-g /' )
+
+	mpirun \$NQSII_MPIOPTS -np 1 \
+	python \$SFTWR/twisst/twisst.py \
+	  --method complete \
+	  -t \$BASE_DIR/ressources/plugin/trees/${loc}/${loc}.${lg}.w50.phyml_bionj.trees.gz \
+	  -T 1 \
+	  \$TWISST_POPS \
+	  --groupsFile ${loc}.${lg}.twisst_pop.txt | \
+	  gzip > ${loc}.${lg}.w${twisst_w}.phyml_bionj.weights.tsv.gz
+	"""
+}
