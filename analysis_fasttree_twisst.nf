@@ -49,7 +49,7 @@ process vcf2geno {
 	label 'L_20g15h_vcf2geno'
 
 	input:
-	set vcfId, file( vcf ); val( lg ) from fasttree_geno
+	set vcfId, file( vcf ), val( lg ) from fasttree_geno
 
 	output:
 	set val( lg ), file( "output.${lg}.geno.gz" ) into snp_geno_tree
