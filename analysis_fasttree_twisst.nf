@@ -43,11 +43,13 @@ process subset_vcf_by_location {
 
 
 /* 1) fasttree section ============== */
+vcf_geno.combine( lg_fasttree ).set{ fasttree_geno }
+
 process vcf2geno {
 	label 'L_20g15h_vcf2geno'
 
 	input:
-	set vcfId, file( vcf ); val( lg ) from vcf_geno.combine( lg_fasttree )
+	set vcfId, file( vcf ); val( lg ) from fasttree_geno
 
 	output:
 	set val( lg ), file( "output.${lg}.geno.gz" ) into snp_geno_tree
