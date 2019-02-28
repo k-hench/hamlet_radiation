@@ -226,7 +226,7 @@ process twisst_plugin {
 	set val( loc ), file( vcf ), file( pop ), val( lg ) from vcf_loc_twisst.combine( lg_twisst )
 
 	output:
-	set val( loc ), val( lg ), val( twisst_w ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
+	set val( loc ), val( lg ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
 
 	script:
 	"""
@@ -246,6 +246,6 @@ process twisst_plugin {
 	  -T 1 \
 	  \$TWISST_POPS \
 	  --groupsFile ${loc}.${lg}.twisst_pop.txt | \
-	  gzip > ${loc}.${lg}.w${twisst_w}.phyml_bionj.weights.tsv.gz
+	  gzip > ${loc}.${lg}.w50.phyml_bionj.weights.tsv.gz
 	"""
 }
