@@ -243,7 +243,6 @@ process twisst_plugin {
 	python \$SFTWR/twisst/twisst.py \
 	  --method complete \
 	  -t \$BASE_DIR/ressources/plugin/trees/${loc}/${loc}.${lg}.w50.phyml_bionj.trees.gz \
-	  -T 1 \
 	  \$TWISST_POPS \
 	  --groupsFile ${loc}.${lg}.twisst_pop.txt | \
 	  gzip > ${loc}.${lg}.w50.phyml_bionj.weights.tsv.gz
