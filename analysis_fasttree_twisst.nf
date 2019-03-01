@@ -226,7 +226,7 @@ process twisst_plugin {
 	set val( loc ), file( vcf ), file( pop ), val( lg ) from vcf_loc_twisst.combine( lg_twisst )
 
 	output:
-	set val( loc ), val( lg ), file( "*.weights.tsv.gz" ), file( "*.data.tsv" ) into ( twisst_output )
+	set val( loc ), val( lg ), file( "*.weights.tsv.gz" ) into ( twisst_output )
 
 	script:
 	"""
