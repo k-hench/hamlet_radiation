@@ -88,7 +88,7 @@ process fasttree_prep {
 }
 
 process fasttree_run {
-	label 'L_300g99h_fasttree_run'
+	label 'L_190g100h_fasttree_run'
 	publishDir "2_analysis/fasttree/", mode: 'copy'
 
 	input:
