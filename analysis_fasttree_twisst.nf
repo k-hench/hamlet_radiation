@@ -43,16 +43,16 @@ process subset_vcf_by_location {
 
 
 /* 1) fasttree section ============== */
-vcf_geno.combine( lg_fasttree ).set{ fasttree_geno }
+vcf_geno.combine( lg_fasttree ).into{ fasttree_geno; fasttree_no_og_geno  }
 
-process vcf2geno {
-	label 'L_20g15h_vcf2geno'
+process vcf2geno_all {
+	label 'L_20g15h_vcf2geno_all'
 
 	input:
 	set vcfId, file( vcf ), val( lg ) from fasttree_geno
 
 	output:
-	set val( lg ), file( "output.${lg}.geno.gz" ) into snp_geno_tree
+	set val( "all" ), val( lg ), file( "output.all.${lg}.geno.gz" ) into snp_geno_tree_all
 
 	script:
 	"""
@@ -63,20 +63,52 @@ process vcf2geno {
 	--stdout | gzip > intermediate.vcf.gz
 
 	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-		-i  intermediate.vcf.gz | gzip > output.${lg}.geno.gz
+		-i  intermediate.vcf.gz | gzip > output.all.${lg}.geno.gz
 
 	rm intermediate.vcf.gz
 	"""
 }
 
+process vcf2geno_no_og {
+	label 'L_20g15h_vcf2geno_no_og'
+
+	input:
+	set vcfId, file( vcf ), val( lg ) from fasttree_no_og_geno
+
+	output:
+	set val( "no_og" ), val( lg ), file( "output.no_og.${lg}.geno.gz" ) into snp_geno_tree_no_og
+
+	script:
+	"""
+	vcfsamplenames ${vcf[0]} | \
+		grep "tor\\|tab" > og.pop
+
+	vcftools \
+	--gzvcf ${vcf[0]} \
+	--chr ${lg} \
+	--remove og.pop \
+	--recode \
+	--stdout | gzip > intermediate.vcf.gz
+
+	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
+		-i  intermediate.vcf.gz | gzip > output.no_og.${lg}.geno.gz
+
+	rm intermediate.vcf.gz
+	"""
+}
+
+snp_geno_tree_all
+	.concat( snp_geno_tree_no_og )
+	.set{ snp_geno_tree }
+
 process fasttree_prep {
 	label 'L_190g15h_fasttree_prep'
 
 	input:
-	set val( lg ), file( geno ) from snp_geno_tree
+	set val( type ), val( lg ), file( geno ) from snp_geno_tree
 
 	output:
-	set val( lg ), file( "all_samples.${lg}.SNP.fa" ) into ( fasttree_prep_ch )
+	set val( type ), val( lg ), file( "all_samples.${lg}.SNP.fa" ) into ( fasttree_prep_ch )
 
 	script:
 	"""
@@ -92,7 +124,7 @@ process fasttree_run {
 	publishDir "2_analysis/fasttree/", mode: 'copy'
 
 	input:
-	set val( lg ), file( fa ) from fasttree_prep_ch
+	set val( type ), val( lg ), file( fa ) from fasttree_prep_ch
 
 	output:
 	file( "all_samples.${lg}.SNP.tree" ) into ( fasttree_output )
