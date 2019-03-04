@@ -95,7 +95,7 @@ process fasttree_run {
 	set val( lg ), file( fa ) from fasttree_prep_ch
 
 	output:
-	file( " all_samples.${lg}.SNP.tree" ) into ( fasttree_output )
+	file( "all_samples.${lg}.SNP.tree" ) into ( fasttree_output )
 
 	script:
 	"""
