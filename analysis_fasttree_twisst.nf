@@ -113,7 +113,7 @@ process fasttree_prep {
 	script:
 	"""
 	python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
-		-s  all_samples.${lg}.SNP.fa \
+		-s  all_samples.${type}.${lg}.SNP.fa \
 		-f fasta \
 		--splitPhased
 	"""
@@ -127,11 +127,11 @@ process fasttree_run {
 	set val( type ), val( lg ), file( fa ) from fasttree_prep_ch
 
 	output:
-	file( "all_samples.${lg}.SNP.tree" ) into ( fasttree_output )
+	file( "all_samples.${type}.${lg}.SNP.tree" ) into ( fasttree_output )
 
 	script:
 	"""
-	fasttree -nt ${fa} > all_samples.${lg}.SNP.tree
+	fasttree -nt ${fa} > all_samples.${type}.${lg}.SNP.tree
 	"""
 }
 /*--------- tree construction -----------*/
