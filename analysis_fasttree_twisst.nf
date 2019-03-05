@@ -108,7 +108,7 @@ process fasttree_prep {
 	set val( type ), val( lg ), file( geno ) from snp_geno_tree
 
 	output:
-	set val( type ), val( lg ), file( "all_samples.${lg}.SNP.fa" ) into ( fasttree_prep_ch )
+	set val( type ), val( lg ), file( "all_samples.${type}.${lg}.SNP.fa" ) into ( fasttree_prep_ch )
 
 	script:
 	"""
