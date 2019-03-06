@@ -101,6 +101,8 @@ process bam_caller {
 	"""
 	module load openssl1.0.2
 
+	samtools index ${bam}
+
 	samtools mpileup -q 25 -Q 20 -C 50 -u -r ${lg} -f \$REF_GENOME ${bam} | \
 		bcftools call -c -V indels | \
 		\$BASE_DIR/py/bamHamletCaller.py ${depth} ${id}.${lg}.coverage_mask.bed.gz | \
