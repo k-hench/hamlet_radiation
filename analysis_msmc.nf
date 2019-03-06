@@ -58,14 +58,12 @@ sample_bams
 	.join( depth_by_sample_ch )
 	.set{ sample_bam_and_depth }
 
-sample_bam_and_depth.subscribe{ println it }
 /* multiply the sample channel by the linkage groups */
-/*
 sample_bam_and_depth
 	.combine( vcf_msmc )
 	.combine( lg_ch1 )
 	.set{ samples_msmc }
-*/
+samples_msmc.subscribe{ println it }
 /* split vcf by individual ----------------------------- */
 /*
 process split_vcf_by_individual {
