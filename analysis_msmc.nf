@@ -50,6 +50,7 @@ Channel
 	.map{ file ->
 				def key = file.name.toString().tokenize('.').get(0)
 				return tuple(key, file)}
+				.map{ ["id":it[0], "bam":it[1]] }
 				.set{ sample_bams }
 
 sample_bams.subscribe{ println it }
