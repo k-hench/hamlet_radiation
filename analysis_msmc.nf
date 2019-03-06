@@ -82,7 +82,7 @@ process split_vcf_by_individual {
 		-V ${vcf[0]} \
 		-sn ${id} \
 		-L ${lg}\
-		-o phased_mac2.${id}.${L}.vcf.gz
+		-o phased_mac2.${id}.${lg}.vcf.gz
 	"""
 }
 
@@ -101,8 +101,8 @@ process bam_caller {
 	"""
 	samtools mpileup -q 25 -Q 20 -C 50 -u -r ${lg} -f \$REF_GENOME ${bam} | \
 		bcftools call -c -V indels | \
-		\$BASE_DIR/py/bamHamletCaller.py ${depth} ${ID}.${LG}.coverage_mask.bed.gz | \
-		gzip -c > ${ID}.${LG}.bam_caller.vcf.gz
+		\$BASE_DIR/py/bamHamletCaller.py ${depth} ${id}.${lg}.coverage_mask.bed.gz | \
+		gzip -c > ${id}.${lg}.bam_caller.vcf.gz
 	"""
 }
 
