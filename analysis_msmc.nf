@@ -66,13 +66,13 @@ sample_bam_and_depth
 
 /* split vcf by individual ----------------------------- */
 process split_vcf_by_individual {
-	label 'L_20g15h_split_by_vcf'
+	label 'L_20g15m_split_by_vcf'
 
 	input:
 	set val( id ), file( bam ), val( sites ), val( depth ), val( vcf_id ), file( vcf ), val( lg ) from samples_msmc
 
 	output:
-	set val( id ), val( lg ), file( bam ), val( depth ), file( "phased_mac2.${id}.${L}.vcf.gz" ) into ( sample_vcf, sample_vcf2 )
+	set val( id ), val( lg ), file( bam ), val( depth ), file( "phased_mac2.${id}.${lg}.vcf.gz" ) into ( sample_vcf, sample_vcf2 )
 
 	script:
 	"""
