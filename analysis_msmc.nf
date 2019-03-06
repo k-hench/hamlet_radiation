@@ -82,7 +82,7 @@ process split_vcf_by_individual {
 		-V ${vcf[0]} \
 		-sn ${id} \
 		-L ${lg}\
-		-o phased_mac2.${id}.${lg}.vcf.gz
+		-O phased_mac2.${id}.${lg}.vcf.gz
 	"""
 }
 
