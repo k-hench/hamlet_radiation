@@ -76,7 +76,7 @@ process split_vcf_by_individual {
 
 	script:
 	"""
-	gatk --java-options "-Xmx10G"
+	gatk --java-options "-Xmx10G" \
 		SelectVariants \
 		-R \$REF_GENOME \
 		-V ${vcf[0]} \
