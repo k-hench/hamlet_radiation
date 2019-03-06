@@ -63,14 +63,13 @@ sample_bam_and_depth
 	.combine( vcf_msmc )
 	.combine( lg_ch1 )
 	.set{ samples_msmc }
-samples_msmc.subscribe{ println it }
+
 /* split vcf by individual ----------------------------- */
-/*
 process split_vcf_by_individual {
 	label 'L_20g15h_split_by_vcf'
 
 	input:
-	set val( id ), file( bam ), val( sites ), val( depth ), file( vcf ), val( lg ) from samples_msmc
+	set val( id ), file( bam ), val( sites ), val( depth ), val( vcf_id ), file( vcf ), val( lg ) from samples_msmc
 
 	output:
 	set val( id ), val( lg ), file( bam ), val( depth ), file( "phased_mac2.${id}.${L}.vcf.gz" ) into ( sample_vcf, sample_vcf2 )
@@ -80,7 +79,7 @@ process split_vcf_by_individual {
 	gatk --java-options "-Xmx10G"
 		SelectVariants \
 		-R \$REF_GENOME \
-		-V ${vcf} \
+		-V ${vcf[0]} \
 		-sn ${id} \
 		-L ${lg}\
 		-o phased_mac2.${id}.${L}.vcf.gz
@@ -149,9 +148,8 @@ msmc_grouping
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ msmc_run:row.msmc_run, spec:row.spec, geo:row.geo, group_nr:row.group_nr, group_size:row.group_size, samples:row.samples ] }
 	.set { msmc_runs }
-*/
 /* wait for bam_caller and generate_segsites to finish: */
-/*
+
 coverage_by_sample_lg.collect().map{ [ it ] }.into{ coverage_done; coverage_cc }
 segsites_by_sample_lg.collect().map{ [ it ] }.into{ segsites_done; segsites_cc }
 
@@ -160,7 +158,7 @@ lg_ch2
 	.combine( coverage_done )
 	.combine( segsites_done )
 	.set{ msmc_grouping_after_segsites }
-*/
+
 /* generating MSMC input files (4 inds per species) ----------- */
 /*
 process generate_multihetsep {
