@@ -89,7 +89,7 @@ process split_vcf_by_individual {
 process bam_caller {
 	label 'L_36g47h_bam_caller'
 	publishDir "ressources/coverage_masks", mode: 'copy' , pattern: "*.coverage_mask.bed.gz"
-	conda "$HOME/miniconda2/envs/py3"
+	/* conda "$HOME/miniconda2/envs/py3" */
 	module "openssl1.0.2"
 
 	input:
