@@ -42,6 +42,7 @@ depth_ch
 /* create channel out of sequencing depth table */
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ id:row.INDV, sites:row.N_SITES, depth:row.MEAN_DEPTH] }
+	.map{ [it.id, it] }
 	.set { depth_by_sample_ch }
 
 /* create channel from bam files and add sample id */
@@ -50,7 +51,6 @@ Channel
 	.map{ file ->
 				def key = file.name.toString().tokenize('.').get(0)
 				return tuple(key, file)}
-				.map{ ["id":it[0], "bam":it[1]] }
 				.set{ sample_bams }
 
 /* combine sample bams and sequencing depth */
