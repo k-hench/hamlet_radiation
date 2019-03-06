@@ -108,7 +108,7 @@ process bam_caller {
 }
 
 process generate_segsites {
-	label "L_36g47h_msmc_generate_segsites"
+	label "L_20g15m_msmc_generate_segsites"
 	publishDir "2_analysis/msmc/segsites", mode: 'copy' , pattern: "*.covered_sites.bed.txt.gz"
 	/*conda "$HOME/miniconda2/envs/py3"*/
 
