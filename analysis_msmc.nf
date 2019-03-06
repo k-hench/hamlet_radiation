@@ -90,6 +90,7 @@ process bam_caller {
 	label 'L_36g47h_bam_caller'
 	publishDir "ressources/coverage_masks", mode: 'copy' , pattern: "*.coverage_mask.bed.gz"
 	conda "$HOME/miniconda2/envs/py3"
+	module "openssl1.0.2"
 
 	input:
 	set val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) from sample_vcf
@@ -109,7 +110,7 @@ process bam_caller {
 process generate_segsites {
 	label "L_36g47h_msmc_generate_segsites"
 	publishDir "2_analysis/msmc/segsites", mode: 'copy' , pattern: "*.covered_sites.bed.txt.gz"
-	conda "$HOME/miniconda2/envs/py3"
+	/*conda "$HOME/miniconda2/envs/py3"*/
 
 	input:
 	set val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) from sample_vcf2
