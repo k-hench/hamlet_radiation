@@ -139,6 +139,7 @@ process fasttree_run {
 process plot_tree {
 	label '32g1h.fasttree_plot'
 	publishDir "out/fasttree/", mode: 'symlink'
+	module "R3.5.2"
 
 	input:
 	file( tree ) from fasttree_output

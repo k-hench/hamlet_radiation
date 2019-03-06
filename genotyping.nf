@@ -246,10 +246,10 @@ process gather_gvcfs {
 	GVCF=\$(echo " ${gvcf}" | sed 's/ /-V /g; s/vcf.gz/vcf.gz /g')
 
 	gatk --java-options "-Xmx85g" \
-	CombineGVCFs \
-	-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-	\$GVCF \
-	-O cohort.g.vcf.gz
+		CombineGVCFs \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		\$GVCF \
+		-O cohort.g.vcf.gz
 	"""
 }
 

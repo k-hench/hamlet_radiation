@@ -50,6 +50,7 @@ process pca_location {
 	label "L_20g15h_pca_location"
 	publishDir "figures/pca", mode: 'copy' , pattern: "*.pdf"
 	publishDir "2_analysis/pca", mode: 'copy' , pattern: "*.gz"
+	module "R3.5.2"
 
 	input:
 	set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
@@ -72,6 +73,7 @@ process pca_all {
 	publishDir "figures/pca", mode: 'copy' , pattern: "*.pdf"
 	publishDir "2_analysis/pca", mode: 'copy' , pattern: "*.txt.gz"
 	publishDir "1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
+	module "R3.5.2"
 
 	input:
 	set vcfId, file( vcf ) from vcf_all_samples_pca
@@ -180,6 +182,7 @@ process admixture_log {
 	label 'L_loc_admixture_log'
 	publishDir "2_analysis/admixture/", mode: 'copy' , pattern: "admixture_report*"
 	publishDir "figures/admixture", mode: 'copy' , pattern: "*.pdf"
+	module "R3.5.2"
 
 	input:
 	set val( dummy ), file( logs ), file( admxQ ), file( pop ) from admx_log.groupTuple()
@@ -247,6 +250,7 @@ process admixture_loc_log {
 	label 'L_loc_admixture_log_loc'
 	publishDir "2_analysis/admixture/${loc}", mode: 'copy' , pattern: "admixture_report*"
 	publishDir "figures/admixture", mode: 'copy' , pattern: "*.pdf"
+	module "R3.5.2"
 
 	input:
 	set val( loc ), file( admxQ ), file( logs ), file( pop ) from admx_loc_log_sorted
@@ -335,6 +339,7 @@ process fst_globals {
 	label 'L_loc_fst_globals'
 	publishDir "2_analysis/fst/logs/", mode: 'copy' , pattern: "fst_globals.txt"
 	publishDir "figures/fst", mode: 'copy' , pattern: "global_fst.pdf"
+	module "R3.5.2"
 
 	input:
 	file( log ) from fst_logs.collect()
@@ -363,6 +368,7 @@ fst_50k
 process plot_fst {
 	label 'L_20g2h_plot_fst'
 	publishDir "figures/fst", mode: 'copy' , pattern: "*.png"
+	module "R3.5.2"
 
 	input:
 	set val( loc ), file( first_fst ), file( first_log ) from fst_50k_sorted
@@ -413,6 +419,7 @@ process phenotye_pca {
 	label "L_loc_phenotype_pca"
 	publishDir "figures/phenotype", mode: 'copy' , pattern: "*.pdf"
 	publishDir "2_analysis/phenotype", mode: 'copy' , pattern: "*.gz"
+	module "R3.5.2"
 
 	input:
 	file( sc ) from phenotypes_raw
@@ -436,6 +443,7 @@ traits_ch.combine( plink_binary ).combine( phenotype_file ).set{ trait_plink_com
 process gemma_run {
  label 'L_32g4h_GxP_run'
  publishDir "2_analysis/GxP/bySNP/", mode: 'copy'
+ module "R3.5.2"
 
  input:
  set  val( pheno ), file( bed ), file( bim ), file( fam ), file( pheno_file ) from trait_plink_combo

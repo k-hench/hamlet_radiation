@@ -127,6 +127,7 @@ process generate_segsites {
 process msmc_sample_grouping {
 	label "L_loc_msmc_grouping"
 	publishDir "2_analysis/msmc/setup", mode: 'copy'
+	module "R3.5.2"
 
 	output:
 	file( "msmc_grouping.txt" ) into msmc_grouping
