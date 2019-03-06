@@ -44,8 +44,6 @@ depth_ch
 	.map{ row -> [ id:row.INDV, sites:row.N_SITES, depth:row.MEAN_DEPTH] }
 	.set { depth_by_sample_ch }
 
-depth_by_sample_ch.subscribe{ println it }
-
 /* create channel from bam files and add sample id */
 Channel
 	.fromPath( '1_genotyping/0_dedup_bams/*.bam' )
@@ -55,11 +53,10 @@ Channel
 				.set{ sample_bams }
 
 /* combine sample bams and sequencing depth */
-/*
 sample_bams
 	.join( depth_by_sample_ch )
 	.set{ sample_bam_and_depth }
-*/
+sample_bam_and_depth.subscribe{ println it }
 /* multiply the sample channel by the linkage groups */
 /*
 sample_bam_and_depth
