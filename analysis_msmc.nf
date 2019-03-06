@@ -52,11 +52,13 @@ Channel
 				return tuple(key, file)}
 				.set{ sample_bams }
 
+sample_bams.subscribe{ println it }
 /* combine sample bams and sequencing depth */
+/*
 sample_bams
 	.join( depth_by_sample_ch )
 	.set{ sample_bam_and_depth }
-sample_bam_and_depth.subscribe{ println it }
+*/
 /* multiply the sample channel by the linkage groups */
 /*
 sample_bam_and_depth
