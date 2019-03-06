@@ -42,7 +42,7 @@ depth_ch
 /* create channel out of sequencing depth table */
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ id:row.INDV, sites:row.N_SITES, depth:row.MEAN_DEPTH] }
-	.map{ [it.id, it] }
+	.map{ [it.id, it.sites, it.depth] }
 	.set { depth_by_sample_ch }
 
 /* create channel from bam files and add sample id */
