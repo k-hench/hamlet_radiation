@@ -1,3 +1,8 @@
+# The **python** folder
+
+This folder contains analysis run in **python**.
+The scripts are run from within the **nextflow** pipelines in the root folder.
+
 ## Something is missing here:
 
 For `bamHamletCaller.py` to run, the script `utils.py` from the repo [**msmc-tools**](https://github.com/stschiff/msmc-tools) by Stephan Schiffels needs to be located here.
@@ -13,3 +18,6 @@ git clone https://github.com/stschiff/msmc-tools.git
 cd -
 ln -s $SOFTWARE_DIR/msmc-tools/utils.py ./
 ```
+---
+
+<center><img src="../logo.svg" alt="logo" width="150"/></center>
