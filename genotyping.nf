@@ -37,7 +37,7 @@ process split_samples {
 	echo -e "Read group:\t${x.flowcell_id_fwd}.${x.lane_fwd}\nCompany:\t${x.company}"
 
 	mkdir -p \$BASE_DIR/temp_files
-
+ 
 	gatk --java-options "-Xmx20G" \
 		FastqToSam \
 		-SM=${x.label} \
