@@ -163,7 +163,6 @@ lg_ch2
 	.set{ msmc_grouping_after_segsites }
 
 /* generating MSMC input files (4 inds per species) ----------- */
-/*
 process generate_multihetsep {
 	label "L_120g40h_msmc_generate_multihetsep"
 	publishDir "2_analysis/msmc/input/run_${msmc_gr.msmc_run}", mode: 'copy' , pattern "*.multihetsep.txt"
@@ -171,7 +170,6 @@ process generate_multihetsep {
 
 	input:
 	/* content msmc_gr: val( msmc_run ), val( spec ), val( geo ), val( group_nr ), val( group_size ), val( samples ) */
-	/*
 	set val( lg ), msmc_gr, coverage, segsites from msmc_grouping_after_segsites
 
 	output:
@@ -199,7 +197,7 @@ process generate_multihetsep {
 		> msmc_run.${msmc_gr.msmc_run}.${msmc_gr.spec}.${msmc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }
-
+/*
 msmc_input_lg
 	.groupTuple()
 	.set {msmc_input}
@@ -231,7 +229,7 @@ process msmc_run {
 }
 */
 /* generating MSMC cross coalescence input files (2 inds x 2 species) ----------- */
-/*
+
 cc_grouping
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ run_nr:row.run_nr, geo:row.geo, spec_1:row.spec_1, spec_2:row.spec_2, contrast_nr:row.contrast_nr, samples_1:row.samples_1, samples_2:row.samples_2 ] }
@@ -242,25 +240,21 @@ lg_ch3
 	.combine( coverage_cc )
 	.combine( segsites_cc )
 	.set{ cc_grouping_after_segsites }
-*/
-/*
+
 process generate_multihetsep_cc {
 	label "L_105g30h_cc_generate_multihetsep"
 	publishDir "2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
-*/
 	/* content cc_gr: val( run_nr ), val( geo ), val( spec_1 ), val( spec_2 ), val( contrast_nr ), val( samples_1 ), val( samples_2 ) */
-/*
 	set val( lg ), cc_gr, coverage, segsites from cc_grouping_after_segsites
 
 	output:
 	set val( cc_gr.run_nr ), val( lg ), val( cc_gr.spec_1 ), val( cc_gr.spec_2 ), val( cc_gr.geo ), val( cc_gr.contrast_nr ), val( cc_gr.samples_1 ), val( cc_gr.samples_2 ), file( "cc_run.*.multihetsep.txt" ) into cc_input_lg
-*/
 	/* !! CHECK: hetsep  using ALL samples of species? */
 	/* !! CHECK: also - pipe at indel script broken? (filter_indels)  */
-/*
+
 	script:
 	"""
 	COVDIR="\$BASE_DIR/ressources/coverage_masks/"
@@ -293,7 +287,7 @@ process generate_multihetsep_cc {
 		> cc_run.${cc_gr.run_nr}.${cc_gr.spec_1}-${cc_gr.spec_2}.${cc_gr.contrast_nr}.${cc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }
-
+/*
 cc_input_lg
   .groupTuple()
 	.set {cc_input}
