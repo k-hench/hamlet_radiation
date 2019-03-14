@@ -493,8 +493,8 @@ process gemma_smooth {
 	set file( lm ), file( lmm ), val( win ), val( step ) from gxp_smoothing_input
 
 	output:
-	set val( win ), file( "*.lm.50k.5k.txt.gz" ) into gxp_lm_smoothing_output
-		set val( win ), file( "*.lmm.50k.5k.txt.gz" ) into gxp_lmm_smoothing_output
+	set val( win ), file( "*.lm.*k.txt.gz" ) into gxp_lm_smoothing_output
+	set val( win ), file( "*.lmm.*k.txt.gz" ) into gxp_lmm_smoothing_output
 
 	script:
 	"""
