@@ -520,6 +520,6 @@ process gemma_plot {
 
 	script:
 	"""
-	Rscript --vanilla \$BASE_DIR/R/phenotypes_pca.R \$BASE_DIR/R/project_config.R
+	Rscript --vanilla \$BASE_DIR/R/plot_gxp.R \$BASE_DIR/R/project_config.R
 	"""
 }
