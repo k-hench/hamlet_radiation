@@ -506,7 +506,7 @@ process gemma_smooth {
 gxp_lm_smoothing_output
 	.groupTuple()
 	.filter{ it[0] == 50000 }
-	.set{ grouped_smoothing_output }*/
+	.set{ grouped_smoothing_output }
 
 process gemma_plot {
 	label 'L_loc_GxP_plot'
@@ -523,4 +523,4 @@ process gemma_plot {
 	"""
 	Rscript --vanilla \$BASE_DIR/R/plot_gxp.R \$BASE_DIR/R/project_config.R
 	"""
-} 
+}
