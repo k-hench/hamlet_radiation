@@ -493,7 +493,8 @@ process gemma_smooth {
 	set file( lm ), file( lmm ), val( win ), val( step ) from gxp_smoothing_input
 
 	output:
-	set val( win ), file( "*k.txt.gz" ) into gxp_smoothing_output
+	set val( win ), file( "*.lm.50k.5k.txt.gz" ) into gxp_lm_smoothing_output
+		set val( win ), file( "*.lmm.50k.5k.txt.gz" ) into gxp_lmm_smoothing_output
 
 	script:
 	"""
@@ -502,7 +503,7 @@ process gemma_smooth {
 	"""
 }
 
-gxp_smoothing_output
+gxp_lm_smoothing_output
 	.groupTuple()
 	.filter{ it[0] == 50000 }
 	.subscribe{ println it }
