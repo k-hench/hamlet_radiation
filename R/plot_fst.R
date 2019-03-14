@@ -119,4 +119,4 @@ p1_2 <- ggplot()+
 
 p1 <- cowplot::plot_grid(p1_1,p1_2,ncol = 2,align = 'h',rel_widths = c(1,.15))
 n_runs <- runs$loc_run %>% length()
-ggsave(p1, filename = str_c('fst_',loc,'.png'),width = 297*.95,height = (15+20*n_runs)*.95,units = 'mm')
+ggsave(p1, filename = str_c('fst_',loc,'.pdf'),width = 297*.95,height = (15+20*n_runs)*.95,units = 'mm')

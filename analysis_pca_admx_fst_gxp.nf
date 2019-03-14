@@ -367,14 +367,14 @@ fst_50k
 
 process plot_fst {
 	label 'L_20g2h_plot_fst'
-	publishDir "figures/fst", mode: 'copy' , pattern: "*.png"
+	publishDir "figures/fst", mode: 'copy' , pattern: "*.pdf"
 	module "R3.5.2"
 
 	input:
 	set val( loc ), file( first_fst ), file( first_log ) from fst_50k_sorted
 
 	output:
-	file( "*.png" ) into fst_plots
+	file( "*.pdf" ) into fst_plots
 
 	script:
 	"""
@@ -493,11 +493,33 @@ process gemma_smooth {
 	set file( lm ), file( lmm ), val( win ), val( step ) from gxp_smoothing_input
 
 	output:
-	file( "*k.txt.gz" ) into gxp_smoothing_output
+	set val( win ), file( "*k.txt.gz" ) into gxp_smoothing_output
 
 	script:
 	"""
 	\$BASE_DIR/sh/gxp_slider ${lm} ${win} ${step}
 	\$BASE_DIR/sh/gxp_slider ${lmm} ${win} ${step}
+	"""
+}
+
+gxp_smoothing_output
+	.groupTuple()
+	.filter{ it[0] == 50000 }
+	.set{ grouped_smoothing_output }
+
+process gemma_plot {
+	label 'L_loc_GxP_plot'
+	publishDir "figures/gxp", mode: 'copy' , pattern: "*.pdf"
+	module "R3.5.2"
+
+	input:
+	set file( win ), file( gxp ) from grouped_smoothing_output
+
+	output:
+	file( "*.pdf" ) into gxp_plot_output
+
+	script:
+	"""
+	Rscript --vanilla \$BASE_DIR/R/phenotypes_pca.R \$BASE_DIR/R/project_config.R
 	"""
 }
