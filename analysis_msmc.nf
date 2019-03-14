@@ -242,21 +242,22 @@ lg_ch3
 	.combine( coverage_cc )
 	.combine( segsites_cc )
 	.set{ cc_grouping_after_segsites }
-
-process generate_multihetsep_cc {
+cc_grouping_after_segsites.subscribe{ println it}
+/*process generate_multihetsep_cc {
 	label "L_105g30h_cc_generate_multihetsep"
 	publishDir "2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
-	/* content cc_gr: val( run_nr ), val( geo ), val( spec_1 ), val( spec_2 ), val( contrast_nr ), val( samples_1 ), val( samples_2 ) */
+	*//* content cc_gr: val( run_nr ), val( geo ), val( spec_1 ), val( spec_2 ), val( contrast_nr ), val( samples_1 ), val( samples_2 ) */
+	/*
 	set val( lg ), cc_gr, coverage, segsites from cc_grouping_after_segsites
 
 	output:
 	set val( cc_gr.run_nr ), val( lg ), val( cc_gr.spec_1 ), val( cc_gr.spec_2 ), val( cc_gr.geo ), val( cc_gr.contrast_nr ), val( cc_gr.samples_1 ), val( cc_gr.samples_2 ), file( "cc_run.*.multihetsep.txt" ) into cc_input_lg
-	/* !! CHECK: hetsep  using ALL samples of species? */
+	*//* !! CHECK: hetsep  using ALL samples of species? */
 	/* !! CHECK: also - pipe at indel script broken? (filter_indels)  */
-
+/*
 	script:
 	"""
 	COVDIR="\$BASE_DIR/ressources/coverage_masks/"
@@ -289,7 +290,7 @@ process generate_multihetsep_cc {
 		> cc_run.${cc_gr.run_nr}.${cc_gr.spec_1}-${cc_gr.spec_2}.${cc_gr.contrast_nr}.${cc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }
-/*
+*//*
 cc_input_lg
   .groupTuple()
 	.set {cc_input}
