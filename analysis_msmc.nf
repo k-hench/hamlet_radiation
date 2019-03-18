@@ -161,7 +161,7 @@ lg_ch2
 	.combine( msmc_runs )
 	.combine( coverage_done )
 	.combine( segsites_done )
-	.map{[it[1].run, it ]}
+	.map{[it[0], it[1].run, it[1]]}
 	.set{ msmc_grouping_after_segsites }
 msmc_grouping_after_segsites.println()
 /* generating MSMC input files (4 or 3 inds per species) ----------- */
