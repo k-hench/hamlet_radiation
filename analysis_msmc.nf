@@ -153,8 +153,8 @@ msmc_grouping
 	.set { msmc_runs }
 /* wait for bam_caller and generate_segsites to finish: */
 
-coverage_by_sample_lg.collect().map{ [ it ] }.into{ coverage_done; coverage_cc }
-segsites_by_sample_lg.collect().map{ [ it ] }.into{ segsites_done; segsites_cc }
+coverage_by_sample_lg..groupTuple().into{ coverage_done; coverage_cc }
+segsites_by_sample_lg..groupTuple().into{ segsites_done; segsites_cc }
 
 coverage_done.subscribe{ println it}
 /*
