@@ -193,13 +193,13 @@ process generate_multihetsep {
 		echo \$( cat ) )
 
 	generate_multihetsep.py \
-		\$SMP \ # (--mask=\$COV/{sample}.{lg}.coverage_mask.bed.gz ...)
+		\$SMP \ 
 		--mask=\$BASE_DIR/ressources/mappability_masks/${lg}.mapmask.bed.txt.gz \
 		--negative_mask=\$BASE_DIR/ressources/indel_masks/indel_mask.${lg}.bed.gz \
 		\$SEG \ # (\${SEGDIR}/{sample}.{lg}.covered_sites.bed.txt.gz ...) \
 		> msmc_run.${msmc_gr.msmc_run}.${msmc_gr.spec}.${msmc_gr.geo}.${lg}.multihetsep.txt
 	"""
-}*/
+}
 /*
 msmc_input_lg
 	.groupTuple()
