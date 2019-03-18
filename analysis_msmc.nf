@@ -156,12 +156,14 @@ msmc_grouping
 coverage_by_sample_lg.collect().map{ [ it ] }.into{ coverage_done; coverage_cc }
 segsites_by_sample_lg.collect().map{ [ it ] }.into{ segsites_done; segsites_cc }
 
+coverage_done.subscribe{ println it}
+/*
 lg_ch2
 	.combine( msmc_runs )
 	.combine( coverage_done )
 	.combine( segsites_done )
 	.set{ msmc_grouping_after_segsites }
-
+*/
 /* generating MSMC input files (4 inds per species) ----------- */
 /*
 process generate_multihetsep {
@@ -231,7 +233,7 @@ process msmc_run {
 }
 */
 /* generating MSMC cross coalescence input files (2 inds x 2 species) ----------- */
-
+/*
 cc_grouping
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ run_nr:row.run_nr, geo:row.geo, spec_1:row.spec_1, spec_2:row.spec_2, contrast_nr:row.contrast_nr, samples_1:row.samples_1, samples_2:row.samples_2 ] }
@@ -242,7 +244,7 @@ lg_ch3
 	.combine( coverage_cc )
 	.combine( segsites_cc )
 	.set{ cc_grouping_after_segsites }
-cc_grouping_after_segsites.subscribe{ println it}
+*/
 /*process generate_multihetsep_cc {
 	label "L_105g30h_cc_generate_multihetsep"
 	publishDir "2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
