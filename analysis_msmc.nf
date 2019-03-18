@@ -156,7 +156,7 @@ msmc_grouping
 coverage_by_sample_lg.groupTuple().into{ coverage_done; coverage_cc }
 segsites_by_sample_lg.groupTuple().into{ segsites_done; segsites_cc }
 
-coverage_done.subscribe{ println it}
+segsites_done.subscribe{ println it}
 /*
 lg_ch2
 	.combine( msmc_runs )
