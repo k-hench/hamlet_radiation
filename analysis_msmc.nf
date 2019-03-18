@@ -163,17 +163,16 @@ lg_ch2
 	.combine( segsites_done )
 	.set{ msmc_grouping_after_segsites }
 
-msmc_grouping_after_segsites.println()
-/* generating MSMC input files (4 inds per species) ----------- */
-/*
+/* generating MSMC input files (4 or 3 inds per species) ----------- */
+
 process generate_multihetsep {
 	label "L_120g40h_msmc_generate_multihetsep"
 	publishDir "2_analysis/msmc/input/run_${msmc_gr.msmc_run}", mode: 'copy' , pattern "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
-	*//* content msmc_gr: val( msmc_run ), val( spec ), val( geo ), val( group_nr ), val( group_size ), val( samples ) */
-	/*
+	/* content msmc_gr: val( msmc_run ), val( spec ), val( geo ), val( group_nr ), val( group_size ), val( samples ) */
+	/*[LG20, [msmc_run:45, spec:uni, geo:pan, group_nr:4, group_size:3, samples:ind1, ind2, ind3], coverage done!, segsites done!]*/
 	set val( lg ), msmc_gr, coverage, segsites from msmc_grouping_after_segsites
 
 	output:
@@ -197,7 +196,7 @@ process generate_multihetsep {
 		\$SMP \ # (--mask=\$COV/{sample}.{lg}.coverage_mask.bed.gz ...)
 		--mask=\$BASE_DIR/ressources/mappability_masks/${lg}.mapmask.bed.txt.gz \
 		--negative_mask=\$BASE_DIR/ressources/indel_masks/indel_mask.${lg}.bed.gz \
-		\$SEG \ # (\${SEGDIR}/{sample}.{lg}.covered_sites.bed.txt.gz ...)
+		\$SEG \ # (\${SEGDIR}/{sample}.{lg}.covered_sites.bed.txt.gz ...) \
 		> msmc_run.${msmc_gr.msmc_run}.${msmc_gr.spec}.${msmc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }*/
