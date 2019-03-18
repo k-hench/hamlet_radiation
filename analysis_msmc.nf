@@ -112,7 +112,7 @@ process bam_caller {
 
 process generate_segsites {
 	label "L_20g15m_msmc_generate_segsites"
-	publishDir "2_analysis/msmc/segsites", mode: 'copy' , pattern: "*.covered_sites.bed.txt.gz"
+	publishDir "2_analysis/msmc/segsites", mode: 'copy' , pattern: "*.segsites.vcf.gz"
 
 	input:
 	set val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) from sample_vcf2
@@ -190,7 +190,7 @@ process generate_multihetsep {
 	SEGDIR="\$BASE_DIR/2_analysis/msmc/segsites/"
 	SEG=\$(echo ${msmc_gr.samples}  | \
 		sed "s|, |\\n\${SEGDIR}|g; s|^|\${SEGDIR}|g" | \
-		sed "s/\$/.${lg}.covered_sites.bed.txt.gz/g" | \
+		sed "s/\$/.${lg}.segsites.vcf.gz/g" | \
 		echo \$( cat ) )
 
 	generate_multihetsep.py \
