@@ -154,8 +154,8 @@ msmc_grouping
 /* wait for bam_caller and generate_segsites to finish: */
 /*this '.collect' is only meant to wait until the channel is done,
   files are being redirected via publishDir*/
-coverage_by_sample_lg.collect().map{ [ it ] }.into{ coverage_done; coverage_cc }
-segsites_by_sample_lg.collect().map{ [ it ] }.into{ segsites_done; segsites_cc }
+coverage_by_sample_lg.collect().map{ "coverage done!" }.into{ coverage_done; coverage_cc }
+segsites_by_sample_lg.collect().map{ "segsites done!" }.into{ segsites_done; segsites_cc }
 
 lg_ch2
 	.combine( msmc_runs )
