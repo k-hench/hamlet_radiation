@@ -193,10 +193,10 @@ process generate_multihetsep {
 		echo \$( cat ) )
 
 	generate_multihetsep.py \
-		\$SMP \ 
+		\$SMP \
 		--mask=\$BASE_DIR/ressources/mappability_masks/${lg}.mapmask.bed.txt.gz \
 		--negative_mask=\$BASE_DIR/ressources/indel_masks/indel_mask.${lg}.bed.gz \
-		\$SEG \ # (\${SEGDIR}/{sample}.{lg}.covered_sites.bed.txt.gz ...) \
+		\$SEG \
 		> msmc_run.${msmc_gr.msmc_run}.${msmc_gr.spec}.${msmc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }
