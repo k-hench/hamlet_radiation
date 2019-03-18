@@ -168,13 +168,13 @@ lg_ch2
 
 process generate_multihetsep {
 	label "L_120g40h_msmc_generate_multihetsep"
-	publishDir "2_analysis/msmc/input/run-${run}", mode: 'copy' , pattern "*.multihetsep.txt"
+	publishDir "2_analysis/msmc/input/runs/", mode: 'copy' , pattern "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
 	/* content msmc_gr: val( msmc_run ), val( spec ), val( geo ), val( group_nr ), val( group_size ), val( samples ) */
 	/*[LG20, [msmc_run:45, spec:uni, geo:pan, group_nr:4, group_size:3, samples:ind1, ind2, ind3], coverage done!, segsites done!]*/
-	set val( lg ), val(run) , msmc_gr from msmc_grouping_after_segsites
+	set val( lg ), val( run ), msmc_gr from msmc_grouping_after_segsites
 
 	output:
 	set val( msmc_gr.msmc_run ), val( lg ), val( msmc_gr.spec ), val( msmc_gr.geo ), val( msmc_gr.group_size ), file( "msmc_run.*.multihetsep.txt" ) into msmc_input_lg
