@@ -152,30 +152,18 @@ msmc_grouping
 	.map{ row -> [ msmc_run:row.msmc_run, spec:row.spec, geo:row.geo, group_nr:row.group_nr, group_size:row.group_size, samples:row.samples ] }
 	.set { msmc_runs }
 /* wait for bam_caller and generate_segsites to finish: */
+/*this '.collect' is only meant to wait until the channel is done,
+  files are being redirected via publishDir*/
+coverage_by_sample_lg.collect().map{ [ it ] }.into{ coverage_done; coverage_cc }
+segsites_by_sample_lg.collect().map{ [ it ] }.into{ segsites_done; segsites_cc }
 
-coverage_by_sample_lg
-	.groupTuple()
-	.transpose()
-	.map{[it[0] + it[1], it ]}
-	.into{ coverage_done; coverage_cc }
-segsites_by_sample_lg
-	.groupTuple()
-	.transpose()
-	.map{[it[0] + it[1], it ]}
-	.into{ segsites_done; segsites_cc }
-
-segsites_done.subscribe{ println it}
-/*
-ch1
-	.join(ch2, remainder: true)
-	.println()
-	
 lg_ch2
 	.combine( msmc_runs )
 	.combine( coverage_done )
 	.combine( segsites_done )
 	.set{ msmc_grouping_after_segsites }
-*/
+
+msmc_grouping_after_segsites.println()
 /* generating MSMC input files (4 inds per species) ----------- */
 /*
 process generate_multihetsep {
@@ -245,7 +233,7 @@ process msmc_run {
 }
 */
 /* generating MSMC cross coalescence input files (2 inds x 2 species) ----------- */
-/*
+
 cc_grouping
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ run_nr:row.run_nr, geo:row.geo, spec_1:row.spec_1, spec_2:row.spec_2, contrast_nr:row.contrast_nr, samples_1:row.samples_1, samples_2:row.samples_2 ] }
@@ -256,7 +244,7 @@ lg_ch3
 	.combine( coverage_cc )
 	.combine( segsites_cc )
 	.set{ cc_grouping_after_segsites }
-*/
+
 /*process generate_multihetsep_cc {
 	label "L_105g30h_cc_generate_multihetsep"
 	publishDir "2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
@@ -304,7 +292,7 @@ lg_ch3
 		> cc_run.${cc_gr.run_nr}.${cc_gr.spec_1}-${cc_gr.spec_2}.${cc_gr.contrast_nr}.${cc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }
-*//*
+/*
 cc_input_lg
   .groupTuple()
 	.set {cc_input}
