@@ -168,7 +168,7 @@ lg_ch2
 
 process generate_multihetsep {
 	label "L_120g40h_msmc_generate_multihetsep"
-	publishDir "2_analysis/msmc/input/run_${run}", mode: 'copy' , pattern "*.multihetsep.txt"
+	publishDir "2_analysis/msmc/input/run-${run}", mode: 'copy' , pattern "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
