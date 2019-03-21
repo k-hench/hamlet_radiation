@@ -552,7 +552,8 @@ process filterIndels {
 		-O=filterd.indel.vcf.gz \
 		--exclude-filtered
 
-	awk '! /\\#/' filterd.indel.vcf.gz | \
+	zcat filterd.indel.vcf.gz | \
+		awk '! /\\#/' | \
 		awk '{if(length(\$4) > length(\$5)) print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$4)+4);  else print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$5)+4)}' | \
 		gzip -c > indel_mask.bed.gz
 
