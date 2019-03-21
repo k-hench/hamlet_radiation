@@ -6,13 +6,13 @@ Channel
 	.into{ lg_ch1; lg_ch2; lg_ch3 }
 
 Channel
-	.fromFilePairs("../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
+	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_msmc }
 
 /* 1) Msmc section ============== */
 
 Channel
-	.fromFilePairs("../1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.{gz,gz.tbi}")
+	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.{gz,gz.tbi}")
 	.set{ vcf_depth }
 
 /* gather depth per individual ----------------------------- */
@@ -47,7 +47,7 @@ depth_ch
 
 /* create channel from bam files and add sample id */
 Channel
-	.fromPath( '../1_genotyping/0_dedup_bams/*.bam' )
+	.fromPath( '../../1_genotyping/0_dedup_bams/*.bam' )
 	.map{ file ->
 				def key = file.name.toString().tokenize('.').get(0)
 				return tuple(key, file)}
@@ -88,7 +88,7 @@ process split_vcf_by_individual {
 
 process bam_caller {
 	label 'L_36g47h_bam_caller'
-	publishDir "../ressources/coverage_masks", mode: 'copy' , pattern: "*.coverage_mask.bed.gz"
+	publishDir "../../ressources/coverage_masks", mode: 'copy' , pattern: "*.coverage_mask.bed.gz"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
@@ -112,7 +112,7 @@ process bam_caller {
 
 process generate_segsites {
 	label "L_20g15m_msmc_generate_segsites"
-	publishDir "../2_analysis/msmc/segsites", mode: 'copy' , pattern: "*.segsites.vcf.gz"
+	publishDir "../../2_analysis/msmc/segsites", mode: 'copy' , pattern: "*.segsites.vcf.gz"
 
 	input:
 	set val( id ), val( lg ), file( bam ), val( depth ), file( vcf ) from sample_vcf2
@@ -130,7 +130,7 @@ process generate_segsites {
 
 process msmc_sample_grouping {
 	label "L_loc_msmc_grouping"
-	publishDir "../2_analysis/msmc/setup", mode: 'copy'
+	publishDir "../../2_analysis/msmc/setup", mode: 'copy'
 	module "R3.5.2"
 
 	output:
@@ -168,7 +168,7 @@ lg_ch2
 
 process generate_multihetsep {
 	label "L_120g40h_msmc_generate_multihetsep"
-	publishDir "../2_analysis/msmc/input/run_${run}", mode: 'copy' , pattern: "*.multihetsep.txt"
+	publishDir "../../2_analysis/msmc/input/run_${run}", mode: 'copy' , pattern: "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
@@ -209,7 +209,7 @@ msmc_input_lg
 /*
 process msmc_run {
 	label "L_190g100h_msmc_run"
-	publishDir "../2_analysis/msmc/output/", mode: 'copy'
+	publishDir "../../2_analysis/msmc/output/", mode: 'copy'
 
 	input:
 	set msmc_run, lg , spec, geo, group_size, file( hetsep ) from msmc_input
@@ -246,7 +246,7 @@ lg_ch3
 
 /*process generate_multihetsep_cc {
 	label "L_105g30h_cc_generate_multihetsep"
-	publishDir "../2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
+	publishDir "../../2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
@@ -299,7 +299,7 @@ cc_input_lg
 /* run cross coalescence -------------- */
 /*process cc_run {
 	label "L_190g30ht24_cc_run"
-	publishDir "../2_analysis/cross_coalescence/output/", mode: 'copy'
+	publishDir "../../2_analysis/cross_coalescence/output/", mode: 'copy'
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:

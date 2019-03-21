@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 Channel
-	.fromFilePairs("../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
+	.fromFilePairs("../../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
 	.set{ vcf_cohort }
 
 Channel
@@ -62,7 +62,7 @@ process merge_genotypes {
 
 process filterSNPs {
 	label 'L_105g30h_filter_genotypes'
-	publishDir "../1_genotyping/3_gatk_filtered/", mode: 'copy'
+	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
 
 	input:
 	set file( vcf ), file( tbi ) from all_bp_merged
