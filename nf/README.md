@@ -7,4 +7,4 @@ Of course, the **genotyping\*** pipelines need to be run *before* the **analysis
 
 ---
 
-<center><img src="../logo.svg" alt="logo" width="150"/></center>
+<img src="../logo.svg" alt="logo" width="150" align="middle"/>
