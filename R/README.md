@@ -36,4 +36,4 @@ BiocManager::install("SNPRelate", version = "3.8")
 ```
 ---
 
-<center><img src="../logo.svg" alt="logo" width="150"/></center>
+<p align="center"><img src="../logo.svg" alt="logo" width="150"/></p>

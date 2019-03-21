@@ -20,4 +20,4 @@ ln -s $SOFTWARE_DIR/msmc-tools/utils.py ./
 ```
 ---
 
-<center><img src="../logo.svg" alt="logo" width="150"/></center>
+<p align="center"><img src="../logo.svg" alt="logo" width="150"/></p>

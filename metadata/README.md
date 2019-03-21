@@ -38,4 +38,4 @@ Summary on *per-sample-id* basis:
 
 ---
 
-<center><img src="../logo.svg" alt="logo" width="150"/></center>
+<p align="center"><img src="../logo.svg" alt="logo" width="150"/></p>

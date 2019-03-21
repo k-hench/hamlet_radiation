@@ -19,4 +19,4 @@ Short summary of the SNP filtering prcess:
 
 ---
 
-<center><img src="../logo.svg" alt="logo" width="150"/></center>
+<p align="center"><img src="../logo.svg" alt="logo" width="150"/></p>
