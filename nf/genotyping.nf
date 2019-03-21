@@ -10,7 +10,7 @@
 
 /* open the pipeline based on the metadata spread sheet that includes all
 * information necessary to assign read groups to the sequencing data */
-params.index = 'metadata/file_info.txt'
+params.index = '../metadata/file_info.txt'
 
 /* split the spread sheet by row and feed it into a channel */
 Channel
@@ -136,7 +136,7 @@ process map_and_merge {
 * (intermediate step is required to create .bai file) */
 process mark_duplicates {
 	label 'L_32g30h_mark_duplicates'
-	publishDir "1_genotyping/0_sorted_bams/", mode: 'symlink'
+	publishDir "../1_genotyping/0_sorted_bams/", mode: 'symlink'
 	tag "${sample}"
 
 	input:
@@ -206,7 +206,7 @@ indexed_bams
 /* create one *.g.vcf file per sample */
 process receive_tuple {
 	label 'L_36g47h_receive_tuple'
-	publishDir "1_genotyping/1_gvcfs/", mode: 'symlink'
+	publishDir "../1_genotyping/1_gvcfs/", mode: 'symlink'
 	tag "${sample}"
 
 	input:
@@ -231,7 +231,7 @@ process receive_tuple {
 /* collect and combine all *.g.vcf files */
 process gather_gvcfs {
 	label 'L_O88g90h_gather_gvcfs'
-	publishDir "1_genotyping/1_gvcfs/", mode: 'symlink'
+	publishDir "../1_genotyping/1_gvcfs/", mode: 'symlink'
 	echo true
 
 	input:
@@ -256,7 +256,7 @@ process gather_gvcfs {
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
 	label 'L_O88g90h_joint_genotype'
-	publishDir "1_genotyping/2_raw_vcfs/", mode: 'symlink'
+	publishDir "../1_genotyping/2_raw_vcfs/", mode: 'symlink'
 
 	input:
 	set file( vcf ), file( tbi ) from gcvf_snps
@@ -292,7 +292,7 @@ Channel
 /* produce metrics table to determine filtering thresholds - ups forgot to extract SNPS first*/
 process joint_genotype_metrics {
 	label 'L_28g5h_genotype_metrics'
-	publishDir "1_genotyping/2_raw_vcfs/", mode: 'move'
+	publishDir "../1_genotyping/2_raw_vcfs/", mode: 'move'
 
 	input:
 	set file( vcf ), file( tbi ) from raw_var_sites_to_metrics
@@ -316,7 +316,7 @@ process joint_genotype_metrics {
    and type (bi-allelic only) */
 process filterSNPs {
 	label 'L_78g10h_filter_Snps'
-	publishDir "1_genotyping/3_gatk_filtered/", mode: 'symlink'
+	publishDir "../1_genotyping/3_gatk_filtered/", mode: 'symlink'
 
 	input:
 	set file( vcf ), file( tbi ) from raw_var_sites
@@ -428,7 +428,7 @@ process run_shapeit {
 
 process merge_phased {
 	label 'L_28g5h_merge_phased_vcf'
-	publishDir "1_genotyping/4_phased/", mode: 'move'
+	publishDir "../1_genotyping/4_phased/", mode: 'move'
 
 	input:
 	file( vcf ) from phased_lgs.collect()
@@ -456,12 +456,12 @@ process merge_phased {
 /* ========================================= */
 /* appendix: generate indel masks for msmc: */
 Channel
-	.fromFilePairs("1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
+	.fromFilePairs("../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
 	.set{ cohort_gvcf }
 
 process joint_genotype_indel {
 	label 'L_O88g90h_genotype_indel'
-	publishDir "1_genotyping/2_raw_vcfs/", mode: 'copy'
+	publishDir "../1_genotyping/2_raw_vcfs/", mode: 'copy'
 
 	input:
 	set file( vcf ), file( tbi ) from gvcf_indel
@@ -490,7 +490,7 @@ process joint_genotype_indel {
 
 process indel_metrics {
 	label 'L_28g5h_genotype_metrics'
-	publishDir "1_genotyping/2_raw_vcfs/", mode: 'copy'
+	publishDir "../1_genotyping/2_raw_vcfs/", mode: 'copy'
 
 	input:
 	set file( vcf ), file( tbi ) from raw_indel_to_metrics
@@ -512,7 +512,7 @@ process indel_metrics {
 
 process filterIndels {
 	label 'L_78g10h_filter_indels'
-	publishDir "1_genotyping/3_gatk_filtered/", mode: 'copy'
+	publishDir "../1_genotyping/3_gatk_filtered/", mode: 'copy'
 
 	input:
 	set file( vcf ), file( tbi ) from raw_indel
@@ -571,7 +571,7 @@ lg_ch.combine( filtered_indel ).set{ filtered_indel_lg }
 
 process split_indel_mask {
 	label 'L_loc_split_indel_mask'
-	publishDir "ressources/indel_masks/", mode: 'copy'
+	publishDir "../ressources/indel_masks/", mode: 'copy'
 
 	input:
 	set val( lg ), file( bed ) from filtered_indel_lg

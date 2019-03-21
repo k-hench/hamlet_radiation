@@ -5,7 +5,7 @@ Channel
 	.into{ admx_ch; admx_loc_ch }
 
 Channel
-	.fromFilePairs("1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
+	.fromFilePairs("../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_locations; vcf_all_samples_pca; vcf_admx; vcf_geno }
 
 Channel
@@ -48,8 +48,8 @@ process subset_vcf_by_location {
 /* 1a) PCA (local) -------------- */
 process pca_location {
 	label "L_20g15h_pca_location"
-	publishDir "figures/pca", mode: 'copy' , pattern: "*.pdf"
-	publishDir "2_analysis/pca", mode: 'copy' , pattern: "*.gz"
+	publishDir "../figures/pca", mode: 'copy' , pattern: "*.pdf"
+	publishDir "../2_analysis/pca", mode: 'copy' , pattern: "*.gz"
 	module "R3.5.2"
 
 	input:
@@ -70,9 +70,9 @@ process pca_location {
 /* 1b) PCA (global) -------------- */
 process pca_all {
 	label "L_20g15h_pca_all"
-	publishDir "figures/pca", mode: 'copy' , pattern: "*.pdf"
-	publishDir "2_analysis/pca", mode: 'copy' , pattern: "*.txt.gz"
-	publishDir "1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
+	publishDir "../figures/pca", mode: 'copy' , pattern: "*.pdf"
+	publishDir "../2_analysis/pca", mode: 'copy' , pattern: "*.txt.gz"
+	publishDir "../1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
 	module "R3.5.2"
 
 	input:
@@ -160,7 +160,7 @@ admx_prep  = admx_ch.combine( admx_plink )
 
 process admixture_all {
 	label 'L_O88g200h_admixture_all'
-	publishDir "2_analysis/admixture/", mode: 'copy' , pattern: "*.Q"
+	publishDir "../2_analysis/admixture/", mode: 'copy' , pattern: "*.Q"
 
 	input:
 	set  val( x ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_prep
@@ -180,8 +180,8 @@ process admixture_all {
 
 process admixture_log {
 	label 'L_loc_admixture_log'
-	publishDir "2_analysis/admixture/", mode: 'copy' , pattern: "admixture_report*"
-	publishDir "figures/admixture", mode: 'copy' , pattern: "*.pdf"
+	publishDir "../2_analysis/admixture/", mode: 'copy' , pattern: "admixture_report*"
+	publishDir "../figures/admixture", mode: 'copy' , pattern: "*.pdf"
 	module "R3.5.2"
 
 	input:
@@ -226,7 +226,7 @@ admx_loc_prep  = admx_loc_ch.combine( admx_loc_plink )
 
 process admixture_loc {
 	label 'L_78g10h_admixture_loc'
-	publishDir "2_analysis/admixture/${loc}", mode: 'copy' , pattern: "*.Q"
+	publishDir "../2_analysis/admixture/${loc}", mode: 'copy' , pattern: "*.Q"
 
 	input:
 	set val( x ), val( loc ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_loc_prep
@@ -248,8 +248,8 @@ admxQL_loc
 
 process admixture_loc_log {
 	label 'L_loc_admixture_log_loc'
-	publishDir "2_analysis/admixture/${loc}", mode: 'copy' , pattern: "admixture_report*"
-	publishDir "figures/admixture", mode: 'copy' , pattern: "*.pdf"
+	publishDir "../2_analysis/admixture/${loc}", mode: 'copy' , pattern: "admixture_report*"
+	publishDir "../figures/admixture", mode: 'copy' , pattern: "*.pdf"
 	module "R3.5.2"
 
 	input:
@@ -298,9 +298,9 @@ bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 process fst_run {
 	label 'L_32g4h_fst_run'
-	publishDir "2_analysis/fst/50k/${loc}", mode: 'copy' , pattern: "*.50k.windowed.weir.fst.gz"
-	publishDir "2_analysis/fst/10k/${loc}", mode: 'copy' , pattern: "*.10k.windowed.weir.fst.gz"
-	publishDir "2_analysis/fst/logs/${loc}", mode: 'copy' , pattern: "${loc}-${spec1}-${spec2}.log"
+	publishDir "../2_analysis/fst/50k/${loc}", mode: 'copy' , pattern: "*.50k.windowed.weir.fst.gz"
+	publishDir "../2_analysis/fst/10k/${loc}", mode: 'copy' , pattern: "*.10k.windowed.weir.fst.gz"
+	publishDir "../2_analysis/fst/logs/${loc}", mode: 'copy' , pattern: "${loc}-${spec1}-${spec2}.log"
 
 	input:
 	set val( loc ), file( vcf ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
@@ -337,8 +337,8 @@ process fst_run {
    genome wide fst values */
 process fst_globals {
 	label 'L_loc_fst_globals'
-	publishDir "2_analysis/fst/logs/", mode: 'copy' , pattern: "fst_globals.txt"
-	publishDir "figures/fst", mode: 'copy' , pattern: "global_fst.pdf"
+	publishDir "../2_analysis/fst/logs/", mode: 'copy' , pattern: "fst_globals.txt"
+	publishDir "../figures/fst", mode: 'copy' , pattern: "global_fst.pdf"
 	module "R3.5.2"
 
 	input:
@@ -367,7 +367,7 @@ fst_50k
 
 process plot_fst {
 	label 'L_20g2h_plot_fst'
-	publishDir "figures/fst", mode: 'copy' , pattern: "*.pdf"
+	publishDir "../figures/fst", mode: 'copy' , pattern: "*.pdf"
 	module "R3.5.2"
 
 	input:
@@ -412,13 +412,13 @@ process GxP_run {
 }
 
 Channel
-	.fromPath("metadata/phenotypes.sc")
+	.fromPath("../metadata/phenotypes.sc")
 	.set{ phenotypes_raw }
 
 process phenotye_pca {
 	label "L_loc_phenotype_pca"
-	publishDir "figures/phenotype", mode: 'copy' , pattern: "*.pdf"
-	publishDir "2_analysis/phenotype", mode: 'copy' , pattern: "*.gz"
+	publishDir "../figures/phenotype", mode: 'copy' , pattern: "*.pdf"
+	publishDir "../2_analysis/phenotype", mode: 'copy' , pattern: "*.gz"
 	module "R3.5.2"
 
 	input:
@@ -442,7 +442,7 @@ traits_ch.combine( plink_binary ).combine( phenotype_file ).set{ trait_plink_com
 
 process gemma_run {
  label 'L_32g4h_GxP_run'
- publishDir "2_analysis/GxP/bySNP/", mode: 'copy'
+ publishDir "../2_analysis/GxP/bySNP/", mode: 'copy'
  module "R3.5.2"
 
  input:
@@ -487,7 +487,7 @@ gemma_results.combine( gxp_smoothing_levels ).set{ gxp_smoothing_input }
 
 process gemma_smooth {
 	label 'L_20g2h_GxP_smooth'
-	publishDir "2_analysis/GxP/", mode: 'copy'
+	publishDir "../2_analysis/GxP/", mode: 'copy'
 
 	input:
 	set file( lm ), file( lmm ), val( win ), val( step ) from gxp_smoothing_input
@@ -510,7 +510,7 @@ gxp_lm_smoothing_output
 
 process gemma_plot {
 	label 'L_loc_GxP_plot'
-	publishDir "figures/gxp", mode: 'copy' , pattern: "*.pdf"
+	publishDir "../figures/gxp", mode: 'copy' , pattern: "*.pdf"
 	module "R3.5.2"
 
 	input:

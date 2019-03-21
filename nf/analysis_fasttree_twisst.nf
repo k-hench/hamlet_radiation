@@ -6,7 +6,7 @@ Channel
 	.into{ lg_fasttree; lg_twisst }
 
 Channel
-	.fromFilePairs("1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
+	.fromFilePairs("../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_locations;  vcf_geno }
 
 Channel
@@ -121,7 +121,7 @@ process fasttree_prep {
 
 process fasttree_run {
 	label 'L_190g100h_fasttree_run'
-	publishDir "2_analysis/fasttree/", mode: 'copy'
+	publishDir "../2_analysis/fasttree/", mode: 'copy'
 
 	input:
 	set val( type ), val( lg ), file( fa ) from fasttree_prep_ch
@@ -138,7 +138,7 @@ process fasttree_run {
 /*
 process plot_tree {
 	label '32g1h.fasttree_plot'
-	publishDir "out/fasttree/", mode: 'symlink'
+	publishDir "../out/fasttree/", mode: 'symlink'
 	module "R3.5.2"
 
 	input:
@@ -220,7 +220,7 @@ process twisst_prep {
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 process twisst_run {
 	label 'L_G120g40h_run_twisst'
-	publishDir "2_analysis/twisst/", mode: 'copy'
+	publishDir "../2_analysis/twisst/", mode: 'copy'
 
 	input:
 	set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ), file( tree ), file( data ) from twisst_prep_ch
@@ -253,7 +253,7 @@ process twisst_run {
 
 process twisst_plugin {
 	label 'L_G120g40h_twisst_plugin'
-	publishDir "2_analysis/twisst/", mode: 'copy'
+	publishDir "../2_analysis/twisst/", mode: 'copy'
 
 	input:
 	set val( loc ), file( vcf ), file( pop ), val( lg ) from vcf_loc_twisst.combine( lg_twisst )
