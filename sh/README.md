@@ -9,4 +9,4 @@ The file `nextflow_alias.sh` contains the commands used to execute the **nextflo
 
 ---
 
-<center><img src="../logo.svg" alt="logo" width="150"/></center>
+<p align="center"><img src="../logo.svg" alt="logo" width="150"/></p>
