@@ -57,7 +57,7 @@ process merge_genotypes {
 	gatk --java-options "-Xmx85g" \
 		GatherVcfs \
 		\$INPUT \
-		O=all_sites.vcf.gz
+		-O=all_sites.vcf.gz
 	"""
 }
 
