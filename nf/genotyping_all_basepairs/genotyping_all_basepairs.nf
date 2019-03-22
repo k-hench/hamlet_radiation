@@ -53,14 +53,14 @@ process merge_genotypes {
 	script:
 	"""
 	INPUT=\$(ls -1 *vcf.gz | sed 's/^/ -I /g' | cat \$( echo ))
-	echo \$INPUT
-	#gatk --java-options "-Xmx85g" \
-	#	GatherVcfs \
-	#	\$INPUT \
-	#	O=all_sites.vcf.gz
+
+	gatk --java-options "-Xmx85g" \
+		GatherVcfs \
+		\$INPUT \
+		O=all_sites.vcf.gz
 	"""
 }
-/*
+
 process filterSNPs {
 	label 'L_105g30h_filter_genotypes'
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
@@ -109,4 +109,3 @@ process filterSNPs {
 	rm intermediate.*
 	"""
 }
-*/
