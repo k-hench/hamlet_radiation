@@ -17,7 +17,7 @@ process joint_genotype_snps {
 	set val( lg ), vcfId, file( vcf ) from vcf_lg_combo
 
 	output:
-	set val( lg ), file( "all_site*.vcf.gz" ), file( "all_site*.vcf.gz.tbi" ) into all_bp_by_location
+	set val( 'all' ), val( lg ), file( "all_site*.vcf.gz" ), file( "all_site*.vcf.gz.tbi" ) into all_bp_by_location
 
 	script:
 	"""
@@ -40,11 +40,13 @@ process joint_genotype_snps {
 	"""
 }
 
+all_bp_by_location.groupTuple().println()
+/*
 process merge_genotypes {
 	label 'L_78g5h_merge_genotypes'
 
 	input:
-	set val( lg ), file( vcf ), file( tbi ) from all_bp_by_location.collect()
+	set val( lg ), file( vcf ), file( tbi ) from all_bp_by_location.groupTuple()
 
 	output:
 	set file( "all_sites.vcf.gz" ), file( "all_sites.vcf.gz.tbi" ) into all_bp_merged
@@ -108,3 +110,4 @@ process filterSNPs {
 	rm intermediate.*
 	"""
 }
+*/
