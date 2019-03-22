@@ -40,13 +40,12 @@ process joint_genotype_snps {
 	"""
 }
 
-all_bp_by_location.groupTuple().println()
-/*
 process merge_genotypes {
 	label 'L_78g5h_merge_genotypes'
+	echo true
 
 	input:
-	set val( lg ), file( vcf ), file( tbi ) from all_bp_by_location.groupTuple()
+	set val( dummy ),  val( lg ), file( vcf ), file( tbi ) from all_bp_by_location.groupTuple()
 
 	output:
 	set file( "all_sites.vcf.gz" ), file( "all_sites.vcf.gz.tbi" ) into all_bp_merged
@@ -54,14 +53,14 @@ process merge_genotypes {
 	script:
 	"""
 	INPUT=\$(ls -1 *vcf.gz | sed 's/^/ -I /g' | cat \$( echo ))
-
-	gatk --java-options "-Xmx85g" \
-		GatherVcfs \
-		\$INPUT \
-		O=all_sites.vcf.gz
+	echo \$INPUT
+	#gatk --java-options "-Xmx85g" \
+	#	GatherVcfs \
+	#	\$INPUT \
+	#	O=all_sites.vcf.gz
 	"""
 }
-
+/*
 process filterSNPs {
 	label 'L_105g30h_filter_genotypes'
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
