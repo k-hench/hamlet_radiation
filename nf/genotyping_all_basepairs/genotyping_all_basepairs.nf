@@ -48,7 +48,7 @@ process merge_genotypes {
 	set val( dummy ),  val( lg ), file( vcf ), file( tbi ) from all_bp_by_location.groupTuple()
 
 	output:
-	set file( "all_sites.vcf.gz" ), file( "all_sites.vcf.gz.tbi" ) into all_bp_merged
+	file( "all_sites.vcf.gz" ) into all_bp_merged
 
 	script:
 	"""
@@ -66,10 +66,10 @@ process filterSNPs {
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
 
 	input:
-	set file( vcf ), file( tbi ) from all_bp_merged
+	file( vcf ) from all_bp_merged
 
 	output:
-	set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
+	file( "filterd_bi-allelic.vcf.gz" ) into filtered_snps
 
 	script:
 	"""
