@@ -69,10 +69,12 @@ process filterSNPs {
 	file( vcf ) from all_bp_merged
 
 	output:
-	file( "filterd_bi-allelic.vcf.gz" ) into filtered_snps
+	set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
 
 	script:
 	"""
+	tabix -p vcf ${vcf}
+
 	gatk --java-options "-Xmx75G" \
 		VariantFiltration \
 		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
