@@ -64,6 +64,7 @@ process merge_genotypes {
 process filterSNPs {
 	label 'L_105g30h_filter_genotypes'
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
+	module "openssl1.0.2"
 
 	input:
 	file( vcf ) from all_bp_merged
