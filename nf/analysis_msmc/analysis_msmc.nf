@@ -204,9 +204,9 @@ process generate_multihetsep {
 msmc_input_lg
 	.groupTuple()
 	.set {msmc_input}
-
+msmc_input.println()
 /* run msmc ------------------ */
-
+/*
 process msmc_run {
 	label "L_190g100h_msmc_run"
 	publishDir "../../2_analysis/msmc/output/", mode: 'copy'
@@ -230,7 +230,7 @@ process msmc_run {
 		\${INFILES}
 	"""
 }
-
+*/
 /* generating MSMC cross coalescence input files (2 inds x 2 species) ----------- */
 
 cc_grouping
