@@ -177,7 +177,7 @@ process generate_multihetsep {
 	set val( lg ), val( run ), msmc_gr from msmc_grouping_after_segsites
 
 	output:
-	set val( msmc_gr.msmc_run ), val( lg ), val( msmc_gr.spec ), val( msmc_gr.geo ), val( msmc_gr.group_size ), file( "msmc_run.*.multihetsep.txt" ) into msmc_input_lg
+	set val( run ), val( lg ), val( msmc_gr.spec ), val( msmc_gr.geo ), val( msmc_gr.group_size ), file( "msmc_run.*.multihetsep.txt" ) into msmc_input_lg
 
 	script:
 	"""
