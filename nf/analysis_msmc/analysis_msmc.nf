@@ -209,13 +209,14 @@ msmc_input_lg
 
 process msmc_run {
 	label "L_190g100h_msmc_run"
-	publishDir "../../2_analysis/msmc/output/", mode: 'copy'
+	publishDir "../../2_analysis/msmc/output/", mode: 'copy' , pattern: "*.final.txt"
+	publishDir "../../2_analysis/msmc/loops/", mode: 'copy' , pattern: "*.loop.txt"
 
 	input:
 	set msmc_run, lg , spec, geo, group_size, file( hetsep ) from msmc_input
 
 	output:
-	file("*.msmc2") into msmc_output
+	file("*.msmc2.*.txt") into msmc_output
 
 	script:
 	"""
