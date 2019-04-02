@@ -258,7 +258,7 @@ process generate_multihetsep_cc {
 	set val( lg ), val( run ), cc_gr from cc_grouping_after_segsites
 
 	output:
-	set val( cc_gr.run_nr ), val( lg ), val( cc_gr.spec_1 ), val( cc_gr.spec_2 ), val( cc_gr.geo ), val( cc_gr.contrast_nr ), val( cc_gr.samples_1 ), val( cc_gr.samples_2 ), file( "cc_run.*.multihetsep.txt" ) into cc_input_lg
+	set val( cc_gr.run ), val( lg ), val( cc_gr.spec_1 ), val( cc_gr.spec_2 ), val( cc_gr.geo ), val( cc_gr.contrast_nr ), val( cc_gr.samples_1 ), val( cc_gr.samples_2 ), file( "cc_run.*.multihetsep.txt" ) into cc_input_lg
 	/* !! CHECK: hetsep  using ALL samples of species? */
 	/* !! CHECK: also - pipe at indel script broken? (filter_indels)  */
 
