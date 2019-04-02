@@ -236,30 +236,32 @@ process msmc_run {
 
 cc_grouping
 	.splitCsv(header:true, sep:"\t")
-	.map{ row -> [ run_nr:row.run_nr, geo:row.geo, spec_1:row.spec_1, spec_2:row.spec_2, contrast_nr:row.contrast_nr, samples_1:row.samples_1, samples_2:row.samples_2 ] }
+	.map{ row -> [ run:row.run_nr, geo:row.geo, spec_1:row.spec_1, spec_2:row.spec_2, contrast_nr:row.contrast_nr, samples_1:row.samples_1, samples_2:row.samples_2 ] }
 	.set { cc_runs }
+
 
 lg_ch3
 	.combine( cc_runs )
 	.combine( coverage_cc )
 	.combine( segsites_cc )
+	.map{[it[0], it[1].run, it[1]]}
 	.set{ cc_grouping_after_segsites }
-cc_grouping_after_segsites.println()
-/*process generate_multihetsep_cc {
+
+process generate_multihetsep_cc {
 	label "L_105g30h_cc_generate_multihetsep"
 	publishDir "../../2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
-	*//* content cc_gr: val( run_nr ), val( geo ), val( spec_1 ), val( spec_2 ), val( contrast_nr ), val( samples_1 ), val( samples_2 ) */
-	/*
-	set val( lg ), cc_gr, coverage, segsites from cc_grouping_after_segsites
+	/* content cc_gr: val( run_nr ), val( geo ), val( spec_1 ), val( spec_2 ), val( contrast_nr ), val( samples_1 ), val( samples_2 ) */
+
+	set val( lg ), val( run ), cc_gr from cc_grouping_after_segsites
 
 	output:
 	set val( cc_gr.run_nr ), val( lg ), val( cc_gr.spec_1 ), val( cc_gr.spec_2 ), val( cc_gr.geo ), val( cc_gr.contrast_nr ), val( cc_gr.samples_1 ), val( cc_gr.samples_2 ), file( "cc_run.*.multihetsep.txt" ) into cc_input_lg
-	*//* !! CHECK: hetsep  using ALL samples of species? */
+	/* !! CHECK: hetsep  using ALL samples of species? */
 	/* !! CHECK: also - pipe at indel script broken? (filter_indels)  */
-/*
+
 	script:
 	"""
 	COVDIR="\$BASE_DIR/ressources/coverage_masks/"
@@ -289,7 +291,7 @@ cc_grouping_after_segsites.println()
 		--negative_mask=\$BASE_DIR/ressources/indel_masks/indel_mask.${lg}.bed.gz \
 		\${SEG1} \
 		\${SEG2} \
-		> cc_run.${cc_gr.run_nr}.${cc_gr.spec_1}-${cc_gr.spec_2}.${cc_gr.contrast_nr}.${cc_gr.geo}.${lg}.multihetsep.txt
+		> cc_run.${run}.${cc_gr.spec_1}-${cc_gr.spec_2}.${cc_gr.contrast_nr}.${cc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }
 /*
