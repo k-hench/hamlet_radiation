@@ -249,7 +249,7 @@ lg_ch3
 
 process generate_multihetsep_cc {
 	label "L_105g30h_cc_generate_multihetsep"
-	publishDir "../../2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
+	publishDir "../../2_analysis/cross_coalescence/input/run_${cc_gr.run}", mode: 'copy' , pattern "*.multihetsep.txt"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
