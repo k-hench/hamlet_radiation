@@ -254,7 +254,6 @@ process generate_multihetsep_cc {
 
 	input:
 	/* content cc_gr: val( run_nr ), val( geo ), val( spec_1 ), val( spec_2 ), val( contrast_nr ), val( samples_1 ), val( samples_2 ) */
-
 	set val( lg ), val( run ), cc_gr from cc_grouping_after_segsites
 
 	output:
