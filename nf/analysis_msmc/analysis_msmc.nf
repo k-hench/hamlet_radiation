@@ -244,7 +244,7 @@ lg_ch3
 	.combine( coverage_cc )
 	.combine( segsites_cc )
 	.set{ cc_grouping_after_segsites }
-
+cc_grouping_after_segsites.println()
 /*process generate_multihetsep_cc {
 	label "L_105g30h_cc_generate_multihetsep"
 	publishDir "../../2_analysis/cross_coalescence/input/run_${cc_gr.run_nr}", mode: 'copy' , pattern "*.multihetsep.txt"
