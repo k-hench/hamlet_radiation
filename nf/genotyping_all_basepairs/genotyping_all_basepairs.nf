@@ -91,14 +91,18 @@ process filterSNPs {
 		--filter-expression "MQRankSum < -0.2 || MQRankSum > 0.2" \
 		--filter-name "filter_MQRankSum" \
 		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
-		--filter-name "filter_ReadPosRankSum"
+		--filter-name "filter_ReadPosRankSum" \
+		--QUIET true
+
 
 	gatk --java-options "-Xmx75G" \
 		SelectVariants \
 		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
 		-V=intermediate.vcf.gz \
 		-O=intermediate.filterd.vcf.gz \
-		--exclude-filtered
+		--exclude-filtered \
+		--QUIET true \
+		--verbosity ERROR
 
 	vcftools \
 		--gzvcf intermediate.filterd.vcf.gz \
