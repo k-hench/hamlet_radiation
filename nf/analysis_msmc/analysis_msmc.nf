@@ -276,11 +276,11 @@ process generate_multihetsep_cc {
 	SEGDIR="\$BASE_DIR/2_analysis/msmc/segsites/"
 	SEG1=\$(echo ${cc_gr.samples_1}  | \
 		sed "s|, |\\n\${SEGDIR}|g; s|^|\${SEGDIR}|g" | \
-		sed "s/\$/.${lg}.covered_sites.bed.txt.gz/g" | \
+		sed "s/\$/.${lg}.segsites.vcf.gz/g" | \
 		echo \$( cat ) )
 	SEG2=\$(echo ${cc_gr.samples_2}  | \
 		sed "s|, |\\n\${SEGDIR}|g; s|^|\${SEGDIR}|g" | \
-		sed "s/\$/.${lg}.covered_sites.bed.txt.gz/g" | \
+		sed "s/\$/.${lg}.segsites.vcf.gz/g" | \
 		echo \$( cat ) )
 
 	generate_multihetsep.py \
