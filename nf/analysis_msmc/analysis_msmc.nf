@@ -206,7 +206,6 @@ msmc_input_lg
 	.set {msmc_input}
 
 /* run msmc ------------------ */
-
 process msmc_run {
 	label "L_190g100h_msmc_run"
 	publishDir "../../2_analysis/msmc/output/", mode: 'copy' , pattern: "*.final.txt"
@@ -293,13 +292,13 @@ process generate_multihetsep_cc {
 		> cc_run.${run}.${cc_gr.spec_1}-${cc_gr.spec_2}.${cc_gr.contrast_nr}.${cc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }
-/*
+
 cc_input_lg
   .groupTuple()
 	.set {cc_input}
-*/
+
 /* run cross coalescence -------------- */
-/*process cc_run {
+process cc_run {
 	label "L_190g30ht24_cc_run"
 	publishDir "../../2_analysis/cross_coalescence/output/", mode: 'copy'
 	conda "$HOME/miniconda2/envs/py3"
@@ -309,10 +308,8 @@ cc_input_lg
 
 	output:
 	file("cc_run.*.final.txt.gz") into cc_output
-*/
 	/* !! CHECK: using hetsep index for -I flag? (currently sample ID is used)?
 		# --> replaced by index */
-/*
 	script:
 	"""
 	INFILES=\$( echo ${hetsep} )
@@ -348,4 +345,3 @@ cc_input_lg
 		gzip > cc_run.${cc_run[0]}.final.txt.gz
 	"""
 }
-*/
