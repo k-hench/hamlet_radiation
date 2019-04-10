@@ -435,7 +435,7 @@ process phenotye_pca {
 }
 
 Channel
-	.from("Bars", "Lines", "Snout", "Peduncle", "Blue", "Yellow", "Orange", "Tail_transparent","PC1", "PC2", "PC_d1", "abe", "gum", "ind", "may", "nig", "pue", "ran", "uni", "blue2")
+	.from("Bars", "Lines", "Snout", "Peduncle", "Blue", "Yellow", "Orange", "Tail_transparent","PC1", "PC2", "PC_d1", "abe", "gum", "ind", "may", "nig", "pue", "ran", "uni", "blue2" )
 	.set{ traits_ch }
 
 traits_ch.combine( plink_binary ).combine( phenotype_file ).set{ trait_plink_combo }
