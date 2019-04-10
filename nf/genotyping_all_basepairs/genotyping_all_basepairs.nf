@@ -92,7 +92,7 @@ process filterSNPs {
 		--filter-name "filter_MQRankSum" \
 		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
 		--filter-name "filter_ReadPosRankSum" \
-		--QUIET true
+		--QUIET true &> var_filt.log
 
 
 	gatk --java-options "-Xmx75G" \
@@ -102,7 +102,7 @@ process filterSNPs {
 		-O=intermediate.filterd.vcf.gz \
 		--exclude-filtered \
 		--QUIET true \
-		--verbosity ERROR
+		--verbosity ERROR  &> var_select.log
 
 	vcftools \
 		--gzvcf intermediate.filterd.vcf.gz \
