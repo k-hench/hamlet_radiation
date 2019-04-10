@@ -153,6 +153,7 @@ data_export <- data %>%
          PC_d1 = ifelse(!is.na(Bars),round(transform_PCs(PC_d1),2),NA),
          ID = id) %>%
  select(-id) %>%
- select(ID,label:uni)
+ select(ID,label:uni) %>%
+ mutate(blue2 = ind+may)
 
 write_delim(data_export,path = 'phenotypes.txt', delim = '\t')
