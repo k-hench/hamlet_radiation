@@ -119,7 +119,7 @@ process filterSNPs {
 }
 
 Channel
-	.fromPath('1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.gz')
+	.fromPath('../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.gz')
 	.set{ mito_vcf }
 
 process subset_mito {
