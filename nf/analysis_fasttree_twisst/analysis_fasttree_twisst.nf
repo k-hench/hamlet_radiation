@@ -179,7 +179,7 @@ process subset_vcf_by_location_whg {
 
 	vcftools --gzvcf ${vcf[0]} \
 		--keep ${loc}.pop \
-		DROP_CHRS \
+		\$DROP_CHRS \
 		--mac 3 \
 		--recode \
 		--stdout | gzip > ${loc}.${mode}.vcf.gz
