@@ -130,7 +130,7 @@ process subset_mito {
 	file( vcf ) from mito_vcf
 
 	output:
-	set file( "filterd_bi-allelic.mito.vcf.gz" ), file( "filterd_bi-allelic.mito.vcf.gz.tbi" ) into filtered_snps
+	set file( "filterd_bi-allelic.mito.vcf.gz" ), file( "filterd_bi-allelic.mito.vcf.gz.tbi" ) into mito_out
 
 	script:
 	"""
