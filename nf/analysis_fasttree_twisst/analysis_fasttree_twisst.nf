@@ -173,8 +173,8 @@ process subset_vcf_by_location_whg {
 			grep -v tab > ${loc}.pop
 	fi
 
-	if [ "${mode}" == "whg_no_og" ];then
-		DROP_CHRS="--not-chr LG04 --not-chr LG07 --not-chr LG08  --not-chr LG09 --not-chr LG12 --not-chr LG17 --not-chr LG23"
+	if [ "${mode}" == "no_musks" ];then
+		DROP_CHRS="--not-chr LG04 --not-chr LG07 --not-chr LG08 --not-chr LG09 --not-chr LG12 --not-chr LG17 --not-chr LG23"
 	fi
 
 	vcftools --gzvcf ${vcf[0]} \
