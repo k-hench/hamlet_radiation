@@ -117,3 +117,28 @@ process filterSNPs {
 	rm intermediate.*
 	"""
 }
+
+Channel
+	.fromPath('1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.gz')
+	.set{ mito_vcf }
+
+process subset_mito {
+	label 'L_105g30h_filter_genotypes'
+	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
+
+	input:
+	file( vcf ) from mito_vcf
+
+	output:
+	set file( "filterd_bi-allelic.mito.vcf.gz" ), file( "filterd_bi-allelic.mito.vcf.gz.tbi" ) into filtered_snps
+
+	script:
+	"""
+	module load openssl1.0.2
+
+	vcftools --gzvcf filterd_bi-allelic.vcf.gz --chr LG_M --recode --stdout | \
+	gzip > filterd_bi-allelic.mito.vcf.gz
+
+	tabix -p vcf filterd_bi-allelic.mito.vcf.gz
+	"""
+}
