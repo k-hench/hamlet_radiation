@@ -223,6 +223,51 @@ process fasttree_whg_run {
 	"""
 }
 
+Channel
+	.fromPath('../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.mito.vcf.gz')
+	.set{ vcf_mito }
+
+process fasttree_mito {
+	label 'L_20g2h_fasttree_mito'
+	publishDir "../../2_analysis/fasttree/", mode: 'copy'
+
+	input:
+	file( vcf ) from vcf_mito
+
+	output:
+	file( "only_a.mito.SNP.tree" ) into ( fasttree_mito_output )
+
+	script:
+	"""
+	vcfsamplenames ${vcf} | \
+	grep -v tor | \
+	grep -v tab > vcf.pop
+
+	vcftools --gzvcf ${vcf} \
+		--keep vcf.pop \
+		--mac 2 \
+		--recode \
+		--stdout | gzip > mito.vcf.gz
+
+	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
+		-i  mito.vcf.gz | \
+		gzip > mito.geno.gz
+
+	python \$SFTWR/genomics_general/genoToSeq.py \
+		-g mito.geno.gz \
+		-s  all_samples.mito.fa \
+		-f fasta \
+		--splitPhased
+
+	samtools faidx all_samples.mito.fa
+
+	grep "_A" all_samples.mito.fa.fai | \
+		awk -v OFS='\t' '{print \$1,"0",\$2,\$1}' | \
+		fastaFromBed -fi all_samples.mito.fa -bed stdin -name -fo only_a.mito.fa
+
+	fasttree -nt only_a.mito.fa > only_a.mito.SNP.tree
+	"""
+}
 /*--------- tree construction -----------*/
 /*
 process plot_tree {
