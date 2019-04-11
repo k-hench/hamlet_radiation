@@ -162,6 +162,8 @@ process subset_vcf_by_location_whg {
 
 	script:
 	"""
+	DROP_CHRS=" "
+
 	if [ "${loc}" == "all" ];then
 		vcfsamplenames ${vcf[0]} | \
 			grep -v tor | \
@@ -191,6 +193,7 @@ process subset_vcf_by_location_whg {
 
 process fasttree_whg_prep {
 	label 'L_190g4h_fasttree_whg_prep'
+	tag "${mode} - ${loc}"
 
 	input:
 	set val( mode ), val( loc ), file( geno ) from snp_geno_tree_whg_no_og
@@ -209,6 +212,7 @@ process fasttree_whg_prep {
 
 process fasttree_whg_run {
 	label 'L_190g100h_fasttree_run'
+	tag "${mode} - ${loc}"
 	publishDir "../../2_analysis/fasttree/", mode: 'copy'
 
 	input:
