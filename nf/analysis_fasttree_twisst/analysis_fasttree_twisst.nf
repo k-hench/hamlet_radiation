@@ -243,6 +243,8 @@ process fasttree_mito {
 
 	script:
 	"""
+	module load openssl1.0.2
+
 	vcfsamplenames ${vcf[0]} | \
 	grep -v tor | \
 	grep -v tab > vcf.pop
