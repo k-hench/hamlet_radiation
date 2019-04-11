@@ -130,7 +130,7 @@ process subset_mito {
 	file( vcf ) from mito_vcf
 
 	output:
-	set file( "filterd_bi-allelic.mito.vcf.gz" ), file( "filterd_bi-allelic.mito.vcf.gz.tbi" ) into mito_out
+	set file( "filterd_bi-allelic.mito.vcf.gz" ) into mito_out
 
 	script:
 	"""
@@ -138,7 +138,5 @@ process subset_mito {
 
 	vcftools --gzvcf filterd_bi-allelic.vcf.gz --chr LG_M --recode --stdout | \
 	gzip > filterd_bi-allelic.mito.vcf.gz
-
-	tabix -p vcf filterd_bi-allelic.mito.vcf.gz
 	"""
 }
