@@ -123,7 +123,7 @@ Channel
 	.set{ mito_vcf }
 
 process subset_mito {
-	label 'L_105g30h_filter_genotypes'
+	label 'L_20g2h_subset_mito'
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
 
 	input:
