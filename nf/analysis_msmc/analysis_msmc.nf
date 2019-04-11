@@ -319,14 +319,14 @@ process cc_run {
 	msmc2 \
 		-m 0.00255863 -t 24 \
 		-p 1*2+25*1+1*2+1*3 \
-		-o cc_run.${cc_run[0]}.${spec1[0]}.msmc \
+		-o cc_run.${cc_run}.${spec1[0]}.msmc \
 		-I 0,1,2,3 \
 		\${INFILES}
 
 	msmc2 \
 		-m 0.00255863 -t 24 \
 		-p 1*2+25*1+1*2+1*3 \
-		-o cc_run.${cc_run[0]}.${spec2[0]}.msmc \
+		-o cc_run.${cc_run}.${spec2[0]}.msmc \
 		-I 4,5,6,7 \
 		\${INFILES}
 
@@ -339,9 +339,9 @@ process cc_run {
 		\${INFILES}
 
 	combineCrossCoal.py \
-		cc_run.${cc_run[0]}.cross.msmc.final.txt \
-		cc_run.${cc_run[0]}.${spec1[0]}.msmc.final.txt \
-		cc_run.${cc_run[0]}.${spec2[0]}.msmc.final.txt | \
-		gzip > cc_run.${cc_run[0]}.final.txt.gz
+		cc_run.${cc_run}.cross.msmc.final.txt \
+		cc_run.${cc_run}.${spec1[0]}.msmc.final.txt \
+		cc_run.${cc_run}.${spec2[0]}.msmc.final.txt | \
+		gzip > cc_run.${cc_run}.final.txt.gz
 	"""
 }
