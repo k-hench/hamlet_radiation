@@ -224,7 +224,7 @@ process fasttree_whg_run {
 }
 
 Channel
-	.fromPath('../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.mito.vcf.gz')
+	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.mito.vcf.{gz,gz.tbi}")
 	.set{ vcf_mito }
 
 process fasttree_mito {
@@ -232,18 +232,18 @@ process fasttree_mito {
 	publishDir "../../2_analysis/fasttree/", mode: 'copy'
 
 	input:
-	file( vcf ) from vcf_mito
+	set val( vcf_id ), file( vcf ) from vcf_mito
 
 	output:
 	file( "only_a.mito.SNP.tree" ) into ( fasttree_mito_output )
 
 	script:
 	"""
-	vcfsamplenames ${vcf} | \
+	vcfsamplenames ${vcf[0]} | \
 	grep -v tor | \
 	grep -v tab > vcf.pop
 
-	vcftools --gzvcf ${vcf} \
+	vcftools --gzvcf ${vcf[0]} \
 		--keep vcf.pop \
 		--mac 2 \
 		--recode \
