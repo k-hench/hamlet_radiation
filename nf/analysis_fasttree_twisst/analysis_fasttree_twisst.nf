@@ -21,8 +21,13 @@ Channel
 	.from( "all", "bel", "hon", "pan" )
 	.set{ locations4_ch }
 
+Channel
+	.from( "whg_no_og", "no_musks" )
+	.set{ whg_modes }
+
 locations4_ch
 	.combine( vcf_fasttree_whg )
+	.combine( whg_modes )
 	.set{ vcf_fasttree_whg_location_combo }
 
 process subset_vcf_by_location {
@@ -150,10 +155,10 @@ process subset_vcf_by_location_whg {
 	label "L_20g2h_subset_vcf_whg"
 
 	input:
-	set val( loc ), vcfId, file( vcf ) from vcf_fasttree_whg_location_combo
+	set val( loc ), vcfId, file( vcf ), val( mode ) from vcf_fasttree_whg_location_combo
 
 	output:
-	set val( "whg_no_og" ), val( loc ), file( "${loc}.no_og.whg.geno.gz" ) into snp_geno_tree_whg_no_og
+	set val( mode ), val( loc ), file( "${loc}.${mode}.whg.geno.gz" ) into snp_geno_tree_whg_no_og
 
 	script:
 	"""
@@ -168,14 +173,19 @@ process subset_vcf_by_location_whg {
 			grep -v tab > ${loc}.pop
 	fi
 
+	if [ "${mode}" == "whg_no_og" ];then
+		DROP_CHRS="--not-chr LG04 --not-chr LG07 --not-chr LG08  --not-chr LG09 --not-chr LG12 --not-chr LG17 --not-chr LG23"
+	fi
+
 	vcftools --gzvcf ${vcf[0]} \
 		--keep ${loc}.pop \
+		DROP_CHRS \
 		--mac 3 \
 		--recode \
-		--stdout | gzip > ${loc}.vcf.gz
+		--stdout | gzip > ${loc}.${mode}.vcf.gz
 
 	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-		-i  ${loc}.vcf.gz | gzip > ${loc}.no_og.whg.geno.gz
+		-i  ${loc}.${mode}.vcf.gz | gzip > ${loc}.${mode}.whg.geno.gz
 	"""
 }
 
@@ -183,15 +193,15 @@ process fasttree_whg_prep {
 	label 'L_190g4h_fasttree_whg_prep'
 
 	input:
-	set val( type ), val( loc ), file( geno ) from snp_geno_tree_whg_no_og
+	set val( mode ), val( loc ), file( geno ) from snp_geno_tree_whg_no_og
 
 	output:
-	set val( type ), val( loc ), file( "all_samples.${loc}.whg.SNP.fa" ) into ( fasttree_whg_prep_ch )
+	set val( mode ), val( loc ), file( "all_samples.${loc}.${mode}.whg.SNP.fa" ) into ( fasttree_whg_prep_ch )
 
 	script:
 	"""
 	python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
-		-s  all_samples.${loc}.whg.SNP.fa \
+		-s  all_samples.${loc}.${mode}.whg.SNP.fa \
 		-f fasta \
 		--splitPhased
 	"""
@@ -202,16 +212,17 @@ process fasttree_whg_run {
 	publishDir "../../2_analysis/fasttree/", mode: 'copy'
 
 	input:
-	set val( type ), val( loc ), file( fa ) from fasttree_whg_prep_ch
+	set val( mode ), val( loc ), file( fa ) from fasttree_whg_prep_ch
 
 	output:
-	file( "all_samples.${loc}.whg.SNP.tree" ) into ( fasttree_whg_output )
+	file( "all_samples.${loc}.${mode}.whg.SNP.tree" ) into ( fasttree_whg_output )
 
 	script:
 	"""
-	fasttree -nt ${fa} > all_samples.${loc}.whg.SNP.tree
+	fasttree -nt ${fa} > all_samples.${loc}.${mode}.whg.SNP.tree
 	"""
 }
+
 /*--------- tree construction -----------*/
 /*
 process plot_tree {
