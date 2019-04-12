@@ -395,7 +395,6 @@ Channel
 	.from(50, 200)
 	.combine( vcf_loc_twisst )
 	.combine( lg_twisst )
-	.combine( twisst_modes )
 	.set{ twisst_modes }
 
 process twisst_plugin {
