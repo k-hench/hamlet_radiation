@@ -333,7 +333,7 @@ process cc_run {
 	msmc2 \
 		-m 0.00255863 -t 24 \
 		-p 1*2+25*1+1*2+1*3 \
-		-o cc_run.${cc_run[0]}.cross.msmc \
+		-o cc_run.${cc_run}.cross.msmc \
 		-I 0,1,2,3,4,5,6,7 \
 		-P 0,0,0,0,1,1,1,1 \
 		\${INFILES}

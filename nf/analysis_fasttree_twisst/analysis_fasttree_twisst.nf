@@ -391,12 +391,20 @@ process twisst_run {
 }
 */
 
+Channel
+	.from(50, 200)
+	.combine( vcf_loc_twisst )
+	.combine( lg_twisst )
+	.combine( twisst_modes )
+	.set{ twisst_modes }
+
 process twisst_plugin {
 	label 'L_G120g40h_twisst_plugin'
 	publishDir "../../2_analysis/twisst/", mode: 'copy'
+	tag "${loc}-${lg}-${mode}"
 
 	input:
-	set val( loc ), file( vcf ), file( pop ), val( lg ) from vcf_loc_twisst.combine( lg_twisst )
+	set val( mode ), val( loc ), file( vcf ), file( pop ), val( lg ) from twisst_modes
 
 	output:
 	set val( loc ), val( lg ), file( "*.weights.tsv.gz" ) into ( twisst_output )
@@ -415,9 +423,9 @@ process twisst_plugin {
 	mpirun \$NQSII_MPIOPTS -np 1 \
 	python \$SFTWR/twisst/twisst.py \
 	  --method complete \
-	  -t \$BASE_DIR/ressources/plugin/trees/${loc}/${loc}.${lg}.w50.phyml_bionj.trees.gz \
+	  -t \$BASE_DIR/ressources/plugin/trees/${loc}/${loc}.${lg}.w${mode}.phyml_bionj.trees.gz \
 	  \$TWISST_POPS \
 	  --groupsFile ${loc}.${lg}.twisst_pop.txt | \
-	  gzip > ${loc}.${lg}.w50.phyml_bionj.weights.tsv.gz
+	  gzip > ${loc}.${lg}.w${mode}.phyml_bionj.weights.tsv.gz
 	"""
 }
