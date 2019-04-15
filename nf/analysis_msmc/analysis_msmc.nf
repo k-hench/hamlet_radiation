@@ -299,8 +299,9 @@ cc_input_lg
 
 /* run cross coalescence -------------- */
 process cc_run {
-	label "L_190g30ht24_cc_run"
+	label "L_190g10ht24_cc_run"
 	publishDir "../../2_analysis/cross_coalescence/output/", mode: 'copy'
+	tag "${cc_run}-${geo}:${spec1}/${spec2}"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
