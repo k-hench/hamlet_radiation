@@ -301,7 +301,7 @@ cc_input_lg
 process cc_run {
 	label "L_190g10ht24_cc_run"
 	publishDir "../../2_analysis/cross_coalescence/output/", mode: 'copy'
-	tag "${cc_run}-${geo}:${spec1}/${spec2}"
+	tag "${cc_run}-${geo[0]}:${spec1[0]}/${spec2[0]}"
 	conda "$HOME/miniconda2/envs/py3"
 
 	input:
