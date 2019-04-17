@@ -22,12 +22,17 @@ Channel
 	.set{ locations4_ch }
 
 Channel
-	.from( "whg_no_og", "no_musks" )
+	.from( "whg", "no_musks" )
 	.set{ whg_modes }
+
+Channel
+	.from( "all", "no_outgroups" )
+	.into{ sample_modes; sample_modes_mito }
 
 locations4_ch
 	.combine( vcf_fasttree_whg )
 	.combine( whg_modes )
+	.combine( sample_modes )
 	.set{ vcf_fasttree_whg_location_combo }
 
 process subset_vcf_by_location {
@@ -155,26 +160,33 @@ process subset_vcf_by_location_whg {
 	label "L_20g2h_subset_vcf_whg"
 
 	input:
-	set val( loc ), vcfId, file( vcf ), val( mode ) from vcf_fasttree_whg_location_combo
+	set val( loc ), vcfId, file( vcf ), val( mode ), val( sample_mode ) from vcf_fasttree_whg_location_combo
 
 	output:
-	set val( mode ), val( loc ), file( "${loc}.${mode}.whg.geno.gz" ) into snp_geno_tree_whg_no_og
+	set val( mode ), val( loc ), val( sample_mode ), file( "${loc}.${mode}.${sample_mode}.whg.geno.gz" ) into snp_geno_tree_whg
 
 	script:
 	"""
 	DROP_CHRS=" "
 
+	# check if samples need to be dropped based on location
 	if [ "${loc}" == "all" ];then
-		vcfsamplenames ${vcf[0]} | \
-			grep -v tor | \
-			grep -v tab > ${loc}.pop
+		vcfsamplenames ${vcf[0]} > prep.pop
 	else
 		vcfsamplenames ${vcf[0]} | \
-			grep ${loc} | \
+			grep ${loc}  > prep.pop
+	fi
+
+	# check if outgroups need to be dropped
+	if [ "${sample_mode}" == "all" ];then
+		mv prep.pop ${loc}.pop
+	else
+		cat prep.pop | \
 			grep -v tor | \
 			grep -v tab > ${loc}.pop
 	fi
 
+	# check if diverged LGs need to be dropped
 	if [ "${mode}" == "no_musks" ];then
 		DROP_CHRS="--not-chr LG04 --not-chr LG07 --not-chr LG08 --not-chr LG09 --not-chr LG12 --not-chr LG17 --not-chr LG23"
 	fi
@@ -184,10 +196,10 @@ process subset_vcf_by_location_whg {
 		\$DROP_CHRS \
 		--mac 3 \
 		--recode \
-		--stdout | gzip > ${loc}.${mode}.vcf.gz
+		--stdout | gzip > ${loc}.${mode}.${sample_mode}.vcf.gz
 
 	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-		-i  ${loc}.${mode}.vcf.gz | gzip > ${loc}.${mode}.whg.geno.gz
+		-i  ${loc}.${mode}.${sample_mode}.vcf.gz | gzip > ${loc}.${mode}.${sample_mode}.whg.geno.gz
 	"""
 }
 
@@ -196,15 +208,15 @@ process fasttree_whg_prep {
 	tag "${mode} - ${loc}"
 
 	input:
-	set val( mode ), val( loc ), file( geno ) from snp_geno_tree_whg_no_og
+	set val( mode ), val( loc ), val( sample_mode ), file( geno ) from snp_geno_tree_whg
 
 	output:
-	set val( mode ), val( loc ), file( "all_samples.${loc}.${mode}.whg.SNP.fa" ) into ( fasttree_whg_prep_ch )
+	set val( mode ), val( loc ), val( sample_mode ), file( "all_samples.${loc}.${mode}.${sample_mode}.whg.SNP.fa" ) into ( fasttree_whg_prep_ch )
 
 	script:
 	"""
 	python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
-		-s  all_samples.${loc}.${mode}.whg.SNP.fa \
+		-s  all_samples.${loc}.${mode}.${sample_mode}.whg.SNP.fa \
 		-f fasta \
 		--splitPhased
 	"""
@@ -216,19 +228,20 @@ process fasttree_whg_run {
 	publishDir "../../2_analysis/fasttree/", mode: 'copy'
 
 	input:
-	set val( mode ), val( loc ), file( fa ) from fasttree_whg_prep_ch
+	set val( mode ), val( loc ), val( sample_mode ), file( fa ) from fasttree_whg_prep_ch
 
 	output:
-	file( "all_samples.${loc}.${mode}.whg.SNP.tree" ) into ( fasttree_whg_output )
+	file( "${sample_mode}.${loc}.${mode}.SNP.tree" ) into ( fasttree_whg_output )
 
 	script:
 	"""
-	fasttree -nt ${fa} > all_samples.${loc}.${mode}.whg.SNP.tree
+	fasttree -nt ${fa} > ${sample_mode}.${loc}.${mode}.SNP.tree
 	"""
 }
 
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.mito.vcf.{gz,gz.tbi}")
+	.combine( sample_modes_mito )
 	.set{ vcf_mito }
 
 process fasttree_mito {
@@ -236,42 +249,47 @@ process fasttree_mito {
 	publishDir "../../2_analysis/fasttree/", mode: 'copy'
 
 	input:
-	set val( vcf_id ), file( vcf ) from vcf_mito
+	set val( vcf_id ), file( vcf ), val( sample_mode ) from vcf_mito
 
 	output:
-	file( "only_a.mito.SNP.tree" ) into ( fasttree_mito_output )
+	file( "${sample_mode}_a.mito.SNP.tree" ) into ( fasttree_mito_output )
 
 	script:
 	"""
 	module load openssl1.0.2
 
-	vcfsamplenames ${vcf[0]} | \
-	grep -v tor | \
-	grep -v tab > vcf.pop
+	# check if outgroups need to be dropped
+	if [ "${sample_mode}" == "all" ];then
+		vcfsamplenames ${vcf[0]} > vcf.pop
+	else
+		vcfsamplenames ${vcf[0]} | \
+			grep -v tor | \
+			grep -v tab > vcf.pop
+	fi
 
 	vcftools --gzvcf ${vcf[0]} \
 		--keep vcf.pop \
 		--mac 2 \
 		--recode \
-		--stdout | gzip > mito.vcf.gz
+		--stdout | gzip > mito.${sample_mode}.vcf.gz
 
 	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-		-i  mito.vcf.gz | \
-		gzip > mito.geno.gz
+		-i  mito.${sample_mode}.vcf.gz | \
+		gzip > mito.${sample_mode}.geno.gz
 
 	python \$SFTWR/genomics_general/genoToSeq.py \
-		-g mito.geno.gz \
-		-s  all_samples.mito.fa \
+		-g mito.${sample_mode}.geno.gz \
+		-s  ${sample_mode}.mito.fa \
 		-f fasta \
 		--splitPhased
 
-	samtools faidx all_samples.mito.fa
+	samtools faidx ${sample_mode}.mito.fa
 
-	grep "_A" all_samples.mito.fa.fai | \
+	grep "_A" ${sample_mode}.mito.fa.fai | \
 		awk -v OFS='\t' '{print \$1,"0",\$2,\$1}' | \
-		fastaFromBed -fi all_samples.mito.fa -bed stdin -name -fo only_a.mito.fa
+		fastaFromBed -fi ${sample_mode}.mito.fa -bed stdin -name -fo ${sample_mode}_a.mito.fa
 
-	fasttree -nt only_a.mito.fa > only_a.mito.SNP.tree
+	fasttree -nt ${sample_mode}_a.mito.fa > ${sample_mode}_a.mito.SNP.tree
 	"""
 }
 /*--------- tree construction -----------*/
