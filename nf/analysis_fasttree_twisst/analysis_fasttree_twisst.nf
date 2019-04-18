@@ -155,7 +155,8 @@ process fasttree_run {
 }
 
 /* 1.2) --- whole genome --- */
-
+vcf_fasttree_whg_location_combo.println()
+/*
 process subset_vcf_by_location_whg {
 	label "L_20g2h_subset_vcf_whg"
 
@@ -205,7 +206,7 @@ process subset_vcf_by_location_whg {
 
 process fasttree_whg_prep {
 	label 'L_190g4h_fasttree_whg_prep'
-	tag "${mode} - ${loc}"
+	tag "${mode} - ${loc} - ${sample_mode}"
 
 	input:
 	set val( mode ), val( loc ), val( sample_mode ), file( geno ) from snp_geno_tree_whg
@@ -224,7 +225,7 @@ process fasttree_whg_prep {
 
 process fasttree_whg_run {
 	label 'L_190g100h_fasttree_run'
-	tag "${mode} - ${loc}"
+	tag "${mode} - ${loc} - ${sample_mode}"
 	publishDir "../../2_analysis/fasttree/", mode: 'copy'
 
 	input:
@@ -238,7 +239,7 @@ process fasttree_whg_run {
 	fasttree -nt ${fa} > ${sample_mode}.${loc}.${mode}.SNP.tree
 	"""
 }
-
+*/
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.mito.vcf.{gz,gz.tbi}")
 	.combine( sample_modes_mito )
