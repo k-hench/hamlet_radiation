@@ -220,8 +220,7 @@ process fasttree_whg_prep {
 		--splitPhased
 	"""
 }
-fasttree_whg_prep_ch.println()
-/*
+
 process fasttree_whg_run {
 	label 'L_190g100h_fasttree_run'
 	tag "${mode} - ${loc} - ${sample_mode}"
@@ -238,7 +237,7 @@ process fasttree_whg_run {
 	fasttree -nt ${fa} > ${sample_mode}.${loc}.${mode}.SNP.tree
 	"""
 }
-*/
+
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.mito.vcf.{gz,gz.tbi}")
 	.combine( sample_modes_mito )
