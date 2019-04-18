@@ -201,8 +201,7 @@ process subset_vcf_by_location_whg {
 		-i  ${loc}.${mode}.${sample_mode}.vcf.gz | gzip > ${loc}.${mode}.${sample_mode}.whg.geno.gz
 	"""
 }
-snp_geno_tree_whg.println()
-/*
+
 process fasttree_whg_prep {
 	label 'L_190g4h_fasttree_whg_prep'
 	tag "${mode} - ${loc} - ${sample_mode}"
@@ -221,7 +220,8 @@ process fasttree_whg_prep {
 		--splitPhased
 	"""
 }
-
+fasttree_whg_prep_ch.println()
+/*
 process fasttree_whg_run {
 	label 'L_190g100h_fasttree_run'
 	tag "${mode} - ${loc} - ${sample_mode}"
