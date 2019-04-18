@@ -61,15 +61,14 @@ process merge_genotypes {
 	"""
 }
 
-process filterSNPs {
-	label 'L_105g30h_filter_genotypes'
-	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
+process filterSNP_first {
+	label 'L_105g30h_filter_gt1'
 
 	input:
 	file( vcf ) from all_bp_merged
 
 	output:
-	set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
+	set file( "intermediate.filterd.vcf.gz" ), file( "intermediate.filterd.vcf.gz.tbi" ) into filtered_snps_first
 
 	script:
 	"""
@@ -94,7 +93,6 @@ process filterSNPs {
 		--filter-name "filter_ReadPosRankSum" \
 		--QUIET true &> var_filt.log
 
-
 	gatk --java-options "-Xmx75G" \
 		SelectVariants \
 		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
@@ -103,9 +101,25 @@ process filterSNPs {
 		--exclude-filtered \
 		--QUIET true \
 		--verbosity ERROR  &> var_select.log
+	"""
+}
+
+process filterSNP_second {
+	label 'L_105g30h_filter_gt2'
+	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
+
+	input:
+	set file( vcf ), file( tbi ) from filtered_snps_first
+
+	output:
+	set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
+
+	script:
+	"""
+	module load openssl1.0.2
 
 	vcftools \
-		--gzvcf intermediate.filterd.vcf.gz \
+		--gzvcf ${vcf} \
 		--max-missing-count 17 \
 		--max-alleles 2 \
 		--stdout  \
@@ -113,8 +127,6 @@ process filterSNPs {
 		bgzip > filterd_bi-allelic.allBP.vcf.gz
 
 	tabix -p vcf filterd_bi-allelic.allBP.vcf.gz
-
-	rm intermediate.*
 	"""
 }
 
