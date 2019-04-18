@@ -155,8 +155,6 @@ process fasttree_run {
 }
 
 /* 1.2) --- whole genome --- */
-vcf_fasttree_whg_location_combo.println()
-/*
 process subset_vcf_by_location_whg {
 	label "L_20g2h_subset_vcf_whg"
 
@@ -203,7 +201,8 @@ process subset_vcf_by_location_whg {
 		-i  ${loc}.${mode}.${sample_mode}.vcf.gz | gzip > ${loc}.${mode}.${sample_mode}.whg.geno.gz
 	"""
 }
-
+snp_geno_tree_whg.println()
+/*
 process fasttree_whg_prep {
 	label 'L_190g4h_fasttree_whg_prep'
 	tag "${mode} - ${loc} - ${sample_mode}"
