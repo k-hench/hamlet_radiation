@@ -156,7 +156,7 @@ process fasttree_run {
 
 /* 1.2) --- whole genome --- */
 process subset_vcf_by_location_whg {
-	label "L_20g2h_subset_vcf_whg"
+	label "L_28g5h_subset_vcf_whg"
 
 	input:
 	set val( loc ), vcfId, file( vcf ), val( mode ), val( sample_mode ) from vcf_fasttree_whg_location_combo
