@@ -112,7 +112,7 @@ process filterSNP_second {
 	set file( vcf ), file( tbi ) from filtered_snps_first
 
 	output:
-	set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
+	set file( "filterd_bi-allelic.allBP.vcf.gz" ), file( "filterd_bi-allelic.allBP.vcf.gz.tbi" ) into filtered_snps
 
 	script:
 	"""
@@ -125,8 +125,6 @@ process filterSNP_second {
 		--stdout  \
 		--recode | \
 		bgzip > filterd_bi-allelic.allBP.vcf.gz
-
-	tabix -p vcf filterd_bi-allelic.allBP.vcf.gz
 	"""
 }
 
