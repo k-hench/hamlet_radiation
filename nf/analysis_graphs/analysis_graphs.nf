@@ -57,7 +57,7 @@ process prep_background_graphs {
 	Rscript --vanilla \$BASE_DIR/R/network_generate_background_graphs.R ${nsnps} \
 		\$BASE_DIR/R/network_functions.R \
 		\$BASE_DIR/R/project_config.R \
-		/software/KBIN/downsamplevcf.jar \
+		\$SFTWR/jvarkit/downsamplevcf.jar \
 		${vcf} \
 		${sample_file}
 	"""
