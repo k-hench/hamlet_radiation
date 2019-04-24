@@ -45,6 +45,10 @@ process prep_background_graphs {
 	label "L_20g2h_bg_graph_prep"
 	publishDir "../../2_analysis/popgraphs/data/popgr", mode: 'copy' , pattern: "popgr.background*"
 	module "R3.5.2"
+	module "gdal2.2.3"
+	module "geos3.6.2"
+	module "gsl2.4"
+	module "udunits2.2.25"
 
 	input:
 	set val( nsnps ), file( vcf ), file( sample_file ) from snpnr_vcf_bg_ch
@@ -73,6 +77,10 @@ process summarise_background_graphs {
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
 	publishDir "../../2_analysis/popgraphs/data", mode: 'copy' , pattern: "*.tsv.gz"
 	module "R3.5.2"
+	module "gdal2.2.3"
+	module "geos3.6.2"
+	module "gsl2.4"
+	module "udunits2.2.25"
 
 	input:
 	set val( bg ), val( n_snps ), file( popgr ), file( sample_file ) from bg_graphs_organized_ch
@@ -121,6 +129,10 @@ process sliding_graphs {
 	publishDir "../../2_analysis/popgraphs/data/popgr", mode: 'copy' , pattern: "popgr.LG*"
 	tag "${tab_input.n_snps}-${tab_input.lg}-${tab_input.start} (${tab_input.gwin_id} )"
 	module "R3.5.2"
+	module "gdal2.2.3"
+	module "geos3.6.2"
+	module "gsl2.4"
+	module "udunits2.2.25"
 
 	input:
 	set  val( tab_input ), file( vcf ), file( sample_file ) from slide_windows_split_ch
@@ -162,7 +174,11 @@ process sliding_summmary {
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
 	publishDir "../../2_analysis/popgraphs/data", mode: 'copy' , pattern: "*.tsv.gz"
 	module "R3.5.2"
-
+	module "gdal2.2.3"
+	module "geos3.6.2"
+	module "gsl2.4"
+	module "udunits2.2.25"
+	
 	input:
 	set  val( n_snps ), file( popgr ), file( windows ) from slide_windows_collect
 
