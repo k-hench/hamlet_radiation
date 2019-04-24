@@ -14,6 +14,7 @@ Channel
 /*mute bed location after test*/
 process prep_vcf {
 	label "L_20g2h_prep_vcf"
+	module "openssl1.0.2"
 
 	input:
 	set vcfId, file( vcf ) from vcf_ch
@@ -45,6 +46,7 @@ snpnr_ch
 process prep_background_graphs {
 	label "L_20g2h_bg_graph_prep"
 	publishDir "../../2_analysis/popgraphs/data/popgr", mode: 'copy' , pattern: "popgr.background*"
+	module "R3.5.2"
 
 	input:
 	set val( nsnps ), file( vcf ), file( sample_file ) from snpnr_vcf_bg_ch
@@ -72,6 +74,7 @@ process summarise_background_graphs {
 	label "L_20g2h_bg_graph_summary"
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
 	publishDir "../../2_analysis/popgraphs/data", mode: 'copy' , pattern: "*.tsv.gz"
+	module "R3.5.2"
 
 	input:
 	set val( bg ), val( n_snps ), file( popgr ), file( sample_file ) from bg_graphs_organized_ch
@@ -118,6 +121,7 @@ slide_windows_ch
 process sliding_graphs {
 	label "L_20g15m_slide_graphs"
 	publishDir "../../2_analysis/popgraphs/data/popgr", mode: 'copy' , pattern: "popgr.LG*"
+	module "R3.5.2"
 
 	input:
 	set  val( tab_input ), file( vcf ), file( sample_file ) from slide_windows_split_ch
@@ -158,6 +162,7 @@ process sliding_summmary {
 	label "L_20g2h_slide_summary"
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
 	publishDir "../../2_analysis/popgraphs/data", mode: 'copy' , pattern: "*.tsv.gz"
+	module "R3.5.2"
 
 	input:
 	set  val( n_snps ), file( popgr ), file( windows ) from slide_windows_collect
