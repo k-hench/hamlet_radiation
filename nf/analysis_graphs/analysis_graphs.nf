@@ -33,7 +33,7 @@ process prep_vcf {
 		--bed LG01_quarter.bed \
 		--keep samples_no_out.txt \
 		--recode \
-		--stdout | bgzip >  graph.vcf.gz
+		--stdout | gzip >  graph.vcf.gz
 	"""
 }
 
@@ -119,6 +119,7 @@ slide_windows_ch
 process sliding_graphs {
 	label "L_20g15m_slide_graphs"
 	publishDir "../../2_analysis/popgraphs/data/popgr", mode: 'copy' , pattern: "popgr.LG*"
+	tag "${tab_input.n_snps}-${tab_input.lg}-${tab_input.start} (${tab_input.gwin_id} )"
 	module "R3.5.2"
 
 	input:
