@@ -24,8 +24,6 @@ process prep_vcf {
 
 	script:
 	"""
-	tabix -p vcf -f ${vcf[0]}
-
 	vcfsamplenames ${vcf[0]} | \
 		grep -v 'tor\\|tab\\|flo' > samples_no_out.txt
 
