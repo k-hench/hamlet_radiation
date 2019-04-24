@@ -57,8 +57,9 @@ process prep_background_graphs {
 	module load gdal2.2.3
 	module load geos3.6.2
 	module load gsl2.4
-	module load udunits2.2.25
+	module load proj4.9.3
 	module load openssl1.0.2
+	module load udunits2.2.25
 
 	Rscript --vanilla \$BASE_DIR/R/network_generate_background_graphs.R ${nsnps} \
 		\$BASE_DIR/R/network_functions.R \
@@ -91,8 +92,9 @@ process summarise_background_graphs {
 	module load gdal2.2.3
 	module load geos3.6.2
 	module load gsl2.4
-	module load udunits2.2.25
+	module load proj4.9.3
 	module load openssl1.0.2
+	module load udunits2.2.25
 
 	Rscript --vanilla \$BASE_DIR/R/network_summarise_background_graphs.R \
 		\$BASE_DIR/R/project_config.R \
@@ -145,8 +147,9 @@ process sliding_graphs {
 	module load gdal2.2.3
 	module load geos3.6.2
 	module load gsl2.4
-	module load udunits2.2.25
+	module load proj4.9.3
 	module load openssl1.0.2
+	module load udunits2.2.25
 
 	echo -e "chrom\\tchromStart\\tchromEnd\\n${tab_input.lg}\\t${tab_input.start}\\t${tab_input.end}" > slide.${tab_input.lg}.${tab_input.n_snps}.${tab_input.win_id}.${tab_input.gwin_id}.bed
 
@@ -192,8 +195,9 @@ process sliding_summmary {
 	module load gdal2.2.3
 	module load geos3.6.2
 	module load gsl2.4
-	module load udunits2.2.25
+	module load proj4.9.3
 	module load openssl1.0.2
+	module load udunits2.2.25
 
 	Rscript --vanilla \$BASE_DIR/R/network_summarise_slide_graphs.R \
 		 ${n_snps} \
