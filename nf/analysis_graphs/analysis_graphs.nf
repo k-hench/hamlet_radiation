@@ -45,10 +45,6 @@ process prep_background_graphs {
 	label "L_20g2h_bg_graph_prep"
 	publishDir "../../2_analysis/popgraphs/data/popgr", mode: 'copy' , pattern: "popgr.background*"
 	module "R3.5.2"
-	module "gdal2.2.3"
-	module "geos3.6.2"
-	module "gsl2.4"
-	module "udunits2.2.25"
 
 	input:
 	set val( nsnps ), file( vcf ), file( sample_file ) from snpnr_vcf_bg_ch
@@ -58,6 +54,12 @@ process prep_background_graphs {
 
 	script:
 	"""
+	module load gdal2.2.3
+	module load geos3.6.2
+	module load gsl2.4
+	module load udunits2.2.25
+	module load openssl1.0.2
+
 	Rscript --vanilla \$BASE_DIR/R/network_generate_background_graphs.R ${nsnps} \
 		\$BASE_DIR/R/network_functions.R \
 		\$BASE_DIR/R/project_config.R \
@@ -77,10 +79,6 @@ process summarise_background_graphs {
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
 	publishDir "../../2_analysis/popgraphs/data", mode: 'copy' , pattern: "*.tsv.gz"
 	module "R3.5.2"
-	module "gdal2.2.3"
-	module "geos3.6.2"
-	module "gsl2.4"
-	module "udunits2.2.25"
 
 	input:
 	set val( bg ), val( n_snps ), file( popgr ), file( sample_file ) from bg_graphs_organized_ch
@@ -90,6 +88,12 @@ process summarise_background_graphs {
 
 	script:
 	"""
+	module load gdal2.2.3
+	module load geos3.6.2
+	module load gsl2.4
+	module load udunits2.2.25
+	module load openssl1.0.2
+
 	Rscript --vanilla \$BASE_DIR/R/network_summarise_background_graphs.R \
 		\$BASE_DIR/R/project_config.R \
 		\$BASE_DIR/R/network_functions.R \
@@ -129,10 +133,6 @@ process sliding_graphs {
 	publishDir "../../2_analysis/popgraphs/data/popgr", mode: 'copy' , pattern: "popgr.LG*"
 	tag "${tab_input.n_snps}-${tab_input.lg}-${tab_input.start} (${tab_input.gwin_id} )"
 	module "R3.5.2"
-	module "gdal2.2.3"
-	module "geos3.6.2"
-	module "gsl2.4"
-	module "udunits2.2.25"
 
 	input:
 	set  val( tab_input ), file( vcf ), file( sample_file ) from slide_windows_split_ch
@@ -142,6 +142,12 @@ process sliding_graphs {
 
 	script:
 	"""
+	module load gdal2.2.3
+	module load geos3.6.2
+	module load gsl2.4
+	module load udunits2.2.25
+	module load openssl1.0.2
+
 	echo -e "chrom\\tchromStart\\tchromEnd\\n${tab_input.lg}\\t${tab_input.start}\\t${tab_input.end}" > slide.${tab_input.lg}.${tab_input.n_snps}.${tab_input.win_id}.${tab_input.gwin_id}.bed
 
 	vcftools --gzvcf ${vcf} \
@@ -174,11 +180,7 @@ process sliding_summmary {
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
 	publishDir "../../2_analysis/popgraphs/data", mode: 'copy' , pattern: "*.tsv.gz"
 	module "R3.5.2"
-	module "gdal2.2.3"
-	module "geos3.6.2"
-	module "gsl2.4"
-	module "udunits2.2.25"
-	
+
 	input:
 	set  val( n_snps ), file( popgr ), file( windows ) from slide_windows_collect
 
@@ -187,7 +189,13 @@ process sliding_summmary {
 
 	script:
 	"""
-	 Rscript --vanilla \$BASE_DIR/R/network_summarise_slide_graphs.R \
+	module load gdal2.2.3
+	module load geos3.6.2
+	module load gsl2.4
+	module load udunits2.2.25
+	module load openssl1.0.2
+
+	Rscript --vanilla \$BASE_DIR/R/network_summarise_slide_graphs.R \
 		 ${n_snps} \
 		 \$BASE_DIR/R/network_functions.R \
 		 \$BASE_DIR/R/project_config.R \
