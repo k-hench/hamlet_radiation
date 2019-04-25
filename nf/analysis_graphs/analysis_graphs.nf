@@ -27,11 +27,10 @@ process prep_vcf {
 	vcfsamplenames ${vcf[0]} | \
 		grep -v 'tor\\|tab\\|flo' > samples_no_out.txt
 
-	echo -e "chrom\\tchromStart\\tchromEnd\\nLG01\\t0\\t6472566" > LG01_quarter.bed
-
 	vcftools --gzvcf ${vcf[0]} \
-		--bed LG01_quarter.bed \
 		--keep samples_no_out.txt \
+		--thin 5000 \
+		--mac 1 \
 		--recode \
 		--stdout | gzip >  graph.vcf.gz
 	"""
