@@ -11,7 +11,6 @@ Channel
 	.from( 50 , 200, 500 )
 	.set{ snpnr_ch }
 
-/*mute bed location after test*/
 process prep_vcf {
 	label "L_20g2h_prep_vcf"
 	module "openssl1.0.2"
