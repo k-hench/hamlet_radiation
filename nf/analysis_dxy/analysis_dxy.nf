@@ -10,7 +10,6 @@ Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.set{ lg_ch }
 
-
 /* ------------------------------------ */
 /* split the genotypes by LG and reformat the genotypes */
 process split_allBP {
