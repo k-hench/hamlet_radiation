@@ -112,7 +112,7 @@ process filterSNP_second {
 	set file( vcf ), file( tbi ) from filtered_snps_first
 
 	output:
-	file( "filterd_bi-allelic.allBP.vcf.gz" ) into filtered_snps
+	file( "filterd.allBP.vcf.gz" ) into filtered_snps
 
 	script:
 	"""
