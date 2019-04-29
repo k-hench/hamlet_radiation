@@ -13,4 +13,7 @@ else if(lg == $1){
   else if(snpcount == nsps){print lg, start, end, snpcount, wincount, gwincount; start = $2; end = $2; snpcount = 1; wincount = ++wincount; gwincount = ++gwincount}
   else {print "ERROR: SOMETHING WENT WRONG!!" }
   }}
-  END {print lg, start, end, snpcount, wincount, gwincount}' > $BASE_NAME.snp_windows.$2.tsv
+  END {print lg, start, end, snpcount, wincount, gwincount}' > .tmp.tsv
+
+awk '{if($2 != $3){print}}' .tmp.tsv > $BASE_NAME.snp_windows.$2.tsv
+rm .tmp.tsv
