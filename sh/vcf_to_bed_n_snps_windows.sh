@@ -15,5 +15,5 @@ else if(lg == $1){
   }}
   END {print lg, start, end, snpcount, wincount, gwincount}' > .tmp.tsv
 
-awk '{if($2 != $3){print}}' .tmp.tsv > $BASE_NAME.snp_windows.$2.tsv
+awk '{if($4 > 4){print}}' .tmp.tsv > $BASE_NAME.snp_windows.$2.tsv
 rm .tmp.tsv
