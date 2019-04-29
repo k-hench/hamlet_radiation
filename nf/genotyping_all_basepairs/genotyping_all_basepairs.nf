@@ -121,10 +121,9 @@ process filterSNP_second {
 	vcftools \
 		--gzvcf ${vcf} \
 		--max-missing-count 17 \
-		--max-alleles 2 \
 		--stdout  \
 		--recode | \
-		bgzip > filterd_bi-allelic.allBP.vcf.gz
+		bgzip > filterd.allBP.vcf.gz
 	"""
 }
 
@@ -140,7 +139,7 @@ process subset_mito {
 	file( vcf ) from mito_vcf
 
 	output:
-	set file( "filterd_bi-allelic.mito.vcf.gz" ) into mito_out
+	file( "filterd_bi-allelic.mito.vcf.gz" ) into mito_out
 
 	script:
 	"""
