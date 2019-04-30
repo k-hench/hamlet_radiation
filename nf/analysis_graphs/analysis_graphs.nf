@@ -73,6 +73,8 @@ bg_graphs_ch
 	.map{[it[0], it[1], it[2], it[3][0]]}
 	.set{ bg_graphs_organized_ch }
 
+bg_graphs_organized_ch.println()
+/*
 process summarise_background_graphs {
 	label "L_20g2h_bg_graph_summary"
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
@@ -101,7 +103,7 @@ process summarise_background_graphs {
 
 	gzip network_background_data.tsv
 	"""
-}
+}*/
 
 
 /* un-head prep script */

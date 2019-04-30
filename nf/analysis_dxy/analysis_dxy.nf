@@ -19,7 +19,7 @@ process split_allBP {
 	set val( lg ), vcfId, file( vcf ) from lg_ch.combine( vcf_ch )
 
 	output:
-	set val( lg ), file( 'filterd_bi-allelic.allBP.vcf.gz' ), file( "allBP.LG${lg}.geno.gz" ) from geno_ch
+	set val( lg ), file( 'filterd_bi-allelic.allBP.vcf.gz' ), file( "allBP.LG${lg}.geno.gz" ) into geno_ch
 
 	script:
 	"""
