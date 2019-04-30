@@ -19,17 +19,17 @@ process split_allBP {
 	set val( lg ), vcfId, file( vcf ) from lg_ch.combine( vcf_ch )
 
 	output:
-	set val( lg ), file( vcf[0] ), file( "allBP.LG${x}.geno.gz" ) from geno_ch
+	set val( lg ), file( vcf[0] ), file( "allBP.LG${lg}.geno.gz" ) from geno_ch
 
 	script:
 	"""
 	vcftools --gzvcf ${vcf[0]} \
-		--chr LG${x} \
+		--chr LG${lg} \
 		--recode \
-		--stdout | gzip  > allBP.LG${x}.vcf.gz
+		--stdout | gzip  > allBP.LG${lg}.vcf.gz
 
 	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-		-i allBP.LG${x}.vcf.gz  | gzip > allBP.LG${x}.geno.gz
+		-i allBP.LG${lg}.vcf.gz  | gzip > allBP.LG${lg}.geno.gz
 	"""
 }
 
