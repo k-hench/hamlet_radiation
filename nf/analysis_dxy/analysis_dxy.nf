@@ -73,6 +73,7 @@ bel_pairs_ch
 /* compute the dxy values along non-overlaping 50kb windows */
 process dxy_lg {
 	label 'L_G32g30h_dxy_lg'
+	tag "${spec1}${loc}-${spec2}${loc}"
 	/* this process is likely not to finish - somehow the window script
 	fails to finish - I still produces the output though */
 
@@ -87,7 +88,7 @@ process dxy_lg {
 	module load intel17.0.4 intelmpi17.0.4
 
 	vcfsamplenames ${vcf} | \
-		awk -v OFS='\t' '{print $1, substr( $1, length($1) - 5, 6)}' > pop.txt
+		awk -v OFS='\t' '{print \$1, substr( \$1, length(\$1) - 5, 6)}' > pop.txt
 
 	mpirun \$NQSII_MPIOPTS -np 1 \
 		python \$SFTWR/genomics_general/popgenWindows.py \
@@ -109,6 +110,7 @@ dxy_lg_ch
 process receive_tuple {
 	label 'L_36g47h_receive_tuple'
 	publishDir "../../2_analysis/dxy/", mode: 'copy'
+	tag "${pop1}-${pop2}"
 
 	input:
 	set comp, dxy, lg, pop1, pop2 from tubbled_dxy

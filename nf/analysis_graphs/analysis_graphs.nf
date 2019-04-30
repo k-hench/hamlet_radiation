@@ -131,7 +131,7 @@ slide_windows_ch
 process sliding_graphs {
 	label "L_20g15m_slide_graphs"
 	publishDir "../../2_analysis/popgraphs/data/popgr", mode: 'copy' , pattern: "popgr.LG*"
-	tag "${tab_input.n_snps}-${tab_input.lg}-${tab_input.start} (${tab_input.gwin_id} )"
+	tag "${tab_input.n_snps}-${tab_input.lg}-${tab_input.start} (${tab_input.gwin_id})"
 	module "R3.5.2"
 
 	input:
@@ -172,7 +172,7 @@ process sliding_graphs {
 
 slide_popgraphs_ch
 	.groupTuple()
-	.map{[it[0].toString(), it[1]]}
+	.map{[it[0].toString(), it]}
 	.join( slide_windows_file.map{[it[0].toString(), it[1]]})
 	.set{ slide_windows_collect }
 
@@ -180,10 +180,11 @@ process sliding_summmary {
 	label "L_20g2h_slide_summary"
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
 	publishDir "../../2_analysis/popgraphs/data", mode: 'copy' , pattern: "*.tsv.gz"
+	tag "${n_snps}"
 	module "R3.5.2"
 
 	input:
-	set  val( n_snps ), file( popgr ), file( windows ) from slide_windows_collect
+	set  val( n_snps ), val( n_snps_two ), file( popgr ), file( windows ) from slide_windows_collect
 
 	output:
 	set file( "network_slide.${n_snps}.png" ), file( "network_slide_data.${n_snps}.tsv.gz" ) into ( slide_done_ch )
