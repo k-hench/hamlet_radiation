@@ -73,8 +73,6 @@ bg_graphs_ch
 	.map{[it[0], it[1], it[2], it[3][0]]}
 	.set{ bg_graphs_organized_ch }
 
-bg_graphs_organized_ch.println()
-/*
 process summarise_background_graphs {
 	label "L_20g2h_bg_graph_summary"
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
@@ -103,8 +101,7 @@ process summarise_background_graphs {
 
 	gzip network_background_data.tsv
 	"""
-}*/
-
+}
 
 /* un-head prep script */
 process prepare_sliding_graphs {
@@ -173,8 +170,8 @@ process sliding_graphs {
 }
 
 slide_popgraphs_ch
+	.map{[it[0].toString(), it[1]]}
 	.groupTuple()
-	.map{[it[0].toString(), it]}
 	.join( slide_windows_file.map{[it[0].toString(), it[1]]})
 	.set{ slide_windows_collect }
 
@@ -186,7 +183,7 @@ process sliding_summmary {
 	module "R3.5.2"
 
 	input:
-	set  val( n_snps ), val( n_snps_two ), file( popgr ), file( windows ) from slide_windows_collect
+	set  val( n_snps ), file( popgr ), file( windows ) from slide_windows_collect
 
 	output:
 	set file( "network_slide.${n_snps}.png" ), file( "network_slide_data.${n_snps}.tsv.gz" ) into ( slide_done_ch )

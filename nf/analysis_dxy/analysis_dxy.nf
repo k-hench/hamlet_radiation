@@ -41,10 +41,6 @@ Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).int
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
-locations_ch
-	.combine( geno_ch )
-	.set{ geno_location_combo }
-
 /* Preparation: create all possible species pairs depending on location
    and combine with genotype subset (for the respective location)*/
 
