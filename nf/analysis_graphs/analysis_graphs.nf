@@ -48,7 +48,7 @@ process prep_background_graphs {
 	set val( nsnps ), file( vcf ), file( sample_file ) from snpnr_vcf_bg_ch
 
 	output:
-	set val( "bg" ), val( nsnps ), file( "popgr.background*" ), file( sample_file ) into ( bg_graphs_ch )
+	set val( "bg" ), val( nsnps ), file( "popgr.background*" ), file( "${nsnps}.${sample_file}" ) into ( bg_graphs_ch )
 
 	script:
 	"""
@@ -58,6 +58,8 @@ process prep_background_graphs {
 	module load proj4.9.3
 	module load openssl1.0.2
 	module load udunits2.2.25
+
+	mv ${sample_file} ${nsnps}.${sample_file}
 
 	Rscript --vanilla \$BASE_DIR/R/network_generate_background_graphs.R ${nsnps} \
 		\$BASE_DIR/R/network_functions.R \
@@ -72,7 +74,7 @@ bg_graphs_ch
 	.groupTuple()
 	.map{[it[0], it[1], it[2], it[3][0]]}
 	.set{ bg_graphs_organized_ch }
-
+/* -- ! WORK HERE ! ---*/
 process summarise_background_graphs {
 	label "L_20g2h_bg_graph_summary"
 	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
@@ -93,6 +95,8 @@ process summarise_background_graphs {
 	module load proj4.9.3
 	module load openssl1.0.2
 	module load udunits2.2.25
+
+	mv ${sample_file[0]} samples_no_out.txt
 
 	Rscript --vanilla \$BASE_DIR/R/network_summarise_background_graphs.R \
 		\$BASE_DIR/R/project_config.R \
