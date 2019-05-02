@@ -72,7 +72,6 @@ process prep_background_graphs {
 
 bg_graphs_ch
 	.groupTuple()
-	.map{[it[0], it[1], it[2], it[3][0]]}
 	.set{ bg_graphs_organized_ch }
 /* -- ! WORK HERE ! ---*/
 process summarise_background_graphs {
@@ -85,7 +84,7 @@ process summarise_background_graphs {
 	set val( bg ), val( n_snps ), file( popgr ), file( sample_file ) from bg_graphs_organized_ch
 
 	output:
-	set file( "network_background.png" ), file( "network_background_data.tsv.gz" ) into ( bg_done_ch )
+	set file( "network_background.pdf" ), file( "network_background_data.tsv.gz" ) into ( bg_done_ch )
 
 	script:
 	"""
@@ -190,7 +189,7 @@ process sliding_summmary {
 	set  val( n_snps ), file( popgr ), file( windows ) from slide_windows_collect
 
 	output:
-	set file( "network_slide.${n_snps}.png" ), file( "network_slide_data.${n_snps}.tsv.gz" ) into ( slide_done_ch )
+	set file( "network_slide.${n_snps}.pdf" ), file( "network_slide_data.${n_snps}.tsv.gz" ) into ( slide_done_ch )
 
 	script:
 	"""
