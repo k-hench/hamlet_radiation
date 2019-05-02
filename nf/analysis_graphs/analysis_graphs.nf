@@ -59,14 +59,14 @@ process prep_background_graphs {
 	module load openssl1.0.2
 	module load udunits2.2.25
 
-	mv ${sample_file} ${nsnps}.${sample_file}
-
 	Rscript --vanilla \$BASE_DIR/R/network_generate_background_graphs.R ${nsnps} \
 		\$BASE_DIR/R/network_functions.R \
 		\$BASE_DIR/R/project_config.R \
 		\$SFTWR/jvarkit/dist/downsamplevcf.jar \
 		${vcf} \
 		${sample_file}
+
+	mv ${sample_file} ${nsnps}.${sample_file}
 	"""
 }
 

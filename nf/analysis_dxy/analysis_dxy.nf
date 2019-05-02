@@ -13,7 +13,7 @@ Channel
 /* ------------------------------------ */
 /* split the genotypes by LG and reformat the genotypes */
 process split_allBP {
-	label 'L_32g10h_split_allBP'
+	label 'L_32g15h_split_allBP'
 
 	input:
 	set val( lg ), vcfId, file( vcf ) from lg_ch.combine( vcf_ch )
