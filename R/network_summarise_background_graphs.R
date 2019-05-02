@@ -47,5 +47,6 @@ p1 <- plot_data %>%
   facet_grid(key ~ graph_snps, scales = 'free') +
   scale_fill_brewer(palette = 'PuOr', guide = FALSE)
 
-ggsave(plot = p1, filename = 'network_background.png', width = 15, height = 10, dpi = 250)
+#ggsave(plot = p1, filename = 'network_background.png', width = 15, height = 10, dpi = 250)
+ggsave(plot = p1, filename = 'network_background.pdf', width = 15, height = 10)
 write_tsv(x = summary_data, path = "network_background_data.tsv")

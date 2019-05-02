@@ -56,5 +56,6 @@ p1 <- summary_data %>%
   scale_fill_brewer(palette = 'PuOr') +
   theme_hypo()
 
-ggsave(plot = p1, filename = str_c("network_slide.", n_snps, ".png"), width = 15, height = 10, dpi = 250)
+#ggsave(plot = p1, filename = str_c("network_slide.", n_snps, ".png"), width = 15, height = 10, dpi = 250)
+ggsave(plot = p1, filename = str_c("network_slide.", n_snps, ".pdf"), width = 15, height = 10)
 write_tsv(x = summary_data, path = str_c("network_slide_data.", n_snps, ".tsv"))
