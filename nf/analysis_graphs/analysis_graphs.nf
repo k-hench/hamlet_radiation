@@ -76,7 +76,7 @@ bg_graphs_ch
 /* -- ! WORK HERE ! ---*/
 process summarise_background_graphs {
 	label "L_20g2h_bg_graph_summary"
-	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
+	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.pdf"
 	publishDir "../../2_analysis/popgraphs/data", mode: 'copy' , pattern: "*.tsv.gz"
 	module "R3.5.2"
 
@@ -180,7 +180,7 @@ slide_popgraphs_ch
 
 process sliding_summmary {
 	label "L_20g2h_slide_summary"
-	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.png"
+	publishDir "../../2_analysis/popgraphs/figures", mode: 'copy' , pattern: "*.pdf"
 	publishDir "../../2_analysis/popgraphs/data", mode: 'copy' , pattern: "*.tsv.gz"
 	tag "${n_snps}"
 	module "R3.5.2"
