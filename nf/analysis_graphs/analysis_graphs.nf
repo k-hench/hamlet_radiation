@@ -8,7 +8,7 @@ Channel
 	.set{ window_ch }
 
 Channel
-	.from( 50 , 200, 500 )
+	.from( 50 , 200, 500, 2000 )
 	.set{ snpnr_ch }
 
 process prep_vcf {
