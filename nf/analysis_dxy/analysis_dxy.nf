@@ -65,13 +65,13 @@ bel_pairs_ch
 	.concat( hon_pairs_ch, pan_pairs_ch )
 	.combine( geno_ch )
 	.set { all_dxy_pairs_ch }
-
-/* compute the dxy values along non-overlaping 50kb windows */
-process dxy_lg {
+all_dxy_pairs_ch.println()
+// compute the dxy values along non-overlaping 50kb windows
+/*process dxy_lg {
 	label 'L_G32g30h_dxy_lg'
 	tag "${spec1}${loc}-${spec2}${loc}"
-	/* this process is likely not to finish - somehow the window script
-	fails to finish - I still produces the output though */
+	// this process is likely not to finish - somehow the window script
+	// fails to finish - I still produces the output though
 
 	input:
 	set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno )  from all_dxy_pairs_ch
@@ -128,3 +128,4 @@ process receive_tuple {
 	gzip dxy.${pop1}-${pop2}.50kb-5kb.tsv
 	"""
 }
+*/
