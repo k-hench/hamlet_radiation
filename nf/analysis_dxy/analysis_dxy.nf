@@ -3,7 +3,7 @@
 //   all callable sites data sheet (dxy).
 
 Channel
-	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.allBP.vcf.{gz,gz.tbi}")
+	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
 	.set{ vcf_ch }
 
 Channel
