@@ -14,6 +14,8 @@ Channel
 // split the genotypes by LG and reformat the genotypes
 process split_allBP {
 	label 'L_32g15h_split_allBP'
+	tag "LG${lg}"
+	module "openssl1.0.2"
 
 	input:
 	set val( lg ), vcfId, file( vcf ) from lg_ch.combine( vcf_ch )
@@ -26,7 +28,7 @@ process split_allBP {
 	vcftools --gzvcf ${vcf[0]} \
 		--chr LG${lg} \
 		--recode \
-		--stdout | gzip  > allBP.LG${lg}.vcf.gz
+		--stdout | bgzip  > allBP.LG${lg}.vcf.gz
 
 	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
 		-i allBP.LG${lg}.vcf.gz  | gzip > allBP.LG${lg}.geno.gz
@@ -66,6 +68,7 @@ bel_pairs_ch
 process dxy_lg {
 	label 'L_G32g30h_dxy_lg'
 	tag "${spec1}${loc}-${spec2}${loc}"
+	module "openssl1.0.2"
 	// this process is likely not to finish - somehow the window script
 	// fails to finish - I still produces the output though
 
