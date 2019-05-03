@@ -44,18 +44,18 @@ Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spe
 bel_pairs_ch = Channel.from( "bel" )
 	.combine( bel_spec1_ch )
 	.combine( bel_spec2_ch )
-	.filter{ it[2] < it[4] }
-	.map{ it[0,1,3]}
+	.filter{ it[1] < it[3] }
+	.map{ it[0,2,4]}
 hon_pairs_ch = Channel.from( "hon" )
 	.combine( hon_spec1_ch )
 	.combine(hon_spec2_ch)
-	.filter{ it[2] < it[4] }
-	.map{ it[0,1,3]}
+	.filter{ it[1] < it[3] }
+	.map{ it[0,2,4]}
 pan_pairs_ch = Channel.from( "pan" )
 	.combine( pan_spec1_ch )
 	.combine(pan_spec2_ch)
-	.filter{ it[2] < it[4] }
-	.map{ it[0,1,3]}
+	.filter{ it[1] < it[3] }
+	.map{ it[0,2,4]}
 
 bel_pairs_ch
 	.concat( hon_pairs_ch, pan_pairs_ch )
@@ -124,4 +124,3 @@ process receive_tuple {
 	gzip dxy.${pop1}-${pop2}.50kb-5kb.tsv
 	"""
 }
-*/
