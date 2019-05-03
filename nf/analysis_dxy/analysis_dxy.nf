@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
-/* This pipelie includes the anlysis run on the
-   all callable sites data sheet (dxy).*/
+// This pipelie includes the anlysis run on the
+//   all callable sites data sheet (dxy).
 
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.allBP.vcf.{gz,gz.tbi}")
@@ -10,8 +10,8 @@ Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.set{ lg_ch }
 
-/* ------------------------------------ */
-/* split the genotypes by LG and reformat the genotypes */
+// ------------------------------------
+// split the genotypes by LG and reformat the genotypes
 process split_allBP {
 	label 'L_32g15h_split_allBP'
 
@@ -33,30 +33,26 @@ process split_allBP {
 	"""
 }
 
-Channel
-	.from( "bel", "hon", "pan")
-	.set{ locations_ch }
-
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
-/* Preparation: create all possible species pairs depending on location
-   and combine with genotype subset (for the respective location)*/
+// Preparation: create all possible species pairs depending on location
+//   and combine with genotype subset (for the respective location)
 
-/* channel content after joinig: set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]*/
+// channel content after joinig: set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]
 bel_pairs_ch = Channel.from( "bel" )
-	.join( bel_spec1_ch )
+	.combine( bel_spec1_ch )
 	.combine( bel_spec2_ch )
 	.filter{ it[2] < it[4] }
 	.map{ it[0,1,3]}
 hon_pairs_ch = Channel.from( "hon" )
-	.join( hon_spec1_ch )
+	.combine( hon_spec1_ch )
 	.combine(hon_spec2_ch)
 	.filter{ it[2] < it[4] }
 	.map{ it[0,1,3]}
 pan_pairs_ch = Channel.from( "pan" )
-	.join( pan_spec1_ch )
+	.combine( pan_spec1_ch )
 	.combine(pan_spec2_ch)
 	.filter{ it[2] < it[4] }
 	.map{ it[0,1,3]}
