@@ -61,9 +61,9 @@ bel_pairs_ch
 	.concat( hon_pairs_ch, pan_pairs_ch )
 	.combine( geno_ch )
 	.set { all_dxy_pairs_ch }
-all_dxy_pairs_ch.println()
+
 // compute the dxy values along non-overlaping 50kb windows
-/*process dxy_lg {
+process dxy_lg {
 	label 'L_G32g30h_dxy_lg'
 	tag "${spec1}${loc}-${spec2}${loc}"
 	// this process is likely not to finish - somehow the window script
@@ -124,4 +124,3 @@ process receive_tuple {
 	gzip dxy.${pop1}-${pop2}.50kb-5kb.tsv
 	"""
 }
-*/
