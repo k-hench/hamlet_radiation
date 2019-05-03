@@ -15,7 +15,6 @@ Channel
 process split_allBP {
 	label 'L_32g15h_split_allBP'
 	tag "LG${lg}"
-	module "openssl1.0.2"
 
 	input:
 	set val( lg ), vcfId, file( vcf ) from lg_ch.combine( vcf_ch )
@@ -25,6 +24,8 @@ process split_allBP {
 
 	script:
 	"""
+	module load openssl1.0.2
+
 	vcftools --gzvcf ${vcf[0]} \
 		--chr LG${lg} \
 		--recode \
@@ -68,7 +69,6 @@ bel_pairs_ch
 process dxy_lg {
 	label 'L_G32g30h_dxy_lg'
 	tag "${spec1}${loc}-${spec2}${loc}"
-	module "openssl1.0.2"
 	// this process is likely not to finish - somehow the window script
 	// fails to finish - I still produces the output though
 
@@ -80,6 +80,7 @@ process dxy_lg {
 
 	script:
 	"""
+	module load openssl1.0.2
 	module load intel17.0.4 intelmpi17.0.4
 
 	vcfsamplenames ${vcf} | \
