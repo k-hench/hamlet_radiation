@@ -47,7 +47,7 @@ fll_n <- function(n){fll_fun(n) %>% setNames(., nm = str_c("pop_",1:n)) }
 sp_labs <- c(
   abe = expression(italic(H.~aberrans)),
   flo = expression(italic(H.~floridae)),
-  gum = expression(italic(H.~gumigutta)),
+  gum = expression(italic(H.~gummigutta)),
   ind = expression(italic(H.~indigo)),
   may = expression(italic(H.~maya)),
   nig = expression(italic(H.~nigricans)),
@@ -61,7 +61,7 @@ sp_labs <- c(
 sp_names <- c(
   abe = "aberrans",
   flo = "floridae",
-  gum = "gumigutta",
+  gum = "gummigutta",
   ind = "indigo",
   may = "maya",
   nig = "nigricans",
