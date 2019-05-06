@@ -86,8 +86,8 @@ process dxy_lg {
 	zcat ${geno} | \
 		head -n 1 | \
 		cut -f 3- | \
-		sed 's/\t/\n/g' | \
-		awk -v OFS='\t' '{print \$1, substr( \$1, length(\$1) - 5, 6)}' > pop.txt
+		sed 's/\\t/\\n/g' | \
+		awk -v OFS='\\t' '{print \$1, substr( \$1, length(\$1) - 5, 6)}' > pop.txt
 
 	mpirun \$NQSII_MPIOPTS -np 1 \
 		python \$SFTWR/genomics_general/popgenWindows.py \
