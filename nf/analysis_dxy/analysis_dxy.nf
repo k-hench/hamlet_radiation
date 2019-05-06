@@ -68,7 +68,7 @@ bel_pairs_ch
 // compute the dxy values along non-overlaping 50kb windows
 process dxy_lg {
 	label 'L_G32g30h_dxy_lg'
-	tag "${spec1}${loc}-${spec2}${loc}"
+	tag "${spec1}${loc}-${spec2}${loc}_LG${lg}"
 	// this process is likely not to finish - somehow the window script
 	// fails to finish - I still produces the output though
 
