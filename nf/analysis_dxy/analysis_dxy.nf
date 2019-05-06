@@ -83,7 +83,10 @@ process dxy_lg {
 	module load openssl1.0.2
 	module load intel17.0.4 intelmpi17.0.4
 
-	vcfsamplenames ${vcf} | \
+	zcat ${geno} | \
+		head -n 1 | \
+		cut -f 3- | \
+		sed 's/\t/\n/g' | \
 		awk -v OFS='\t' '{print \$1, substr( \$1, length(\$1) - 5, 6)}' > pop.txt
 
 	mpirun \$NQSII_MPIOPTS -np 1 \
