@@ -20,7 +20,7 @@ process split_allBP {
 	set val( lg ), vcfId, file( vcf ) from lg_ch.combine( vcf_ch )
 
 	output:
-	set val( lg ), file( 'phased_mac2.LG${lg}.vcf.gz' ) into vcf_by_lg_ch
+	set val( lg ), file( "phased_mac2.LG${lg}.vcf.gz" ) into vcf_by_lg_ch
 
 	script:
 	"""
@@ -52,7 +52,7 @@ process fasteprr_s1 {
 }
 
 process fasteprr_s1_summary {
-	label 'L_20g2h_fasteprr_s1_summmary'
+	label 'L_loc_fasteprr_s1_summmary'
 
 	input:
 	file( step1 ) from step_1_out_ch.collect()
@@ -74,7 +74,7 @@ Channel
 	.set{ step_2_run_ch }
 
 process fasteprr_s2 {
-	label 'L_20g2h_fasteprr_s2'
+	label 'L_32g30h_fasteprr_s2'
 	tag "run_${idx}"
 	module "R3.5.2"
 
@@ -92,7 +92,7 @@ process fasteprr_s2 {
 }
 
 process fasteprr_s2_summary {
-	label 'L_20g2h_fasteprr_s2_summmary'
+	label 'L_loc_fasteprr_s2_summmary'
 
 	input:
 	set val( idx ), file( step2 ) from step_2_out_ch.collect()
@@ -111,7 +111,7 @@ process fasteprr_s2_summary {
 }
 
 process fasteprr_s3 {
-	label 'L_20g2h_fasteprr_s3'
+	label 'L_32g4h_fasteprr_s3'
 	module "R3.5.2"
 
 	input:
@@ -129,7 +129,7 @@ process fasteprr_s3 {
 
 
 process fasteprr_s3_summary {
-	label 'L_20g2h_fasteprr_s3_summmary'
+	label 'L_loc_fasteprr_s3_summmary'
 	publishDir "../../2_analysis/fasteprr", mode: 'copy'
 
 	input:
