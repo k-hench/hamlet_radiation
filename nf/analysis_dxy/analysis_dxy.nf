@@ -109,25 +109,25 @@ dxy_lg_ch
 process receive_tuple {
 	label 'L_36g47h_receive_tuple'
 	publishDir "../../2_analysis/dxy/", mode: 'copy'
-	tag "${pop1}-${pop2}"
+	tag "${pop1[0]}-${pop2[0]}"
 
 	input:
-	set comp, dxy, lg, pop1, pop2 from tubbled_dxy
+	set val( comp ), file( dxy ), val( lg ), val( pop1 ), val( pop2 ) from tubbled_dxy
 
 	output:
-	file( "dxy.${pop1}-${pop2}.50kb-5kb.tsv.gz" ) into dxy_output_ch
+	file( "dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv.gz" ) into dxy_output_ch
 
 	script:
 	"""
-	zcat dxy.${pop1}-${pop2}.LG01.50kb-5kb.txt.gz | \
-	head -n 1 > dxy.${pop1}-${pop2}.50kb-5kb.tsv;
+	zcat dxy.${pop1[0]}-${pop2[0]}.LG01.50kb-5kb.txt.gz | \
+	head -n 1 > dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv;
 
 	for j in {01..24};do
 		echo "-> LG\$j"
-		zcat dxy.${pop1}-${pop2}.LG\$j.50kb-5kb.txt.gz | \
-			awk 'NR>1{print}' >> dxy.${pop1}-${pop2}.50kb-5kb.tsv;
+		zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.50kb-5kb.txt.gz | \
+			awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv;
 	done
 
-	gzip dxy.${pop1}-${pop2}.50kb-5kb.tsv
+	gzip dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv
 	"""
 }
