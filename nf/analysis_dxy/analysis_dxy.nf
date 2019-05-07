@@ -107,7 +107,7 @@ dxy_lg_ch
   .set{ tubbled_dxy }
 
 process receive_tuple {
-	label 'L_36g47h_receive_tuple'
+	label 'L_20g2h_receive_tuple'
 	publishDir "../../2_analysis/dxy/", mode: 'copy'
 	tag "${pop1[0]}-${pop2[0]}"
 
