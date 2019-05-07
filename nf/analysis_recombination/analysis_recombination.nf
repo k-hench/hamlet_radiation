@@ -42,7 +42,7 @@ process fasteprr_s1 {
 	set val( lg ), file( vcf ) from vcf_by_lg_ch
 
 	output:
-	file( "step1_LG${lg}" ) into vcf_by_lg_ch
+	file( "step1_LG${lg}" ) into step_1_out_ch
 
 	script:
 	"""
@@ -55,7 +55,7 @@ process fasteprr_s1_summary {
 	label 'L_20g2h_fasteprr_s1_summmary'
 
 	input:
-	file( step1 ) from vcf_by_lg_ch.collect()
+	file( step1 ) from step_1_out_ch.collect()
 
 	output:
 	file( "step1" ) into ( step1_ch1, step1_ch2 )
