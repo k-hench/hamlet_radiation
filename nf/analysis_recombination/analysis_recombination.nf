@@ -70,7 +70,7 @@ process fasteprr_s1_summary {
 Channel
 	.from( 1..250 )
 	.map{ it.toString().padLeft(3, "0") }
-	.combine( step1_ch )
+	.combine( step1_ch1 )
 	.set{ step_2_run_ch }
 
 process fasteprr_s2 {
