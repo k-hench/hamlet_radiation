@@ -67,7 +67,7 @@ bel_pairs_ch
 
 // compute the dxy values along non-overlaping 50kb windows
 process dxy_lg {
-	label 'L_G32g30h_dxy_lg'
+	label 'L_G32g15h_dxy_lg'
 	tag "${spec1}${loc}-${spec2}${loc}_LG${lg}"
 	// this process is likely not to finish - somehow the window script
 	// fails to finish - I still produces the output though
@@ -91,7 +91,7 @@ process dxy_lg {
 
 	mpirun \$NQSII_MPIOPTS -np 1 \
 		python \$SFTWR/genomics_general/popgenWindows.py \
-		-w 50000 -s 50000 \
+		-w 50000 -s 5000 \
 		--popsFile pop.txt \
 		-p ${spec1}${loc} -p ${spec2}${loc} \
 		-g ${geno} \
