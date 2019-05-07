@@ -47,7 +47,7 @@ process fasteprr_s1 {
 	script:
 	"""
 	mkdir step1_LG${lg}
-	Rscript --vanilla \$BASE_DIR/R/fasteprr_step1.R ${vcf} step1_LG${lg} LG${lg} 50
+	Rscript --vanilla \$BASE_DIR/R/fasteprr_step1.R ./${vcf} step1_LG${lg} LG${lg} 50
 	"""
 }
 
