@@ -80,3 +80,7 @@ shps <- c(bel = 21,
 loc_labs <- c( bel = "Belize",
                hon = "Honduras",
                pan = "Panama")
+
+project_case <- function(x){
+	str_to_lower(x)
+}
