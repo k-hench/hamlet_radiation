@@ -144,7 +144,7 @@ Channel
 	.set{ random_sets_ch }
 
 process randomize_samples {
-label 'L_20g2h_randomize_samples'
+label 'L_20g15h_randomize_samples'
 publishDir "../../2_analysis/fst/50k/random", mode: 'copy' , pattern: "*_windowed.weir.fst.gz"
 module "R3.5.2"
 
