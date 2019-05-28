@@ -159,7 +159,7 @@ script:
 """
 cut -f 2,3 \$BASE_DIR/metadata/sample_info.txt | \
 	grep "${loc}" | \
-	grep "${spec1}\\|${spec2}" > pop_prep.txt
+	grep "${spec1}\\|${spec2}" > pop_prep.tsv
 
 Rscript --vanilla \$BASE_DIR/R/randomize_pops.R
 
