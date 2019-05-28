@@ -123,7 +123,7 @@ process fasteprr_s3 {
 	script:
 	"""
 	mkdir step3
-	Rscript --vanilla fasteprr_step3.R ${step1} ${step2} step3
+	Rscript --vanilla \$BASE_DIR/R/fasteprr_step3.R ${step1} ${step2} step3
 	"""
 }
 
