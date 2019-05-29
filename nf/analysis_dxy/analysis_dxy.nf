@@ -163,8 +163,8 @@ cut -f 2,3 \$BASE_DIR/metadata/sample_info.txt | \
 
 Rscript --vanilla \$BASE_DIR/R/randomize_pops.R
 
-cut -f 1 random_pop.txt | grep A > pop1.txt
-cut -f 1 random_pop.txt | grep B > pop2.txt
+grep A random_pop.txt | cut -f 1  > pop1.txt
+grep B random_pop.txt | cut -f 1  > pop2.txt
 
 vcftools \
   --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd_bi-allelic.allBP.vcf.gz \
