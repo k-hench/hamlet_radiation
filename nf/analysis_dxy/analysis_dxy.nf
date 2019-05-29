@@ -195,7 +195,7 @@ input:
 set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno ), val( random_set ), file( pop_file ) from random_assigned_ch
 
 output:
-set val( "${spec1}${loc}-${spec2}${loc}" ), file( "dxy.${spec1}${loc}-${spec2}${loc}.LG${lg}.50kb-5kb.txt.gz" ), val( lg ), val( "aaa${loc}" ), val( "bbb${loc}" ) into dxy_random_lg_ch
+set val( "aaa${loc}-bbb${loc}" ), file( "dxy.aaa${loc}-bbb${loc}.LG${lg}.50kb-5kb.txt.gz" ), val( lg ), val( "aaa${loc}" ), val( "bbb${loc}" ) into dxy_random_lg_ch
 
 script:
 """
