@@ -81,6 +81,7 @@ process pca_all {
 	output:
 	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
 	file( "hamlets_only.vcf.gz*" ) into vcf_hamlets_only
+	set file( "hamlets_only.vcf.gz*" ), file( "hamlets_only.pop.txt" ) into vcf_multi_fst
 
 	script:
 	"""
@@ -274,6 +275,50 @@ process admixture_loc_log {
 /* 3) Fst section ============== */
 /* Preparation: create all possible species pairs depending on location
    and combine with genotype subset (for the respective location)*/
+
+// multi fst =======================
+process fst_multi {
+	label 'L_20g15h_fst_multi'
+	publishDir "../../2_analysis/fst/50k/${loc}", mode: 'copy' , pattern: "*.50k.tsv.gz"
+	publishDir "../../2_analysis/fst/10k/${loc}", mode: 'copy' , pattern: "*.10k.tsv.gz"
+	publishDir "../../2_analysis/fst/logs/${loc}", mode: 'copy' , pattern: "*.log"
+	conda "$HOME/miniconda2/envs/py3"
+
+	input:
+	set file( vcf ), file( pop ) from vcf_multi_fst
+
+	output:
+	file( "multi_fst*" ) into multi_fst_output
+
+	script:
+	"""
+	vcftools --gzvcf ${vcf} \
+	   --mac 1 --recode --stdout | \
+		gzip > hamlets_only_mac1.vcf.gz
+
+	python \$BASE_DIR/py/multipop_fst_per_snp.py \
+	   -v hamlets_only_mac1.vcf.gz \
+	   -p ${pop} \
+		2> multi_fst_snp.log | \
+		gzip > multi_fst_snp.tsv.gz
+
+	python \$BASE_DIR/py/multipop_fst_windows.py \
+	   -v hamlets_only_mac1.vcf.gz \
+	   -p ${pop} \
+		-w 50000 \
+		-s 5000 | \
+		gzip > multi_fst.50k.tsv.gz
+
+	python \$BASE_DIR/py/multipop_fst_windows.py \
+		-v hamlets_only_mac1.vcf.gz \
+		-p ${pop} \
+		-w 10000 \
+		-s 1000 | \
+		gzip > multi_fst.10k.tsv.gz
+	"""
+}
+
+// pairwise fsts ===================
 
 /* channel content after joinig: set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]*/
 bel_pairs_ch = Channel.from( "bel" )
