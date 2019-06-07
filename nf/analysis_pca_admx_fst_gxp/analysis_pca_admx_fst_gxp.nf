@@ -292,26 +292,28 @@ process fst_multi {
 
 	script:
 	"""
+	awk '{print \$1"\\t"\$2\$3}' ${pop} > pop.txt
+
 	vcftools --gzvcf ${vcf} \
 	   --mac 1 --recode --stdout | \
 		gzip > hamlets_only_mac1.vcf.gz
 
 	python \$BASE_DIR/py/multipop_fst_per_snp.py \
 	   -v hamlets_only_mac1.vcf.gz \
-	   -p ${pop} \
+	   -p pop.txt \
 		2> multi_fst_snp.log | \
 		gzip > multi_fst_snp.tsv.gz
 
 	python \$BASE_DIR/py/multipop_fst_windows.py \
 	   -v hamlets_only_mac1.vcf.gz \
-	   -p ${pop} \
+	   -p pop.txt \
 		-w 50000 \
 		-s 5000 | \
 		gzip > multi_fst.50k.tsv.gz
 
 	python \$BASE_DIR/py/multipop_fst_windows.py \
 		-v hamlets_only_mac1.vcf.gz \
-		-p ${pop} \
+		-p pop.txt \
 		-w 10000 \
 		-s 1000 | \
 		gzip > multi_fst.10k.tsv.gz
