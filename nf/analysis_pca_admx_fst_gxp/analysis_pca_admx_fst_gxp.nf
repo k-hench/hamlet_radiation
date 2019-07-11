@@ -294,29 +294,67 @@ process fst_multi {
 	"""
 	awk '{print \$1"\\t"\$2\$3}' ${pop} > pop.txt
 
+	for k in abehon gumhon indbel maybel nigbel nighon nigpan puebel puehon puepan ranhon unibel unihon unipan; do
+	grep \$k pop.txt | cut -f 1 > pop.\$k.txt
+	done
+
 	vcftools --gzvcf ${vcf} \
-	   --mac 1 --recode --stdout | \
-		gzip > hamlets_only_mac1.vcf.gz
+	--weir-fst-pop pop.abehon.txt \
+	--weir-fst-pop pop.gumhon.txt \
+	--weir-fst-pop pop.indbel.txt \
+	--weir-fst-pop pop.maybel.txt \
+	--weir-fst-pop pop.nigbel.txt \
+	--weir-fst-pop pop.nighon.txt \
+	--weir-fst-pop pop.nigpan.txt \
+	--weir-fst-pop pop.puebel.txt \
+	--weir-fst-pop pop.puehon.txt \
+	--weir-fst-pop pop.puepan.txt \
+	--weir-fst-pop pop.ranhon.txt \
+	--weir-fst-pop pop.unibel.txt \
+	--weir-fst-pop pop.unihon.txt \
+	--weir-fst-pop pop.unipan.txt \
+	--stdout  2> multi_fst_snp.log | \
+	gzip multi_fst.50k.tsv.gz
 
-	python \$BASE_DIR/py/multipop_fst_per_snp.py \
-	   -v hamlets_only_mac1.vcf.gz \
-	   -p pop.txt \
-		2> multi_fst_snp.log | \
-		gzip > multi_fst_snp.tsv.gz
+	vcftools --gzvcf ${vcf} \
+	--weir-fst-pop pop.abehon.txt \
+	--weir-fst-pop pop.gumhon.txt \
+	--weir-fst-pop pop.indbel.txt \
+	--weir-fst-pop pop.maybel.txt \
+	--weir-fst-pop pop.nigbel.txt \
+	--weir-fst-pop pop.nighon.txt \
+	--weir-fst-pop pop.nigpan.txt \
+	--weir-fst-pop pop.puebel.txt \
+	--weir-fst-pop pop.puehon.txt \
+	--weir-fst-pop pop.puepan.txt \
+	--weir-fst-pop pop.ranhon.txt \
+	--weir-fst-pop pop.unibel.txt \
+	--weir-fst-pop pop.unihon.txt \
+	--weir-fst-pop pop.unipan.txt \
+	--fst-window-step 5000 \
+	--fst-window-size 50000 \
+	--stdout  2> multi_fst.50k.log | \
+	gzip multi_fst.50k.tsv.gz
 
-	python \$BASE_DIR/py/multipop_fst_windows.py \
-	   -v hamlets_only_mac1.vcf.gz \
-	   -p pop.txt \
-		-w 50000 \
-		-s 5000 | \
-		gzip > multi_fst.50k.tsv.gz
-
-	python \$BASE_DIR/py/multipop_fst_windows.py \
-		-v hamlets_only_mac1.vcf.gz \
-		-p pop.txt \
-		-w 10000 \
-		-s 1000 | \
-		gzip > multi_fst.10k.tsv.gz
+	vcftools --gzvcf ${vcf} \
+	--weir-fst-pop pop.abehon.txt \
+	--weir-fst-pop pop.gumhon.txt \
+	--weir-fst-pop pop.indbel.txt \
+	--weir-fst-pop pop.maybel.txt \
+	--weir-fst-pop pop.nigbel.txt \
+	--weir-fst-pop pop.nighon.txt \
+	--weir-fst-pop pop.nigpan.txt \
+	--weir-fst-pop pop.puebel.txt \
+	--weir-fst-pop pop.puehon.txt \
+	--weir-fst-pop pop.puepan.txt \
+	--weir-fst-pop pop.ranhon.txt \
+	--weir-fst-pop pop.unibel.txt \
+	--weir-fst-pop pop.unihon.txt \
+	--weir-fst-pop pop.unipan.txt \
+	--fst-window-step 1000 \
+	--fst-window-size 10000 \
+	--stdout  2> multi_fst.10k.log | \
+	gzip multi_fst_snp.tsv.gz
 	"""
 }
 

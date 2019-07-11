@@ -28,6 +28,7 @@ clr2 <- c(
 
 plot_clr <- rgb(.2,.2,.2)
 plot_size <- .2
+outlr_clr <- rgb(1,0,0,.2)
 
 loc_names <- c(
 	bel = "Belize",
