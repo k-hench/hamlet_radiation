@@ -314,7 +314,7 @@ process fst_multi {
 	--weir-fst-pop pop.unihon.txt \
 	--weir-fst-pop pop.unipan.txt \
 	--stdout  2> multi_fst_snp.log | \
-	gzip multi_fst.50k.tsv.gz
+	gzip > multi_fst.50k.tsv.gz
 
 	vcftools --gzvcf ${vcf} \
 	--weir-fst-pop pop.abehon.txt \
@@ -334,7 +334,7 @@ process fst_multi {
 	--fst-window-step 5000 \
 	--fst-window-size 50000 \
 	--stdout  2> multi_fst.50k.log | \
-	gzip multi_fst.50k.tsv.gz
+	gzip > multi_fst.50k.tsv.gz
 
 	vcftools --gzvcf ${vcf} \
 	--weir-fst-pop pop.abehon.txt \
@@ -354,7 +354,7 @@ process fst_multi {
 	--fst-window-step 1000 \
 	--fst-window-size 10000 \
 	--stdout  2> multi_fst.10k.log | \
-	gzip multi_fst_snp.tsv.gz
+	gzip > multi_fst_snp.tsv.gz
 	"""
 }
 
