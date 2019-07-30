@@ -4,9 +4,9 @@
 extend = Channel.from( 500000 )
 recom = Channel.from( 0.02 )
 sel  = Channel.from( 0.5 )
-ne = Channel.from( 10000, 100000, 100000 )
-mig  = Channel.from( 0.01, 0.001, 0.0001)
-divt  = Channel.from( 1000, 10000, 100000 )
+ne = Channel.from( 1000, 10000, 100000, 100000 )
+mig  = Channel.from( 0.01, 0.001, 0.0001, 0.00001)
+divt  = Channel.from( 1000, 10000, 100000, 1000000 )
 dom = Channel.from( 0.5 )
 mode = Channel.from( 'seq', 'poly' )
 
