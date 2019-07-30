@@ -23,6 +23,7 @@ par = extend
 process msms_seq {
 	label "L_20g2h_msms"
 	tag "msms_${x.mode}_Ne_${x.ne}_mig_${x.mig}_t_${x.divt}"
+	module load openssl1.0.2
 
 	input:
 	val( x ) from par
@@ -115,6 +116,7 @@ process msms_seq {
 process prep_dxy {
 	label "L_20g2h_msms"
 	tag "prep_${x.mode}_Ne_${x.ne}_mig_${x.mig}_t_${x.divt}"
+	module load openssl1.0.2
 
 	input:
 	set val( x ), file( fa ) from vcf2geno
@@ -136,6 +138,7 @@ process dxy_run {
 	label "L_20g2h_msms"
 	tag "dxy_${x.mode}_Ne_${x.ne}_mig_${x.mig}_t_${x.divt}"
 	publishDir "../../2_analysis/simulation/dxy", mode: 'copy'
+	module load openssl1.0.2
 
 	input:
 	set val( x ), file( geno ) from ( dxy_prep )
@@ -169,6 +172,7 @@ process fst_run {
 	label "L_20g2h_msms"
 	tag "fst_${x.mode}_Ne_${x.ne}_mig_${x.mig}_t_${x.divt}"
 	publishDir "../../2_analysis/simulation/fst", mode: 'copy'
+	module load openssl1.0.2
 
 	input:
 	set val( x ), file( vcf ) from  msms_vcf
