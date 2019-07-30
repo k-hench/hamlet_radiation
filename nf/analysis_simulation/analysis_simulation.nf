@@ -29,7 +29,7 @@ process msms_seq {
 
 	output:
 	set val( x ), file( "*.vcf.gz" ), file( "*_${x.dom}.txt" ) into ( msms_output, vcf2pca )
-	set val( x ), file( "fst_decay.msms.seq_gen.fa" ) into ( vcf2geno )
+	set val( x ), file( "*.fa" ) into ( vcf2geno )
 
 	script:
 	"""
@@ -101,16 +101,17 @@ process msms_seq {
 		-N ${x.ne} \
 		-threads 4 \
 		-seed 27678 | \
-		grep ";"  > fst_decay.msms.grep.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}.txt
+		grep ";"  > msms.grep.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}.txt
 
 
-	partitions=\$(wc -l fst_decay.msms.grep.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}.txt)
+	partitions=\$(wc -l msms.grep.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}.txt)
 
-	seq-gen -of -mHKY -l ${x.ext} -s 0.01 -p \$partitions < fst_decay.msms.grep.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}.txt  | \
-		sed 's/^>\\([0-9]\\)\$/>0\\1/g' > fst_decay.msms.seq_gen.fa
+	seq-gen -of -mHKY -l ${x.ext} -s 0.01 -p \$partitions < msms.grep.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}.txt  | \
+		sed 's/^>\\([0-9]\\)\$/>0\\1/g' > msms.seq_gen.fa
 
-	cat fst_decay.msms.seq_gen.fa | msa2vcf > fst_decay.seq-gen.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}.vcf
-	bgzip fst_decay.seq-gen.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}.vcf
+	cat msms.seq_gen.fa | \
+		msa2vcf | \
+		bgzip > seq-gen.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}.vcf.gz
 	"""
 }
 
