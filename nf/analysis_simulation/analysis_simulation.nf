@@ -138,7 +138,7 @@ process prep_dxy {
 }
 
 process dxy_run {
-	label "L_20g2h_msms"
+	label "L_G20g2h_dxy"
 	tag "dxy_${x.mode}_Ne_${x.ne}_mig_${x.mig}_t_${x.divt}"
 	publishDir "../../2_analysis/simulation/dxy", mode: 'copy'
 
@@ -177,7 +177,7 @@ process dxy_run {
 }
 
 process fst_run {
-	label "L_20g2h_msms"
+	label "L_20g2h_fst"
 	tag "fst_${x.mode}_Ne_${x.ne}_mig_${x.mig}_t_${x.divt}"
 	publishDir "../../2_analysis/simulation/fst", mode: 'copy'
 
