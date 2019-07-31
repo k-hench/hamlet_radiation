@@ -150,6 +150,9 @@ process dxy_run {
 
 	script:
 	"""
+	module load openssl1.0.2
+	module load intel17.0.4 intelmpi17.0.4
+
 	for k in {01..12};do echo -e "\$k\tA" >> pop.txt; done
 	for k in {13..24};do echo -e "\$k\tB" >> pop.txt; done
 	for k in {25..36};do echo -e "\$k\tC" >> pop.txt; done
@@ -159,13 +162,16 @@ process dxy_run {
 		pop1=\$(echo \$k | cut -c 1)
 		pop2=\$(echo \$k | cut -c 3)
 
-		python \$SFTWR/genomics_general/popgenWindows.py \
-			-w 10000 -s 1000 \
+		mpirun \$NQSII_MPIOPTS -np 1 \
+			python \$SFTWR/genomics_general/popgenWindows.py \
 			--popsFile pop.txt \
+			-w 10000 -s 1000 \
 			-p \$pop1 -p \$pop2 \
 			-g ${geno} \
 			-o run.${x.ext}_${x.rec}_${x.ne}_${x.sel}_${x.mig}_${x.divt}_${x.dom}_\$pop1-\$pop2-${x.mode}.dxy.gz \
-			-f phased --writeFailedWindows -T 1
+			-f phased \
+			--writeFailedWindows \
+			-T 1
 	done
 	"""
 }
