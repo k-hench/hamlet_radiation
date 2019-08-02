@@ -4,7 +4,7 @@
 
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
-	.set{ vcf_ch }
+	.into{ vcf_ch; vcf_pi_ch }
 
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
@@ -39,7 +39,9 @@ process split_allBP {
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
-
+Channel
+	.from('indbel', 'maybel', 'nigbel', 'puebel', 'unibel', 'abehon', 'gumhon', 'nighon', 'puehon', 'ranhon', 'unihon', 'nigpan', 'puepan', 'unipan')
+	.set{spec_dxy}
 // Preparation: create all possible species pairs depending on location
 //   and combine with genotype subset (for the respective location)
 
@@ -242,4 +244,44 @@ done
 
 gzip dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv
 """
+}
+
+
+// The pi part need to be run AFTER the global fst outlier windows were selected (REMEMBER TO CHECK FST OUTLIER DIRECTORY)
+process pi_per_spec {
+	label 'L_32g15h_pi'
+	tag "${spec}"
+	publishDir "../../2_analysis/pi", mode: 'copy'
+
+	input:
+	set val( spec ), vcfId, file( vcf ) from spec_dxy.combine( vcf_pi_ch )
+
+	output:
+   file( "*.50k.windowed.pi.gz" ) into pi_50k
+
+	script:
+	"""
+	module load openssl1.0.2
+
+	vcfsamplenames ${vcf[0]} | \
+		grep ${spec} > pop.txt
+
+	vcftools --gzvcf ${vcf[0]} \
+		--keep pop.txt \
+		--window-pi 50000 \
+		--window-pi-step 50000 \
+		--out ${spec}.50k 2> ${spec}.pi.log
+	gzip ${spec}.50k.windowed.pi
+
+	tail -n +2 \$BASE_DIR/2_analysis/fst/outliers/all_multi_fst_outliers_998.tsv | \
+		cut -f 2,3,4 > outlier.bed
+
+	vcftools --gzvcf ${vcf[0]} \
+		--keep pop.txt \
+		--exclude-bed outlier.bed \
+		--window-pi 50000 \
+		--window-pi-step 50000\
+		--out ${spec}_no_outllier.50k 2> ${spec}_no_outllier.pi.log
+	gzip ${spec}_no_outllier.50k.windowed.pi
+	"""
 }
