@@ -281,7 +281,7 @@ process pi_per_spec {
 		--exclude-bed outlier.bed \
 		--window-pi 50000 \
 		--window-pi-step 50000\
-		--out ${spec}_no_outllier.50k 2> ${spec}_no_outllier.pi.log
-	gzip ${spec}_no_outllier.50k.windowed.pi
+		--out ${spec}_no_outlier.50k 2> ${spec}_no_outllier.pi.log
+	gzip ${spec}_no_outlier.50k.windowed.pi
 	"""
 }
