@@ -269,7 +269,7 @@ process pi_per_spec {
 	vcftools --gzvcf ${vcf[0]} \
 		--keep pop.txt \
 		--window-pi 50000 \
-		--window-pi-step 50000 \
+		--window-pi-step 5000 \
 		--out ${spec}.50k 2> ${spec}.pi.log
 	gzip ${spec}.50k.windowed.pi
 
@@ -280,7 +280,7 @@ process pi_per_spec {
 		--keep pop.txt \
 		--exclude-bed outlier.bed \
 		--window-pi 50000 \
-		--window-pi-step 50000\
+		--window-pi-step 5000\
 		--out ${spec}_no_outlier.50k 2> ${spec}_no_outllier.pi.log
 	gzip ${spec}_no_outlier.50k.windowed.pi
 	"""
