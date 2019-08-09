@@ -85,3 +85,7 @@ loc_labs <- c( bel = "Belize",
 project_case <- function(x){
 	str_to_lower(x)
 }
+
+project_inv_case <- function(x){
+  str_to_upper(x)
+}
