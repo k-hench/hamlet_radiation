@@ -33,13 +33,15 @@ outlr_clr <- rgb(1,0,0,.2)
 loc_names <- c(
 	bel = "Belize",
 	hon = "Honduras",
-	pan = "Panama"
+	pan = "Panama",
+	flo = "Florida"
 )
 
 clr_loc = c(
-	bel = "#440154FF",
-	hon = "#21908CFF",
-	pan = "#FDE725FF"
+	bel = "#E41A1C",
+	hon = "#377EB8",
+	pan = "#4DAF4A",
+	flo = "#984EA3"
 )
 
 fll_fun <- function(n){viridis::inferno(n)}
