@@ -81,6 +81,7 @@ shps <- c(bel = 21,
           flo = 24)
 
 loc_labs <- c( bel = "Belize",
+               flo = "Florida",
                hon = "Honduras",
                pan = "Panama")
 
