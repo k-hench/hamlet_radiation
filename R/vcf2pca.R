@@ -124,7 +124,7 @@ p1 <- ggplot(pc_percent,aes(x=EV_nr,y=exp_var)) +
 p2 <- ggplot(df_result,aes(x,y,fill=spec)) +
   geom_point(aes(shape = loc)) +
   scale_fill_manual("Species", values = clr, labels = sp_labs) +
-  scale_shape_manual("Location", values = shps, labels = loc_labs) +
+  scale_shape_manual("Location", values = shps, labels = loc_names) +
   facet_grid(run_y~run_x, scales = 'free') +
   guides(fill = guide_legend(override.aes = list(shape = 21, size = 3)),
          shape = guide_legend(override.aes = list(fill = 'black', size = 3))) +
@@ -148,7 +148,7 @@ p3 <- ggplot()+
                 left_join(.,id_labs),
               aes(EV01, EV02, fill = spec, shape = loc)) +
    scale_fill_manual(values = clr, guide = FALSE) +
-   scale_shape_manual("Location", values = shps, labels = loc_labs) +
+   scale_shape_manual("Location", values = shps, labels = loc_names) +
    guides(shape = guide_legend(override.aes = list(fill = 'black', size = 3))) +
    labs(x = levels(factor(c(df_result$run_x,df_result$run_y)))[1],
         y = levels(factor(c(df_result$run_x,df_result$run_y)))[2]) +
