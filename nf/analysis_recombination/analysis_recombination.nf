@@ -74,7 +74,7 @@ Channel
 	.set{ step_2_run_ch }
 
 process fasteprr_s2 {
-	label 'L_loc_fasteprr_s2'
+	label 'L_long_loc_fasteprr_s2'
 	tag "run_${idx}"
 	module "R3.5.2"
 
