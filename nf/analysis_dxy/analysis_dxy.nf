@@ -45,6 +45,10 @@ Channel
 // Preparation: create all possible species pairs depending on location
 //   and combine with genotype subset (for the respective location)
 
+Channel
+	.from( 1, 5 )
+	.into{ kb_ch; kb_ch2; kb_ch3 }
+
 // channel content after joinig: set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]
 bel_pairs_ch = Channel.from( "bel" )
 	.combine( bel_spec1_ch )
@@ -65,6 +69,7 @@ pan_pairs_ch = Channel.from( "pan" )
 bel_pairs_ch
 	.concat( hon_pairs_ch, pan_pairs_ch )
 	.combine( geno_ch )
+	.combine( kb_ch )
 	.into { all_dxy_pairs_ch; random_dxy_pairs_ch }
 
 // compute the dxy values along non-overlaping 50kb windows
@@ -75,10 +80,10 @@ process dxy_lg {
 	// fails to finish - I still produces the output though
 
 	input:
-	set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno )  from all_dxy_pairs_ch
+	set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno ), val( kb ) from all_dxy_pairs_ch
 
 	output:
-	set val( "${spec1}${loc}-${spec2}${loc}" ), file( "dxy.${spec1}${loc}-${spec2}${loc}.LG${lg}.50kb-5kb.txt.gz" ), val( lg ), val( "${spec1}${loc}" ), val( "${spec2}${loc}" ) into dxy_lg_ch
+	set val( "${spec1}${loc}-${spec2}${loc}" ), file( "dxy.${spec1}${loc}-${spec2}${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz" ), val( lg ), val( "${spec1}${loc}" ), val( "${spec2}${loc}" ), val( kb ) into dxy_lg_ch
 
 	script:
 	"""
@@ -93,11 +98,11 @@ process dxy_lg {
 
 	mpirun \$NQSII_MPIOPTS -np 1 \
 		python \$SFTWR/genomics_general/popgenWindows.py \
-		-w 50000 -s 5000 \
+		-w ${kb}0000 -s ${kb}000 \
 		--popsFile pop.txt \
 		-p ${spec1}${loc} -p ${spec2}${loc} \
 		-g ${geno} \
-		-o dxy.${spec1}${loc}-${spec2}${loc}.LG${lg}.50kb-5kb.txt.gz \
+		-o dxy.${spec1}${loc}-${spec2}${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz \
 		-f phased \
 		--writeFailedWindows \
 		-T 1
@@ -114,23 +119,23 @@ process receive_tuple {
 	tag "${pop1[0]}-${pop2[0]}"
 
 	input:
-	set val( comp ), file( dxy ), val( lg ), val( pop1 ), val( pop2 ) from tubbled_dxy
+	set val( comp ), file( dxy ), val( lg ), val( pop1 ), val( pop2 ), val( kb ) from tubbled_dxy
 
 	output:
-	file( "dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv.gz" ) into dxy_output_ch
+	file( "dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv.gz" ) into dxy_output_ch
 
 	script:
 	"""
-	zcat dxy.${pop1[0]}-${pop2[0]}.LG01.50kb-5kb.txt.gz | \
-	head -n 1 > dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv;
+	zcat dxy.${pop1[0]}-${pop2[0]}.LG01.${kb}0kb-${kb}kb.txt.gz | \
+	head -n 1 > dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
 
 	for j in {01..24};do
 		echo "-> LG\$j"
-		zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.50kb-5kb.txt.gz | \
-			awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv;
+		zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.${kb}0kb-${kb}kb.txt.gz | \
+			awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
 	done
 
-	gzip dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv
+	gzip dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv
 	"""
 }
 
@@ -144,6 +149,7 @@ Channel
 	.from( 1 )
 	.combine( random_run_ch )
 	.set{ random_sets_ch }
+	.combine( kb_ch2 )
 
 process randomize_samples {
 label 'L_20g15h_randomize_samples'
@@ -151,7 +157,7 @@ publishDir "../../2_analysis/fst/50k/random", mode: 'copy' , pattern: "*_windowe
 module "R3.5.2"
 
 input:
-set val( random_set ), val( loc ), val(spec1), val(spec2) from random_sets_ch
+set val( random_set ), val( loc ), val(spec1), val(spec2), val( kb ) from random_sets_ch
 
 output:
 set random_set, file( "random_pop.txt" ) into random_pops_ch
@@ -172,9 +178,9 @@ vcftools \
   --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd_bi-allelic.allBP.vcf.gz \
   --weir-fst-pop pop1.txt \
   --weir-fst-pop pop2.txt \
-  --fst-window-step 50000 \
-  --fst-window-size 50000 \
-  --stdout | gzip > ${loc}-aaa-bbb.50k.random_${spec1}_${spec2}_windowed.weir.fst.gz
+  --fst-window-step ${kb}0000 \
+  --fst-window-size ${kb}0000 \
+  --stdout | gzip > ${loc}-aaa-bbb.${kb}0k.random_${spec1}_${spec2}_windowed.weir.fst.gz
 
 """
 }
@@ -194,10 +200,10 @@ module "R3.5.2"
 // fails to finish - I still produces the output though
 
 input:
-set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno ), val( random_set ), file( pop_file ) from random_assigned_ch
+set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno ), val( kb ), val( random_set ), file( pop_file ) from random_assigned_ch
 
 output:
-set val( "aaa${loc}-bbb${loc}" ), file( "dxy.aaa${loc}-bbb${loc}.LG${lg}.50kb-5kb.txt.gz" ), val( lg ), val( "aaa${loc}" ), val( "bbb${loc}" ) into dxy_random_lg_ch
+set val( "aaa${loc}-bbb${loc}-${kb}0kb" ), file( "dxy.aaa${loc}-bbb${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz" ), val( lg ), val( "aaa${loc}" ), val( "bbb${loc}" ), val( kb ) into dxy_random_lg_ch
 
 script:
 """
@@ -210,7 +216,7 @@ mpirun \$NQSII_MPIOPTS -np 1 \
 	--popsFile ${pop_file} \
 	-p A -p B \
 	-g ${geno} \
-	-o dxy.aaa${loc}-bbb${loc}.LG${lg}.50kb-5kb.txt.gz \
+	-o dxy.aaa${loc}-bbb${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz \
 	-f phased \
 	--writeFailedWindows \
 	-T 1
@@ -226,23 +232,23 @@ label 'L_20g2h_receive_random_tuple'
 publishDir "../../2_analysis/dxy/random/", mode: 'copy'
 
 input:
-set val( comp ), file( dxy ), val( lg ), val( pop1 ), val( pop2 ) from tubbled_random_dxy
+set val( comp ), file( dxy ), val( lg ), val( pop1 ), val( pop2 ), val( kb )  from tubbled_random_dxy
 
 output:
-file( "dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv.gz" ) into dxy_random_output_ch
+file( "dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv.gz" ) into dxy_random_output_ch
 
 script:
 """
-zcat dxy.${pop1[0]}-${pop2[0]}.LG01.50kb-5kb.txt.gz | \
-head -n 1 > dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv;
+zcat dxy.${pop1[0]}-${pop2[0]}.LG01.${kb}0kb-${kb}kb.txt.gz | \
+head -n 1 > dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
 
 for j in {01..24};do
 	echo "-> LG\$j"
-	zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.50kb-5kb.txt.gz | \
-		awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv;
+	zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.${kb}0kb-${kb}kb.txt.gz | \
+		awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
 done
 
-gzip dxy.${pop1[0]}-${pop2[0]}.50kb-5kb.tsv
+gzip dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv
 """
 }
 
@@ -254,10 +260,10 @@ process pi_per_spec {
 	publishDir "../../2_analysis/pi", mode: 'copy'
 
 	input:
-	set val( spec ), vcfId, file( vcf ) from spec_dxy.combine( vcf_pi_ch )
+	set val( spec ), vcfId, file( vcf ), val( kb ) from spec_dxy.combine( vcf_pi_ch ).combine( kb_ch3 )
 
 	output:
-   file( "*.50k.windowed.pi.gz" ) into pi_50k
+   file( "*.${kb}0k.windowed.pi.gz" ) into pi_50k
 
 	script:
 	"""
@@ -268,10 +274,10 @@ process pi_per_spec {
 
 	vcftools --gzvcf ${vcf[0]} \
 		--keep pop.txt \
-		--window-pi 50000 \
-		--window-pi-step 5000 \
-		--out ${spec}.50k 2> ${spec}.pi.log
-	gzip ${spec}.50k.windowed.pi
+		--window-pi ${kb}0000 \
+		--window-pi-step ${kb}000 \
+		--out ${spec}.${kb}0k 2> ${spec}.pi.log
+	gzip ${spec}.${kb}0k.windowed.pi
 
 	tail -n +2 \$BASE_DIR/2_analysis/fst/outliers/all_multi_fst_outliers_998.tsv | \
 		cut -f 2,3,4 > outlier.bed
@@ -279,9 +285,9 @@ process pi_per_spec {
 	vcftools --gzvcf ${vcf[0]} \
 		--keep pop.txt \
 		--exclude-bed outlier.bed \
-		--window-pi 50000 \
-		--window-pi-step 5000\
-		--out ${spec}_no_outlier.50k 2> ${spec}_no_outllier.pi.log
-	gzip ${spec}_no_outlier.50k.windowed.pi
+		--window-pi ${kb}0000 \
+		--window-pi-step ${kb}000\
+		--out ${spec}_no_outlier.${kb}0k 2> ${spec}_${kb}0k_no_outllier.pi.log
+	gzip ${spec}_no_outlier.${kb}0k.windowed.pi
 	"""
 }
