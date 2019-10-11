@@ -148,8 +148,8 @@ Channel
 Channel
 	.from( 1 )
 	.combine( random_run_ch )
-	.set{ random_sets_ch }
 	.combine( kb_ch2 )
+	.set{ random_sets_ch }
 
 process randomize_samples {
 label 'L_20g15h_randomize_samples'
