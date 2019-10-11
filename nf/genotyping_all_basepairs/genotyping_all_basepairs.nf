@@ -1,14 +1,19 @@
 #!/usr/bin/env nextflow
+// git 2.1
 Channel
 	.fromFilePairs("../../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
 	.set{ vcf_cohort }
 
+// git 2.2
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.set{ ch_LG_ids }
 
+
+// git 2.3
 ch_LG_ids.combine( vcf_cohort ).set{ vcf_lg_combo }
 
+// git 2.4
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
 	label "L_O88g90h_LGs_genotype"
@@ -40,6 +45,7 @@ process joint_genotype_snps {
 	"""
 }
 
+// git 2.5
 process merge_genotypes {
 	label 'L_78g5h_merge_genotypes'
 	echo true
@@ -61,6 +67,7 @@ process merge_genotypes {
 	"""
 }
 
+// git 2.6
 process filterSNP_first {
 	label 'L_105g30h_filter_gt1'
 
@@ -104,6 +111,7 @@ process filterSNP_first {
 	"""
 }
 
+// git 2.7
 process filterSNP_second {
 	label 'L_105g30h_filter_gt2'
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
@@ -127,10 +135,12 @@ process filterSNP_second {
 	"""
 }
 
+// git 2.8
 Channel
 	.fromPath('../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.gz')
 	.set{ mito_vcf }
 
+// git 2.9
 process subset_mito {
 	label 'L_20g2h_subset_mito'
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'

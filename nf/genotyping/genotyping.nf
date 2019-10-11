@@ -12,6 +12,7 @@
 * information necessary to assign read groups to the sequencing data */
 params.index = '../../metadata/file_info.txt'
 
+// git 1.1
 /* split the spread sheet by row and feed it into a channel */
 Channel
 	.fromPath(params.index)
@@ -19,6 +20,7 @@ Channel
 	.map{ row -> [ id:row.id, label:row.label, file_fwd:row.file_fwd, file_rev:row.file_rev, flowcell_id_fwd:row.flowcell_id_fwd, lane_fwd:row.lane_fwd, company:row.company] }
 	.set { samples_ch }
 
+// git 1.2
 /* for every sequencing file, convert into ubam format and assign read groups */
 process split_samples {
 	label 'L_20g2h_split_samples'
@@ -53,6 +55,7 @@ process split_samples {
 	"""
 }
 
+// git 1.3
 /* for every ubam file, mark Illumina adapters */
 process mark_adapters {
 	label 'L_20g2h_mark_adapters'
@@ -76,16 +79,17 @@ process mark_adapters {
 	"""
 }
 
+// git 1.4
 adapter_bams
 	.combine(ubams_merge, by:0)
 	.set {merge_input}
 
+// git 1.5
 /* this step includes a 3 step pipeline:
 *  - re-transformatikon into fq format
 *  - mapping aginst the reference genome_file
 *  - merging with the basuch ubams to include
 		read group information */
-
 process map_and_merge {
 	label 'L_75g24h8t_map_and_merge'
 	tag "${sample}"
@@ -132,6 +136,7 @@ process map_and_merge {
 	"""
 }
 
+// git 1.6
 /* for every mapped sample,sort and mark duplicates
 * (intermediate step is required to create .bai file) */
 process mark_duplicates {
@@ -179,6 +184,7 @@ process mark_duplicates {
 	"""
 }
 
+// git 1.7
 /* index al bam files */
 process index_bam {
 	label 'L_32g1h_index_bam'
@@ -198,11 +204,13 @@ process index_bam {
 	"""
 }
 
+// git 1.8
 /* collect all bam files for each sample */
 indexed_bams
 	.groupTuple()
 	.set {tubbled}
 
+// git 1.9
 /* create one *.g.vcf file per sample */
 process receive_tuple {
 	label 'L_36g47h_receive_tuple'
@@ -228,6 +236,7 @@ process receive_tuple {
 	"""
 }
 
+// git 1.10
 /* collect and combine all *.g.vcf files */
 process gather_gvcfs {
 	label 'L_O88g90h_gather_gvcfs'
@@ -253,6 +262,7 @@ process gather_gvcfs {
 	"""
 }
 
+// git 1.11
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
 	label 'L_O88g90h_joint_genotype'
@@ -283,12 +293,13 @@ process joint_genotype_snps {
 	"""
 }
 
+// git 1.12
 /* generate a LG channel */
-
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.into{ LG_ids1; LG_ids2 }
 
+// git 1.13
 /* produce metrics table to determine filtering thresholds - ups forgot to extract SNPS first*/
 process joint_genotype_metrics {
 	label 'L_28g5h_genotype_metrics'
@@ -312,6 +323,7 @@ process joint_genotype_metrics {
 	"""
 }
 
+// git 1.14
 /* filter snps basaed on locus annotations, missingness
    and type (bi-allelic only) */
 process filterSNPs {
@@ -363,6 +375,7 @@ process filterSNPs {
 	"""
 }
 
+// git 1.15
 process extractPirs {
 	label 'L_78g10h_extract_pirs'
 
@@ -397,6 +410,7 @@ process extractPirs {
 	"""
 }
 
+// git 1.16
 process run_shapeit {
 	label 'L_75g24h8t_run_shapeit'
 
@@ -426,6 +440,7 @@ process run_shapeit {
 	"""
 }
 
+// git 1.17
 process merge_phased {
 	label 'L_28g5h_merge_phased_vcf'
 	publishDir "../../1_genotyping/4_phased/", mode: 'move'
@@ -454,6 +469,7 @@ process merge_phased {
 }
 
 /* ========================================= */
+// git 1.18
 /* appendix: generate indel masks for msmc: */
 Channel
 	.fromFilePairs("../../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
@@ -488,6 +504,7 @@ process joint_genotype_indel {
 	"""
 }
 
+// git 1.19
 process indel_metrics {
 	label 'L_28g5h_genotype_metrics'
 	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
@@ -510,6 +527,7 @@ process indel_metrics {
 	"""
 }
 
+// git 1.20
 process filterIndels {
 	label 'L_78g10h_filter_indels'
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
@@ -561,14 +579,17 @@ process filterIndels {
 	"""
 }
 
+// git 1.21
 /* create channel of linkage groups */
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
 	.into{ lg_ch }
 
+// git 1.22
 lg_ch.combine( filtered_indel ).set{ filtered_indel_lg }
 
+// git 1.23
 process split_indel_mask {
 	label 'L_loc_split_indel_mask'
 	publishDir "../../ressources/indel_masks/", mode: 'copy'

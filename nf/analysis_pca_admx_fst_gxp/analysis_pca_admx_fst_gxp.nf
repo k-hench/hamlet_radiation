@@ -314,7 +314,7 @@ process fst_multi {
 	--weir-fst-pop pop.unihon.txt \
 	--weir-fst-pop pop.unipan.txt \
 	--stdout  2> multi_fst_snp.log | \
-	gzip > multi_fst.50k.tsv.gz
+	gzip > multi_fst.tsv.gz
 
 	vcftools --gzvcf ${vcf} \
 	--weir-fst-pop pop.abehon.txt \
