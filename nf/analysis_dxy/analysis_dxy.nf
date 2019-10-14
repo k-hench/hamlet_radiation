@@ -83,7 +83,7 @@ process dxy_lg {
 	set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno ), val( kb ) from all_dxy_pairs_ch
 
 	output:
-	set val( "${spec1}${loc}-${spec2}${loc}" ), file( "dxy.${spec1}${loc}-${spec2}${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz" ), val( lg ), val( "${spec1}${loc}" ), val( "${spec2}${loc}" ), val( kb ) into dxy_lg_ch
+	set val( "${spec1}${loc}-${spec2}${loc}-${kb}" ), file( "dxy.${spec1}${loc}-${spec2}${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz" ), val( lg ), val( "${spec1}${loc}" ), val( "${spec2}${loc}" ), val( kb ) into dxy_lg_ch
 
 	script:
 	"""
