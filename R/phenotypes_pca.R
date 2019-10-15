@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla plot_fst.R ${location} ${globals.file.txt} fst_functions.R project_config.R
+# Rscript --vanilla plot_fst.R ${location} ${globals.file.txt} fst_functions.R
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
@@ -10,14 +10,13 @@ args = commandArgs(trailingOnly=FALSE)
 args = args[7:8]
 print(args)
 # setup -----------------------
-library(tidyverse)
+library(GenomicOriginsScripts)
 library(logisticPCA)
 library(ggrepel)
 
 # config -----------------------
 pheno_file <- as.character(args[1])
 proj_config <- as.character(args[2])
-source(proj_config)
 
 loading_scale <- 17
 light_clr <- 'lightgray'

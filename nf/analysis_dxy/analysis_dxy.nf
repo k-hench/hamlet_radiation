@@ -115,7 +115,7 @@ dxy_lg_ch
 
 process receive_tuple {
 	label 'L_20g2h_receive_tuple'
-	publishDir "../../2_analysis/dxy/", mode: 'copy'
+	publishDir "../../2_analysis/dxy/${kb}0k/", mode: 'copy'
 	tag "${pop1[0]}-${pop2[0]}"
 
 	input:
@@ -153,7 +153,7 @@ Channel
 
 process randomize_samples {
 label 'L_20g15h_randomize_samples'
-publishDir "../../2_analysis/fst/50k/random", mode: 'copy' , pattern: "*_windowed.weir.fst.gz"
+publishDir "../../2_analysis/fst/${kb}0k/random", mode: 'copy' , pattern: "*_windowed.weir.fst.gz"
 module "R3.5.2"
 
 input:

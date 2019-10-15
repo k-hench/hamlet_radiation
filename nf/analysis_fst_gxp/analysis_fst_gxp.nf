@@ -1,24 +1,22 @@
 #!/usr/bin/env nextflow
 /* create channel of linkage groups */
 Channel
-	.from( 2..12 )
-	.into{ admx_ch; admx_loc_ch }
-
-Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.into{ vcf_locations; vcf_all_samples_pca; vcf_admx; vcf_geno }
+	.into{ vcf_locations; vcf_filter; vcf_geno }
 
 Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
+locations_ch
+	.combine( vcf_locations )
+	.set{ vcf_location_combo }
+
+
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
-locations_ch
-	.combine( vcf_locations )
-	.set{ vcf_location_combo }
 
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
@@ -27,7 +25,7 @@ process subset_vcf_by_location {
 	set val( loc ), vcfId, file( vcf ) from vcf_location_combo
 
 	output:
-	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pca, vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3, vcf_loc_admix )
+	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
 
 	script:
 	"""
@@ -45,55 +43,20 @@ process subset_vcf_by_location {
 }
 
 /* 1) PCA section ============== */
-/* 1a) PCA (local) -------------- */
-process pca_location {
-	label "L_20g15h_pca_location"
-	publishDir "../../figures/pca", mode: 'copy' , pattern: "*.pdf"
-	publishDir "../../2_analysis/pca", mode: 'copy' , pattern: "*.gz"
-	module "R3.5.2"
-
-	input:
-	set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
-
-	output:
-	set file( "${loc}.prime_pca.pdf" ), file( "${loc}.pca.pdf" ), file( "${loc}.exp_var.txt.gz" ), file( "${loc}.scores.txt.gz" ) into pca_loc_out
-
-	script:
-	"""
-	awk '{print \$1"\\t"\$1}' ${loc}.pop | \
-		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > ${loc}.pop.txt
-
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R ${loc}.pop.txt 6
-	"""
-}
-
-/* 1b) PCA (global) -------------- */
-process pca_all {
-	label "L_20g15h_pca_all"
-	publishDir "../../figures/pca", mode: 'copy' , pattern: "*.pdf"
-	publishDir "../../2_analysis/pca", mode: 'copy' , pattern: "*.txt.gz"
+process subset_vcf_hamlets_only {
+	label "L_20g15h_filter_hamlets_only"
 	publishDir "../../1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
 	module "R3.5.2"
 
 	input:
-	set vcfId, file( vcf ) from vcf_all_samples_pca
+	set vcfId, file( vcf ) from vcf_filter
 
 	output:
-	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
 	file( "hamlets_only.vcf.gz*" ) into vcf_hamlets_only
 	set file( "hamlets_only.vcf.gz*" ), file( "hamlets_only.pop.txt" ) into vcf_multi_fst
 
 	script:
 	"""
-	# complete PCA, all samples ------------
-	vcfsamplenames ${vcf[0]} | \
-		awk '{print \$1"\\t"\$1}' | \
-		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > all.pop.txt
-
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R all.pop.txt 6
-
-	# PCA without outgroups ---------------
-
 	vcfsamplenames ${vcf[0]} | \
 		grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" > outgroup.pop
 
@@ -107,169 +70,7 @@ process pca_all {
 		--remove outgroup.pop \
 		--recode \
 		--stdout | gzip > hamlets_only.vcf.gz
-
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.vcf.gz \$BASE_DIR/R/project_config.R hamlets_only.pop.txt 6
-
-	# PCA without indtgo or gumigutta ---------------
-
-	grep -v "ind\\|gum" hamlets_only.pop.txt > core_hamlets.pop.txt
-	cut -f 1 core_hamlets.pop.txt > core_hamlets.pop
-
-	vcftools \
-		--gzvcf ${vcf[0]} \
-		--keep core_hamlets.pop \
-		--recode \
-		--stdout | gzip > core_hamlets.vcf.gz
-
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R core_hamlets.vcf.gz \$BASE_DIR/R/project_config.R core_hamlets.pop.txt 6
 	"""
-}
-
-/* 2) Admixture section ============== */
-
-/* 2a) Admixture (global) -------------- */
-process plink12 {
-	label 'L_20g2h_plink12'
-
-	input:
-	set vcfId, file( vcf ) from vcf_admx
-
-	output:
-	set file( "hapmap.ped" ), file( "hapmap.map" ), file( "hapmap.nosex" ), file( "pop.txt" ) into admx_plink
-	set file( "GxP_plink.map" ), file( "GxP_plink.ped" ) into plink_GxP
-
-	script:
-	"""
-	vcfsamplenames ${vcf[0]} | \
-		grep -v "tor\\|tab\\|flo" | \
-		awk '{print \$1"\\t"\$1}' | \
-		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > pop.txt
-
-	vcftools \
-		--gzvcf ${vcf[0]} \
-		--plink \
-		--out GxP_plink
-
-	plink \
-		--file GxP_plink \
-		--recode12 \
-		--out hapmap
-	"""
-}
-
-admx_prep  = admx_ch.combine( admx_plink )
-
-process admixture_all {
-	label 'L_O88g200h_admixture_all'
-	publishDir "../../2_analysis/admixture/", mode: 'copy' , pattern: "*.Q"
-
-	input:
-	set  val( x ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_prep
-
-	output:
-	file( "hapmap.all.${x}.P" ) into admx_output
-	set val( "dummy" ), file( "log${x}-all.out" ), file( "hapmap.all.${x}.Q" ), file( "pop.${x}.txt" ) into admx_log
-
-	script:
-	"""
-	mv ${pop} pop.${x}.txt
-	admixture --cv ${ped} ${x} | tee log${x}-all.out
-	mv hapmap.${x}.P hapmap.all.${x}.P
-	mv hapmap.${x}.Q hapmap.all.${x}.Q
-	"""
-}
-
-process admixture_log {
-	label 'L_loc_admixture_log'
-	publishDir "../../2_analysis/admixture/", mode: 'copy' , pattern: "admixture_report*"
-	publishDir "../../figures/admixture", mode: 'copy' , pattern: "*.pdf"
-	module "R3.5.2"
-
-	input:
-	set val( dummy ), file( logs ), file( admxQ ), file( pop ) from admx_log.groupTuple()
-
-	output:
-	file( "admixture_report.txt" ) into admxR_output
-	file( "admixture*.pdf" ) into admx_plot_all
-
-	script:
-	"""
-	grep -h CV log*.out > admixture_report.txt
-	Rscript --vanilla \$BASE_DIR/R/plot_admixture.R admixture_report.txt ${pop[0]} \$BASE_DIR/R/project_config.R .all 12
-	"""
-}
-
-/* 2b) Admixture (local) -------------- */
-process plink12_loc {
-	label 'L_20g2h_plink12_loc'
-
-	input:
-	set val( loc ), file( vcf ), file( pop ) from vcf_loc_admix
-
-	output:
-	set val( loc ), file( "hapmap.${loc}.ped" ), file( "hapmap.${loc}.map" ), file( "hapmap.${loc}.nosex" ), file( pop ) into admx_loc_plink
-
-	script:
-	"""
-	vcftools \
-		--gzvcf ${vcf} \
-		--plink \
-		--out intermediate_plink
-
-	plink \
-		--file intermediate_plink \
-		--recode12 \
-		--out hapmap.${loc}
-	"""
-}
-
-admx_loc_prep  = admx_loc_ch.combine( admx_loc_plink )
-
-process admixture_loc {
-	label 'L_78g10h_admixture_loc'
-	publishDir "../../2_analysis/admixture/${loc}", mode: 'copy' , pattern: "*.Q"
-
-	input:
-	set val( x ), val( loc ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_loc_prep
-
-	output:
-	set val( loc ), file( "*.P" ) into admxP_loc
-	set val( loc ), file( "*.Q" ),file( "log*.out" ), file( "${x}${pop}" ) into admxQL_loc
-
-	script:
-	"""
-	mv ${pop} ${x}${pop}
-	admixture --cv ${ped} ${x} | tee log${x}-${loc}.out
-	"""
-}
-
-admxQL_loc
-	.groupTuple()
-	.set { admx_loc_log_sorted }
-
-process admixture_loc_log {
-	label 'L_loc_admixture_log_loc'
-	publishDir "../../2_analysis/admixture/${loc}", mode: 'copy' , pattern: "admixture_report*"
-	publishDir "../../figures/admixture", mode: 'copy' , pattern: "*.pdf"
-	module "R3.5.2"
-
-	input:
-	set val( loc ), file( admxQ ), file( logs ), file( pop ) from admx_loc_log_sorted
-
-	output:
-	file( "admixture_report.${loc}.txt" ) into admxR_loc_output
-	file( "admixture*.pdf" ) into admx_plot_loc
-
-	script:
-	"""
-	cat ${pop[0]} | \
-		awk '{print \$1"\\t"\$1}' | \
-		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\2/g' > pop.txt
-
-	grep -h CV log*.out > admixture_report.${loc}.txt
-	Rscript --vanilla \$BASE_DIR/R/plot_admixture.R admixture_report.${loc}.txt pop.txt \$BASE_DIR/R/project_config.R .${loc} 8
-	"""
-	/*input: 1:admixture_reports, 2: sample_ids, 3: project_config, 4:location, 5: max_admixture_K */
 }
 
 /* 3) Fst section ============== */
@@ -282,13 +83,16 @@ process fst_multi {
 	publishDir "../../2_analysis/fst/50k/${loc}", mode: 'copy' , pattern: "*.50k.tsv.gz"
 	publishDir "../../2_analysis/fst/10k/${loc}", mode: 'copy' , pattern: "*.10k.tsv.gz"
 	publishDir "../../2_analysis/fst/logs/${loc}", mode: 'copy' , pattern: "*.log"
+	publishDir "../../2_analysis/summaries", mode: 'copy' , pattern: "fst_outliers_998.tsv"
 	conda "$HOME/miniconda2/envs/py3"
+	module "R3.5.2"
 
 	input:
 	set file( vcf ), file( pop ) from vcf_multi_fst
 
 	output:
 	file( "multi_fst*" ) into multi_fst_output
+	file( "fst_outliers_998.tsv" )  into fst_outlier_output
 
 	script:
 	"""
@@ -298,8 +102,7 @@ process fst_multi {
 	grep \$k pop.txt | cut -f 1 > pop.\$k.txt
 	done
 
-	vcftools --gzvcf ${vcf} \
-	--weir-fst-pop pop.abehon.txt \
+	POP="--weir-fst-pop pop.abehon.txt \
 	--weir-fst-pop pop.gumhon.txt \
 	--weir-fst-pop pop.indbel.txt \
 	--weir-fst-pop pop.maybel.txt \
@@ -312,49 +115,34 @@ process fst_multi {
 	--weir-fst-pop pop.ranhon.txt \
 	--weir-fst-pop pop.unibel.txt \
 	--weir-fst-pop pop.unihon.txt \
-	--weir-fst-pop pop.unipan.txt \
+	--weir-fst-pop pop.unipan.txt"
+
+	# fst by SNP
+	# ----------
+	vcftools --gzvcf ${vcf} \
+	 \$POP \
 	--stdout  2> multi_fst_snp.log | \
 	gzip > multi_fst.tsv.gz
 
+	# fst 50kb window
+	# ---------------
 	vcftools --gzvcf ${vcf} \
-	--weir-fst-pop pop.abehon.txt \
-	--weir-fst-pop pop.gumhon.txt \
-	--weir-fst-pop pop.indbel.txt \
-	--weir-fst-pop pop.maybel.txt \
-	--weir-fst-pop pop.nigbel.txt \
-	--weir-fst-pop pop.nighon.txt \
-	--weir-fst-pop pop.nigpan.txt \
-	--weir-fst-pop pop.puebel.txt \
-	--weir-fst-pop pop.puehon.txt \
-	--weir-fst-pop pop.puepan.txt \
-	--weir-fst-pop pop.ranhon.txt \
-	--weir-fst-pop pop.unibel.txt \
-	--weir-fst-pop pop.unihon.txt \
-	--weir-fst-pop pop.unipan.txt \
+	 \$POP \
 	--fst-window-step 5000 \
 	--fst-window-size 50000 \
 	--stdout  2> multi_fst.50k.log | \
 	gzip > multi_fst.50k.tsv.gz
 
+	# fst 10kb window
+	# ---------------
 	vcftools --gzvcf ${vcf} \
-	--weir-fst-pop pop.abehon.txt \
-	--weir-fst-pop pop.gumhon.txt \
-	--weir-fst-pop pop.indbel.txt \
-	--weir-fst-pop pop.maybel.txt \
-	--weir-fst-pop pop.nigbel.txt \
-	--weir-fst-pop pop.nighon.txt \
-	--weir-fst-pop pop.nigpan.txt \
-	--weir-fst-pop pop.puebel.txt \
-	--weir-fst-pop pop.puehon.txt \
-	--weir-fst-pop pop.puepan.txt \
-	--weir-fst-pop pop.ranhon.txt \
-	--weir-fst-pop pop.unibel.txt \
-	--weir-fst-pop pop.unihon.txt \
-	--weir-fst-pop pop.unipan.txt \
+	 \$POP \
 	--fst-window-step 1000 \
 	--fst-window-size 10000 \
 	--stdout  2> multi_fst.10k.log | \
 	gzip > multi_fst_snp.tsv.gz
+
+	Rscript --vanilla \$BASE_DIR/R/table_fst_outliers.R multi_fst.50k.tsv.gz
 	"""
 }
 
