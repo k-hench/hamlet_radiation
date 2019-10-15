@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla plot_fst.R ${location} ${globals.file.txt} fst_functions.R
+# Rscript --vanilla phenotypes_pca.R phenotypes.sc
 # ===============================================================
-# This script
+# This script provides the pca based on the hamlet phenotypes
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('phenotypes.sc','~/Desktop/chapter2/R/project_config.R')
+# args <- c('phenotypes.sc')
 args = commandArgs(trailingOnly=FALSE)
 args = args[7:8]
 print(args)
@@ -16,7 +16,6 @@ library(ggrepel)
 
 # config -----------------------
 pheno_file <- as.character(args[1])
-proj_config <- as.character(args[2])
 
 loading_scale <- 17
 light_clr <- 'lightgray'

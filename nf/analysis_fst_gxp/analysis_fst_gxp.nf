@@ -211,7 +211,6 @@ process fst_run {
 process fst_globals {
 	label 'L_loc_fst_globals'
 	publishDir "../../2_analysis/fst/logs/", mode: 'copy' , pattern: "fst_globals.txt"
-	publishDir "../../figures/fst", mode: 'copy' , pattern: "global_fst.pdf"
 	module "R3.5.2"
 
 	input:
@@ -230,36 +229,6 @@ process fst_globals {
 		cut -f 1,3,5 | \
 
 	sed 's/^\\(...\\)-/\\1\\t/g' > fst_globals.txt
-	Rscript --vanilla \$BASE_DIR/R/plot_global_fst.R fst_globals.txt \$BASE_DIR/R/fst_functions.R \$BASE_DIR/R/project_config.R
-	"""
-}
-
-fst_50k
-	.groupTuple()
-	.set { fst_50k_sorted }
-
-process plot_fst {
-	label 'L_20g2h_plot_fst'
-	publishDir "../../figures/fst", mode: 'copy' , pattern: "*.pdf"
-	module "R3.5.2"
-
-	input:
-	set val( loc ), file( first_fst ), file( first_log ) from fst_50k_sorted
-
-	output:
-	file( "*.pdf" ) into fst_plots
-
-	script:
-	"""
-	cat *.log | \
-		grep -E 'Weir and Cockerham|--out' | \
-		grep -A 3 50k | \
-		sed '/^--/d; s/^.*--out //g; s/.50k//g; /^Output/d; s/Weir and Cockerham //g; s/ Fst estimate: /\t/g' | \
-		paste - - - | \
-		cut -f 1,3,5 | \
-		sed 's/^\\(...\\)-/\\1\\t/g' > fst_${loc}.txt
-
-	Rscript --vanilla \$BASE_DIR/R/plot_fst.R ${loc} fst_${loc}.txt \$BASE_DIR/R/fst_functions.R \$BASE_DIR/R/project_config.R
 	"""
 }
 
@@ -303,7 +272,7 @@ process phenotye_pca {
 
 	script:
 	"""
-	Rscript --vanilla \$BASE_DIR/R/phenotypes_pca.R ${sc} \$BASE_DIR/R/project_config.R
+	Rscript --vanilla \$BASE_DIR/R/phenotypes_pca.R ${sc}
 	"""
 }
 
@@ -373,27 +342,5 @@ process gemma_smooth {
 	"""
 	\$BASE_DIR/sh/gxp_slider ${lm} ${win} ${step}
 	\$BASE_DIR/sh/gxp_slider ${lmm} ${win} ${step}
-	"""
-}
-
-gxp_lm_smoothing_output
-	.groupTuple()
-	.filter{ it[0] == 50000 }
-	.set{ grouped_smoothing_output }
-
-process gemma_plot {
-	label 'L_loc_GxP_plot'
-	publishDir "../../figures/gxp", mode: 'copy' , pattern: "*.pdf"
-	module "R3.5.2"
-
-	input:
-	set file( win ), file( gxp ) from grouped_smoothing_output
-
-	output:
-	file( "*.pdf" ) into gxp_plot_output
-
-	script:
-	"""
-	Rscript --vanilla \$BASE_DIR/R/plot_gxp.R \$BASE_DIR/R/project_config.R
 	"""
 }
