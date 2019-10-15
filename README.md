@@ -19,6 +19,13 @@ The commands to run the pipelines (`nf_run_gatk`) can be found in `sh/nextflow_a
 Additional information about the input data is located in the `./metadata` folder,
 a summary of the nextflow processes can be found in the `./docs` folder.
 
+There is an additional [**R** package](https://k-hench.github.io/GenomicOriginsScripts/) needed to run the plotting scripts for the figures.
+It can be installed using:
+
+```r
+devtools::install_github("k-hench/GenomicOriginsScripts")
+```
+
 ---
 
 <p align="center"><img src="logo.svg" alt="logo" width="150"/></p>
