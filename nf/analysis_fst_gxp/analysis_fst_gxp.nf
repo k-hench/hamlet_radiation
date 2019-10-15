@@ -1,23 +1,27 @@
 #!/usr/bin/env nextflow
 /* create channel of linkage groups */
+
+// git 3.1
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_locations; vcf_filter; vcf_geno }
 
+// git 3.2
 Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
+// git 3.3
 locations_ch
 	.combine( vcf_locations )
 	.set{ vcf_location_combo }
 
-
+// git 3.4
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
-
+// git 3.5
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
@@ -42,6 +46,7 @@ process subset_vcf_by_location {
 	"""
 }
 
+// git 3.6
 /* 1) PCA section ============== */
 process subset_vcf_hamlets_only {
 	label "L_20g15h_filter_hamlets_only"
@@ -73,10 +78,10 @@ process subset_vcf_hamlets_only {
 	"""
 }
 
+// git 3.7
 /* 3) Fst section ============== */
 /* Preparation: create all possible species pairs depending on location
    and combine with genotype subset (for the respective location)*/
-
 // multi fst =======================
 process fst_multi {
 	label 'L_20g15h_fst_multi'
@@ -146,8 +151,8 @@ process fst_multi {
 	"""
 }
 
+// git 3.8
 // pairwise fsts ===================
-
 /* channel content after joinig: set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]*/
 bel_pairs_ch = Channel.from( "bel" )
 	.join( vcf_loc_pair1 )
@@ -169,6 +174,7 @@ pan_pairs_ch = Channel.from( "pan" )
 	.map{ it[0,1,2,4,6]}
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
+// git 3.9
 process fst_run {
 	label 'L_32g4h_fst_run'
 	publishDir "../../2_analysis/fst/50k/${loc}", mode: 'copy' , pattern: "*.50k.windowed.weir.fst.gz"
@@ -206,6 +212,7 @@ process fst_run {
 	"""
 }
 
+// git 3.10
 /* collect the VCFtools logs to crate a table with the
    genome wide fst values */
 process fst_globals {
@@ -232,6 +239,7 @@ process fst_globals {
 	"""
 }
 
+// git 3.11
 /* 4) G x P section ============== */
 process GxP_run {
 	label 'L_20g2h_GxP_binary'
@@ -253,10 +261,12 @@ process GxP_run {
 	"""
 }
 
+// git 3.12
 Channel
 	.fromPath("../../metadata/phenotypes.sc")
 	.set{ phenotypes_raw }
 
+// git 3.13
 process phenotye_pca {
 	label "L_loc_phenotype_pca"
 	publishDir "../../figures/phenotype", mode: 'copy' , pattern: "*.pdf"
@@ -276,12 +286,15 @@ process phenotye_pca {
 	"""
 }
 
+// git 3.14
 Channel
 	.from("Bars", "Lines", "Snout", "Peduncle", "Blue", "Yellow", "Orange", "Tail_transparent","PC1", "PC2", "PC_d1", "abe", "gum", "ind", "may", "nig", "pue", "ran", "uni", "blue2" )
 	.set{ traits_ch }
 
+// git 3.15
 traits_ch.combine( plink_binary ).combine( phenotype_file ).set{ trait_plink_combo }
 
+// git 3.16
 process gemma_run {
  label 'L_32g4h_GxP_run'
  publishDir "../../2_analysis/GxP/bySNP/", mode: 'copy'
@@ -321,12 +334,15 @@ process gemma_run {
 	"""
 }
 
+// git 3.17
 Channel
 	.from([[50000, 5000], [10000, 1000]])
 	.set{ gxp_smoothing_levels }
 
+// git 3.18
 gemma_results.combine( gxp_smoothing_levels ).set{ gxp_smoothing_input }
 
+// git 3.19
 process gemma_smooth {
 	label 'L_20g2h_GxP_smooth'
 	publishDir "../../2_analysis/GxP/", mode: 'copy'

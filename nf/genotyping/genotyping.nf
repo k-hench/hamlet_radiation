@@ -7,14 +7,12 @@
 	 ===============================================================
 */
 
-/* open the pipeline based on the metadata spread sheet that includes all
-* information necessary to assign read groups to the sequencing data */
-params.index = '../../metadata/file_info.txt'
-
 // git 1.1
-/* split the spread sheet by row and feed it into a channel */
+/* open the pipeline based on the metadata spread sheet that includes all
+ information necessary to assign read groups to the sequencing data,
+ split the spread sheet by row and feed it into a channel */
 Channel
-	.fromPath(params.index)
+	.fromPath('../../metadata/file_info.txt')
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ id:row.id, label:row.label, file_fwd:row.file_fwd, file_rev:row.file_rev, flowcell_id_fwd:row.flowcell_id_fwd, lane_fwd:row.lane_fwd, company:row.company] }
 	.set { samples_ch }

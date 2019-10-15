@@ -1,40 +1,50 @@
 #!/usr/bin/env nextflow
+
+// git 5.1
 /* create channel of linkage groups */
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
 	.into{ lg_fasttree; lg_twisst }
 
+// git 5.2
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_locations;  vcf_geno; vcf_fasttree_whg }
 
+// git 5.3
 Channel
 	.from( "bel", "hon" )
 	.set{ locations_ch }
 
+// git 5.4
 locations_ch
 	.combine( vcf_locations )
 	.set{ vcf_location_combo }
 
+// git 5.5
 Channel
 	.from( "all", "bel", "hon", "pan" )
 	.set{ locations4_ch }
 
+// git 5.6
 Channel
 	.from( "whg", "no_musks" )
 	.set{ whg_modes }
 
+// git 5.7
 Channel
 	.from( "all", "no_outgroups" )
 	.into{ sample_modes; sample_modes_mito }
 
+// git 5.8
 locations4_ch
 	.combine( vcf_fasttree_whg )
 	.combine( whg_modes )
 	.combine( sample_modes )
 	.set{ vcf_fasttree_whg_location_combo }
 
+// git 5.9
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
@@ -59,11 +69,12 @@ process subset_vcf_by_location {
 	"""
 }
 
-
+// git 5.10
 /* 1) fasttree section ============== */
 /* 1.1) --- by LG --- */
 vcf_geno.combine( lg_fasttree ).into{ fasttree_geno; fasttree_no_og_geno  }
 
+// git 5.11
 process vcf2geno_all {
 	label 'L_20g15h_vcf2geno_all'
 
@@ -88,6 +99,7 @@ process vcf2geno_all {
 	"""
 }
 
+// git 5.12
 process vcf2geno_no_og {
 	label 'L_20g15h_vcf2geno_no_og'
 
@@ -116,10 +128,12 @@ process vcf2geno_no_og {
 	"""
 }
 
+// git 5.13
 snp_geno_tree_all
 	.concat( snp_geno_tree_no_og )
 	.set{ snp_geno_tree }
 
+// git 5.14
 process fasttree_prep {
 	label 'L_190g15h_fasttree_prep'
 
@@ -138,6 +152,7 @@ process fasttree_prep {
 	"""
 }
 
+// git 5.15
 process fasttree_run {
 	label 'L_190g100h_fasttree_run'
 	publishDir "../../2_analysis/fasttree/", mode: 'copy'
@@ -154,6 +169,7 @@ process fasttree_run {
 	"""
 }
 
+// git 5.16
 /* 1.2) --- whole genome --- */
 process subset_vcf_by_location_whg {
 	label "L_28g5h_subset_vcf_whg"
@@ -202,6 +218,7 @@ process subset_vcf_by_location_whg {
 	"""
 }
 
+// git 5.17
 process fasttree_whg_prep {
 	label 'L_190g4h_fasttree_whg_prep'
 	tag "${mode} - ${loc} - ${sample_mode}"
@@ -221,6 +238,7 @@ process fasttree_whg_prep {
 	"""
 }
 
+// git 5.18
 process fasttree_whg_run {
 	label 'L_190g100h_fasttree_run'
 	tag "${mode} - ${loc} - ${sample_mode}"
@@ -238,11 +256,13 @@ process fasttree_whg_run {
 	"""
 }
 
+// git 5.19
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.mito.vcf.{gz,gz.tbi}")
 	.combine( sample_modes_mito )
 	.set{ vcf_mito }
 
+// git 5.20
 process fasttree_mito {
 	label 'L_20g2h_fasttree_mito'
 	publishDir "../../2_analysis/fasttree/", mode: 'copy'
@@ -292,34 +312,17 @@ process fasttree_mito {
 	"""
 }
 /*--------- tree construction -----------*/
-/*
-process plot_tree {
-	label '32g1h.fasttree_plot'
-	publishDir "../../out/fasttree/", mode: 'symlink'
-	module "R3.5.2"
-
-	input:
-	file( tree ) from fasttree_output
-
-	output:
-	file( "*.pdf" ) into fasttree_plot
-
-	script:
-	"""
-	Rscript --vanilla \$BASE_DIR/R/plot_tree.R ${tree} \$BASE_DIR/vcf_samples.txt
-	"""
-}
-*/
-
 /* 2) Twisst section ============== */
 
 /* MUTE:
+// git 5.21
 vcf_loc_twisst
 	.combine( lg_twisst )
 	.set{ vcf_loc_lg_twisst }
 */
 
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
+// git 5.22
 process vcf2geno_loc {
 	label 'L_20g15h_vcf2geno'
 
@@ -344,11 +347,14 @@ process vcf2geno_loc {
 }
 */
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
-Channel.from( 50 ).set{ twisst_window_types }
+// git 5.23
+Channel.from( 50, 200 ).set{ twisst_window_types }
 
+// git 5.24
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 */
 /*
+// git 5.25
 process twisst_prep {
   label 'L_G120g40h_prep_twisst'
 
@@ -375,6 +381,7 @@ process twisst_prep {
 }
 */
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
+// git 5.26
 process twisst_run {
 	label 'L_G120g40h_run_twisst'
 	publishDir "../../2_analysis/twisst/", mode: 'copy'
@@ -408,12 +415,14 @@ process twisst_run {
 }
 */
 
+// git 5.26
 Channel
 	.from(50, 200)
 	.combine( vcf_loc_twisst )
 	.combine( lg_twisst )
 	.set{ twisst_modes }
 
+// git 5.27
 process twisst_plugin {
 	label 'L_G120g40h_twisst_plugin'
 	publishDir "../../2_analysis/twisst/", mode: 'copy'

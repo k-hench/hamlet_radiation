@@ -2,14 +2,17 @@
 // This pipelie includes the anlysis run on the
 //   all callable sites data sheet (dxy).
 
+// git 4.1
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
 	.into{ vcf_ch; vcf_pi_ch }
 
+// git 4.2
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.set{ lg_ch }
 
+// git 4.3
 // ------------------------------------
 // split the genotypes by LG and reformat the genotypes
 process split_allBP {
@@ -36,19 +39,24 @@ process split_allBP {
 	"""
 }
 
+// git 4.4
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
+
+// git 4.5
 Channel
 	.from('indbel', 'maybel', 'nigbel', 'puebel', 'unibel', 'abehon', 'gumhon', 'nighon', 'puehon', 'ranhon', 'unihon', 'nigpan', 'puepan', 'unipan')
 	.set{spec_dxy}
 // Preparation: create all possible species pairs depending on location
 //   and combine with genotype subset (for the respective location)
 
+// git 4.6
 Channel
 	.from( 1, 5 )
 	.into{ kb_ch; kb_ch2; kb_ch3 }
 
+// git 4.7
 // channel content after joinig: set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]
 bel_pairs_ch = Channel.from( "bel" )
 	.combine( bel_spec1_ch )
@@ -66,12 +74,14 @@ pan_pairs_ch = Channel.from( "pan" )
 	.filter{ it[1] < it[3] }
 	.map{ it[0,2,4]}
 
+// git 4.8
 bel_pairs_ch
 	.concat( hon_pairs_ch, pan_pairs_ch )
 	.combine( geno_ch )
 	.combine( kb_ch )
 	.into { all_dxy_pairs_ch; random_dxy_pairs_ch }
 
+// git 4.9
 // compute the dxy values along non-overlaping 50kb windows
 process dxy_lg {
 	label 'L_G32g15h_dxy_lg'
@@ -109,10 +119,12 @@ process dxy_lg {
     """
 }
 
+// git 4.10
 dxy_lg_ch
   .groupTuple()
   .set{ tubbled_dxy }
 
+// git 4.11
 process receive_tuple {
 	label 'L_20g2h_receive_tuple'
 	publishDir "../../2_analysis/dxy/${kb}0k/", mode: 'copy'
@@ -140,119 +152,126 @@ process receive_tuple {
 }
 
 
+// git 4.12
 // randomize samples -------------------------------------------------------------------------
 Channel
 	.from( [['bel', 'ind', 'may']] )
 	.set{ random_run_ch }
 
+// git 4.13
 Channel
 	.from( 1 )
 	.combine( random_run_ch )
 	.combine( kb_ch2 )
 	.set{ random_sets_ch }
 
+// git 4.14
 process randomize_samples {
-label 'L_20g15h_randomize_samples'
-publishDir "../../2_analysis/fst/${kb}0k/random", mode: 'copy' , pattern: "*_windowed.weir.fst.gz"
-module "R3.5.2"
+	label 'L_20g15h_randomize_samples'
+	publishDir "../../2_analysis/fst/${kb}0k/random", mode: 'copy' , pattern: "*_windowed.weir.fst.gz"
+	module "R3.5.2"
 
-input:
-set val( random_set ), val( loc ), val(spec1), val(spec2), val( kb ) from random_sets_ch
+	input:
+	set val( random_set ), val( loc ), val(spec1), val(spec2), val( kb ) from random_sets_ch
 
-output:
-set random_set, file( "random_pop.txt" ) into random_pops_ch
-file( "*_windowed.weir.fst.gz") into random_fst_out
+	output:
+	set random_set, file( "random_pop.txt" ) into random_pops_ch
+	file( "*_windowed.weir.fst.gz") into random_fst_out
 
-script:
-"""
-cut -f 2,3 \$BASE_DIR/metadata/sample_info.txt | \
-	grep "${loc}" | \
-	grep "${spec1}\\|${spec2}" > pop_prep.tsv
+	script:
+	"""
+	cut -f 2,3 \$BASE_DIR/metadata/sample_info.txt | \
+		grep "${loc}" | \
+		grep "${spec1}\\|${spec2}" > pop_prep.tsv
 
-Rscript --vanilla \$BASE_DIR/R/randomize_pops.R
+	Rscript --vanilla \$BASE_DIR/R/randomize_pops.R
 
-grep A random_pop.txt | cut -f 1  > pop1.txt
-grep B random_pop.txt | cut -f 1  > pop2.txt
+	grep A random_pop.txt | cut -f 1  > pop1.txt
+	grep B random_pop.txt | cut -f 1  > pop2.txt
 
-vcftools \
-  --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd_bi-allelic.allBP.vcf.gz \
-  --weir-fst-pop pop1.txt \
-  --weir-fst-pop pop2.txt \
-  --fst-window-step ${kb}0000 \
-  --fst-window-size ${kb}0000 \
-  --stdout | gzip > ${loc}-aaa-bbb.${kb}0k.random_${spec1}_${spec2}_windowed.weir.fst.gz
+	vcftools \
+	  --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd_bi-allelic.allBP.vcf.gz \
+	  --weir-fst-pop pop1.txt \
+	  --weir-fst-pop pop2.txt \
+	  --fst-window-step ${kb}0000 \
+	  --fst-window-size ${kb}0000 \
+	  --stdout | gzip > ${loc}-aaa-bbb.${kb}0k.random_${spec1}_${spec2}_windowed.weir.fst.gz
 
-"""
+	"""
 }
 
+// git 4.15
 random_dxy_pairs_ch
 	.filter{ it[0] == 'bel' && it[1] == 'ind' && it[2] == 'may' }
 	.combine( random_pops_ch )
 	.set{ random_assigned_ch }
 
+// git 4.16
 // compute the dxy values along non-overlaping 50kb windows
 process dxy_lg_random {
-label 'L_G32g15h_dxy_lg_random'
-tag "aaa${loc}-bbb${loc}_LG${lg}"
-module "R3.5.2"
+	label 'L_G32g15h_dxy_lg_random'
+	tag "aaa${loc}-bbb${loc}_LG${lg}"
+	module "R3.5.2"
 
-// this process is likely not to finish - somehow the window script
-// fails to finish - I still produces the output though
+	// this process is likely not to finish - somehow the window script
+	// fails to finish - I still produces the output though
 
-input:
-set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno ), val( kb ), val( random_set ), file( pop_file ) from random_assigned_ch
+	input:
+	set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno ), val( kb ), val( random_set ), file( pop_file ) from random_assigned_ch
 
-output:
-set val( "aaa${loc}-bbb${loc}-${kb}0kb" ), file( "dxy.aaa${loc}-bbb${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz" ), val( lg ), val( "aaa${loc}" ), val( "bbb${loc}" ), val( kb ) into dxy_random_lg_ch
+	output:
+	set val( "aaa${loc}-bbb${loc}-${kb}0kb" ), file( "dxy.aaa${loc}-bbb${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz" ), val( lg ), val( "aaa${loc}" ), val( "bbb${loc}" ), val( kb ) into dxy_random_lg_ch
 
-script:
-"""
-module load openssl1.0.2
-module load intel17.0.4 intelmpi17.0.4
+	script:
+	"""
+	module load openssl1.0.2
+	module load intel17.0.4 intelmpi17.0.4
 
-mpirun \$NQSII_MPIOPTS -np 1 \
-	python \$SFTWR/genomics_general/popgenWindows.py \
-	-w 50000 -s 5000 \
-	--popsFile ${pop_file} \
-	-p A -p B \
-	-g ${geno} \
-	-o dxy.aaa${loc}-bbb${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz \
-	-f phased \
-	--writeFailedWindows \
-	-T 1
- """
+	mpirun \$NQSII_MPIOPTS -np 1 \
+		python \$SFTWR/genomics_general/popgenWindows.py \
+		-w 50000 -s 5000 \
+		--popsFile ${pop_file} \
+		-p A -p B \
+		-g ${geno} \
+		-o dxy.aaa${loc}-bbb${loc}.LG${lg}.${kb}0kb-${kb}kb.txt.gz \
+		-f phased \
+		--writeFailedWindows \
+		-T 1
+	 """
 }
 
+// git 4.17
 dxy_random_lg_ch
 .groupTuple()
 .set{ tubbled_random_dxy }
 
+// git 4.18
 process receive_random_tuple {
-label 'L_20g2h_receive_random_tuple'
-publishDir "../../2_analysis/dxy/random/", mode: 'copy'
+	label 'L_20g2h_receive_random_tuple'
+	publishDir "../../2_analysis/dxy/random/", mode: 'copy'
 
-input:
-set val( comp ), file( dxy ), val( lg ), val( pop1 ), val( pop2 ), val( kb )  from tubbled_random_dxy
+	input:
+	set val( comp ), file( dxy ), val( lg ), val( pop1 ), val( pop2 ), val( kb )  from tubbled_random_dxy
 
-output:
-file( "dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv.gz" ) into dxy_random_output_ch
+	output:
+	file( "dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv.gz" ) into dxy_random_output_ch
 
-script:
-"""
-zcat dxy.${pop1[0]}-${pop2[0]}.LG01.${kb}0kb-${kb}kb.txt.gz | \
-head -n 1 > dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
+	script:
+	"""
+	zcat dxy.${pop1[0]}-${pop2[0]}.LG01.${kb}0kb-${kb}kb.txt.gz | \
+	head -n 1 > dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
 
-for j in {01..24};do
-	echo "-> LG\$j"
-	zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.${kb}0kb-${kb}kb.txt.gz | \
-		awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
-done
+	for j in {01..24};do
+		echo "-> LG\$j"
+		zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.${kb}0kb-${kb}kb.txt.gz | \
+			awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
+	done
 
-gzip dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv
-"""
+	gzip dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv
+	"""
 }
 
-
+// git 4.19
 // The pi part need to be run AFTER the global fst outlier windows were selected (REMEMBER TO CHECK FST OUTLIER DIRECTORY)
 process pi_per_spec {
 	label 'L_32g15h_pi'

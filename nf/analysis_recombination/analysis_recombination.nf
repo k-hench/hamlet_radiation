@@ -1,16 +1,18 @@
 #!/usr/bin/env nextflow
 // This pipelie includes the recombination anlysis
 
+// git 6.1
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_ch }
 
+// git 6.2
 Channel
 	.from( 1..24 )
 	.map{ it.toString().padLeft(2, "0") }
 	.set{ lg_ch }
 
-// ------------------------------------
+// git 6.3
 // split the genotypes by LG and reformat the genotypes
 process split_allBP {
 	label 'L_20g2h_split_by_lg'
@@ -33,6 +35,7 @@ process split_allBP {
 	"""
 }
 
+// git 6.4
 process fasteprr_s1 {
 	label 'L_20g2h_fasteprr_s1'
 	tag "LG${lg}"
@@ -51,6 +54,7 @@ process fasteprr_s1 {
 	"""
 }
 
+// git 6.5
 process fasteprr_s1_summary {
 	label 'L_loc_fasteprr_s1_summmary'
 
@@ -67,12 +71,14 @@ process fasteprr_s1_summary {
 	"""
 }
 
+// git 6.6
 Channel
 	.from( 1..250 )
 	.map{ it.toString().padLeft(3, "0") }
 	.combine( step1_ch1 )
 	.set{ step_2_run_ch }
 
+// git 6.7
 process fasteprr_s2 {
 	label 'L_long_loc_fasteprr_s2'
 	tag "run_${idx}"
@@ -91,6 +97,7 @@ process fasteprr_s2 {
 	"""
 }
 
+// git 6.8
 process fasteprr_s2_summary {
 	label 'L_loc_fasteprr_s2_summmary'
 
@@ -110,6 +117,7 @@ process fasteprr_s2_summary {
 	"""
 }
 
+// git 6.9
 process fasteprr_s3 {
 	label 'L_32g4h_fasteprr_s3'
 	module "R3.5.2"
@@ -127,7 +135,7 @@ process fasteprr_s3 {
 	"""
 }
 
-
+// git 6.10
 process fasteprr_s3_summary {
 	label 'L_loc_fasteprr_s3_summmary'
 	publishDir "../../2_analysis/fasteprr", mode: 'copy'
