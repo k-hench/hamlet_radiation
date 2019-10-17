@@ -1,176 +1,34 @@
 #!/usr/bin/env nextflow
 
 // git 5.1
-/* create channel of linkage groups */
-Channel
-	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
-	.map{ "LG" + it }
-	.into{ lg_fasttree; lg_twisst }
-
-// git 5.2
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.into{ vcf_locations;  vcf_geno; vcf_fasttree_whg }
+	.into{ vcf_fasttree_whg; vcf_locations }
 
-// git 5.3
-Channel
-	.from( "bel", "hon" )
-	.set{ locations_ch }
-
-// git 5.4
-locations_ch
-	.combine( vcf_locations )
-	.set{ vcf_location_combo }
-
-// git 5.5
+// git 5.2
 Channel
 	.from( "all", "bel", "hon", "pan" )
 	.set{ locations4_ch }
 
-// git 5.6
+// git 5.3
 Channel
 	.from( "whg", "no_musks" )
 	.set{ whg_modes }
 
-// git 5.7
+// git 5.4
 Channel
 	.from( "all", "no_outgroups" )
 	.into{ sample_modes; sample_modes_mito }
 
-// git 5.8
+// git 5.5
 locations4_ch
 	.combine( vcf_fasttree_whg )
 	.combine( whg_modes )
 	.combine( sample_modes )
 	.set{ vcf_fasttree_whg_location_combo }
 
-// git 5.9
-process subset_vcf_by_location {
-	label "L_20g2h_subset_vcf"
-
-	input:
-	set val( loc ), vcfId, file( vcf ) from vcf_location_combo
-
-	output:
-	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_twisst )
-
-	script:
-	"""
-	vcfsamplenames ${vcf[0]} | \
-		grep ${loc} | \
-		grep -v tor | \
-		grep -v tab > ${loc}.pop
-
-	vcftools --gzvcf ${vcf[0]} \
-		--keep ${loc}.pop \
-		--mac 3 \
-		--recode \
-		--stdout | gzip > ${loc}.vcf.gz
-	"""
-}
-
-// git 5.10
+// git 5.6
 /* 1) fasttree section ============== */
-/* 1.1) --- by LG --- */
-vcf_geno.combine( lg_fasttree ).into{ fasttree_geno; fasttree_no_og_geno  }
-
-// git 5.11
-process vcf2geno_all {
-	label 'L_20g15h_vcf2geno_all'
-
-	input:
-	set vcfId, file( vcf ), val( lg ) from fasttree_geno
-
-	output:
-	set val( "all" ), val( lg ), file( "output.all.${lg}.geno.gz" ) into snp_geno_tree_all
-
-	script:
-	"""
-	vcftools \
-	--gzvcf ${vcf[0]} \
-	--chr ${lg} \
-	--recode \
-	--stdout | gzip > intermediate.vcf.gz
-
-	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-		-i  intermediate.vcf.gz | gzip > output.all.${lg}.geno.gz
-
-	rm intermediate.vcf.gz
-	"""
-}
-
-// git 5.12
-process vcf2geno_no_og {
-	label 'L_20g15h_vcf2geno_no_og'
-
-	input:
-	set vcfId, file( vcf ), val( lg ) from fasttree_no_og_geno
-
-	output:
-	set val( "no_og" ), val( lg ), file( "output.no_og.${lg}.geno.gz" ) into snp_geno_tree_no_og
-
-	script:
-	"""
-	vcfsamplenames ${vcf[0]} | \
-		grep "tor\\|tab" > og.pop
-
-	vcftools \
-	--gzvcf ${vcf[0]} \
-	--chr ${lg} \
-	--remove og.pop \
-	--recode \
-	--stdout | gzip > intermediate.vcf.gz
-
-	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-		-i  intermediate.vcf.gz | gzip > output.no_og.${lg}.geno.gz
-
-	rm intermediate.vcf.gz
-	"""
-}
-
-// git 5.13
-snp_geno_tree_all
-	.concat( snp_geno_tree_no_og )
-	.set{ snp_geno_tree }
-
-// git 5.14
-process fasttree_prep {
-	label 'L_190g15h_fasttree_prep'
-
-	input:
-	set val( type ), val( lg ), file( geno ) from snp_geno_tree
-
-	output:
-	set val( type ), val( lg ), file( "all_samples.${type}.${lg}.SNP.fa" ) into ( fasttree_prep_ch )
-
-	script:
-	"""
-	python \$SFTWR/genomics_general/genoToSeq.py -g ${geno} \
-		-s  all_samples.${type}.${lg}.SNP.fa \
-		-f fasta \
-		--splitPhased
-	"""
-}
-
-// git 5.15
-process fasttree_run {
-	label 'L_190g100h_fasttree_run'
-	publishDir "../../2_analysis/fasttree/", mode: 'copy'
-
-	input:
-	set val( type ), val( lg ), file( fa ) from fasttree_prep_ch
-
-	output:
-	file( "all_samples.${type}.${lg}.SNP.tree" ) into ( fasttree_output )
-
-	script:
-	"""
-	fasttree -nt ${fa} > all_samples.${type}.${lg}.SNP.tree
-	"""
-}
-
-// git 5.16
-/* 1.2) --- whole genome --- */
 process subset_vcf_by_location_whg {
 	label "L_28g5h_subset_vcf_whg"
 
@@ -218,7 +76,7 @@ process subset_vcf_by_location_whg {
 	"""
 }
 
-// git 5.17
+// git 5.7
 process fasttree_whg_prep {
 	label 'L_190g4h_fasttree_whg_prep'
 	tag "${mode} - ${loc} - ${sample_mode}"
@@ -238,7 +96,7 @@ process fasttree_whg_prep {
 	"""
 }
 
-// git 5.18
+// git 5.8
 process fasttree_whg_run {
 	label 'L_190g100h_fasttree_run'
 	tag "${mode} - ${loc} - ${sample_mode}"
@@ -256,73 +114,59 @@ process fasttree_whg_run {
 	"""
 }
 
-// git 5.19
-Channel
-	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.mito.vcf.{gz,gz.tbi}")
-	.combine( sample_modes_mito )
-	.set{ vcf_mito }
+/* 2) Twisst section ============== */
 
-// git 5.20
-process fasttree_mito {
-	label 'L_20g2h_fasttree_mito'
-	publishDir "../../2_analysis/fasttree/", mode: 'copy'
+// git 5.9
+Channel
+	.from( "bel", "hon" )
+	.set{ locations_ch }
+
+// git 5.10
+locations_ch
+	.combine( vcf_locations )
+	.set{ vcf_location_combo }
+
+// git 5.11
+/* create channel of linkage groups */
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.map{ "LG" + it }
+	.set{ lg_twisst }
+
+// git 5.12
+process subset_vcf_by_location {
+	label "L_20g2h_subset_vcf"
 
 	input:
-	set val( vcf_id ), file( vcf ), val( sample_mode ) from vcf_mito
+	set val( loc ), vcfId, file( vcf ) from vcf_location_combo
 
 	output:
-	file( "${sample_mode}_a.mito.SNP.tree" ) into ( fasttree_mito_output )
+	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_twisst )
 
 	script:
 	"""
-	module load openssl1.0.2
-
-	# check if outgroups need to be dropped
-	if [ "${sample_mode}" == "all" ];then
-		vcfsamplenames ${vcf[0]} > vcf.pop
-	else
-		vcfsamplenames ${vcf[0]} | \
-			grep -v tor | \
-			grep -v tab > vcf.pop
-	fi
+	vcfsamplenames ${vcf[0]} | \
+		grep ${loc} | \
+		grep -v tor | \
+		grep -v tab > ${loc}.pop
 
 	vcftools --gzvcf ${vcf[0]} \
-		--keep vcf.pop \
-		--mac 2 \
+		--keep ${loc}.pop \
+		--mac 3 \
 		--recode \
-		--stdout | gzip > mito.${sample_mode}.vcf.gz
-
-	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-		-i  mito.${sample_mode}.vcf.gz | \
-		gzip > mito.${sample_mode}.geno.gz
-
-	python \$SFTWR/genomics_general/genoToSeq.py \
-		-g mito.${sample_mode}.geno.gz \
-		-s  ${sample_mode}.mito.fa \
-		-f fasta \
-		--splitPhased
-
-	samtools faidx ${sample_mode}.mito.fa
-
-	grep "_A" ${sample_mode}.mito.fa.fai | \
-		awk -v OFS='\t' '{print \$1,"0",\$2,\$1}' | \
-		fastaFromBed -fi ${sample_mode}.mito.fa -bed stdin -name -fo ${sample_mode}_a.mito.fa
-
-	fasttree -nt ${sample_mode}_a.mito.fa > ${sample_mode}_a.mito.SNP.tree
+		--stdout | gzip > ${loc}.vcf.gz
 	"""
 }
-/*--------- tree construction -----------*/
-/* 2) Twisst section ============== */
 
 /* MUTE:
-// git 5.21
+// git 5.13
 vcf_loc_twisst
 	.combine( lg_twisst )
 	.set{ vcf_loc_lg_twisst }
 */
 
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
-// git 5.22
+// git 5.14
 process vcf2geno_loc {
 	label 'L_20g15h_vcf2geno'
 
@@ -347,14 +191,14 @@ process vcf2geno_loc {
 }
 */
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
-// git 5.23
+// git 5.15
 Channel.from( 50, 200 ).set{ twisst_window_types }
 
-// git 5.24
+// git 5.16
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 */
 /*
-// git 5.25
+// git 5.17
 process twisst_prep {
   label 'L_G120g40h_prep_twisst'
 
@@ -381,7 +225,7 @@ process twisst_prep {
 }
 */
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
-// git 5.26
+// git 5.18
 process twisst_run {
 	label 'L_G120g40h_run_twisst'
 	publishDir "../../2_analysis/twisst/", mode: 'copy'
@@ -415,14 +259,14 @@ process twisst_run {
 }
 */
 
-// git 5.26
+// git 5.19
 Channel
 	.from(50, 200)
 	.combine( vcf_loc_twisst )
 	.combine( lg_twisst )
 	.set{ twisst_modes }
 
-// git 5.27
+// git 5.20
 process twisst_plugin {
 	label 'L_G120g40h_twisst_plugin'
 	publishDir "../../2_analysis/twisst/", mode: 'copy'

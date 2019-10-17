@@ -4,7 +4,7 @@
 // git 3.1
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.into{ vcf_locations; vcf_filter; vcf_geno }
+	.into{ vcf_locations; vcf_filter; vcf_gxp; vcf_geno }
 
 // git 3.2
 Channel
@@ -241,6 +241,34 @@ process fst_globals {
 
 // git 3.11
 /* 4) G x P section ============== */
+process plink12 {
+	label 'L_20g2h_plink12'
+
+	input:
+	set vcfId, file( vcf ) from vcf_gxp
+
+	output:
+	set file( "GxP_plink.map" ), file( "GxP_plink.ped" ) into plink_GxP
+
+	script:
+	"""
+	vcfsamplenames ${vcf[0]} | \
+		grep -v "tor\\|tab\\|flo" | \
+		awk '{print \$1"\\t"\$1}' | \
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > pop.txt
+
+	vcftools \
+		--gzvcf ${vcf[0]} \
+		--plink \
+		--out GxP_plink
+
+	plink \
+		--file GxP_plink \
+		--recode12 \
+		--out hapmap
+	"""
+}
+
 process GxP_run {
 	label 'L_20g2h_GxP_binary'
 
