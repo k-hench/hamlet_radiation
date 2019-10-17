@@ -441,7 +441,9 @@ process run_shapeit {
 }
 
 // git 1.17
-// merge the phased LGs back together
+// merge the phased LGs back together.
+// the resulting vcf file represents
+// the 'SNPs only' data set
 process merge_phased {
 	label 'L_28g5h_merge_phased_vcf'
 	publishDir "../../1_genotyping/4_phased/", mode: 'move'

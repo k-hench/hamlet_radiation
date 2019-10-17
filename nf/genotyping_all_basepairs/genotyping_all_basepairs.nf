@@ -112,6 +112,8 @@ process filterSNP_first {
 }
 
 // git 2.7
+// the resulting vcf file represents
+// the 'all BP' data set
 process filterSNP_second {
 	label 'L_105g30h_filter_gt2'
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
@@ -132,30 +134,5 @@ process filterSNP_second {
 		--stdout  \
 		--recode | \
 		bgzip > filterd.allBP.vcf.gz
-	"""
-}
-
-// git 2.8
-Channel
-	.fromPath('../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.gz')
-	.set{ mito_vcf }
-
-// git 2.9
-process subset_mito {
-	label 'L_20g2h_subset_mito'
-	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
-
-	input:
-	file( vcf ) from mito_vcf
-
-	output:
-	file( "filterd_bi-allelic.mito.vcf.gz" ) into mito_out
-
-	script:
-	"""
-	module load openssl1.0.2
-
-	vcftools --gzvcf filterd_bi-allelic.vcf.gz --chr LG_M --recode --stdout | \
-	gzip > filterd_bi-allelic.mito.vcf.gz
 	"""
 }
