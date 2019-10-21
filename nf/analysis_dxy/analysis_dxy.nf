@@ -229,7 +229,7 @@ process dxy_lg_random {
 
 	mpirun \$NQSII_MPIOPTS -np 1 \
 		python \$SFTWR/genomics_general/popgenWindows.py \
-		-w 50000 -s 5000 \
+		-w ${kb}0000 -s ${kb}000 \
 		--popsFile ${pop_file} \
 		-p A -p B \
 		-g ${geno} \
