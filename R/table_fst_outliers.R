@@ -2,7 +2,7 @@
 # run from terminal:
 # Rscript --vanilla table_fst_outliers.R multi_fst.50k.tsv.gz
 # ===============================================================
-# This script produces Fst outlier table of the study 
+# This script produces Fst outlier table of the study
 # "The genomic origins of a marine radiation"
 # by Hench, McMillan an Puebla
 # ---------------------------------------------------------------
@@ -10,8 +10,7 @@
 # args <- c('figures/data/fst/multi_fst.50k.tsv.gz')
 args = commandArgs(trailingOnly=FALSE)
 # setup -----------------------
-library(tidyverse)
-library(hypogen)
+library(GenomicOriginsScripts)
 library(vroom)
 
 cat('\n')
@@ -28,7 +27,7 @@ outliers <-  vroom::vroom(fst_file,delim = '\t') %>%
   mutate(gpos = (start+end)/2 + GSTART) %>%
   group_by(chrom) %>%
   mutate(norm_fst = fst-mean(fst)) %>%
-  ungroup() %>% 
+  ungroup() %>%
   filter(norm_fst >= quantile(norm_fst, .998)) %>%
   group_by(chrom) %>%
   mutate(check = gpos > lag(gpos,default = 0) + 50000,
