@@ -134,20 +134,20 @@ process receive_tuple {
 	set val( comp ), file( dxy ), val( lg ), val( pop1 ), val( pop2 ), val( kb ) from tubbled_dxy
 
 	output:
-	file( "dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv.gz" ) into dxy_output_ch
+	file( "dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv.gz" ) into dxy_output_ch
 
 	script:
 	"""
-	zcat dxy.${pop1[0]}-${pop2[0]}.LG01.${kb}0kb-${kb}kb.txt.gz | \
-	head -n 1 > dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
+	zcat dxy.${pop1[0]}-${pop2[0]}.LG01.${kb[0]}0kb-${kb[0]}kb.txt.gz | \
+	head -n 1 > dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv;
 
 	for j in {01..24};do
 		echo "-> LG\$j"
-		zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.${kb}0kb-${kb}kb.txt.gz | \
-			awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
+		zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.${kb[0]}0kb-${kb[0]}kb.txt.gz | \
+			awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv;
 	done
 
-	gzip dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv
+	gzip dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv
 	"""
 }
 
@@ -254,20 +254,20 @@ process receive_random_tuple {
 	set val( comp ), file( dxy ), val( lg ), val( pop1 ), val( pop2 ), val( kb )  from tubbled_random_dxy
 
 	output:
-	file( "dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv.gz" ) into dxy_random_output_ch
+	file( "dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv.gz" ) into dxy_random_output_ch
 
 	script:
 	"""
-	zcat dxy.${pop1[0]}-${pop2[0]}.LG01.${kb}0kb-${kb}kb.txt.gz | \
-	head -n 1 > dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
+	zcat dxy.${pop1[0]}-${pop2[0]}.LG01.${kb[0]}0kb-${kb[0]}kb.txt.gz | \
+	head -n 1 > dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv;
 
 	for j in {01..24};do
 		echo "-> LG\$j"
-		zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.${kb}0kb-${kb}kb.txt.gz | \
-			awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv;
+		zcat dxy.${pop1[0]}-${pop2[0]}.LG\$j.${kb[0]}0kb-${kb[0]}kb.txt.gz | \
+			awk 'NR>1{print}' >> dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv;
 	done
 
-	gzip dxy.${pop1[0]}-${pop2[0]}.${kb}0kb-${kb}kb.tsv
+	gzip dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv
 	"""
 }
 
