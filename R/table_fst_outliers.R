@@ -14,8 +14,14 @@ library(GenomicOriginsScripts)
 library(vroom)
 
 cat('\n')
+script_name <- args[5] %>%
+  str_remove(.,'--file=')
+
+plot_comment <- script_name %>%
+  str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+
 
 # config -----------------------
 fst_file <- as.character(args[1])
