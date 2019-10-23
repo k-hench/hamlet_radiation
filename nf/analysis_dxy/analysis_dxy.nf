@@ -163,6 +163,7 @@ Channel
 	.from( 1 )
 	.combine( random_run_ch )
 	.combine( kb_ch2 )
+	.filter{ it[4] == 5 }
 	.set{ random_sets_ch }
 
 // git 4.14
@@ -202,7 +203,7 @@ process randomize_samples {
 
 // git 4.15
 random_dxy_pairs_ch
-	.filter{ it[0] == 'bel' && it[1] == 'ind' && it[2] == 'may' }
+	.filter{ it[0] == 'bel' && it[1] == 'ind' && it[2] == 'may'  && it[6] == 5 }
 	.combine( random_pops_ch )
 	.set{ random_assigned_ch }
 
