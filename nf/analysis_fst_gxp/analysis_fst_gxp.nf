@@ -297,7 +297,6 @@ Channel
 // git 3.13
 process phenotye_pca {
 	label "L_loc_phenotype_pca"
-	publishDir "../../figures/phenotype", mode: 'copy' , pattern: "*.pdf"
 	publishDir "../../2_analysis/phenotype", mode: 'copy' , pattern: "*.txt"
 	module "R3.5.2"
 
