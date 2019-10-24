@@ -17,7 +17,7 @@ Channel
 
 // git 5.4
 Channel
-	.from( "all" ) //, "no_outgroups" )
+	.from( "no_outgroups" ) //, "all" )
 	.into{ sample_modes }
 
 // git 5.5
