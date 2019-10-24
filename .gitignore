@@ -12,3 +12,4 @@ data/*
 ressources/*
 !ressources/README.md
 1_genotyping
+2_analysis
