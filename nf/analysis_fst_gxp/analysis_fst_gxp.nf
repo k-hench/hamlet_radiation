@@ -85,9 +85,9 @@ process subset_vcf_hamlets_only {
 // multi fst =======================
 process fst_multi {
 	label 'L_20g15h_fst_multi'
-	publishDir "../../2_analysis/fst/50k/${loc}", mode: 'copy' , pattern: "*.50k.tsv.gz"
-	publishDir "../../2_analysis/fst/10k/${loc}", mode: 'copy' , pattern: "*.10k.tsv.gz"
-	publishDir "../../2_analysis/fst/logs/${loc}", mode: 'copy' , pattern: "*.log"
+	publishDir "../../2_analysis/fst/50k/", mode: 'copy' , pattern: "*.50k.tsv.gz"
+	publishDir "../../2_analysis/fst/10k/", mode: 'copy' , pattern: "*.10k.tsv.gz"
+	publishDir "../../2_analysis/fst/logs/", mode: 'copy' , pattern: "*.log"
 	publishDir "../../2_analysis/summaries", mode: 'copy' , pattern: "fst_outliers_998.tsv"
 	conda "$HOME/miniconda2/envs/py3"
 	module "R3.5.2"
@@ -177,9 +177,9 @@ bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 // git 3.9
 process fst_run {
 	label 'L_32g4h_fst_run'
-	publishDir "../../2_analysis/fst/50k/${loc}", mode: 'copy' , pattern: "*.50k.windowed.weir.fst.gz"
-	publishDir "../../2_analysis/fst/10k/${loc}", mode: 'copy' , pattern: "*.10k.windowed.weir.fst.gz"
-	publishDir "../../2_analysis/fst/logs/${loc}", mode: 'copy' , pattern: "${loc}-${spec1}-${spec2}.log"
+	publishDir "../../2_analysis/fst/50k/", mode: 'copy' , pattern: "*.50k.windowed.weir.fst.gz"
+	publishDir "../../2_analysis/fst/10k/", mode: 'copy' , pattern: "*.10k.windowed.weir.fst.gz"
+	publishDir "../../2_analysis/fst/logs/", mode: 'copy' , pattern: "${loc}-${spec1}-${spec2}.log"
 
 	input:
 	set val( loc ), file( vcf ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
@@ -217,7 +217,7 @@ process fst_run {
    genome wide fst values */
 process fst_globals {
 	label 'L_loc_fst_globals'
-	publishDir "../../2_analysis/fst/logs/", mode: 'copy' , pattern: "fst_globals.txt"
+	publishDir "../../2_analysis/summaries", mode: 'copy' , pattern: "fst_globals.txt"
 	module "R3.5.2"
 
 	input:
