@@ -100,6 +100,9 @@ process fasteprr_s2 {
 // git 6.8
 step_2_out_ch.into{ step_2_indxs; step_2_files }
 
+step_2_indxs.map{ ['dummy', it[0]] }.groupTuple().println()
+step_2_files.map{ ['dummy', it[1]] }.groupTuple().println()
+/*
 // git 6.9
 process fasteprr_s2_summary {
 	label 'L_loc_fasteprr_s2_summmary'
@@ -175,3 +178,4 @@ process fasteprr_s3_summary {
 	cd ..
 	"""
 }
+*/
