@@ -98,7 +98,7 @@ process fasttree_whg_prep {
 
 // git 5.8
 process fasttree_whg_run {
-	label 'L_190g100h_fasttree_run'
+	label 'L_300g30h_fasttree_run'
 	tag "${mode} - ${loc} - ${sample_mode}"
 	publishDir "../../2_analysis/fasttree/", mode: 'copy'
 
