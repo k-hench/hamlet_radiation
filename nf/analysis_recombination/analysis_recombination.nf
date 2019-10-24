@@ -99,13 +99,8 @@ process fasteprr_s2 {
 
 step_2_out_ch.into{ step_2_indxs; step_2_files }
 
-<<<<<<< HEAD
 step_2_indxs.map{ it[0] }.collect().println()
 step_2_files.map{ it[1] }.collect().println()
-=======
-step_2_indxs.map{ it[0]] }.collect().println()
-step_2_files.map{ it[1]] }.collect().println()
->>>>>>> a65283e92788534981e2d1074816babbf531983a
 /*
 // git 6.8
 process fasteprr_s2_summary {
