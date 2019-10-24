@@ -269,7 +269,7 @@ Channel
 // git 5.20
 process twisst_plugin {
 	label 'L_G120g40h_twisst_plugin'
-	publishDir "../../2_analysis/twisst/weights/${loc}/", mode: 'copy'
+	publishDir "../../2_analysis/twisst/weights/", mode: 'copy'
 	tag "${loc}-${lg}-${mode}"
 
 	input:
