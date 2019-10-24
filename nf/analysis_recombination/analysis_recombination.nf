@@ -97,7 +97,7 @@ process fasteprr_s2 {
 	"""
 }
 
-step_2_out_ch.collect().println()
+step_2_out_ch.map{ ['dummy', it] }.groupTuple().println()
 /*
 // git 6.8
 process fasteprr_s2_summary {
