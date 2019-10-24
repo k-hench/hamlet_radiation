@@ -97,17 +97,16 @@ process fasteprr_s2 {
 	"""
 }
 
+// git 6.8
 step_2_out_ch.into{ step_2_indxs; step_2_files }
 
-step_2_indxs.map{ it[0] }.collect().println()
-step_2_files.map{ it[1] }.collect().println()
-/*
-// git 6.8
+// git 6.9
 process fasteprr_s2_summary {
 	label 'L_loc_fasteprr_s2_summmary'
 
 	input:
-	set val( idx ), file( step2 ) from step_2_out_ch.collect()
+	set val( dummy_idx ), file( idx ) from step_2_indxs.map{ ['dummy', it[0]] }.groupTuple()
+	set val( dummy_file ), file( files ) from step_2_files.map{ ['dummy', it[1]] }.groupTuple()
 
 	output:
 	file( "step2" ) into ( step2_ch )
@@ -117,12 +116,12 @@ process fasteprr_s2_summary {
 	mkdir step2
 
 	for k in ${idx};do
-		cp -r step2_run\$k/\$k step2/
+		cp -r step2_run\$k/* step2/
 	done
 	"""
 }
 
-// git 6.9
+// git 6.10
 process fasteprr_s3 {
 	label 'L_32g4h_fasteprr_s3'
 	module "R3.5.2"
@@ -140,7 +139,7 @@ process fasteprr_s3 {
 	"""
 }
 
-// git 6.10
+// git 6.11
 process fasteprr_s3_summary {
 	label 'L_loc_fasteprr_s3_summmary'
 	publishDir "../../2_analysis/fasteprr", mode: 'copy'
@@ -176,4 +175,3 @@ process fasteprr_s3_summary {
 	cd ..
 	"""
 }
-*/
