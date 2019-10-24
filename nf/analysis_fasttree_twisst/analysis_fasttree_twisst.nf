@@ -228,7 +228,7 @@ process twisst_prep {
 // git 5.18
 process twisst_run {
 	label 'L_G120g40h_run_twisst'
-	publishDir "../../2_analysis/twisst/", mode: 'copy'
+	publishDir "../../2_analysis/twisst/positions/", mode: 'copy'
 
 	input:
 	set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ), file( tree ), file( data ) from twisst_prep_ch
@@ -269,7 +269,7 @@ Channel
 // git 5.20
 process twisst_plugin {
 	label 'L_G120g40h_twisst_plugin'
-	publishDir "../../2_analysis/twisst/", mode: 'copy'
+	publishDir "../../2_analysis/twisst/weights/", mode: 'copy'
 	tag "${loc}-${lg}-${mode}"
 
 	input:

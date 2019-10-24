@@ -277,7 +277,7 @@ process receive_random_tuple {
 process pi_per_spec {
 	label 'L_32g15h_pi'
 	tag "${spec}"
-	publishDir "../../2_analysis/pi", mode: 'copy'
+	publishDir "../../2_analysis/pi/${kb}0k", mode: 'copy'
 
 	input:
 	set val( spec ), vcfId, file( vcf ), val( kb ) from spec_dxy.combine( vcf_pi_ch ).combine( kb_ch3 )

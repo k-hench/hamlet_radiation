@@ -373,7 +373,7 @@ gemma_results.combine( gxp_smoothing_levels ).set{ gxp_smoothing_input }
 // git 3.19
 process gemma_smooth {
 	label 'L_20g2h_GxP_smooth'
-	publishDir "../../2_analysis/GxP/", mode: 'copy'
+	publishDir "../../2_analysis/GxP/${win}", mode: 'copy'
 
 	input:
 	set file( lm ), file( lmm ), val( win ), val( step ) from gxp_smoothing_input
