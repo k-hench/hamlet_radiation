@@ -97,6 +97,8 @@ process fasteprr_s2 {
 	"""
 }
 
+step_2_out_ch.collect().println()
+/*
 // git 6.8
 process fasteprr_s2_summary {
 	label 'L_loc_fasteprr_s2_summmary'
@@ -171,3 +173,4 @@ process fasteprr_s3_summary {
 	cd ..
 	"""
 }
+*/
