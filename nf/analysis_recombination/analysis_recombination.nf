@@ -118,7 +118,7 @@ process fasteprr_s2_summary {
 	"""
 	mkdir step2
 
-	for k in \$( echo ${idx} | sed 's/\\[//g; s/\\]//g'); do
+	for k in \$( echo ${idx} | sed 's/\\[//g; s/\\]//g; s/,//g'); do
 		cp -r step2_run\$k/* step2/
 	done
 	"""
