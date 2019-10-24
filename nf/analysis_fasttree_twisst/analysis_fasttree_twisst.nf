@@ -7,18 +7,18 @@ Channel
 
 // git 5.2
 Channel
-	.from( "all", "bel", "hon", "pan" )
+	.from( "all" ) //, "bel", "hon", "pan" )
 	.set{ locations4_ch }
 
 // git 5.3
 Channel
-	.from( "whg", "no_musks" )
+	.from( "whg" ) //, "no_musks" )
 	.set{ whg_modes }
 
 // git 5.4
 Channel
-	.from( "all", "no_outgroups" )
-	.into{ sample_modes; sample_modes_mito }
+	.from( "all" ) //, "no_outgroups" )
+	.into{ sample_modes }
 
 // git 5.5
 locations4_ch

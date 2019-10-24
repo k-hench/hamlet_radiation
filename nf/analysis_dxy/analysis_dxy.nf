@@ -127,7 +127,7 @@ dxy_lg_ch
 // git 4.11
 process receive_tuple {
 	label 'L_20g2h_receive_tuple'
-	publishDir "../../2_analysis/dxy/${kb}0k/", mode: 'copy'
+	publishDir "../../2_analysis/dxy/${kb[0]}0k/", mode: 'copy'
 	tag "${pop1[0]}-${pop2[0]}"
 
 	input:
