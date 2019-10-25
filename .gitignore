@@ -16,3 +16,7 @@ ressources/*
 2_analysis
 figures
 vignettes/*
+!vignettes/*.Rmd
+!vignettes/*.yml
+!vignettes/*.css
+!vignettes/*.bib
