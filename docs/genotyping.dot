@@ -1,0 +1,135 @@
+digraph "dag" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p0 -> p1;
+
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p1 -> p2;
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p3 [label="split_samples"];
+p2 -> p3 [label="samples_ch"];
+
+p3 [label="split_samples"];
+p4 [label="mark_adapters"];
+p3 -> p4 [label="ubams_mark"];
+
+p3 [label="split_samples"];
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p3 -> p6 [label="ubams_merge"];
+
+p4 [label="mark_adapters"];
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p4 -> p6 [label="adapter_bams"];
+
+p4 [label="mark_adapters"];
+p5 [shape=point];
+p4 -> p5 [label="adapter_metrics"];
+
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 [label="map_and_merge"];
+p6 -> p7 [label="merge_input"];
+
+p7 [label="map_and_merge"];
+p8 [label="mark_duplicates"];
+p7 -> p8 [label="mapped_bams"];
+
+p8 [label="mark_duplicates"];
+p10 [label="index_bam"];
+p8 -> p10 [label="dedup_bams"];
+
+p8 [label="mark_duplicates"];
+p9 [shape=point];
+p8 -> p9 [label="dedup_metrics"];
+
+p10 [label="index_bam"];
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="groupTuple"];
+p10 -> p11 [label="indexed_bams"];
+
+p10 [label="index_bam"];
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p10 -> p24 [label="pir_bams"];
+
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="groupTuple"];
+p12 [label="receive_tuple"];
+p11 -> p12 [label="tubbled"];
+
+p12 [label="receive_tuple"];
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p12 -> p13 [label="gvcfs"];
+
+p12 [label="receive_tuple"];
+p14 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p12 -> p14 [label="tbis"];
+
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p15 [label="gather_gvcfs"];
+p13 -> p15;
+
+p14 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p15 [label="gather_gvcfs"];
+p14 -> p15;
+
+p15 [label="gather_gvcfs"];
+p17 [label="joint_genotype_snps"];
+p15 -> p17 [label="gcvf_snps"];
+
+p15 [label="gather_gvcfs"];
+p16 [shape=point];
+p15 -> p16 [label="gvcf_acs"];
+
+p17 [label="joint_genotype_snps"];
+p23 [label="filterSNPs"];
+p17 -> p23 [label="raw_var_sites"];
+
+p17 [label="joint_genotype_snps"];
+p21 [label="joint_genotype_metrics"];
+p17 -> p21 [label="raw_var_sites_to_metrics"];
+
+p18 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p18 -> p19;
+
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p20 [shape=point];
+p19 -> p20 [label="LG_ids1"];
+
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p25 [label="extractPirs"];
+p19 -> p25 [label="LG_ids2"];
+
+p21 [label="joint_genotype_metrics"];
+p22 [shape=point];
+p21 -> p22 [label="raw_metrics"];
+
+p23 [label="filterSNPs"];
+p25 [label="extractPirs"];
+p23 -> p25 [label="filtered_snps"];
+
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p25 [label="extractPirs"];
+p24 -> p25;
+
+p25 [label="extractPirs"];
+p26 [label="run_shapeit"];
+p25 -> p26 [label="pirs_lg"];
+
+p26 [label="run_shapeit"];
+p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p26 -> p27 [label="phased_lgs"];
+
+p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p28 [label="merge_phased"];
+p27 -> p28;
+
+p28 [label="merge_phased"];
+p30 [shape=point];
+p28 -> p30 [label="phased_vcf"];
+
+p28 [label="merge_phased"];
+p29 [shape=point];
+p28 -> p29 [label="phased_mac2_vcf"];
+
+}
+

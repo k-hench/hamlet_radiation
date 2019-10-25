@@ -1,0 +1,838 @@
+---
+title: "Genotyping"
+author: "Kosmas Hench"
+css: highlight.css
+date: "9/20/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+      
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include=FALSE}
+source('R/draw_workflow.R')
+prod_geno <- tibbler(c('phased_vcf', 'phased_mac2_vcf', 'filtered_snps', 'raw_metrics', 'joint_genotype_metrics','raw_var_sites_to_metrics'))
+```
+
+# Genotyping
+
+
+## Summary
+
+The genotyping procedure is controlled by the [**nextflow**](https://www.nextflow.io/) script `genotyping.nf` (located under `$BASE_DIR/nf/genotyping`).
+It takes the analysis from the raw sequencing data to the genotyped and phased SNPs.
+Below is an overview of the steps involved in the genotyping process.
+
+<div style="max-width:800px; margin:auto;">
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/genotyping.dot', git = 1, point_types = prod_geno),
+        width_svg = 14, height_svg = 14)
+
+```
+</div>
+
+## Details of `genotyping.nf`
+
+### Data preparation
+
+The nextflow script starts with a small header and then opens the analysis by reading a table with meta data about the samples:
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+#!/usr/bin/env nextflow
+/* ===============================================================
+   Disclaimer: This pipeline needs a lot of time & memory to run:
+   All in all we used roughly 10 TB and ran for about 1 Month
+	 (mainly due to limited bandwidth on the cluster durint the
+	 "receive_tuple step)
+	 ===============================================================
+*/
+
+/* open the pipeline based on the metadata spread sheet that includes all
+* information necessary to assign read groups to the sequencing data */
+params.index = '../../metadata/file_info.txt'
+```
+</div>
+
+Below is a little preview of the table containing the sample meta data:
+
+```{r,echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(kableExtra)
+read_tsv('metadata/file_info.txt') %>%
+  mutate(coord_N = as.character(round(coord_N, 3)),
+         coord_W = as.character(round(coord_W, 3))) %>%
+  select(1:8) %>% 
+  mutate(`..` = '...') %>%
+  head() %>%
+  bind_rows(., tibble(id = '...', label = '...',
+                      spec = '...', geo = '...',
+                      date = '...', coord_N = '...', 
+                      coord_W = '...',company='...',
+                      `..` = '')) %>%
+  mutate_all(~cell_spec(.x, color = ifelse(is.na(.x), "lightgray", 
+                                           ifelse(.x == "...", rgb(.7,.7,.7), "black")))) %>%
+  kable(escape = F) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),font_size = 12)%>%
+  row_spec(0, bold = T, color = "#FFFFFF", background = "#333333")
+```
+
+The table is parsed and the values are stored in nextflow variables.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* split the spread sheet by row and feed it into a channel */
+Channel
+	.fromPath(params.index)
+	.splitCsv(header:true, sep:"\t")
+	.map{ row -> [ id:row.id, label:row.label, file_fwd:row.file_fwd, file_rev:row.file_rev, flowcell_id_fwd:row.flowcell_id_fwd, lane_fwd:row.lane_fwd, company:row.company] }
+	.set { samples_ch }
+```
+</div>
+
+The first step to prepare the data for the [GATK best practices](https://gatkforums.broadinstitute.org/gatk/discussion/6483/how-to-map-and-clean-up-short-read-sequence-data-efficiently) is to convert the sample sequences from `*.fq` to `*.bam` format to assign read groups:
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* for every sequencing file, convert into ubam format and assign read groups */
+process split_samples {
+	label 'L_20g2h_split_samples'
+
+	input:
+	val x from samples_ch
+
+	output:
+	set val( "${x.label}.${x.lane_fwd}" ), file( "${x.label}.${x.lane_fwd}.ubam.bam" ) into ubams_mark, ubams_merge
+
+	script:
+	"""
+	echo -e "---------------------------------"
+	echo -e "Label:\t\t${x.label}\nFwd:\t\t${x.file_fwd}\nRev:\t\t${x.file_rev}"
+	echo -e "Flowcell:\t${x.flowcell_id_fwd}\nLane:\t\t${x.lane_fwd}"
+	echo -e "Read group:\t${x.flowcell_id_fwd}.${x.lane_fwd}\nCompany:\t${x.company}"
+
+	mkdir -p \$BASE_DIR/temp_files
+
+	gatk --java-options "-Xmx20G" \
+		FastqToSam \
+		-SM=${x.label} \
+		-F1=\$BASE_DIR/data/seqdata/${x.file_fwd} \
+		-F2=\$BASE_DIR/data/seqdata/${x.file_rev} \
+		-O=${x.label}.${x.lane_fwd}.ubam.bam \
+		-RG=${x.label}.${x.lane_fwd} \
+		-LB=${x.label}".lib1" \
+		-PU=${x.flowcell_id_fwd}.${x.lane_fwd} \
+		-PL=Illumina \
+		-CN=${x.company} \
+		--TMP_DIR=\$BASE_DIR/temp_files;
+	"""
+}
+```
+</div>
+
+The second step is mariking the *Illumina* adaptors.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* for every ubam file, mark Illumina adapters */
+process mark_adapters {
+	label 'L_20g2h_mark_adapters'
+	tag "${sample}"
+
+	input:
+	set val( sample ), file( input ) from ubams_mark
+
+	output:
+	set val( sample ), file( "*.adapter.bam") into adapter_bams
+	file "*.adapter.metrics.txt" into adapter_metrics
+
+	script:
+	"""
+	gatk --java-options "-Xmx18G" \
+		MarkIlluminaAdapters \
+		-I=${input} \
+		-O=${sample}.adapter.bam \
+		-M=${sample}.adapter.metrics.txt \
+		-TMP_DIR=\$BASE_DIR/temp_files;
+	"""
+}
+```
+</div>
+
+We need to pass on the unaligned `.bam` file and the file containing the adapter information together, so the output of the first two processes are matched by the combined sample and sequencing lane information.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+adapter_bams
+	.combine(ubams_merge, by:0)
+	.set {merge_input}
+```
+</div>
+
+For the actual mapping, the sequences are transformed back into `.fq` format, aligned using `bwa` and merged back with their original read group information.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* this step includes a 3 step pipeline:
+*  - re-transformatikon into fq format
+*  - mapping aginst the reference genome_file
+*  - merging with the basuch ubams to include
+		read group information */
+
+process map_and_merge {
+	label 'L_75g24h8t_map_and_merge'
+	tag "${sample}"
+
+	input:
+	set val( sample ), file( adapter_bam_input ), file( ubam_input ) from merge_input
+
+	output:
+	set val( sample ), file( "*.mapped.bam" ) into mapped_bams
+
+	script:
+	"""
+	set -o pipefail
+	gatk --java-options "-Xmx68G" \
+		SamToFastq \
+		-I=${adapter_bam_input} \
+		-FASTQ=/dev/stdout \
+		-INTERLEAVE=true \
+		-NON_PF=true \
+		-TMP_DIR=\$BASE_DIR/temp_files | \
+	bwa mem -M -t 8 -p \$BASE_DIR/ressources/HP_genome_unmasked_01.fa /dev/stdin |
+	gatk --java-options "-Xmx68G" \
+		MergeBamAlignment \
+		--VALIDATION_STRINGENCY SILENT \
+		--EXPECTED_ORIENTATIONS FR \
+		--ATTRIBUTES_TO_RETAIN X0 \
+		-ALIGNED_BAM=/dev/stdin \
+		-UNMAPPED_BAM=${ubam_input} \
+		-OUTPUT=${sample}.mapped.bam \
+		--REFERENCE_SEQUENCE=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz \
+		-PAIRED_RUN true \
+		--SORT_ORDER "unsorted" \
+		--IS_BISULFITE_SEQUENCE false \
+		--ALIGNED_READS_ONLY false \
+		--CLIP_ADAPTERS false \
+		--MAX_RECORDS_IN_RAM 2000000 \
+		--ADD_MATE_CIGAR true \
+		--MAX_INSERTIONS_OR_DELETIONS -1 \
+		--PRIMARY_ALIGNMENT_STRATEGY MostDistant \
+		--UNMAPPED_READ_STRATEGY COPY_TO_TAG \
+		--ALIGNER_PROPER_PAIR_FLAGS true \
+		--UNMAP_CONTAMINANT_READS true \
+		-TMP_DIR=\$BASE_DIR/temp_files
+	"""
+}
+```
+
+</div>
+
+Next, the duplicates are being marked.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* for every mapped sample,sort and mark duplicates
+* (intermediate step is required to create .bai file) */
+process mark_duplicates {
+	label 'L_32g30h_mark_duplicates'
+	publishDir "../../1_genotyping/0_sorted_bams/", mode: 'symlink'
+	tag "${sample}"
+
+	input:
+	set val( sample ), file( input ) from mapped_bams
+
+	output:
+	set val { sample  - ~/\.(\d+)/ }, val( sample ), file( "*.dedup.bam") into dedup_bams
+	file "*.dedup.metrics.txt" into dedup_metrics
+
+	script:
+	"""
+	set -o pipefail
+	gatk --java-options "-Xmx30G" \
+		SortSam \
+		-I=${input} \
+		-O=/dev/stdout \
+		--SORT_ORDER="coordinate" \
+		--CREATE_INDEX=false \
+		--CREATE_MD5_FILE=false \
+		-TMP_DIR=\$BASE_DIR/temp_files \
+		| \
+	gatk --java-options "-Xmx30G" \
+		SetNmAndUqTags \
+		--INPUT=/dev/stdin \
+		--OUTPUT=intermediate.bam \
+		--CREATE_INDEX=true \
+		--CREATE_MD5_FILE=true \
+		-TMP_DIR=\$BASE_DIR/temp_files \
+		--REFERENCE_SEQUENCE=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa.gz
+
+	gatk --java-options "-Xmx30G" \
+		MarkDuplicates \
+		-I=intermediate.bam \
+		-O=${sample}.dedup.bam \
+		-M=${sample}.dedup.metrics.txt \
+		-MAX_FILE_HANDLES=1000  \
+		-TMP_DIR=\$BASE_DIR/temp_files
+
+	rm intermediate*
+	"""
+}
+```
+</div>
+
+As a preparation for the actual genotyping, the `.bam` files are being indexed.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* index al bam files */
+process index_bam {
+	label 'L_32g1h_index_bam'
+	tag "${sample}"
+
+	input:
+	set val( sample ), val( sample_lane ), file( input ) from dedup_bams
+
+	output:
+	set val( sample ), val( sample_lane ), file( input ), file( "*.bai") into ( indexed_bams, pir_bams )
+
+	script:
+	"""
+	gatk --java-options "-Xmx30G" \
+		BuildBamIndex \
+		-INPUT=${input}
+	"""
+}
+```
+</div>
+
+At this point the preparation of the sequencing is done and we can start with the genotyping.
+(The output of the data preparation is split and one copy is later also used to prepare the read aware phasing in the process called [extractPirs](#phasing_start).)
+
+### Genotying
+
+Since some of our samples were split over several lanes, we now need to collect all `.bam` files for each sample.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* collect all bam files for each sample */
+indexed_bams
+	.groupTuple()
+	.set {tubbled}
+```
+</div>
+
+Now, we can create the genotype likelyhoods for each individual sample.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* create one *.g.vcf file per sample */
+process receive_tuple {
+	label 'L_36g47h_receive_tuple'
+	publishDir "../../1_genotyping/1_gvcfs/", mode: 'symlink'
+	tag "${sample}"
+
+	input:
+	set sample, sample_lane, bam, bai from tubbled
+
+	output:
+	file( "*.g.vcf.gz") into gvcfs
+	file( "*.vcf.gz.tbi") into tbis
+
+	script:
+	"""
+	INPUT=\$(echo ${bam}  | sed  's/\\[/-I /g; s/\\]//g; s/,/ -I/g')
+
+	gatk --java-options "-Xmx35g" HaplotypeCaller  \
+	  -R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+	  \$INPUT \
+	  -O ${sample}.g.vcf.gz \
+	  -ERC GVCF
+	"""
+}
+```
+</div>
+
+The individual genotype likelyhoods are collected and combined for the entire data set.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* collect and combine all *.g.vcf files */
+process gather_gvcfs {
+	label 'L_O88g90h_gather_gvcfs'
+	publishDir "../../1_genotyping/1_gvcfs/", mode: 'symlink'
+	echo true
+
+	input:
+	file( gvcf ) from gvcfs.collect()
+	file( tbi ) from tbis.collect()
+
+	output:
+	set file( "cohort.g.vcf.gz" ), file( "cohort.g.vcf.gz.tbi" ) into ( gcvf_snps, gvcf_acs, gvcf_indel )
+
+	script:
+	"""
+	GVCF=\$(echo " ${gvcf}" | sed 's/ /-V /g; s/vcf.gz/vcf.gz /g')
+
+	gatk --java-options "-Xmx85g" \
+		CombineGVCFs \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		\$GVCF \
+		-O cohort.g.vcf.gz
+	"""
+}
+```
+</div>
+
+All samples are jointly genotyped.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* actual genotyping step (varinat sites only) */
+process joint_genotype_snps {
+	label 'L_O88g90h_joint_genotype'
+	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'symlink'
+
+	input:
+	set file( vcf ), file( tbi ) from gcvf_snps
+
+	output:
+	set file( "raw_var_sites.vcf.gz" ), file( "raw_var_sites.vcf.gz.tbi" ) into ( raw_var_sites, raw_var_sites_to_metrics )
+
+	script:
+	"""
+	gatk --java-options "-Xmx85g" \
+		GenotypeGVCFs \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V=${vcf} \
+		-O=intermediate.vcf.gz
+
+	gatk --java-options "-Xmx85G" \
+		SelectVariants \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V=intermediate.vcf.gz \
+		--select-type-to-include=SNP \
+		-O=raw_var_sites.vcf.gz
+
+	rm intermediate.*
+	"""
+}
+```
+</div>
+
+The output of this process is split and used to collect the genotype metrics to inform the [hard filtering of SNPs](https://gatkforums.broadinstitute.org/gatk/discussion/2806/howto-apply-hard-filters-to-a-call-set) and to pass on the genotypes to the process called [filterSNPs](#filterSNPS).
+
+At this point we create a channel containing all 24 hamlet linkage groups (LGs).
+This is used later (in the process called [extractPirs](#phasing_start)) since all LGs are phased separately and only located at this part of the script for historical reasons (sorry :/).
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* generate a LG channel */
+
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.into{ LG_ids1; LG_ids2 }
+```
+</div>
+
+The metrics of the raw genotypes are collected.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* produce metrics table to determine filtering thresholds - ups forgot to extract SNPS first*/
+process joint_genotype_metrics {
+	label 'L_28g5h_genotype_metrics'
+	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'move'
+
+	input:
+	set file( vcf ), file( tbi ) from raw_var_sites_to_metrics
+
+	output:
+	file( "${vcf}.table.txt" ) into raw_metrics
+
+	script:
+	"""
+	gatk --java-options "-Xmx25G" \
+		VariantsToTable \
+		--variant=${vcf} \
+		--output=${vcf}.table.txt \
+		-F=CHROM -F=POS -F=MQ \
+		-F=QD -F=FS -F=MQRankSum -F=ReadPosRankSum \
+		--show-filtered
+	"""
+}
+```
+</div>
+
+Based on the thresholds derived from the genotype metrics, the genotypes are first tagged and then filtered.
+After this, the data is filtered for missingness and only bi-allelic SNPs are selected.
+
+<a name="filterSNPS"></a>
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+/* filter snps basaed on locus annotations, missingness
+   and type (bi-allelic only) */
+process filterSNPs {
+	label 'L_78g10h_filter_Snps'
+	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'symlink'
+
+	input:
+	set file( vcf ), file( tbi ) from raw_var_sites
+
+	output:
+	set file( "filterd_bi-allelic.vcf.gz" ), file( "filterd_bi-allelic.vcf.gz.tbi" ) into filtered_snps
+
+	script:
+	"""
+	gatk --java-options "-Xmx75G" \
+		VariantFiltration \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V ${vcf} \
+		-O=intermediate.vcf.gz \
+		--filter-expression "QD < 2.5" \
+		--filter-name "filter_QD" \
+		--filter-expression "FS > 25.0" \
+		--filter-name "filter_FS" \
+		--filter-expression "MQ < 52.0 || MQ > 65.0" \
+		--filter-name "filter_MQ" \
+		--filter-expression "MQRankSum < -0.2 || MQRankSum > 0.2" \
+		--filter-name "filter_MQRankSum" \
+		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
+		--filter-name "filter_ReadPosRankSum"
+
+	gatk --java-options "-Xmx75G" \
+		SelectVariants \
+		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
+		-V=intermediate.vcf.gz \
+		-O=intermediate.filterd.vcf.gz \
+		--exclude-filtered
+
+	vcftools \
+		--gzvcf intermediate.filterd.vcf.gz \
+		--max-missing-count 17 \
+		--max-alleles 2 \
+		--stdout  \
+		--recode | \
+		bgzip > filterd_bi-allelic.vcf.gz
+
+	tabix -p vcf filterd_bi-allelic.vcf.gz
+
+	rm intermediate.*
+	"""
+}
+```
+</div>
+
+At this point, the genotying is done.
+
+### Phasing
+
+To get from genotypes to haplotypes, we apply read-aware phasing using [**Shapeit**](https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html).
+This takes the original sequencing reads into account, so in the first step the reads are screened for *Phase Informative Reads* (i.e. reads containing more than a single SNP).
+
+This needs to be done for each LG independedly, so we first need to split the genotypes before running `extractPIRs`.
+
+<a name="phasing_start"></a>
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+process extractPirs {
+	label 'L_78g10h_extract_pirs'
+
+	input:
+	val( lg ) from LG_ids2
+	set val( sample ), val( sample_lane ), file( input ), file( index ) from pir_bams.collect()
+	set file( vcf ), file( tbi ) from filtered_snps
+
+	output:
+	set val( lg ), file( "filterd_bi-allelic.LG${lg}.vcf.gz" ), file( "filterd_bi-allelic.LG${lg}.vcf.gz.tbi" ), file( "PIRsList-LG${lg}.txt" ) into pirs_lg
+
+	script:
+	"""
+	LG="LG${lg}"
+	awk -v OFS='\t' -v dir=\$PWD -v lg=\$LG '{print \$1,dir"/"\$2,lg}' \$BASE_DIR/metadata/bamlist_proto.txt > bamlist.txt
+
+	vcftools \
+		--gzvcf ${vcf} \
+		--chr \$LG \
+		--stdout \
+		--recode | \
+		bgzip > filterd_bi-allelic.LG${lg}.vcf.gz
+
+	tabix -p vcf filterd_bi-allelic.LG${lg}.vcf.gz
+
+	extractPIRs \
+		--bam bamlist.txt \
+		--vcf filterd_bi-allelic.LG${lg}.vcf.gz \
+		--out PIRsList-LG${lg}.txt \
+		--base-quality 20 \
+		--read-quality 15
+	"""
+}
+```
+</div>
+
+Using those PIRs, we can then proceed with the actual phasing.
+The resulting haplotypes are converted back into `.vcf` format.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+process run_shapeit {
+	label 'L_75g24h8t_run_shapeit'
+
+	input:
+	set val( lg ), file( vcf ), file( tbi ), file( pirs ) from pirs_lg
+
+	output:
+	file( "phased-LG${lg}.vcf.gz" ) into phased_lgs
+
+	script:
+	"""
+	LG="LG${lg}"
+
+	shapeit \
+		-assemble \
+		--input-vcf ${vcf} \
+		--input-pir ${pirs} \
+		--thread 8 \
+		-O phased-LG${lg}
+
+	shapeit \
+		-convert \
+		--input-hap phased-LG${lg} \
+		--output-vcf phased-LG${lg}.vcf
+
+	bgzip phased-LG${lg}.vcf
+	"""
+}
+```
+</div>
+
+After the phasing, we merge the LGs back together to get a single data set.
+We export a comple data set as well as one that was filtered for a minor allele count of at least two.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+
+process merge_phased {
+	label 'L_28g5h_merge_phased_vcf'
+	publishDir "../../1_genotyping/4_phased/", mode: 'move'
+
+	input:
+	file( vcf ) from phased_lgs.collect()
+
+	output:
+	set file( "phased.vcf.gz" ), file( "phased.vcf.gz.tbi" ) into phased_vcf
+	set file( "phased_mac2.vcf.gz" ), file( "phased_mac2.vcf.gz.tbi" ) into phased_mac2_vcf
+
+	script:
+	"""
+	vcf-concat \
+		phased-LG* | \
+		grep -v ^\$ | \
+		tee phased.vcf | \
+		vcftools --vcf - --mac 2 --recode --stdout | \
+		bgzip > phased_mac2.vcf.gz
+
+	bgzip phased.vcf
+
+	tabix -p vcf phased.vcf.gz
+	tabix -p vcf phased_mac2.vcf.gz
+	"""
+}
+```
+</div>
+
+Finally, we are done with the entire genotyping procedure.
+
+### Appendix
+
+*Note that the following steps are not included in the opening diagram of this script.*
+
+Allthough the genotyping is done at this point, we can still use the structure of this workflow to prepare some input for later analysis Specifically, we are preparing filter masks for *msmc* based on the occurence of indels within the data set.
+For this, we need to also call indels from the genotype likelyhoods.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+
+/* ========================================= */
+/* appendix: generate indel masks for msmc: */
+Channel
+	.fromFilePairs("../../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
+	.set{ cohort_gvcf }
+
+process joint_genotype_indel {
+	label 'L_O88g90h_genotype_indel'
+	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
+
+	input:
+	set file( vcf ), file( tbi ) from gvcf_indel
+
+	output:
+	set file( "raw_var_indel.vcf.gz" ), file( "raw_var_indel.vcf.gz.tbi" ) into ( raw_indel, raw_indel_to_metrics )
+
+	script:
+	"""
+	gatk --java-options "-Xmx85g" \
+		GenotypeGVCFs \
+		-R=\$REF_GENOME \
+		-V=${vcf} \
+		-O=intermediate.vcf.gz
+
+	gatk --java-options "-Xmx85G" \
+		SelectVariants \
+		-R=\$REF_GENOME \
+		-V=intermediate.vcf.gz \
+		--select-type-to-include=INDEL \
+		-O=raw_var_indel.vcf.gz
+
+	rm intermediate.*
+	"""
+}
+```
+</div>
+
+The indels also need to be filtered, so again we extract some genotyping metrics.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+
+process indel_metrics {
+	label 'L_28g5h_genotype_metrics'
+	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
+
+	input:
+	set file( vcf ), file( tbi ) from raw_indel_to_metrics
+
+	output:
+	file( "${vcf}.table.txt" ) into raw_indel_metrics
+
+	script:
+	"""
+	gatk --java-options "-Xmx25G" \
+		VariantsToTable \
+		--variant=${vcf} \
+		--output=${vcf}.table.txt \
+		-F=CHROM -F=POS -F=MQ \
+		-F=QD -F=FS -F=MQRankSum -F=ReadPosRankSum \
+		--show-filtered
+	"""
+}
+```
+</div>
+
+Based on the thresholds derived from the genotyping metrics, the indels are first tagged and then filtered.
+After this, the data is reformated into a simple `.bed` file containing the locations of all indels.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+
+process filterIndels {
+	label 'L_78g10h_filter_indels'
+	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
+
+	input:
+	set file( vcf ), file( tbi ) from raw_indel
+
+	output:
+	set file( "filterd.indel.vcf.gz" ), file( "filterd.indel.vcf.gz.tbi" ) into filtered_indel
+	file( "indel_mask.bed.gz" ) into indel_mask_ch
+
+	/* FILTER THRESHOLDS NEED TO BE UPDATED */
+
+	script:
+	"""
+	gatk --java-options "-Xmx75G" \
+		VariantFiltration \
+		-R=\$REF_GENOME \
+		-V ${vcf} \
+		-O=intermediate.vcf.gz \
+		--filter-expression "QD < 2.5" \
+		--filter-name "filter_QD" \
+		--filter-expression "FS > 25.0" \
+		--filter-name "filter_FS" \
+		--filter-expression "MQ < 52.0 || MQ > 65.0" \
+		--filter-name "filter_MQ" \
+		--filter-expression "SOR > 3.0" \
+		--filter-name "filter_SOR" \
+		--filter-expression "InbreedingCoeff < -0.25" \
+		--filter-name "filter_InbreedingCoeff" \
+		--filter-expression "MQRankSum < -0.2 || MQRankSum > 0.2" \
+		--filter-name "filter_MQRankSum" \
+		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
+		--filter-name "filter_ReadPosRankSum"
+
+	gatk --java-options "-Xmx75G" \
+		SelectVariants \
+		-R=\$REF_GENOME \
+		-V=intermediate.vcf.gz \
+		-O=filterd.indel.vcf.gz \
+		--exclude-filtered
+
+	zcat filterd.indel.vcf.gz | \
+		awk '! /\\#/' | \
+		awk '{if(length(\$4) > length(\$5)) print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$4)+4);  else print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$5)+4)}' | \
+		gzip -c > indel_mask.bed.gz
+
+	rm intermediate.*
+	"""
+}
+```
+</div>
+
+We are going to need the indels for each LG sepetately, so we prepare a nextflow `Channel` of LGs for the splitting.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+
+/* create channel of linkage groups */
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.map{ "LG" + it }
+	.into{ lg_ch }
+
+lg_ch.combine( filtered_indel ).set{ filtered_indel_lg }
+
+process split_indel_mask {
+	label 'L_loc_split_indel_mask'
+	publishDir "../../ressources/indel_masks/", mode: 'copy'
+
+	input:
+	set val( lg ), file( bed ) from filtered_indel_lg
+
+	output:
+	set val( lg ), file( "indel_mask.${lg}.bed.gz " ) into lg_indel_mask
+
+	script:
+	"""
+		gzip -cd ${bed} | \
+		grep ${lg} | \
+		gzip -c > indel_mask.${lg}.bed.gz
+	"""
+}
+```
+</div>
+
+After splitting, the indel masks are ready for use with *msmc*.
+
+---

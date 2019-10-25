@@ -1,0 +1,90 @@
+digraph "analysis_phylo" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p0 -> p1;
+
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p6 [label="vcf_fasttree_whg"];
+
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p14 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p14 [label="vcf_locations"];
+
+p2 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p2 -> p6 [label="locations4_ch"];
+
+p3 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p3 -> p7 [label="whg_modes"];
+
+p4 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p4 -> p5;
+
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p5 -> p8 [label="sample_modes"];
+
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p6 -> p7;
+
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 -> p8;
+
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p9 [label="subset_vcf_by_location_whg"];
+p8 -> p9 [label="vcf_fasttree_whg_location_combo"];
+
+p9 [label="subset_vcf_by_location_whg"];
+p10 [label="fasttree_whg_prep"];
+p9 -> p10 [label="snp_geno_tree_whg"];
+
+p10 [label="fasttree_whg_prep"];
+p11 [label="fasttree_whg_run"];
+p10 -> p11 [label="fasttree_whg_prep_ch"];
+
+p11 [label="fasttree_whg_run"];
+p12 [shape=point];
+p11 -> p12 [label="fasttree_whg_output"];
+
+p13 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p14 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p13 -> p14 [label="locations_ch"];
+
+p14 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p17 [label="subset_vcf_by_location"];
+p14 -> p17 [label="vcf_location_combo"];
+
+p15 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p16 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p15 -> p16;
+
+p16 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p16 -> p20 [label="lg_twisst"];
+
+p17 [label="subset_vcf_by_location"];
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p17 -> p19 [label="vcf_loc_twisst"];
+
+p18 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p18 -> p19;
+
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p19 -> p20;
+
+p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p21 [label="twisst_plugin"];
+p20 -> p21 [label="twisst_modes"];
+
+p21 [label="twisst_plugin"];
+p22 [shape=point];
+p21 -> p22 [label="twisst_output"];
+
+}

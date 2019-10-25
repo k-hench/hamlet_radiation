@@ -1,0 +1,26 @@
+digraph "all_bp" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p0 -> p2 [label="vcf_cohort"];
+
+p1 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p2 [label="ch_LG_ids"];
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p3 [label="joint_genotype_snps"];
+p2 -> p3 [label="vcf_lg_combo"];
+
+p3 [label="joint_genotype_snps"];
+p4 [label="merge_genotypes"];
+p3 -> p4 [label="all_bp_by_location"];
+
+p4 [label="merge_genotypes"];
+p5 [label="filterSNPs"];
+p4 -> p5 [label="all_bp_merged"];
+
+p5 [label="filterSNPs"];
+p6 [shape=point];
+p5 -> p6 [label="filtered_snps"];
+
+}

@@ -1,0 +1,94 @@
+digraph "analysis_recombination" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p0 -> p3 [label="vcf_ch"];
+
+p1 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p1 -> p2;
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p2 -> p3 [label="lg_ch"];
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p4 [label="split_allBP"];
+p3 -> p4;
+
+p4 [label="split_allBP"];
+p5 [label="fasteprr_s1"];
+p4 -> p5 [label="vcf_by_lg_ch"];
+
+p5 [label="fasteprr_s1"];
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p5 -> p6 [label="step_1_out_ch"];
+
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p7 [label="fasteprr_s1_summary"];
+p6 -> p7;
+
+p7 [label="fasteprr_s1_summary"];
+p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 -> p10 [label="step1_ch1"];
+
+p7 [label="fasteprr_s1_summary"];
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 -> p18 [label="step1_ch2"];
+
+p8 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p8 -> p9;
+
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p9 -> p10;
+
+p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p11 [label="fasteprr_s2"];
+p10 -> p11 [label="step_2_run_ch"];
+
+p11 [label="fasteprr_s2"];
+p12 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p11 -> p12 [label="step_2_out_ch"];
+
+p12 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p12 -> p13 [label="step_2_indxs"];
+
+p12 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p15 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p12 -> p15 [label="step_2_files"];
+
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p14 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p13 -> p14;
+
+p14 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p17 [label="fasteprr_s2_summary"];
+p14 -> p17;
+
+p15 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p16 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p15 -> p16;
+
+p16 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p17 [label="fasteprr_s2_summary"];
+p16 -> p17;
+
+p17 [label="fasteprr_s2_summary"];
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p17 -> p18 [label="step2_ch"];
+
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p19 [label="fasteprr_s3"];
+p18 -> p19;
+
+p19 [label="fasteprr_s3"];
+p20 [label="fasteprr_s3_summary"];
+p19 -> p20 [label="step_3_out_ch"];
+
+p20 [label="fasteprr_s3_summary"];
+p21 [shape=point];
+p20 -> p21 [label="step3_ch"];
+
+}

@@ -1,0 +1,13 @@
+.main-container { 
+  max-width: 16in; 
+  max-height: 100%;
+}
+
+.page-header {
+  color: #fff;
+  text-align: left;
+  line-height: 1em; 
+  background-color: #159957;
+  background-image: linear-gradient(120deg,#155799,#159957);
+  padding: 2.5rem 1.5rem .5rem 2.5rem;
+}
