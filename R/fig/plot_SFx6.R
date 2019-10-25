@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx6.R figures/data/dxy/
+# Rscript --vanilla R/fig/plot_SFx6.R 2_analysis/dxy/50k/
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('figures/data/dxy/')
+# args <- c('2_analysis/dxy/50k/')
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

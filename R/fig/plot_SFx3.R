@@ -1,13 +1,15 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx3.R figures/data/fst/ \
-#   figures/data/summaries/all_multi_fst_outliers_998.tsv \
-#   figures/data/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_SFx3.R 2_analysis/fst/50k/ \
+#   2_analysis/summaries/fst_outliers_998.tsv \
+#   2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('figures/data/fst/', 'figures/data/summaries/all_multi_fst_outliers_998.tsv', 'figures/data/summaries/fst_globals.txt')
+# args <- c('R/fig/plot_SFx3.R 2_analysis/fst/50k/',
+#           '2_analysis/summaries/fst_outliers_998.tsv',
+#           '2_analysis/summaries/fst_globals.txt')
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx7.R figures/data/whg_tree/
+# Rscript --vanilla R/fig/plot_SFx7.R 2_analysis/fasttree/ no_outgroups.all.whg.SNP.tree
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('figures/data/whg_tree/')
+# args <- c('2_analysis/fasttree/', 'no_outgroups.all.whg.SNP.tree')
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -26,11 +26,12 @@ args <- process_input(script_name, args)
 
 # config -----------------------
 tree_path <- as.character(args[1])
+tree_file <- as.character(args[2])
 geomfactory::factory_geom_point('support')
 
 # functions -----------------
 
-tree_select <- get_tree(loc = 'all',mode = 'whg_no_og', tree_dir = tree_path)$tree[[1]]
+tree_select <- get_tree(loc = 'all', file = tree_file, tree_dir = tree_path)$tree[[1]]
 
 spec_list <- list('uni','pue','may','nig','gem')
 clr_plt <- c(clr2,gem = "#414D6BFF",ungrouped = "darkgray")

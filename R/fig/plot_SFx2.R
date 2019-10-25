@@ -1,12 +1,12 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SFx2.R \
-#   ~/Desktop/chapter2/metadata/phenotypes.sc figures/data/img/
+#   metadata/phenotypes.sc ressources/img/
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('~/Desktop/chapter2/metadata/phenotypes.sc', 'figures/data/img/')
+# args <- c('metadata/phenotypes.sc', 'ressources/img/')
 args = commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

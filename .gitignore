@@ -11,6 +11,7 @@ data/*
 !data/RADME.md
 ressources/*
 !ressources/README.md
+!ressources/img
 1_genotyping
 2_analysis
 figures

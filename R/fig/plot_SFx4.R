@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx4.R figures/data/pi/
+# Rscript --vanilla R/fig/plot_SFx4.R 2_analysis/pi/50k/
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('figures/data/pi/')
+# args <- c('2_analysis/pi/50k/')
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

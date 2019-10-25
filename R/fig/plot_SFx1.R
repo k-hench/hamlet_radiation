@@ -1,14 +1,16 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SFx1.R \
-#   figures/data/summaries/fst_globals.txt \
-#   figures/data/fst/ \
-#   figures/data/fasteprr/fasteprr.all.rho.txt.gz
+#   2_analysis/summaries/fst_globals.txt \
+#   2_analysis/fst/50k/ \
+#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c( 'figures/data/summaries/fst_globals.txt', 'figures/data/fst/', 'figures/data/fasteprr/fasteprr.all.rho.txt.gz')
+# args <- c( '2_analysis/summaries/fst_globals.txt',
+#            '2_analysis/fst/50k/',
+#            '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
