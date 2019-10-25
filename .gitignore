@@ -20,3 +20,4 @@ vignettes/*
 !vignettes/*.yml
 !vignettes/*.css
 !vignettes/*.bib
+!vignettes/*.md
