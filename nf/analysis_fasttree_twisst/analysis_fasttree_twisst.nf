@@ -201,6 +201,7 @@ snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 // git 5.17
 process twisst_prep {
   label 'L_G120g40h_prep_twisst'
+  	publishDir "../../2_analysis/twisst/positions/${loc}/", mode: 'copy'
 
   input:
   set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ) from twisst_input_ch.filter { it[0] != 'pan' }
@@ -228,7 +229,7 @@ process twisst_prep {
 // git 5.18
 process twisst_run {
 	label 'L_G120g40h_run_twisst'
-	publishDir "../../2_analysis/twisst/positions/${loc}/", mode: 'copy'
+	publishDir "../../2_analysis/twisst/weights/", mode: 'copy'
 
 	input:
 	set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ), file( tree ), file( data ) from twisst_prep_ch
