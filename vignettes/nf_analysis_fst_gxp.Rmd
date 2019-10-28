@@ -1,28 +1,105 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include=FALSE}
+source('R/draw_workflow.R')
+prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'gemma_results',
+                        'phenotype_file', 'fst_glob', "fst_10k_output","fst_50k", 'fst_logs',
+                        'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
+```
+
+# Analysis I (<it>F<sub>ST</sub></it>_ & GxP)
+
+## Summary
+
+The genetic differentiation as well as the genotype x phenotype association are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_gxp.nf` (located under `$BASE_DIR/nf/analysis_fst_gxp/`).
+It takes the _SNPs only_ data set and computes _F<sub>ST</sub>_ and the GxP association.
+Below is an overview of the steps involved in the genotyping process.
+
+<div style="max-width:800px; margin:auto;">
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
+                         git = 1, point_types = prod_geno),
+        width_svg = 16, height_svg = 16)
+
+```
+</div>
+
+## Details of `analysis_fst_gxp.nf`
+
+### Setup
+
+The nextflow script starts by opening the genotype data and feeding it into three different streams.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 #!/usr/bin/env nextflow
 // git 3.1
 // open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_locations; vcf_filter; vcf_gxp }
+```
 
+Since we are going to work on the three sampling locations independently, we create channel for the locations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.2
 // initialize location channel
 Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
+```
 
+Then we attach the genotypes to the locations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.3
 // attach genotypes to location
 locations_ch
 	.combine( vcf_locations )
 	.set{ vcf_location_combo }
+```
 
+Next, we define the species sets sampled at the individual locations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.4
 // define location specific sepcies set
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
+```
 
+For each location, the data is subset to include only local hamlets.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.5
 // subset data to loacal hamlets
 process subset_vcf_by_location {
@@ -48,7 +125,11 @@ process subset_vcf_by_location {
 		--stdout | gzip > ${loc}.vcf.gz
 	"""
 }
+```
 
+As we also want to compute global statistics, we create another subset including all sampled hamlets but excluding the outgroups.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.6
 // subset the global data set to hamlets only
 process subset_vcf_hamlets_only {
@@ -80,10 +161,16 @@ process subset_vcf_hamlets_only {
 		--stdout | gzip > hamlets_only.vcf.gz
 	"""
 }
+```
 
+### <it>F<sub>ST</sub></it>
+
+Using this subset, we compute the global differentiation among all hamlet populations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // ----------- Fst section -----------
 // git 3.7
-// compute global fst
+// compute global fst 
 process fst_multi {
 	label 'L_20g15h_fst_multi'
 	publishDir "../../2_analysis/fst/50k/", mode: 'copy' , pattern: "*.50k.tsv.gz"
@@ -151,14 +238,18 @@ process fst_multi {
 	Rscript --vanilla \$BASE_DIR/R/table_fst_outliers.R multi_fst.50k.tsv.gz
 	"""
 }
+```
 
+Then, we set up the pair wise species comparisons...
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.8
 // prepare pairwise fsts
 // ------------------------------
 /* (create all possible species pairs depending on location
    and combine with genotype subset (for the respective location))*/
 // ------------------------------
-/* channel content after joinig:
+/* channel content after joinig: 
   set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]*/
 // ------------------------------
 bel_pairs_ch = Channel.from( "bel" )
@@ -180,7 +271,11 @@ pan_pairs_ch = Channel.from( "pan" )
 	.filter{ it[3] < it[5] }
 	.map{ it[0,1,2,4,6]}
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
+```
 
+... and run them.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.9
 // comute pairwise fsts
 process fst_run {
@@ -219,7 +314,11 @@ process fst_run {
 	gzip *.windowed.weir.fst
 	"""
 }
+```
 
+The _genome wide_ summaries are compiled from the log files of `VCFtools`.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.10
 /* collect the VCFtools logs to crate a table with the
    genome wide fst values */
@@ -246,7 +345,13 @@ process fst_globals {
 	sed 's/^\\(...\\)-/\\1\\t/g' > fst_globals.txt
 	"""
 }
+```
 
+### GxP
+
+The software use for the GxP association uses genotypes in `plink` file format, so the first step was to convert the input.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // ----------- G x P section -----------
 
 // git 3.11
@@ -300,13 +405,21 @@ process GxP_run {
 		--out GxP_plink_binary
 	"""
 }
+```
 
-// git 3.13
+Additionally to the genotypes, the phenotypes of the samples are needed.
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 3.12
 // import phenotypes
 Channel
 	.fromPath("../../metadata/phenotypes.sc")
 	.set{ phenotypes_raw }
+```
 
+For historic reasons, we perform a PCA on the phenotypes and reoport the extended phenotype data including the scoring on PC1 & PC2.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.13
 // run PCA on phenotypes
 process phenotye_pca {
@@ -326,18 +439,30 @@ process phenotye_pca {
 	Rscript --vanilla \$BASE_DIR/R/phenotypes_pca.R ${sc}
 	"""
 }
+```
 
-// git 3.15
+We set up all the traits for which we want to perform a GxP association.
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 3.14
 // setup GxP traits
 Channel
 	.from("Bars", "Snout", "Peduncle") //,  "Lines", "Blue", "Yellow", "Orange", "Tail_transparent","PC1", "PC2", "PC_d1", "abe", "gum", "ind", "may", "nig", "pue", "ran", "uni", "blue2" )
 	.set{ traits_ch }
+```
 
-// git 3.16
+Then, we combine the reformatted genotypes with the phenotyes and the traits of interrest.
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 3.15
 // bundle GxP input
 traits_ch.combine( plink_binary ).combine( phenotype_file ).set{ trait_plink_combo }
+```
 
-// git 3.17
+Having collectet all the input, we can now run the GxP.
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 3.16
 // actually run the GxP
 process gemma_run {
  label 'L_32g4h_GxP_run'
@@ -377,18 +502,30 @@ process gemma_run {
 		cut -f 2,3,8-10,13-15 | body sort -k1,1 -k2,2n | gzip > ${pheno}.lmm.GxP.txt.gz
 	"""
 }
+```
 
-// git 3.18
+To smooth the GxP results, we initialize two resolutions (50 kb windows with 5 kb increments and 10 kb windows with 1 kb increments). 
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 3.17
 // setup smoothing levels
 Channel
 	.from([[50000, 5000], [10000, 1000]])
 	.set{ gxp_smoothing_levels }
+```
 
-// git 3.19
+The we apply all smoothing levels to the raw GxP output...
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 3.18
 // apply all smoothing levels
 gemma_results.combine( gxp_smoothing_levels ).set{ gxp_smoothing_input }
+```
 
-// git 3.20
+.. and run the smoothing.
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 3.19
 // actually run the smoothing
 process gemma_smooth {
 	label 'L_20g2h_GxP_smooth'
@@ -407,3 +544,10 @@ process gemma_smooth {
 	\$BASE_DIR/sh/gxp_slider ${lmm} ${win} ${step}
 	"""
 }
+```
+</div>
+
+At this step we are done with differentiation and GxP
+.
+
+---

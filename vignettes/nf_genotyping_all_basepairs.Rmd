@@ -1,21 +1,91 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include=FALSE}
+source('R/draw_workflow.R')
+prod_geno_all <- tibbler(c('filtered_snps'))
+```
+
+# Genotyping II (all callable sites)
+
+
+## Summary
+
+The genotyping procedure is controlled by the [**nextflow**](https://www.nextflow.io/) script `genotyping_all_basepairs.nf` (located under `$BASE_DIR/nf/genotyping_all_basepairs/`).
+Based on an intermediate step from `genotyping.nf`, this script produces a data set that includes _all callable sites_  - that is SNPs as well a invariant sites that are covered by sequence.
+Below is an overview of the steps involved in the genotyping process.
+
+<div style="max-width:800px; margin:auto;">
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/genotyping_all_basepairs.dot', git = 1, point_types = prod_geno_all),
+        width_svg = 9, height_svg = 9)
+
+```
+</div>
+
+## Details of `genotyping_all_basepairs.nf`
+
+### Data preparation
+
+The nextflow script starts with a small header and then imports the joint genotyping likelyhoods for all samples produced by `genotyping_all_basepairs.nf`.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 #!/usr/bin/env nextflow
 // git 2.1
 // open genotype likelyhoods
 Channel
 	.fromFilePairs("../../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
 	.set{ vcf_cohort }
+```
 
+The genotyping of the different linkage groups is going to happen in parallel, so we need to initialize a channel for the 24 LGs.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 2.2
 // initialize LG channel
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.set{ ch_LG_ids }
+```
 
+The genotyping likelyhoods are combined, efectively linking the data set to the 24 parallel LGs.
 
+```{r , eval = FALSE, hilang = 'nf'}
 // git 2.3
 // combine genotypes and LGs
 ch_LG_ids.combine( vcf_cohort ).set{ vcf_lg_combo }
+```
 
+The samples are jointly genotyped, indepently for each LG and including invariant sites.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 2.4
 // actual genotyping step (including invarinat sites)
 process joint_genotype_snps {
@@ -47,7 +117,11 @@ process joint_genotype_snps {
 	rm intermediate.*
 	"""
 }
+```
 
+The genotypes of the different LGs are merged.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 2.5
 // merge all LGs
 process merge_genotypes {
@@ -70,7 +144,11 @@ process merge_genotypes {
 		-O=all_sites.vcf.gz
 	"""
 }
+```
 
+The genotypes are hard filtered based on various genotyping scores.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 2.6
 // quality based filtering
 process filterSNP_first {
@@ -115,7 +193,11 @@ process filterSNP_first {
 		--verbosity ERROR  &> var_select.log
 	"""
 }
+```
 
+A second filtering is based on the missingness of samples.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 2.7
 // missingness based filtering
 // the resulting vcf file represents
@@ -142,3 +224,9 @@ process filterSNP_second {
 		bgzip > filterd.allBP.vcf.gz
 	"""
 }
+```
+</div>
+
+Finally, we are done with the second version of genotyping.
+
+---

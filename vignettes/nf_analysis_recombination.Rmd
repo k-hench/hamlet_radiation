@@ -1,0 +1,68 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include=FALSE}
+source('R/draw_workflow.R')
+prod_geno <- tibbler(c('phased_vcf', 'phased_mac2_vcf', 'filtered_snps', 'raw_metrics', 'joint_genotype_metrics','raw_var_sites_to_metrics'))
+```
+
+# Genotyping
+
+
+## Summary
+
+The genotyping procedure is controlled by the [**nextflow**](https://www.nextflow.io/) script `genotyping.nf` (located under `$BASE_DIR/nf/genotyping`).
+It takes the analysis from the raw sequencing data to the genotyped and phased SNPs.
+Below is an overview of the steps involved in the genotyping process.
+
+<div style="max-width:800px; margin:auto;">
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/genotyping.dot', git = 1, point_types = prod_geno),
+        width_svg = 14, height_svg = 14)
+
+```
+</div>
+
+## Details of `.nf`
+
+### Data preparation
+
+The nextflow script starts with a small header and then opens the analysis by reading a table with meta data about the samples.
+The table is parsed and the values are stored in nextflow variables.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+
+
+```
+</div>
+
+Finally, we are done with ----.
+
+---
