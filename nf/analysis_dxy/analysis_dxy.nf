@@ -3,18 +3,19 @@
 //   all callable sites data sheet (dxy).
 
 // git 4.1
+// load genotypes
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
 	.into{ vcf_ch; vcf_pi_ch }
 
 // git 4.2
+// initialize LGs
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.set{ lg_ch }
 
 // git 4.3
-// ------------------------------------
-// split the genotypes by LG and reformat the genotypes
+// split by LG and reformat the genotypes
 process split_allBP {
 	label 'L_32g15h_split_allBP'
 	tag "LG${lg}"
@@ -40,16 +41,17 @@ process split_allBP {
 }
 
 // git 4.4
+// define location specific sepcies set
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
 // git 4.5
+// init all sampled populations (for pi)
 Channel
 	.from('indbel', 'maybel', 'nigbel', 'puebel', 'unibel', 'abehon', 'gumhon', 'nighon', 'puehon', 'ranhon', 'unihon', 'nigpan', 'puepan', 'unipan')
 	.set{spec_dxy}
-// Preparation: create all possible species pairs depending on location
-//   and combine with genotype subset (for the respective location)
+
 
 // git 4.6
 Channel
@@ -57,7 +59,14 @@ Channel
 	.into{ kb_ch; kb_ch2; kb_ch3 }
 
 // git 4.7
-// channel content after joinig: set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]
+// prepare pair wise dxy
+// ------------------------------
+// create all possible species pairs depending on location
+//   and combine with genotype subset (for the respective location)
+// ------------------------------
+// channel content after joinig:
+// set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]
+// ------------------------------
 bel_pairs_ch = Channel.from( "bel" )
 	.combine( bel_spec1_ch )
 	.combine( bel_spec2_ch )
@@ -75,6 +84,7 @@ pan_pairs_ch = Channel.from( "pan" )
 	.map{ it[0,2,4]}
 
 // git 4.8
+// combine species pair with genotypes (and window size)
 bel_pairs_ch
 	.concat( hon_pairs_ch, pan_pairs_ch )
 	.combine( geno_ch )
@@ -82,12 +92,10 @@ bel_pairs_ch
 	.into { all_dxy_pairs_ch; random_dxy_pairs_ch }
 
 // git 4.9
-// compute the dxy values along non-overlaping 50kb windows
+// compute the dxy values
 process dxy_lg {
 	label 'L_G32g15h_dxy_lg'
 	tag "${spec1}${loc}-${spec2}${loc}_LG${lg}"
-	// this process is likely not to finish - somehow the window script
-	// fails to finish - I still produces the output though
 
 	input:
 	set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno ), val( kb ) from all_dxy_pairs_ch
@@ -120,11 +128,13 @@ process dxy_lg {
 }
 
 // git 4.10
+// collect all LGs for each species pair
 dxy_lg_ch
   .groupTuple()
   .set{ tubbled_dxy }
 
 // git 4.11
+// concatinate all LGs for each species pair
 process receive_tuple {
 	label 'L_20g2h_receive_tuple'
 	publishDir "../../2_analysis/dxy/${kb[0]}0k/", mode: 'copy'
@@ -151,14 +161,14 @@ process receive_tuple {
 	"""
 }
 
-
 // git 4.12
-// randomize samples -------------------------------------------------------------------------
+// collect a species pair to randomize
 Channel
 	.from( [['bel', 'ind', 'may']] )
 	.set{ random_run_ch }
 
 // git 4.13
+// setup channel contnent for random channel
 Channel
 	.from( 1 )
 	.combine( random_run_ch )
@@ -167,6 +177,7 @@ Channel
 	.set{ random_sets_ch }
 
 // git 4.14
+// permute the population assignment (the randomization)
 process randomize_samples {
 	label 'L_20g15h_randomize_samples'
 	publishDir "../../2_analysis/fst/${kb}0k/random", mode: 'copy' , pattern: "*_windowed.weir.fst.gz"
@@ -202,20 +213,18 @@ process randomize_samples {
 }
 
 // git 4.15
+// pick random pair of interest
 random_dxy_pairs_ch
 	.filter{ it[0] == 'bel' && it[1] == 'ind' && it[2] == 'may'  && it[6] == 5 }
 	.combine( random_pops_ch )
 	.set{ random_assigned_ch }
 
 // git 4.16
-// compute the dxy values along non-overlaping 50kb windows
+// compute the dxy values
 process dxy_lg_random {
 	label 'L_G32g15h_dxy_lg_random'
 	tag "aaa${loc}-bbb${loc}_LG${lg}"
 	module "R3.5.2"
-
-	// this process is likely not to finish - somehow the window script
-	// fails to finish - I still produces the output though
 
 	input:
 	set val( loc ), val( spec1 ), val( spec2 ), val( lg ), file( vcf ), file( geno ), val( kb ), val( random_set ), file( pop_file ) from random_assigned_ch
@@ -242,11 +251,13 @@ process dxy_lg_random {
 }
 
 // git 4.17
+// collect all LGs of random run
 dxy_random_lg_ch
 .groupTuple()
 .set{ tubbled_random_dxy }
 
 // git 4.18
+// concatinate all LGs of random run
 process receive_random_tuple {
 	label 'L_20g2h_receive_random_tuple'
 	publishDir "../../2_analysis/dxy/random/", mode: 'copy'
@@ -272,8 +283,13 @@ process receive_random_tuple {
 	"""
 }
 
+// ---------------------------------------------------------------
+// The pi part need to be run AFTER the global fst outlier
+// windows were selected (REMEMBER TO CHECK FST OUTLIER DIRECTORY)
+// ---------------------------------------------------------------
+
 // git 4.19
-// The pi part need to be run AFTER the global fst outlier windows were selected (REMEMBER TO CHECK FST OUTLIER DIRECTORY)
+// calculate pi per species
 process pi_per_spec {
 	label 'L_32g15h_pi'
 	tag "${spec}"
@@ -299,7 +315,7 @@ process pi_per_spec {
 		--out ${spec}.${kb}0k 2> ${spec}.pi.log
 	gzip ${spec}.${kb}0k.windowed.pi
 
-	tail -n +2 \$BASE_DIR/2_analysis/fst/outliers/all_multi_fst_outliers_998.tsv | \
+	tail -n +2 \$BASE_DIR/2_analysis/summaries/fst_outliers_998.tsv | \
 		cut -f 2,3,4 > outlier.bed
 
 	vcftools --gzvcf ${vcf[0]} \

@@ -1,31 +1,101 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include=FALSE}
+source('R/draw_workflow.R')
+prod_phylo <- tibbler(c('twisst_output','fasttree_mito_output', 'fasttree_whg_output','fasttree_output'))
+```
+
+# Analysis III (phylogeny & topology weighting)
+
+## Summary
+
+The whole genome phylogeny and the topology weighting are prepared within the [**nextflow**](https://www.nextflow.io/) script `analysis_fasttree_twisst.nf` (located under `$BASE_DIR/nf/analysis_fasttree_twisst/`) and which runs on the _SNPs only_ data set.
+Below is an overview of the steps involved in the process.
+
+<div style="max-width:800px; margin:auto;">
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_phylo.dot',
+                         git = 5, point_types = prod_phylo),
+        width_svg = 14, height_svg = 14)
+
+```
+</div>
+
+## Details of `analysis_fasttree_twisst.nf`
+
+### Setup
+
+The nextflow script starts by opening the genotype data and feeding it into two different streams (one for the phylogeny and one for topology weighting).
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 #!/usr/bin/env nextflow
 // git 5.1
 // open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_fasttree_whg; vcf_locations }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.2
 // setting the sampling location
 // (the script is set up to run on diffferent subsets of samples)
 Channel
 	.from( "all" ) //, "bel", "hon", "pan" )
 	.set{ locations4_ch }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.3
 // setting loci restrictions
 // (keep vs remove outlier regions)
 Channel
 	.from( "whg" ) //, "no_musks" )
 	.set{ whg_modes }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.4
 // setting the sampling mode
 // (the script is set up to run on diffferent subsets of samples)
 Channel
 	.from( "no_outgroups" ) //, "all" )
 	.into{ sample_modes }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.5
 // compile the config settings and add data file
 locations4_ch
@@ -33,7 +103,10 @@ locations4_ch
 	.combine( whg_modes )
 	.combine( sample_modes )
 	.set{ vcf_fasttree_whg_location_combo }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.6
 // apply sample filter, subset and convert genotypes
 process subset_vcf_by_location_whg {
@@ -82,7 +155,10 @@ process subset_vcf_by_location_whg {
 		-i  ${loc}.${mode}.${sample_mode}.vcf.gz | gzip > ${loc}.${mode}.${sample_mode}.whg.geno.gz
 	"""
 }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.7
 // convert genotypes to fasta
 process fasttree_whg_prep {
@@ -103,7 +179,10 @@ process fasttree_whg_prep {
 		--splitPhased
 	"""
 }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.8
 // create phylogeny
 process fasttree_whg_run {
@@ -122,25 +201,37 @@ process fasttree_whg_run {
 	fasttree -nt ${fa} > ${sample_mode}.${loc}.${mode}.SNP.tree
 	"""
 }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.9
 // initialize the locations for topology weighting
 Channel
 	.from( "bel", "hon" )
 	.set{ locations_ch }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.10
 locations_ch
 	.combine( vcf_locations )
 	.set{ vcf_location_combo }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.11
 // initialize LGs
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
 	.set{ lg_twisst }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.12
 // subset the genotypes by location
 process subset_vcf_by_location {
@@ -166,15 +257,10 @@ process subset_vcf_by_location {
 		--stdout | gzip > ${loc}.vcf.gz
 	"""
 }
+```
 
-// ---------------------------------------------------------------
-// Unfortunately the twisst preparation did not work on the cluster
-// ('in place'), so I had to setup the files locally and then plug
-// them into this workflow.
-// Below is the originally intended clean workflow (commented out),
-// while the plugin vesion picks up at git 5.19.
-// ---------------------------------------------------------------
 
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE:
 // git 5.13
 // add the lg channel to the genotype subset
@@ -182,7 +268,10 @@ vcf_loc_twisst
 	.combine( lg_twisst )
 	.set{ vcf_loc_lg_twisst }
 */
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 // git 5.14
 // subset genotypes by LG
@@ -209,16 +298,29 @@ process vcf2geno_loc {
 	"""
 }
 */
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 // git 5.15
 // initialize SNP window size
 Channel.from( 50, 200 ).set{ twisst_window_types }
 */
+
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 // git 5.16
 // add the SNP window size to the genotype subset
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 */
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 // git 5.17
 // create the phylogenies along the sliding window
@@ -248,6 +350,10 @@ process twisst_prep {
 	 """
 }
 */
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 // git 5.18
 // run the topology weighting on the  phylogenies
@@ -283,7 +389,10 @@ process twisst_run {
 	"""
 }
 */
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.19
 // emmulate setting
 Channel
@@ -291,7 +400,10 @@ Channel
 	.combine( vcf_loc_twisst )
 	.combine( lg_twisst )
 	.set{ twisst_modes }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.20
 // run the topology weighting on the  phylogenies
 process twisst_plugin {
@@ -325,3 +437,9 @@ process twisst_plugin {
 	  gzip > ${loc}.${lg}.w${mode}.phyml_bionj.weights.tsv.gz
 	"""
 }
+```
+</div>
+
+At this step we are done with phlyogeny and the topology weighting.
+
+---

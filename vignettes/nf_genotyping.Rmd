@@ -36,7 +36,7 @@ prod_geno <- tibbler(c('phased_vcf', 'phased_mac2_vcf', 'filtered_snps', 'raw_me
 
 ## Summary
 
-The genotyping procedure is controlled by the [**nextflow**](https://www.nextflow.io/) script `genotyping.nf` (located under `$BASE_DIR/nf/genotyping`).
+The genotyping procedure is controlled by the [**nextflow**](https://www.nextflow.io/) script `genotyping.nf` (located under `$BASE_DIR/nf/genotyping/`).
 It takes the analysis from the raw sequencing data to the genotyped and phased SNPs.
 Below is an overview of the steps involved in the genotyping process.
 

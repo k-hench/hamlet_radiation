@@ -141,6 +141,7 @@ For the figure we are going to need:
 We start by importing $d_{XY}$ by first listing all $d_{XY}$ data files and then iterating the $d_{XY}$ import function over the files.
 
 
+
 ```r
 # actual script =========================================================
 
@@ -151,206 +152,8 @@ dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
   bind_rows()
 ```
 
-```
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_abehon, pi_gumhon, dxy_abehon_gumhon, Fst_abeho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_abehon, pi_nighon, dxy_abehon_nighon, Fst_abeho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,100
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_abehon, pi_puehon, dxy_abehon_puehon, Fst_abeho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,089
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_abehon, pi_ranhon, dxy_abehon_ranhon, Fst_abeho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_abehon, pi_unihon, dxy_abehon_unihon, Fst_abeho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_gumhon, pi_nighon, dxy_gumhon_nighon, Fst_gumho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_gumhon, pi_puehon, dxy_gumhon_puehon, Fst_gumho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_gumhon, pi_ranhon, dxy_gumhon_ranhon, Fst_gumho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 109,930
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_gumhon, pi_unihon, dxy_gumhon_unihon, Fst_gumho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_indbel, pi_maybel, dxy_indbel_maybel, Fst_indbe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,195
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_indbel, pi_nigbel, dxy_indbel_nigbel, Fst_indbe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_indbel, pi_puebel, dxy_indbel_puebel, Fst_indbe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_indbel, pi_unibel, dxy_indbel_unibel, Fst_indbe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_maybel, pi_nigbel, dxy_maybel_nigbel, Fst_maybe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_maybel, pi_puebel, dxy_maybel_puebel, Fst_maybe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_maybel, pi_unibel, dxy_maybel_unibel, Fst_maybe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_nigbel, pi_puebel, dxy_nigbel_puebel, Fst_nigbe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_nigbel, pi_unibel, dxy_nigbel_unibel, Fst_nigbe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_nighon, pi_puehon, dxy_nighon_puehon, Fst_nigho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,100
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_nighon, pi_ranhon, dxy_nighon_ranhon, Fst_nigho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,093
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_nighon, pi_unihon, dxy_nighon_unihon, Fst_nigho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,011
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_nigpan, pi_puepan, dxy_nigpan_puepan, Fst_nigpa...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 111,728
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_nigpan, pi_unipan, dxy_nigpan_unipan, Fst_nigpa...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,104
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_puebel, pi_unibel, dxy_puebel_unibel, Fst_puebe...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,103
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_puehon, pi_ranhon, dxy_puehon_ranhon, Fst_pueho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,108
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_puehon, pi_unihon, dxy_puehon_unihon, Fst_pueho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,090
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_puepan, pi_unipan, dxy_puepan_unipan, Fst_puepa...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 110,095
-## Cols: 9
-## chr [1]: scaffold
-## dbl [8]: start, end, mid, sites, pi_ranhon, pi_unihon, dxy_ranhon_unihon, Fst_ranho...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-```
-
 Next we iterate the genotype $\times$ phenotype import function over the trait names *Bars*, *Snout* and *Peduncle*.
+
 
 
 ```r
@@ -374,6 +177,7 @@ gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
 Next, we compute the average genome wide $d_{XY}$ and load the average genome wide $F_{ST}$ values for all 28 pair wise species comparisons.
 
 
+
 ```r
 dxy_globals <- dxy_data %>%
   filter(BIN_START %% 50000 == 1 ) %>%
@@ -388,17 +192,8 @@ fst_globals <- vroom::vroom(fst_globals,delim = '\t',
          run = fct_reorder(run,weighted_fst))
 ```
 
-```
-## Rows: 28
-## Cols: 4
-## chr [2]: loc, run_prep
-## dbl [2]: mean_fst, weighted_fst
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-```
-
 After this, we import $F_{ST}$ by first listing all $F_{ST}$ data files and then iterating the $F_{ST}$ import function over the files.
+
 
 
 ```r
@@ -575,7 +370,7 @@ p_single <- outlier_table %>%
 ```
 
 <center>
-<img src="plot_F3_files/figure-html/unnamed-chunk-17-1.png" width="1344" />
+<img src="plot_F3_files/figure-html/unnamed-chunk-21-1.png" width="1344" />
 </center>
 
 At this point all that we miss is the figure legend.
@@ -610,7 +405,7 @@ p_leg <- cowplot::plot_grid(p_leg1, p_leg2,nrow = 1, rel_widths = c(.6, 1))
 ```
 
 <center>
-<img src="plot_F3_files/figure-html/unnamed-chunk-20-1.png" width="1344" />
+<img src="plot_F3_files/figure-html/unnamed-chunk-24-1.png" width="1344" />
 </center>
 
 After adding the legend to the main part, Figure 3 is done.
@@ -622,7 +417,7 @@ p_done <- cowplot::plot_grid(p_single, p_leg,ncol = 1,
 ```
 
 <center>
-<img src="plot_F3_files/figure-html/unnamed-chunk-22-1.png" width="1344" />
+<img src="plot_F3_files/figure-html/unnamed-chunk-26-1.png" width="1344" />
 </center>
 
 Finally, we can export Figure 3.

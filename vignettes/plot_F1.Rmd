@@ -93,7 +93,24 @@ clr_sec <- 'gray'  # the color of the secondary axis (dxy)
 We begin with the data import by first collecting the paths to all files containing either *F<sub>ST</sub>* or *d<sub>XY</sub>* data (`dir()`), then iterating the import function over all files (`map(summarize_fst)`) and finally combining the outputs into a single tibble (`bind_rows()`).
 This is done for both *F<sub>ST</sub>* and *d<sub>XY</sub>*.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE}
+# start script -------------------
+
+# import Fst 
+fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
+
+fst_data <- str_c(fst_dir,fst_files) %>%
+  purrr::map(summarize_fst) %>%
+  bind_rows()
+
+# import dxy 
+dxy_files <- dir(dxy_dir)
+
+dxy_data <-  str_c(dxy_dir,dxy_files) %>%
+  purrr::map(summarize_dxy) %>%
+  bind_rows()
+```
+```{r, include = FALSE}
 # start script -------------------
 
 # import Fst 

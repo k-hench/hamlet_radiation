@@ -137,7 +137,18 @@ We start with the import of the $F_{ST}$ data, specifically the data set contain
 The data file is read, the columns are renamed and the genomic position is added.
 Then, only the genomic position and the $F_{ST}$ columns are selected and a window column is added for facetting in `ggplot()`.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, include = FALSE}
+# start script -------------------
+# import fst data
+fst_data <- vroom::vroom(fst_file,delim = '\t') %>%
+  select(CHROM, BIN_START, BIN_END, N_VARIANTS, WEIGHTED_FST) %>%
+  setNames(., nm = c('CHROM','BIN_START', 'BIN_END', 'n_snps', 'fst') ) %>%
+  add_gpos() %>%
+  select(GPOS, fst) %>%
+  setNames(., nm = c('GPOS','value')) %>%
+  mutate(window = str_c('bold(',project_case('a'),'):joint~italic(F[ST])'))
+```
+```{r, eval = FALSE}
 # start script -------------------
 # import fst data
 fst_data <- vroom::vroom(fst_file,delim = '\t') %>%
@@ -152,7 +163,18 @@ fst_data <- vroom::vroom(fst_file,delim = '\t') %>%
 Next, we import the $d_{XY}$ data.
 Here we are importing all 28 pairwise comparisons, so we first collect all the file paths and the iterate the data import over all files.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE}
+# import dxy data
+dxy_files <- dir(dxy_dir)
+
+dxy_data <- str_c(dxy_dir,dxy_files) %>%
+  purrr::map(get_dxy) %>%
+  bind_rows() %>%
+  select(N_SITES:GPOS, run) %>%
+  mutate(pop1 = str_sub(run,1,6),
+         pop2 = str_sub(run,8,13))
+```
+```{r, include = FALSE}
 # import dxy data
 dxy_files <- dir(dxy_dir)
 
@@ -185,7 +207,21 @@ Then we import the genotype $\times$ phenotype association data.
 For this, we list all the traits we want to include and then iterate the import funtion over all traits.
 We combine the data sets and transform the table to *long* format.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE}
+# import G x P data
+traits <- c("Bars.lm.50k.5k.txt.gz", "Peduncle.lm.50k.5k.txt.gz", "Snout.lm.50k.5k.txt.gz")
+
+trait_panels <- c(Bars = str_c('bold(',project_case('h'),')'),
+                  Peduncle = str_c('bold(',project_case('i'),')'),
+                  Snout = str_c('bold(',project_case('j'),')'))
+
+
+gxp_data <- str_c(gxp_dir,traits) %>% 
+  purrr::map(get_gxp) %>%
+  join_list() %>% 
+  gather(key = 'window', value = 'value',2:4)
+```
+```{r, include = FALSE}
 # import G x P data
 traits <- c("Bars.lm.50k.5k.txt.gz", "Peduncle.lm.50k.5k.txt.gz", "Snout.lm.50k.5k.txt.gz")
 
@@ -202,7 +238,28 @@ gxp_data <- str_c(gxp_dir,traits) %>%
 
 Then, we import the genome wide $F_{ST}$ summary for all 28 pair wise comparisons to be able to pick a divergence data set of an intermediatly differentiated species pair (the species pair of rank 15, close to 14.5 - the median of rank 1 to 28).
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE}
+# import genome wide Fst data summary  --------
+globals <- vroom::vroom(global_fst_file, delim = '\t',
+                      col_names = c('loc','run','mean','weighted')) %>%
+  mutate(run = str_c(str_sub(run,1,3),loc,'-',str_sub(run,5,7),loc),
+         run = fct_reorder(run,weighted)) 
+
+# select dxy data
+selectors_dxy <- globals %>% 
+  arrange(weighted) %>% 
+  .$weighted %>% 
+  .[15]
+
+select_dxy_runs <- globals %>%
+  filter(weighted %in% selectors_dxy) %>%
+  .$run %>% as.character()
+
+dxy_select <- dxy_data %>% 
+  filter(run %in% select_dxy_runs) %>%
+  mutate(window = str_c('bold(',project_case('d'),'): italic(d[XY])'))
+```
+```{r, include = FALSE}
 # import genome wide Fst data summary  --------
 globals <- vroom::vroom(global_fst_file, delim = '\t',
                       col_names = c('loc','run','mean','weighted')) %>%
@@ -294,7 +351,19 @@ The gnomic position, the topologie number (format: three digits with leading zer
 
 We also create a dummy tibble that contains the null expectation of the topology weight for the two locations (1/n, with n = number of possible topologies - n = 15 for Belize and 105 for Honduras).
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE}
+# import topology weighting data
+twisst_data <- tibble(loc = c('bel','hon'),
+                      panel = c('f','g') %>% project_case() %>% str_c('bold(',.,')')) %>%
+  purrr::pmap(match_twisst_files) %>%
+  bind_rows() %>% 
+  select(GPOS, topo3,topo_rel,window,weight)
+
+twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~weighting[bel]'),
+                                 str_c('bold(',project_case('g'),'):~weighting[hon]')),
+                      weight = c(1/15, 1/105))
+```
+```{r, include = FALSE}
 # import topology weighting data
 twisst_data <- tibble(loc = c('bel','hon'),
                       panel = c('f','g') %>% project_case() %>% str_c('bold(',.,')')) %>%
@@ -316,7 +385,24 @@ data <- bind_rows(dxy_summary, fst_data, gxp_data)
 
 Then we load the positions of the the $F_{ST}$ outlier windows, select the focal outliers that will receive individual labels and create a tibnble and two parameters for the label placement within the plot.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, include = FALSE}
+# import fst outliers
+outliers <- vroom::vroom(outlier_table, delim = '\t')
+
+outlier_pick <- c('LG04_1', 'LG12_2', 'LG12_3')
+
+outlier_label <- outliers %>%
+  filter(gid %in% outlier_pick) %>%
+  mutate(label = letters[row_number()] %>% project_inv_case(),
+         x_shift_label = c(-1,-1.2,1)*10^7,
+         gpos_label = gpos + x_shift_label,
+         gpos_label2 = gpos_label - sign(x_shift_label) *.5*10^7,
+         window = str_c('bold(',project_case('a'),'):joint~italic(F[ST])'))
+
+outlier_y <- .45
+outlier_yend <- .475
+```
+```{r, eval = FALSE}
 # import fst outliers
 outliers <- vroom::vroom(outlier_table, delim = '\t')
 

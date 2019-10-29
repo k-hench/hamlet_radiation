@@ -2,7 +2,7 @@
 title: "Script repository"
 subtitle: "(Hench *et al.* supplement)"
 author: "Kosmas Hench"
-date: "2019-10-25"
+date: "2019-10-29"
 documentclass: book
 bibliography: [book.bib]
 biblio-style: apalike
@@ -13,21 +13,36 @@ description: "Scripts used to produce Figures and Supplementary Figures of 'The 
 
 # Intro
 
-This repository contains a collection of scripts used in the paper "*The genomic origins of a marine radiation*".
+
+
+This repository contains the complete workflow used in the paper "*The genomic origins of a marine radiation*".
+The indivdual chapters of this documentation follow the separate main steps of the workflow, which each refer to an individual prefix in the _git x.x_ references of the papers mathod section.
+The individual steps partly depend on each other and were executed in the order depicted below.
+
+<div style="max-width:800px; margin:auto;">
+<img src="index_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+</div>
 
 ## Analysis
 
-A documentation of the data preparation and the data analysis can be found at:
+A documentation of the data preparation and the data analysis (git 1.x - 6.x) can be found at:
 
-[Genotyping](genotyping.html)
+- git 1.x: [Genotyping](genotyping-i-snps-only.html)
+- git 2.x: [Genotyping all base pairs](genotyping-ii-all-callable-sites.html)
+- git 3.x: [Analysis (<i>F<sub>ST</sub></i> & GxP)](analysis-i-fst-gxp.html)
+- git 4.x: [Analysis (<i>d<sub>XY</sub></i> & $\pi$)](analysis-ii-dxy-pi.html)
+- git 5.x: [Analysis (phylogeny & topolgy weighting)](analysis-iii-phylogeny-topology-weighting.html)
+- git 6.x: [Analysis ($\rho$)](analysis-iv-rho.html)
 
 ## Figures
 
 A more detailed documentation exists for all the figures of the manuscript:
 
-[F1](figure-1.html), [F2](figure-2.html) & [F3](figure-3.html) 
+[F1](figure-1.html), [F2](figure-2.html) & [F3](figure-3.html)
 
 as well as for all the supplementary figures:
+
+## Prerequesites
 
 All scripts assume two variables to be set within the bash environment:
 
@@ -35,5 +50,6 @@ All scripts assume two variables to be set within the bash environment:
   - `$SFTWR` is a folder that contains all the software dependencies that are used within the scripts
 
 The dependencies need to be downloaded and installed separately.
+
 
 

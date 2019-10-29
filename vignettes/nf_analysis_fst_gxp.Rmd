@@ -34,18 +34,18 @@ prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'ge
                         'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
 ```
 
-# Analysis I (<it>F<sub>ST</sub></it>_ & GxP)
+# Analysis I (<i>F<sub>ST</sub></i> & GxP)
 
 ## Summary
 
-The genetic differentiation as well as the genotype x phenotype association are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_gxp.nf` (located under `$BASE_DIR/nf/analysis_fst_gxp/`).
+The genetic differentiation, as well as the genotype x phenotype association, are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_gxp.nf` (located under `$BASE_DIR/nf/analysis_fst_gxp/`).
 It takes the _SNPs only_ data set and computes _F<sub>ST</sub>_ and the GxP association.
-Below is an overview of the steps involved in the genotyping process.
+Below is an overview of the steps involved in the analysis.
 
 <div style="max-width:800px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
-                         git = 1, point_types = prod_geno),
+                         git = 1, point_types = prod_basic),
         width_svg = 16, height_svg = 16)
 
 ```
@@ -163,7 +163,7 @@ process subset_vcf_hamlets_only {
 }
 ```
 
-### <it>F<sub>ST</sub></it>
+### <i>F<sub>ST</sub></i>
 
 Using this subset, we compute the global differentiation among all hamlet populations.
 
@@ -547,7 +547,6 @@ process gemma_smooth {
 ```
 </div>
 
-At this step we are done with differentiation and GxP
-.
+At this step we are done with differentiation and GxP.
 
 ---

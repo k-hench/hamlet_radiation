@@ -148,7 +148,16 @@ For the figure we are going to need:
 
 We start by importing $d_{XY}$ by first listing all $d_{XY}$ data files and then iterating the $d_{XY}$ import function over the files.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, include = FALSE}
+# actual script =========================================================
+
+dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.50kb-5kb.tsv.gz'))
+
+dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
+  purrr::pmap(get_dxy) %>% 
+  bind_rows()
+```
+```{r, eval = FALSE}
 # actual script =========================================================
 
 dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.50kb-5kb.tsv.gz'))
@@ -160,7 +169,14 @@ dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
 
 Next we iterate the genotype $\times$ phenotype import function over the trait names *Bars*, *Snout* and *Peduncle*.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, include = FALSE}
+gxp_traits <- c('Bars', 'Snout', 'Peduncle')
+
+gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.50k.5k.txt.gz') %>% 
+  future_map(get_gxp_long) %>%
+  bind_rows()
+```
+```{r, eval = FALSE}
 gxp_traits <- c('Bars', 'Snout', 'Peduncle')
 
 gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.50k.5k.txt.gz') %>% 
@@ -179,7 +195,20 @@ gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
 
 Next, we compute the average genome wide $d_{XY}$ and load the average genome wide $F_{ST}$ values for all 28 pair wise species comparisons.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, include = FALSE}
+dxy_globals <- dxy_data %>%
+  filter(BIN_START %% 50000 == 1 ) %>%
+  group_by( run ) %>%
+  summarise(mean_global_dxy = sum(dxy*N_SITES)/sum(N_SITES)) %>%
+  mutate(run = fct_reorder(run,mean_global_dxy)) 
+
+fst_globals <- vroom::vroom(fst_globals,delim = '\t',
+                        col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
+  separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
+  mutate(run = str_c(pop1,loc,'-',pop2,loc),
+         run = fct_reorder(run,weighted_fst))
+```
+```{r, eval = FALSE}
 dxy_globals <- dxy_data %>%
   filter(BIN_START %% 50000 == 1 ) %>%
   group_by( run ) %>%
@@ -195,7 +224,17 @@ fst_globals <- vroom::vroom(fst_globals,delim = '\t',
 
 After this, we import $F_{ST}$ by first listing all $F_{ST}$ data files and then iterating the $F_{ST}$ import function over the files.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, include = FALSE}
+fst_files <- dir(fst_dir ,pattern = '.50k.windowed.weir.fst.gz')
+fst_data <- str_c(fst_dir,fst_files) %>%
+  future_map(get_fst) %>%
+  bind_rows()%>%
+  left_join(dxy_globals) %>%
+  left_join(fst_globals) %>%
+  mutate(run = refactor(., fst_globals),
+         BIN_MID = (BIN_START+BIN_END)/2)
+```
+```{r, eval = FALSE}
 fst_files <- dir(fst_dir ,pattern = '.50k.windowed.weir.fst.gz')
 fst_data <- str_c(fst_dir,fst_files) %>%
   future_map(get_fst) %>%
