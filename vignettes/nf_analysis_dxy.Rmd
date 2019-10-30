@@ -32,7 +32,7 @@ source('R/draw_workflow.R')
 prod_dxy <- tibbler(c('pi_50k', 'dxy_random_output_ch', 'random_fst_out', 'dxy_output_ch'))
 ```
 
-# Analysis II (<i>d<sub>XY</sub></i> & $\pi$)
+# Analysis II (<i>d<sub>XY</sub></i> & pi)
 
 ## Summary
 
@@ -77,6 +77,7 @@ Channel
 	.set{ lg_ch }
 ```
 
+Now, we can subset the data set and convert it to a custom genotype format.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.3
@@ -106,6 +107,8 @@ process split_allBP {
 }
 ```
 
+Since the species composition differs between locations, we need to initialize three seperate sets of species.
+These are going to be used to create the divergence species pairs.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.4
@@ -115,6 +118,7 @@ Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 ```
 
+For the diversity, we also initialize the full set of populations of the study.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.5
@@ -124,14 +128,19 @@ Channel
 	.set{spec_dxy}
 ```
 
+We want to run a slining window at different resolutions, so we set up a channel for these.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.6
+// init slining window resolutions
 Channel
 	.from( 1, 5 )
 	.into{ kb_ch; kb_ch2; kb_ch3 }
 ```
 
+### <i>d<sub>XY</sub></i>
+
+To prepare all species comparisons used to estimate divergence, we combine each species witch all other species within a location.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.7
@@ -160,6 +169,7 @@ pan_pairs_ch = Channel.from( "pan" )
 	.map{ it[0,2,4]}
 ```
 
+Now we attach the genotypes and the resolution level to the species pairs.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.8
@@ -171,6 +181,7 @@ bel_pairs_ch
 	.into { all_dxy_pairs_ch; random_dxy_pairs_ch }
 ```
 
+At this point, we can calculate <i>d<sub>XY</sub></i>.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.9
@@ -210,6 +221,7 @@ process dxy_lg {
 }
 ```
 
+Since the calculation was split across LGs, we now need to collect all LGs of a particular species pair...
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.10
@@ -219,6 +231,7 @@ dxy_lg_ch
   .set{ tubbled_dxy }
 ```
 
+... and merge the results.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.11
@@ -250,6 +263,8 @@ process receive_tuple {
 }
 ```
 
+For control, we also create a "random" <i>d<sub>XY</sub></i> run, where we take the most diverged species pair and randomize the population assginment of the samples.
+Therefore, we first pick the most diverged species pair.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.12
@@ -257,7 +272,11 @@ process receive_tuple {
 Channel
 	.from( [['bel', 'ind', 'may']] )
 	.set{ random_run_ch }
+```
 
+Then we set the sliding windiw resolution.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 4.13
 // setup channel contnent for random channel
 Channel
@@ -266,9 +285,13 @@ Channel
 	.combine( kb_ch2 )
 	.filter{ it[4] == 5 }
 	.set{ random_sets_ch }
+```
 
+Now, we randomize the population assignment of the sampels and calculate differentiation.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 4.14
-	// permute the population assignment (the randomization)
+// permute the population assignment (the randomization)
 process randomize_samples {
 	label 'L_20g15h_randomize_samples'
 	publishDir "../../2_analysis/fst/${kb}0k/random", mode: 'copy' , pattern: "*_windowed.weir.fst.gz"
@@ -304,6 +327,7 @@ process randomize_samples {
 }
 ```
 
+We set up another channel to prepare the random <i>d<sub>XY</sub></i>...
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.15
@@ -314,6 +338,7 @@ random_dxy_pairs_ch
 	.set{ random_assigned_ch }
 ```
 
+.. and compute the divergence.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.16
@@ -348,6 +373,7 @@ process dxy_lg_random {
 }
 ```
 
+Again, we collect the output of the individual LGs....
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.17
@@ -357,6 +383,7 @@ dxy_random_lg_ch
 .set{ tubbled_random_dxy }
 ```
 
+... and we merge them
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 4.18
@@ -387,6 +414,10 @@ process receive_random_tuple {
 }
 ```
 
+### $\pi$
+
+Estimating the diveristy is quite staight foreward:
+We take the prepared, population identifier, the data set and the window resolutions and run `VCFtools` on each combination. 
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // ---------------------------------------------------------------

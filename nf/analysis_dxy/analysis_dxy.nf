@@ -54,6 +54,7 @@ Channel
 
 
 // git 4.6
+// init slining window resolutions
 Channel
 	.from( 1, 5 )
 	.into{ kb_ch; kb_ch2; kb_ch3 }

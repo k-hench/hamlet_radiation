@@ -32,7 +32,7 @@ source('R/draw_workflow.R')
 prod_recombination <- tibbler(c('step3_ch'))
 ```
 
-# Analysis IV ($\rho$)
+# Analysis IV (rho)
 
 
 ## Summary
