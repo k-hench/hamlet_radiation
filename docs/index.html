@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench" />
 
 
-<meta name="date" content="2019-10-29" />
+<meta name="date" content="2019-11-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -160,7 +160,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.2.1" data-path="analysis-i-fst-gxp.html"><a href="analysis-i-fst-gxp.html#setup"><i class="fa fa-check"></i><b>4.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> Analysis II (<i>d<sub>XY</sub></i> &amp; <span class="math inline">\(\pi\)</span>)</a><ul>
+<li class="chapter" data-level="5" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a><ul>
 <li class="chapter" data-level="5.1" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
 <li class="chapter" data-level="5.2" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a><ul>
 <li class="chapter" data-level="5.2.1" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
@@ -172,7 +172,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.2.1" data-path="analysis-iii-phylogeny-topology-weighting.html"><a href="analysis-iii-phylogeny-topology-weighting.html#setup-1"><i class="fa fa-check"></i><b>6.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> Analysis IV (<span class="math inline">\(\rho\)</span>)</a><ul>
+<li class="chapter" data-level="7" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> Analysis IV (rho)</a><ul>
 <li class="chapter" data-level="7.1" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html#summary-5"><i class="fa fa-check"></i><b>7.1</b> Summary</a></li>
 <li class="chapter" data-level="7.2" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html#details-of-analysis_recombination.nf"><i class="fa fa-check"></i><b>7.2</b> Details of <code>analysis_recombination.nf</code></a><ul>
 <li class="chapter" data-level="7.2.1" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html#data-preparation-3"><i class="fa fa-check"></i><b>7.2.1</b> Data preparation</a></li>
@@ -227,7 +227,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1 class="title">Script repository</h1>
 <h2 class="subtitle"><em>(Hench <em>et al.</em> supplement)</em></h2>
 <p class="author"><em>Kosmas Hench</em></p>
-<p class="date"><em>2019-10-29</em></p>
+<p class="date"><em>2019-11-01</em></p>
 </div>
 <div id="intro" class="section level1">
 <h1><span class="header-section-number">1</span> Intro</h1>
@@ -251,7 +251,13 @@ The individual steps partly depend on each other and were executed in the order 
 </div>
 <div id="figures" class="section level2">
 <h2><span class="header-section-number">1.2</span> Figures</h2>
-<p>A more detailed documentation exists for all the figures of the manuscript:</p>
+<p>The creation of the figures is bundled in a single script (git 7) which can be executed once all <code>nextflow</code> scripts have successfuly run.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$BASE_DIR</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="fu">bash</span> sh/create_figures.sh</a></code></pre></div>
+<p>This is basically just a collection that will run all scripts located under <code>$BASE_DIR/R/fig</code>.
+Under this location, you will fin one <code>R</code> script per figure (and suppl. figure).
+So if you are only interrested in a single figure - thats te place to start looking.</p>
+<p>Furthermore, a more detailed documentation exists for all the figure scripts used for the manuscript:</p>
 <p><a href="figure-1.html">F1</a>, <a href="figure-2.html">F2</a> &amp; <a href="figure-3.html">F3</a></p>
 <p>as well as for all the supplementary figures:</p>
 </div>

@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench" />
 
 
-<meta name="date" content="2019-10-29" />
+<meta name="date" content="2019-11-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -160,7 +160,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.2.1" data-path="analysis-i-fst-gxp.html"><a href="analysis-i-fst-gxp.html#setup"><i class="fa fa-check"></i><b>4.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> Analysis II (<i>d<sub>XY</sub></i> &amp; <span class="math inline">\(\pi\)</span>)</a><ul>
+<li class="chapter" data-level="5" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a><ul>
 <li class="chapter" data-level="5.1" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
 <li class="chapter" data-level="5.2" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a><ul>
 <li class="chapter" data-level="5.2.1" data-path="analysis-ii-dxy-pi.html"><a href="analysis-ii-dxy-pi.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
@@ -172,7 +172,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.2.1" data-path="analysis-iii-phylogeny-topology-weighting.html"><a href="analysis-iii-phylogeny-topology-weighting.html#setup-1"><i class="fa fa-check"></i><b>6.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> Analysis IV (<span class="math inline">\(\rho\)</span>)</a><ul>
+<li class="chapter" data-level="7" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> Analysis IV (rho)</a><ul>
 <li class="chapter" data-level="7.1" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html#summary-5"><i class="fa fa-check"></i><b>7.1</b> Summary</a></li>
 <li class="chapter" data-level="7.2" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html#details-of-analysis_recombination.nf"><i class="fa fa-check"></i><b>7.2</b> Details of <code>analysis_recombination.nf</code></a><ul>
 <li class="chapter" data-level="7.2.1" data-path="analysis-iv-rho.html"><a href="analysis-iv-rho.html#data-preparation-3"><i class="fa fa-check"></i><b>7.2.1</b> Data preparation</a></li>
@@ -229,15 +229,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">9.1</span> Summary</h2>
 <p>This is the accessory documentation of Figure 2.
 The Figure can be recreated by running the <strong>R</strong> script <code>plot_F2.R</code>:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$BASE_DIR</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="ex">Rscript</span> --vanilla R/fig/plot_F2.R 2_analysis/dxy/50k/ \</a>
-<a class="sourceLine" id="cb16-4" data-line-number="4">   2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \</a>
-<a class="sourceLine" id="cb16-5" data-line-number="5">   2_analysis/summaries/fst_outliers_998.tsv \</a>
-<a class="sourceLine" id="cb16-6" data-line-number="6">   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \</a>
-<a class="sourceLine" id="cb16-7" data-line-number="7">   2_analysis/twisst/weights/ ressources/plugin/trees/ \</a>
-<a class="sourceLine" id="cb16-8" data-line-number="8">   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \</a>
-<a class="sourceLine" id="cb16-9" data-line-number="9">   2_analysis/summaries/fst_globals.txt</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="bu">cd</span> <span class="va">$BASE_DIR</span></a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="ex">Rscript</span> --vanilla R/fig/plot_F2.R 2_analysis/dxy/50k/ \</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">   2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \</a>
+<a class="sourceLine" id="cb17-5" data-line-number="5">   2_analysis/summaries/fst_outliers_998.tsv \</a>
+<a class="sourceLine" id="cb17-6" data-line-number="6">   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \</a>
+<a class="sourceLine" id="cb17-7" data-line-number="7">   2_analysis/twisst/weights/ ressources/plugin/trees/ \</a>
+<a class="sourceLine" id="cb17-8" data-line-number="8">   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \</a>
+<a class="sourceLine" id="cb17-9" data-line-number="9">   2_analysis/summaries/fst_globals.txt</a></code></pre></div>
 </div>
 <div id="details-of-plot_f2.r" class="section level2">
 <h2><span class="header-section-number">9.2</span> Details of <code>plot_F2.R</code></h2>
@@ -246,68 +246,68 @@ It is an executable R script that depends on the accessory R package <strong>Gen
 <div id="config-1" class="section level3">
 <h3><span class="header-section-number">9.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co">#!/usr/bin/env Rscript</span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co"># run from terminal:</span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co"># Rscript --vanilla R/fig/plot_F2.R 2_analysis/dxy/50k/ \</span></a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \</span></a>
-<a class="sourceLine" id="cb17-5" data-line-number="5"><span class="co">#    2_analysis/summaries/fst_outliers_998.tsv \</span></a>
-<a class="sourceLine" id="cb17-6" data-line-number="6"><span class="co">#    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \</span></a>
-<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="co">#    2_analysis/twisst/weights/ ressources/plugin/trees/ \</span></a>
-<a class="sourceLine" id="cb17-8" data-line-number="8"><span class="co">#    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \</span></a>
-<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="co">#    2_analysis/summaries/fst_globals.txt</span></a>
-<a class="sourceLine" id="cb17-10" data-line-number="10"><span class="co"># ===============================================================</span></a>
-<a class="sourceLine" id="cb17-11" data-line-number="11"><span class="co"># This script produces Figure 2 of the study &quot;The genomic origins of a marine radiation&quot;</span></a>
-<a class="sourceLine" id="cb17-12" data-line-number="12"><span class="co"># by Hench, McMillan an Puebla</span></a>
-<a class="sourceLine" id="cb17-13" data-line-number="13"><span class="co"># ---------------------------------------------------------------</span></a>
-<a class="sourceLine" id="cb17-14" data-line-number="14"><span class="co"># ===============================================================</span></a>
-<a class="sourceLine" id="cb17-15" data-line-number="15"><span class="co"># args &lt;- c(&#39;2_analysis/dxy/50k/&#39;,&#39;2_analysis/fst/50k/multi_fst.50k.tsv.gz&#39;,</span></a>
-<a class="sourceLine" id="cb17-16" data-line-number="16"><span class="co"># &#39;2_analysis/GxP/50000/&#39;, &#39;2_analysis/summaries/fst_outliers_998.tsv&#39;,</span></a>
-<a class="sourceLine" id="cb17-17" data-line-number="17"><span class="co"># &#39;https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R&#39;,</span></a>
-<a class="sourceLine" id="cb17-18" data-line-number="18"><span class="co"># &#39;2_analysis/twisst/weights/&#39;, &#39;ressources/plugin/trees/&#39;,</span></a>
-<a class="sourceLine" id="cb17-19" data-line-number="19"><span class="co"># &#39;2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz&#39;, &#39;2_analysis/summaries/fst_globals.txt&#39;)</span></a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co">#!/usr/bin/env Rscript</span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="co"># run from terminal:</span></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co"># Rscript --vanilla R/fig/plot_F2.R 2_analysis/dxy/50k/ \</span></a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="co">#    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \</span></a>
+<a class="sourceLine" id="cb18-5" data-line-number="5"><span class="co">#    2_analysis/summaries/fst_outliers_998.tsv \</span></a>
+<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="co">#    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \</span></a>
+<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="co">#    2_analysis/twisst/weights/ ressources/plugin/trees/ \</span></a>
+<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="co">#    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \</span></a>
+<a class="sourceLine" id="cb18-9" data-line-number="9"><span class="co">#    2_analysis/summaries/fst_globals.txt</span></a>
+<a class="sourceLine" id="cb18-10" data-line-number="10"><span class="co"># ===============================================================</span></a>
+<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="co"># This script produces Figure 2 of the study &quot;The genomic origins of a marine radiation&quot;</span></a>
+<a class="sourceLine" id="cb18-12" data-line-number="12"><span class="co"># by Hench, McMillan an Puebla</span></a>
+<a class="sourceLine" id="cb18-13" data-line-number="13"><span class="co"># ---------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb18-14" data-line-number="14"><span class="co"># ===============================================================</span></a>
+<a class="sourceLine" id="cb18-15" data-line-number="15"><span class="co"># args &lt;- c(&#39;2_analysis/dxy/50k/&#39;,&#39;2_analysis/fst/50k/multi_fst.50k.tsv.gz&#39;,</span></a>
+<a class="sourceLine" id="cb18-16" data-line-number="16"><span class="co"># &#39;2_analysis/GxP/50000/&#39;, &#39;2_analysis/summaries/fst_outliers_998.tsv&#39;,</span></a>
+<a class="sourceLine" id="cb18-17" data-line-number="17"><span class="co"># &#39;https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R&#39;,</span></a>
+<a class="sourceLine" id="cb18-18" data-line-number="18"><span class="co"># &#39;2_analysis/twisst/weights/&#39;, &#39;ressources/plugin/trees/&#39;,</span></a>
+<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="co"># &#39;2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz&#39;, &#39;2_analysis/summaries/fst_globals.txt&#39;)</span></a></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
 The R package <strong>GenomicOriginsScripts</strong> is loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">args =<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly=</span><span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="co"># setup -----------------------</span></a>
-<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="kw">library</span>(GenomicOriginsScripts)</a>
-<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="kw">library</span>(hypoimg)</a>
-<a class="sourceLine" id="cb18-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</a>
-<a class="sourceLine" id="cb18-7" data-line-number="7">script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="st">  </span><span class="kw">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</a>
-<a class="sourceLine" id="cb18-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb18-10" data-line-number="10">plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="kw">getwd</span>(),<span class="st">&#39;/&#39;</span>,.) </a>
-<a class="sourceLine" id="cb18-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb18-13" data-line-number="13">args &lt;-<span class="st"> </span><span class="kw">process_input</span>(script_name, args)</a></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="co">#&gt; ── Script: scripts/plot_F2.R ────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="co">#&gt; Parameters read:</span></a>
-<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="co">#&gt;  ★ 1: 2_analysis/dxy/50k/</span></a>
-<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="co">#&gt;  ★ 2: 2_analysis/fst/50k/multi_fst.50k.tsv.gz</span></a>
-<a class="sourceLine" id="cb19-5" data-line-number="5"><span class="co">#&gt;  ★ 3: 2_analysis/GxP/50000/</span></a>
-<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="co">#&gt;  ★ 4: 2_analysis/summaries/fst_outliers_998.tsv</span></a>
-<a class="sourceLine" id="cb19-7" data-line-number="7"><span class="co">#&gt;  ★ 5: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R</span></a>
-<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="co">#&gt;  ★ 6: 2_analysis/twisst/weights/</span></a>
-<a class="sourceLine" id="cb19-9" data-line-number="9"><span class="co">#&gt;  ★ 7: ressources/plugin/trees/</span></a>
-<a class="sourceLine" id="cb19-10" data-line-number="10"><span class="co">#&gt;  ★ 8: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span></a>
-<a class="sourceLine" id="cb19-11" data-line-number="11"><span class="co">#&gt;  ★ 9: 2_analysis/summaries/fst_globals.txt</span></a>
-<a class="sourceLine" id="cb19-12" data-line-number="12"><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">args =<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly=</span><span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="co"># setup -----------------------</span></a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="kw">library</span>(GenomicOriginsScripts)</a>
+<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="kw">library</span>(hypoimg)</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="st">  </span><span class="kw">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</a>
+<a class="sourceLine" id="cb19-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb19-10" data-line-number="10">plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb19-11" data-line-number="11"><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="kw">getwd</span>(),<span class="st">&#39;/&#39;</span>,.) </a>
+<a class="sourceLine" id="cb19-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb19-13" data-line-number="13">args &lt;-<span class="st"> </span><span class="kw">process_input</span>(script_name, args)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="co">#&gt; ── Script: scripts/plot_F2.R ────────────────────────────────────────────</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co">#&gt; Parameters read:</span></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#&gt;  ★ 1: 2_analysis/dxy/50k/</span></a>
+<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">#&gt;  ★ 2: 2_analysis/fst/50k/multi_fst.50k.tsv.gz</span></a>
+<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">#&gt;  ★ 3: 2_analysis/GxP/50000/</span></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co">#&gt;  ★ 4: 2_analysis/summaries/fst_outliers_998.tsv</span></a>
+<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="co">#&gt;  ★ 5: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R</span></a>
+<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="co">#&gt;  ★ 6: 2_analysis/twisst/weights/</span></a>
+<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co">#&gt;  ★ 7: ressources/plugin/trees/</span></a>
+<a class="sourceLine" id="cb20-10" data-line-number="10"><span class="co">#&gt;  ★ 8: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span></a>
+<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="co">#&gt;  ★ 9: 2_analysis/summaries/fst_globals.txt</span></a>
+<a class="sourceLine" id="cb20-12" data-line-number="12"><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></a></code></pre></div>
 <p>The directories for the different data types are received and stored in respective variables.
 Also, we source an external r script from the <a href="https://github.com/simonhmartin/twisst">original twisst github repository</a> that we need to import the twisst data:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="co"># config -----------------------</span></a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">dxy_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb20-3" data-line-number="3">fst_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">2</span>])</a>
-<a class="sourceLine" id="cb20-4" data-line-number="4">gxp_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">3</span>])</a>
-<a class="sourceLine" id="cb20-5" data-line-number="5">outlier_table &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">4</span>])</a>
-<a class="sourceLine" id="cb20-6" data-line-number="6">twisst_script &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">5</span>])</a>
-<a class="sourceLine" id="cb20-7" data-line-number="7">w_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">6</span>])</a>
-<a class="sourceLine" id="cb20-8" data-line-number="8">d_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">7</span>])</a>
-<a class="sourceLine" id="cb20-9" data-line-number="9">recombination_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">8</span>])</a>
-<a class="sourceLine" id="cb20-10" data-line-number="10">global_fst_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">9</span>])</a>
-<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="kw">source</span>(twisst_script)</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co"># config -----------------------</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">dxy_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">fst_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">2</span>])</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">gxp_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">3</span>])</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">outlier_table &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">4</span>])</a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">twisst_script &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">5</span>])</a>
+<a class="sourceLine" id="cb21-7" data-line-number="7">w_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">6</span>])</a>
+<a class="sourceLine" id="cb21-8" data-line-number="8">d_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">7</span>])</a>
+<a class="sourceLine" id="cb21-9" data-line-number="9">recombination_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">8</span>])</a>
+<a class="sourceLine" id="cb21-10" data-line-number="10">global_fst_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">9</span>])</a>
+<a class="sourceLine" id="cb21-11" data-line-number="11"><span class="kw">source</span>(twisst_script)</a></code></pre></div>
 </div>
 <div id="data-import-1" class="section level3">
 <h3><span class="header-section-number">9.2.2</span> Data import</h3>
@@ -324,126 +324,126 @@ In the following we’ll go step by step through the import of:</p>
 <p>We start with the import of the <span class="math inline">\(F_{ST}\)</span> data, specifically the data set containing the genome wide <span class="math inline">\(F_{ST}\)</span> computed for all populations simultaneously (joint <span class="math inline">\(F_{ST}\)</span>).</p>
 <p>The data file is read, the columns are renamed and the genomic position is added.
 Then, only the genomic position and the <span class="math inline">\(F_{ST}\)</span> columns are selected and a window column is added for facetting in <code>ggplot()</code>.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co"># start script -------------------</span></a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="co"># import fst data</span></a>
-<a class="sourceLine" id="cb21-3" data-line-number="3">fst_data &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(fst_file,<span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(CHROM, BIN_START, BIN_END, N_VARIANTS, WEIGHTED_FST) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="st">  </span><span class="kw">setNames</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;CHROM&#39;</span>,<span class="st">&#39;BIN_START&#39;</span>, <span class="st">&#39;BIN_END&#39;</span>, <span class="st">&#39;n_snps&#39;</span>, <span class="st">&#39;fst&#39;</span>) ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="st">  </span><span class="kw">add_gpos</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="st">  </span><span class="kw">select</span>(GPOS, fst) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="st">  </span><span class="kw">setNames</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;GPOS&#39;</span>,<span class="st">&#39;value&#39;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;a&#39;</span>),<span class="st">&#39;):joint~italic(F[ST])&#39;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="co"># start script -------------------</span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="co"># import fst data</span></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">fst_data &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(fst_file,<span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(CHROM, BIN_START, BIN_END, N_VARIANTS, WEIGHTED_FST) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="st">  </span><span class="kw">setNames</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;CHROM&#39;</span>,<span class="st">&#39;BIN_START&#39;</span>, <span class="st">&#39;BIN_END&#39;</span>, <span class="st">&#39;n_snps&#39;</span>, <span class="st">&#39;fst&#39;</span>) ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="st">  </span><span class="kw">add_gpos</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="st">  </span><span class="kw">select</span>(GPOS, fst) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="st">  </span><span class="kw">setNames</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;GPOS&#39;</span>,<span class="st">&#39;value&#39;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;a&#39;</span>),<span class="st">&#39;):joint~italic(F[ST])&#39;</span>))</a></code></pre></div>
 <p>Next, we import the <span class="math inline">\(d_{XY}\)</span> data.
 Here we are importing all 28 pairwise comparisons, so we first collect all the file paths and the iterate the data import over all files.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="co"># import dxy data</span></a>
-<a class="sourceLine" id="cb22-2" data-line-number="2">dxy_files &lt;-<span class="st"> </span><span class="kw">dir</span>(dxy_dir)</a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb22-4" data-line-number="4">dxy_data &lt;-<span class="st"> </span><span class="kw">str_c</span>(dxy_dir,dxy_files) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(get_dxy) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="st">  </span><span class="kw">select</span>(N_SITES<span class="op">:</span>GPOS, run) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pop1 =</span> <span class="kw">str_sub</span>(run,<span class="dv">1</span>,<span class="dv">6</span>),</a>
-<a class="sourceLine" id="cb22-9" data-line-number="9">         <span class="dt">pop2 =</span> <span class="kw">str_sub</span>(run,<span class="dv">8</span>,<span class="dv">13</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="co"># import dxy data</span></a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">dxy_files &lt;-<span class="st"> </span><span class="kw">dir</span>(dxy_dir)</a>
+<a class="sourceLine" id="cb23-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb23-4" data-line-number="4">dxy_data &lt;-<span class="st"> </span><span class="kw">str_c</span>(dxy_dir,dxy_files) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(get_dxy) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="st">  </span><span class="kw">select</span>(N_SITES<span class="op">:</span>GPOS, run) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pop1 =</span> <span class="kw">str_sub</span>(run,<span class="dv">1</span>,<span class="dv">6</span>),</a>
+<a class="sourceLine" id="cb23-9" data-line-number="9">         <span class="dt">pop2 =</span> <span class="kw">str_sub</span>(run,<span class="dv">8</span>,<span class="dv">13</span>))</a></code></pre></div>
 <p>From this data, we compute the divergence difference (<span class="math inline">\(\Delta d_{XY}\)</span>).</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">dxy_summary &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(GPOS) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">delta_dxy =</span> <span class="kw">max</span>(dxy)<span class="op">-</span><span class="kw">min</span>(dxy),</a>
-<a class="sourceLine" id="cb23-4" data-line-number="4">            <span class="dt">sd_dxy =</span> <span class="kw">sd</span>(dxy),</a>
-<a class="sourceLine" id="cb23-5" data-line-number="5">            <span class="dt">delt_pi =</span> <span class="kw">max</span>(<span class="kw">c</span>(<span class="kw">max</span>(PI_POP1),<span class="kw">max</span>(PI_POP2))) <span class="op">-</span><span class="st"> </span><span class="kw">min</span>(<span class="kw">c</span>(<span class="kw">min</span>(PI_POP1),<span class="kw">min</span>(PI_POP2)))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="st">  </span><span class="kw">setNames</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;GPOS&#39;</span>,</a>
-<a class="sourceLine" id="cb23-8" data-line-number="8">                     <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;e&#39;</span>),<span class="st">&#39;):Delta~italic(d[xy])&#39;</span>),</a>
-<a class="sourceLine" id="cb23-9" data-line-number="9">                     <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;e&#39;</span>),<span class="st">&#39;):italic(d[xy])~(sd)&#39;</span>),</a>
-<a class="sourceLine" id="cb23-10" data-line-number="10">                     <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;e&#39;</span>),<span class="st">&#39;):Delta~italic(pi)&#39;</span>))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="st">  </span><span class="kw">gather</span>(<span class="dt">key =</span> <span class="st">&#39;window&#39;</span>, <span class="dt">value =</span> <span class="st">&#39;value&#39;</span>,<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb23-12" data-line-number="12"><span class="st">  </span><span class="kw">filter</span>(window <span class="op">==</span><span class="st"> </span><span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;e&#39;</span>),<span class="st">&#39;):Delta~italic(d[xy])&#39;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">dxy_summary &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(GPOS) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">delta_dxy =</span> <span class="kw">max</span>(dxy)<span class="op">-</span><span class="kw">min</span>(dxy),</a>
+<a class="sourceLine" id="cb24-4" data-line-number="4">            <span class="dt">sd_dxy =</span> <span class="kw">sd</span>(dxy),</a>
+<a class="sourceLine" id="cb24-5" data-line-number="5">            <span class="dt">delt_pi =</span> <span class="kw">max</span>(<span class="kw">c</span>(<span class="kw">max</span>(PI_POP1),<span class="kw">max</span>(PI_POP2))) <span class="op">-</span><span class="st"> </span><span class="kw">min</span>(<span class="kw">c</span>(<span class="kw">min</span>(PI_POP1),<span class="kw">min</span>(PI_POP2)))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-6" data-line-number="6"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-7" data-line-number="7"><span class="st">  </span><span class="kw">setNames</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;GPOS&#39;</span>,</a>
+<a class="sourceLine" id="cb24-8" data-line-number="8">                     <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;e&#39;</span>),<span class="st">&#39;):Delta~italic(d[xy])&#39;</span>),</a>
+<a class="sourceLine" id="cb24-9" data-line-number="9">                     <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;e&#39;</span>),<span class="st">&#39;):italic(d[xy])~(sd)&#39;</span>),</a>
+<a class="sourceLine" id="cb24-10" data-line-number="10">                     <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;e&#39;</span>),<span class="st">&#39;):Delta~italic(pi)&#39;</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="st">  </span><span class="kw">gather</span>(<span class="dt">key =</span> <span class="st">&#39;window&#39;</span>, <span class="dt">value =</span> <span class="st">&#39;value&#39;</span>,<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="st">  </span><span class="kw">filter</span>(window <span class="op">==</span><span class="st"> </span><span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;e&#39;</span>),<span class="st">&#39;):Delta~italic(d[xy])&#39;</span>))</a></code></pre></div>
 <p>Then we import the genotype <span class="math inline">\(\times\)</span> phenotype association data.
 For this, we list all the traits we want to include and then iterate the import funtion over all traits.
 We combine the data sets and transform the table to <em>long</em> format.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co"># import G x P data</span></a>
-<a class="sourceLine" id="cb24-2" data-line-number="2">traits &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Bars.lm.50k.5k.txt.gz&quot;</span>, <span class="st">&quot;Peduncle.lm.50k.5k.txt.gz&quot;</span>, <span class="st">&quot;Snout.lm.50k.5k.txt.gz&quot;</span>)</a>
-<a class="sourceLine" id="cb24-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb24-4" data-line-number="4">trait_panels &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">Bars =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;h&#39;</span>),<span class="st">&#39;)&#39;</span>),</a>
-<a class="sourceLine" id="cb24-5" data-line-number="5">                  <span class="dt">Peduncle =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;i&#39;</span>),<span class="st">&#39;)&#39;</span>),</a>
-<a class="sourceLine" id="cb24-6" data-line-number="6">                  <span class="dt">Snout =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;j&#39;</span>),<span class="st">&#39;)&#39;</span>))</a>
-<a class="sourceLine" id="cb24-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb24-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb24-9" data-line-number="9">gxp_data &lt;-<span class="st"> </span><span class="kw">str_c</span>(gxp_dir,traits) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb24-10" data-line-number="10"><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(get_gxp) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="st">  </span><span class="kw">join_list</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="st">  </span><span class="kw">gather</span>(<span class="dt">key =</span> <span class="st">&#39;window&#39;</span>, <span class="dt">value =</span> <span class="st">&#39;value&#39;</span>,<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># import G x P data</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">traits &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Bars.lm.50k.5k.txt.gz&quot;</span>, <span class="st">&quot;Peduncle.lm.50k.5k.txt.gz&quot;</span>, <span class="st">&quot;Snout.lm.50k.5k.txt.gz&quot;</span>)</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">trait_panels &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">Bars =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;h&#39;</span>),<span class="st">&#39;)&#39;</span>),</a>
+<a class="sourceLine" id="cb25-5" data-line-number="5">                  <span class="dt">Peduncle =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;i&#39;</span>),<span class="st">&#39;)&#39;</span>),</a>
+<a class="sourceLine" id="cb25-6" data-line-number="6">                  <span class="dt">Snout =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;j&#39;</span>),<span class="st">&#39;)&#39;</span>))</a>
+<a class="sourceLine" id="cb25-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb25-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb25-9" data-line-number="9">gxp_data &lt;-<span class="st"> </span><span class="kw">str_c</span>(gxp_dir,traits) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb25-10" data-line-number="10"><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(get_gxp) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb25-11" data-line-number="11"><span class="st">  </span><span class="kw">join_list</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="st">  </span><span class="kw">gather</span>(<span class="dt">key =</span> <span class="st">&#39;window&#39;</span>, <span class="dt">value =</span> <span class="st">&#39;value&#39;</span>,<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>)</a></code></pre></div>
 <p>Then, we import the genome wide <span class="math inline">\(F_{ST}\)</span> summary for all 28 pair wise comparisons to be able to pick a divergence data set of an intermediatly differentiated species pair (the species pair of rank 15, close to 14.5 - the median of rank 1 to 28).</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># import genome wide Fst data summary  --------</span></a>
-<a class="sourceLine" id="cb25-2" data-line-number="2">globals &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(global_fst_file, <span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>,</a>
-<a class="sourceLine" id="cb25-3" data-line-number="3">                      <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&#39;loc&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;weighted&#39;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">str_c</span>(<span class="kw">str_sub</span>(run,<span class="dv">1</span>,<span class="dv">3</span>),loc,<span class="st">&#39;-&#39;</span>,<span class="kw">str_sub</span>(run,<span class="dv">5</span>,<span class="dv">7</span>),loc),</a>
-<a class="sourceLine" id="cb25-5" data-line-number="5">         <span class="dt">run =</span> <span class="kw">fct_reorder</span>(run,weighted)) </a>
-<a class="sourceLine" id="cb25-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb25-7" data-line-number="7"><span class="co"># select dxy data</span></a>
-<a class="sourceLine" id="cb25-8" data-line-number="8">selectors_dxy &lt;-<span class="st"> </span>globals <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb25-9" data-line-number="9"><span class="st">  </span><span class="kw">arrange</span>(weighted) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb25-10" data-line-number="10"><span class="st">  </span>.<span class="op">$</span>weighted <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb25-11" data-line-number="11"><span class="st">  </span>.[<span class="dv">15</span>]</a>
-<a class="sourceLine" id="cb25-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb25-13" data-line-number="13">select_dxy_runs &lt;-<span class="st"> </span>globals <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-14" data-line-number="14"><span class="st">  </span><span class="kw">filter</span>(weighted <span class="op">%in%</span><span class="st"> </span>selectors_dxy) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-15" data-line-number="15"><span class="st">  </span>.<span class="op">$</span>run <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>()</a>
-<a class="sourceLine" id="cb25-16" data-line-number="16"></a>
-<a class="sourceLine" id="cb25-17" data-line-number="17">dxy_select &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb25-18" data-line-number="18"><span class="st">  </span><span class="kw">filter</span>(run <span class="op">%in%</span><span class="st"> </span>select_dxy_runs) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-19" data-line-number="19"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;d&#39;</span>),<span class="st">&#39;): italic(d[XY])&#39;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co"># import genome wide Fst data summary  --------</span></a>
+<a class="sourceLine" id="cb26-2" data-line-number="2">globals &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(global_fst_file, <span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>,</a>
+<a class="sourceLine" id="cb26-3" data-line-number="3">                      <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&#39;loc&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;weighted&#39;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">str_c</span>(<span class="kw">str_sub</span>(run,<span class="dv">1</span>,<span class="dv">3</span>),loc,<span class="st">&#39;-&#39;</span>,<span class="kw">str_sub</span>(run,<span class="dv">5</span>,<span class="dv">7</span>),loc),</a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">         <span class="dt">run =</span> <span class="kw">fct_reorder</span>(run,weighted)) </a>
+<a class="sourceLine" id="cb26-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb26-7" data-line-number="7"><span class="co"># select dxy data</span></a>
+<a class="sourceLine" id="cb26-8" data-line-number="8">selectors_dxy &lt;-<span class="st"> </span>globals <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-9" data-line-number="9"><span class="st">  </span><span class="kw">arrange</span>(weighted) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-10" data-line-number="10"><span class="st">  </span>.<span class="op">$</span>weighted <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-11" data-line-number="11"><span class="st">  </span>.[<span class="dv">15</span>]</a>
+<a class="sourceLine" id="cb26-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb26-13" data-line-number="13">select_dxy_runs &lt;-<span class="st"> </span>globals <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-14" data-line-number="14"><span class="st">  </span><span class="kw">filter</span>(weighted <span class="op">%in%</span><span class="st"> </span>selectors_dxy) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-15" data-line-number="15"><span class="st">  </span>.<span class="op">$</span>run <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>()</a>
+<a class="sourceLine" id="cb26-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb26-17" data-line-number="17">dxy_select &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-18" data-line-number="18"><span class="st">  </span><span class="kw">filter</span>(run <span class="op">%in%</span><span class="st"> </span>select_dxy_runs) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-19" data-line-number="19"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;d&#39;</span>),<span class="st">&#39;): italic(d[XY])&#39;</span>))</a></code></pre></div>
 <p>The <span class="math inline">\(d_{XY}\)</span> data set includes also <span class="math inline">\(\pi\)</span> of the involved populations.
 We first extract the diversity data for each population (pop1 &amp; pop2), combine them and compute the statistics needed for ranking the populations based on their diversity.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co"># select pi data</span></a>
-<a class="sourceLine" id="cb26-2" data-line-number="2">pi_summary_<span class="dv">1</span> &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="st">  </span><span class="kw">group_by</span>(pop1,run) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-4" data-line-number="4"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">avg_pi =</span> <span class="kw">mean</span>(PI_POP1)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-5" data-line-number="5"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-6" data-line-number="6"><span class="st">  </span><span class="kw">set_names</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;pop&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;avg_pi&#39;</span>))</a>
-<a class="sourceLine" id="cb26-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb26-8" data-line-number="8">pi_summary &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-9" data-line-number="9"><span class="st">  </span><span class="kw">group_by</span>(pop2,run) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-10" data-line-number="10"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">avg_pi =</span> <span class="kw">mean</span>(PI_POP2)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-11" data-line-number="11"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-12" data-line-number="12"><span class="st">  </span><span class="kw">set_names</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;pop&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;avg_pi&#39;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-13" data-line-number="13"><span class="st">  </span><span class="kw">bind_rows</span>(pi_summary_<span class="dv">1</span>)  <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-14" data-line-number="14"><span class="st">  </span><span class="kw">group_by</span>(pop) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb26-15" data-line-number="15"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">length</span>(pop),</a>
-<a class="sourceLine" id="cb26-16" data-line-number="16">            <span class="dt">mean_pi =</span> <span class="kw">mean</span>(avg_pi),</a>
-<a class="sourceLine" id="cb26-17" data-line-number="17">            <span class="dt">min_pi =</span> <span class="kw">min</span>(avg_pi),</a>
-<a class="sourceLine" id="cb26-18" data-line-number="18">            <span class="dt">max_pi =</span> <span class="kw">max</span>(avg_pi),</a>
-<a class="sourceLine" id="cb26-19" data-line-number="19">            <span class="dt">sd_pi =</span> <span class="kw">sd</span>(avg_pi)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-20" data-line-number="20"><span class="st">  </span><span class="kw">arrange</span>(n)</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="co"># select pi data</span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">pi_summary_<span class="dv">1</span> &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="st">  </span><span class="kw">group_by</span>(pop1,run) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-4" data-line-number="4"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">avg_pi =</span> <span class="kw">mean</span>(PI_POP1)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-6" data-line-number="6"><span class="st">  </span><span class="kw">set_names</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;pop&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;avg_pi&#39;</span>))</a>
+<a class="sourceLine" id="cb27-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb27-8" data-line-number="8">pi_summary &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-9" data-line-number="9"><span class="st">  </span><span class="kw">group_by</span>(pop2,run) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">avg_pi =</span> <span class="kw">mean</span>(PI_POP2)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-11" data-line-number="11"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-12" data-line-number="12"><span class="st">  </span><span class="kw">set_names</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;pop&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;avg_pi&#39;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-13" data-line-number="13"><span class="st">  </span><span class="kw">bind_rows</span>(pi_summary_<span class="dv">1</span>)  <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-14" data-line-number="14"><span class="st">  </span><span class="kw">group_by</span>(pop) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb27-15" data-line-number="15"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">length</span>(pop),</a>
+<a class="sourceLine" id="cb27-16" data-line-number="16">            <span class="dt">mean_pi =</span> <span class="kw">mean</span>(avg_pi),</a>
+<a class="sourceLine" id="cb27-17" data-line-number="17">            <span class="dt">min_pi =</span> <span class="kw">min</span>(avg_pi),</a>
+<a class="sourceLine" id="cb27-18" data-line-number="18">            <span class="dt">max_pi =</span> <span class="kw">max</span>(avg_pi),</a>
+<a class="sourceLine" id="cb27-19" data-line-number="19">            <span class="dt">sd_pi =</span> <span class="kw">sd</span>(avg_pi)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-20" data-line-number="20"><span class="st">  </span><span class="kw">arrange</span>(n)</a></code></pre></div>
 <p>Then, we determine an intermediatly diverse candidate of our 14 populations (rank 7, again: <span class="math inline">\(7 \approx median(1:14)\)</span>) and average over the diversities estimated in all pairwise comparisons this population was involved in.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">selectors_pi &lt;-<span class="st"> </span>pi_summary <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-2" data-line-number="2"><span class="st">  </span>.<span class="op">$</span>mean_pi <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="st">  </span><span class="kw">sort</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-4" data-line-number="4"><span class="st">  </span>.[<span class="dv">7</span>]</a>
-<a class="sourceLine" id="cb27-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb27-6" data-line-number="6">select_pi_pops &lt;-<span class="st"> </span>pi_summary <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(mean_pi <span class="op">%in%</span><span class="st"> </span>selectors_pi) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="st">  </span>.<span class="op">$</span>pop <span class="op">%&gt;%</span><span class="st"> </span>as.character</a>
-<a class="sourceLine" id="cb27-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb27-10" data-line-number="10">pi_data_select &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb27-11" data-line-number="11"><span class="st">  </span><span class="kw">select</span>(GPOS, PI_POP1, pop1 )<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-12" data-line-number="12"><span class="st">  </span><span class="kw">set_names</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;GPOS&#39;</span>,<span class="st">&#39;pi&#39;</span>,<span class="st">&#39;pop&#39;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-13" data-line-number="13"><span class="st">  </span><span class="kw">bind_rows</span>(.,dxy_data <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb27-14" data-line-number="14"><span class="st">              </span><span class="kw">select</span>(GPOS, PI_POP2, pop2 )<span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-15" data-line-number="15"><span class="st">              </span><span class="kw">set_names</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;GPOS&#39;</span>,<span class="st">&#39;pi&#39;</span>,<span class="st">&#39;pop&#39;</span>))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-16" data-line-number="16"><span class="st">  </span><span class="kw">group_by</span>(GPOS,pop) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb27-17" data-line-number="17"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">length</span>(pop),</a>
-<a class="sourceLine" id="cb27-18" data-line-number="18">            <span class="dt">mean_pi =</span> <span class="kw">mean</span>(pi),</a>
-<a class="sourceLine" id="cb27-19" data-line-number="19">            <span class="dt">min_pi =</span> <span class="kw">min</span>(pi),</a>
-<a class="sourceLine" id="cb27-20" data-line-number="20">            <span class="dt">max_pi =</span> <span class="kw">max</span>(pi),</a>
-<a class="sourceLine" id="cb27-21" data-line-number="21">            <span class="dt">sd_pi =</span> <span class="kw">sd</span>(pi)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-22" data-line-number="22"><span class="st">  </span><span class="kw">filter</span>(pop <span class="op">%in%</span><span class="st"> </span>select_pi_pops) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb27-23" data-line-number="23"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;b&#39;</span>),<span class="st">&#39;): italic(pi)&#39;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">selectors_pi &lt;-<span class="st"> </span>pi_summary <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="st">  </span>.<span class="op">$</span>mean_pi <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span><span class="kw">sort</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="st">  </span>.[<span class="dv">7</span>]</a>
+<a class="sourceLine" id="cb28-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb28-6" data-line-number="6">select_pi_pops &lt;-<span class="st"> </span>pi_summary <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(mean_pi <span class="op">%in%</span><span class="st"> </span>selectors_pi) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-8" data-line-number="8"><span class="st">  </span>.<span class="op">$</span>pop <span class="op">%&gt;%</span><span class="st"> </span>as.character</a>
+<a class="sourceLine" id="cb28-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb28-10" data-line-number="10">pi_data_select &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb28-11" data-line-number="11"><span class="st">  </span><span class="kw">select</span>(GPOS, PI_POP1, pop1 )<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-12" data-line-number="12"><span class="st">  </span><span class="kw">set_names</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;GPOS&#39;</span>,<span class="st">&#39;pi&#39;</span>,<span class="st">&#39;pop&#39;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-13" data-line-number="13"><span class="st">  </span><span class="kw">bind_rows</span>(.,dxy_data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb28-14" data-line-number="14"><span class="st">              </span><span class="kw">select</span>(GPOS, PI_POP2, pop2 )<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-15" data-line-number="15"><span class="st">              </span><span class="kw">set_names</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;GPOS&#39;</span>,<span class="st">&#39;pi&#39;</span>,<span class="st">&#39;pop&#39;</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-16" data-line-number="16"><span class="st">  </span><span class="kw">group_by</span>(GPOS,pop) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb28-17" data-line-number="17"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">length</span>(pop),</a>
+<a class="sourceLine" id="cb28-18" data-line-number="18">            <span class="dt">mean_pi =</span> <span class="kw">mean</span>(pi),</a>
+<a class="sourceLine" id="cb28-19" data-line-number="19">            <span class="dt">min_pi =</span> <span class="kw">min</span>(pi),</a>
+<a class="sourceLine" id="cb28-20" data-line-number="20">            <span class="dt">max_pi =</span> <span class="kw">max</span>(pi),</a>
+<a class="sourceLine" id="cb28-21" data-line-number="21">            <span class="dt">sd_pi =</span> <span class="kw">sd</span>(pi)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-22" data-line-number="22"><span class="st">  </span><span class="kw">filter</span>(pop <span class="op">%in%</span><span class="st"> </span>select_pi_pops) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-23" data-line-number="23"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;b&#39;</span>),<span class="st">&#39;): italic(pi)&#39;</span>))</a></code></pre></div>
 <p>The import of the recombination data is pretty sraight foreward:
 Reading one file, adding genomic position and window coluumn for facetting.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co"># import recombination data</span></a>
-<a class="sourceLine" id="cb28-2" data-line-number="2">recombination_data &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(recombination_file,<span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span><span class="kw">add_gpos</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;c&#39;</span>),<span class="st">&#39;): rho&#39;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="co"># import recombination data</span></a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">recombination_data &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(recombination_file,<span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="st">  </span><span class="kw">add_gpos</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb29-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;c&#39;</span>),<span class="st">&#39;): rho&#39;</span>))</a></code></pre></div>
 <pre><code>## Rows: 11,206
 ## Cols: 4
 ## chr [1]: CHROM
@@ -455,87 +455,87 @@ Reading one file, adding genomic position and window coluumn for facetting.</p>
 This is done once per location, the data sets are combined and specific columns are selected:
 The gnomic position, the topologie number (format: three digits with leading zeros, hence “topo3”), relative topology rank ranging from 0 to 1, the facceting column annd the actual weight data.</p>
 <p>We also create a dummy tibble that contains the null expectation of the topology weight for the two locations (1/n, with n = number of possible topologies - n = 15 for Belize and 105 for Honduras).</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co"># import topology weighting data</span></a>
-<a class="sourceLine" id="cb30-2" data-line-number="2">twisst_data &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">loc =</span> <span class="kw">c</span>(<span class="st">&#39;bel&#39;</span>,<span class="st">&#39;hon&#39;</span>),</a>
-<a class="sourceLine" id="cb30-3" data-line-number="3">                      <span class="dt">panel =</span> <span class="kw">c</span>(<span class="st">&#39;f&#39;</span>,<span class="st">&#39;g&#39;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">project_case</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,.,<span class="st">&#39;)&#39;</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-4" data-line-number="4"><span class="st">  </span>purrr<span class="op">::</span><span class="kw">pmap</span>(match_twisst_files) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-5" data-line-number="5"><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-6" data-line-number="6"><span class="st">  </span><span class="kw">select</span>(GPOS, topo3,topo_rel,window,weight)</a>
-<a class="sourceLine" id="cb30-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb30-8" data-line-number="8">twisst_null &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">window =</span> <span class="kw">c</span>(<span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;f&#39;</span>),<span class="st">&#39;):~weighting[bel]&#39;</span>),</a>
-<a class="sourceLine" id="cb30-9" data-line-number="9">                                 <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;g&#39;</span>),<span class="st">&#39;):~weighting[hon]&#39;</span>)),</a>
-<a class="sourceLine" id="cb30-10" data-line-number="10">                      <span class="dt">weight =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">15</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">105</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="co"># import topology weighting data</span></a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">twisst_data &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">loc =</span> <span class="kw">c</span>(<span class="st">&#39;bel&#39;</span>,<span class="st">&#39;hon&#39;</span>),</a>
+<a class="sourceLine" id="cb31-3" data-line-number="3">                      <span class="dt">panel =</span> <span class="kw">c</span>(<span class="st">&#39;f&#39;</span>,<span class="st">&#39;g&#39;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">project_case</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,.,<span class="st">&#39;)&#39;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-4" data-line-number="4"><span class="st">  </span>purrr<span class="op">::</span><span class="kw">pmap</span>(match_twisst_files) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-5" data-line-number="5"><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb31-6" data-line-number="6"><span class="st">  </span><span class="kw">select</span>(GPOS, topo3,topo_rel,window,weight)</a>
+<a class="sourceLine" id="cb31-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb31-8" data-line-number="8">twisst_null &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">window =</span> <span class="kw">c</span>(<span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;f&#39;</span>),<span class="st">&#39;):~weighting[bel]&#39;</span>),</a>
+<a class="sourceLine" id="cb31-9" data-line-number="9">                                 <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;g&#39;</span>),<span class="st">&#39;):~weighting[hon]&#39;</span>)),</a>
+<a class="sourceLine" id="cb31-10" data-line-number="10">                      <span class="dt">weight =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">15</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">105</span>))</a></code></pre></div>
 <p>We craete a single data set for <span class="math inline">\(d_{XY}\)</span>, <span class="math inline">\(F_{ST}\)</span> and genotype <span class="math inline">\(\times\)</span> phenotype data.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="co"># combine data types --------</span></a>
-<a class="sourceLine" id="cb31-2" data-line-number="2">data &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(dxy_summary, fst_data, gxp_data)</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="co"># combine data types --------</span></a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">data &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(dxy_summary, fst_data, gxp_data)</a></code></pre></div>
 <p>Then we load the positions of the the <span class="math inline">\(F_{ST}\)</span> outlier windows, select the focal outliers that will receive individual labels and create a tibnble and two parameters for the label placement within the plot.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="co"># import fst outliers</span></a>
-<a class="sourceLine" id="cb32-2" data-line-number="2">outliers &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(outlier_table, <span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>)</a>
-<a class="sourceLine" id="cb32-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb32-4" data-line-number="4">outlier_pick &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;LG04_1&#39;</span>, <span class="st">&#39;LG12_2&#39;</span>, <span class="st">&#39;LG12_3&#39;</span>)</a>
-<a class="sourceLine" id="cb32-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb32-6" data-line-number="6">outlier_label &lt;-<span class="st"> </span>outliers <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb32-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(gid <span class="op">%in%</span><span class="st"> </span>outlier_pick) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb32-8" data-line-number="8"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">label =</span> letters[<span class="kw">row_number</span>()] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">project_inv_case</span>(),</a>
-<a class="sourceLine" id="cb32-9" data-line-number="9">         <span class="dt">x_shift_label =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="op">-</span><span class="fl">1.2</span>,<span class="dv">1</span>)<span class="op">*</span><span class="dv">10</span><span class="op">^</span><span class="dv">7</span>,</a>
-<a class="sourceLine" id="cb32-10" data-line-number="10">         <span class="dt">gpos_label =</span> gpos <span class="op">+</span><span class="st"> </span>x_shift_label,</a>
-<a class="sourceLine" id="cb32-11" data-line-number="11">         <span class="dt">gpos_label2 =</span> gpos_label <span class="op">-</span><span class="st"> </span><span class="kw">sign</span>(x_shift_label) <span class="op">*</span>.<span class="dv">5</span><span class="op">*</span><span class="dv">10</span><span class="op">^</span><span class="dv">7</span>,</a>
-<a class="sourceLine" id="cb32-12" data-line-number="12">         <span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;a&#39;</span>),<span class="st">&#39;):joint~italic(F[ST])&#39;</span>))</a>
-<a class="sourceLine" id="cb32-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb32-14" data-line-number="14">outlier_y &lt;-<span class="st"> </span><span class="fl">.45</span></a>
-<a class="sourceLine" id="cb32-15" data-line-number="15">outlier_yend &lt;-<span class="st"> </span><span class="fl">.475</span></a></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="co"># import fst outliers</span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2">outliers &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(outlier_table, <span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>)</a>
+<a class="sourceLine" id="cb33-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb33-4" data-line-number="4">outlier_pick &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;LG04_1&#39;</span>, <span class="st">&#39;LG12_2&#39;</span>, <span class="st">&#39;LG12_3&#39;</span>)</a>
+<a class="sourceLine" id="cb33-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb33-6" data-line-number="6">outlier_label &lt;-<span class="st"> </span>outliers <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(gid <span class="op">%in%</span><span class="st"> </span>outlier_pick) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-8" data-line-number="8"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">label =</span> letters[<span class="kw">row_number</span>()] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">project_inv_case</span>(),</a>
+<a class="sourceLine" id="cb33-9" data-line-number="9">         <span class="dt">x_shift_label =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="op">-</span><span class="fl">1.2</span>,<span class="dv">1</span>)<span class="op">*</span><span class="dv">10</span><span class="op">^</span><span class="dv">7</span>,</a>
+<a class="sourceLine" id="cb33-10" data-line-number="10">         <span class="dt">gpos_label =</span> gpos <span class="op">+</span><span class="st"> </span>x_shift_label,</a>
+<a class="sourceLine" id="cb33-11" data-line-number="11">         <span class="dt">gpos_label2 =</span> gpos_label <span class="op">-</span><span class="st"> </span><span class="kw">sign</span>(x_shift_label) <span class="op">*</span>.<span class="dv">5</span><span class="op">*</span><span class="dv">10</span><span class="op">^</span><span class="dv">7</span>,</a>
+<a class="sourceLine" id="cb33-12" data-line-number="12">         <span class="dt">window =</span> <span class="kw">str_c</span>(<span class="st">&#39;bold(&#39;</span>,<span class="kw">project_case</span>(<span class="st">&#39;a&#39;</span>),<span class="st">&#39;):joint~italic(F[ST])&#39;</span>))</a>
+<a class="sourceLine" id="cb33-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb33-14" data-line-number="14">outlier_y &lt;-<span class="st"> </span><span class="fl">.45</span></a>
+<a class="sourceLine" id="cb33-15" data-line-number="15">outlier_yend &lt;-<span class="st"> </span><span class="fl">.475</span></a></code></pre></div>
 </div>
 <div id="plotting-1" class="section level3">
 <h3><span class="header-section-number">9.2.3</span> Plotting</h3>
 <p>Finally it is time to put the pieces together with one giant <code>ggplot():</code></p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">p_done &lt;-<span class="st"> </span><span class="kw">ggplot</span>()<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-2" data-line-number="2"><span class="st">  </span><span class="co"># add lg indication in the backgroud</span></a>
-<a class="sourceLine" id="cb33-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_hypo_LG</span>()<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-4" data-line-number="4"><span class="st">  </span><span class="co"># add fst outlier window indication in the background </span></a>
-<a class="sourceLine" id="cb33-5" data-line-number="5"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">data =</span> outliers, <span class="kw">aes</span>(<span class="dt">xintercept =</span> gpos), <span class="dt">color =</span> outlr_clr)<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-6" data-line-number="6"><span class="st">  </span><span class="co"># add outlier label flags</span></a>
-<a class="sourceLine" id="cb33-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_segment</span>(<span class="dt">data =</span> outlier_label, </a>
-<a class="sourceLine" id="cb33-8" data-line-number="8">               <span class="kw">aes</span>(<span class="dt">x =</span> gpos, </a>
-<a class="sourceLine" id="cb33-9" data-line-number="9">                   <span class="dt">xend =</span> gpos_label2, <span class="dt">y =</span> outlier_y, <span class="dt">yend =</span> outlier_yend),</a>
-<a class="sourceLine" id="cb33-10" data-line-number="10">               <span class="dt">color =</span> <span class="kw">alpha</span>(outlr_clr,<span class="dv">1</span>),<span class="dt">size =</span> <span class="fl">.2</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-11" data-line-number="11"><span class="st">  </span><span class="co"># add outlier labels</span></a>
-<a class="sourceLine" id="cb33-12" data-line-number="12"><span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> outlier_label, <span class="kw">aes</span>(<span class="dt">x =</span> gpos_label, <span class="dt">y =</span> outlier_yend, <span class="dt">label =</span> label),</a>
-<a class="sourceLine" id="cb33-13" data-line-number="13">            <span class="dt">color =</span> <span class="kw">alpha</span>(outlr_clr,<span class="dv">1</span>), <span class="dt">fontface =</span> <span class="st">&#39;bold&#39;</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-14" data-line-number="14"><span class="st">  </span><span class="co"># add fst, delta dxy and gxp data</span></a>
-<a class="sourceLine" id="cb33-15" data-line-number="15"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> data, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> value),<span class="dt">size =</span> plot_size, <span class="dt">color =</span> plot_clr) <span class="op">+</span></a>
-<a class="sourceLine" id="cb33-16" data-line-number="16"><span class="st">  </span><span class="co"># add dxy data</span></a>
-<a class="sourceLine" id="cb33-17" data-line-number="17"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dxy_select,<span class="kw">aes</span>(<span class="dt">x=</span> GPOS, <span class="dt">y =</span> dxy),<span class="dt">size =</span> plot_size, <span class="dt">color =</span> plot_clr)<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-18" data-line-number="18"><span class="st">  </span><span class="co"># add pi data</span></a>
-<a class="sourceLine" id="cb33-19" data-line-number="19"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> pi_data_select, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> mean_pi),<span class="dt">size =</span> plot_size, <span class="dt">color =</span> plot_clr) <span class="op">+</span></a>
-<a class="sourceLine" id="cb33-20" data-line-number="20"><span class="st">  </span><span class="co"># add recombination data (points)</span></a>
-<a class="sourceLine" id="cb33-21" data-line-number="21"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> recombination_data, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> RHO),<span class="dt">size =</span> plot_size, <span class="dt">color =</span> plot_clr) <span class="op">+</span></a>
-<a class="sourceLine" id="cb33-22" data-line-number="22"><span class="st">  </span><span class="co"># add recombination data (smoothed)</span></a>
-<a class="sourceLine" id="cb33-23" data-line-number="23"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">data =</span> recombination_data, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> RHO, <span class="dt">group =</span> CHROM),</a>
-<a class="sourceLine" id="cb33-24" data-line-number="24">              <span class="dt">color =</span> <span class="st">&#39;red&#39;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>, <span class="dt">size =</span> <span class="fl">.7</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb33-25" data-line-number="25"><span class="st">  </span><span class="co"># add topology weighting data</span></a>
-<a class="sourceLine" id="cb33-26" data-line-number="26"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> twisst_data, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> weight, <span class="dt">color =</span> topo_rel),<span class="dt">size =</span> <span class="fl">.4</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb33-27" data-line-number="27"><span class="st">  </span><span class="co"># add topology weighting &quot;null expectation&quot;</span></a>
-<a class="sourceLine" id="cb33-28" data-line-number="28"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">data =</span> twisst_null,<span class="kw">aes</span>(<span class="dt">yintercept =</span>  weight), <span class="dt">color =</span> <span class="kw">rgb</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,.<span class="dv">5</span>), <span class="dt">size=</span>.<span class="dv">4</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb33-29" data-line-number="29"><span class="st">  </span><span class="co"># color scheme lg indication</span></a>
-<a class="sourceLine" id="cb33-30" data-line-number="30"><span class="st">  </span><span class="kw">scale_fill_hypo_LG_bg</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb33-31" data-line-number="31"><span class="st">  </span><span class="co"># layout x ayis</span></a>
-<a class="sourceLine" id="cb33-32" data-line-number="32"><span class="st">  </span><span class="kw">scale_x_hypo_LG</span>()<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-33" data-line-number="33"><span class="st">  </span><span class="co"># color scheme topology weighting</span></a>
-<a class="sourceLine" id="cb33-34" data-line-number="34"><span class="st">  </span><span class="kw">scale_color_gradient</span>( <span class="dt">low =</span> <span class="st">&quot;#f0a830ff&quot;</span>, <span class="dt">high =</span> <span class="st">&quot;#084082ff&quot;</span>, <span class="dt">guide =</span> <span class="ot">FALSE</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-35" data-line-number="35"><span class="st">  </span><span class="co"># facetting to separate the different stats</span></a>
-<a class="sourceLine" id="cb33-36" data-line-number="36"><span class="st">  </span><span class="kw">facet_grid</span>(window<span class="op">~</span>.,<span class="dt">scales =</span> <span class="st">&#39;free&#39;</span>,<span class="dt">switch =</span> <span class="st">&#39;y&#39;</span>, <span class="dt">labeller =</span> label_parsed)<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-37" data-line-number="37"><span class="st">    </span><span class="co"># tune plot appreance</span></a>
-<a class="sourceLine" id="cb33-38" data-line-number="38"><span class="st">  </span><span class="kw">theme_hypo</span>()<span class="op">+</span></a>
-<a class="sourceLine" id="cb33-39" data-line-number="39"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&#39;bottom&#39;</span>,</a>
-<a class="sourceLine" id="cb33-40" data-line-number="40">    <span class="dt">axis.title =</span> <span class="kw">element_blank</span>(),</a>
-<a class="sourceLine" id="cb33-41" data-line-number="41">    <span class="dt">strip.background =</span> <span class="kw">element_blank</span>(),</a>
-<a class="sourceLine" id="cb33-42" data-line-number="42">    <span class="dt">strip.placement =</span> <span class="st">&#39;outside&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">p_done &lt;-<span class="st"> </span><span class="kw">ggplot</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="st">  </span><span class="co"># add lg indication in the backgroud</span></a>
+<a class="sourceLine" id="cb34-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_hypo_LG</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-4" data-line-number="4"><span class="st">  </span><span class="co"># add fst outlier window indication in the background </span></a>
+<a class="sourceLine" id="cb34-5" data-line-number="5"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">data =</span> outliers, <span class="kw">aes</span>(<span class="dt">xintercept =</span> gpos), <span class="dt">color =</span> outlr_clr)<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-6" data-line-number="6"><span class="st">  </span><span class="co"># add outlier label flags</span></a>
+<a class="sourceLine" id="cb34-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_segment</span>(<span class="dt">data =</span> outlier_label, </a>
+<a class="sourceLine" id="cb34-8" data-line-number="8">               <span class="kw">aes</span>(<span class="dt">x =</span> gpos, </a>
+<a class="sourceLine" id="cb34-9" data-line-number="9">                   <span class="dt">xend =</span> gpos_label2, <span class="dt">y =</span> outlier_y, <span class="dt">yend =</span> outlier_yend),</a>
+<a class="sourceLine" id="cb34-10" data-line-number="10">               <span class="dt">color =</span> <span class="kw">alpha</span>(outlr_clr,<span class="dv">1</span>),<span class="dt">size =</span> <span class="fl">.2</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-11" data-line-number="11"><span class="st">  </span><span class="co"># add outlier labels</span></a>
+<a class="sourceLine" id="cb34-12" data-line-number="12"><span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> outlier_label, <span class="kw">aes</span>(<span class="dt">x =</span> gpos_label, <span class="dt">y =</span> outlier_yend, <span class="dt">label =</span> label),</a>
+<a class="sourceLine" id="cb34-13" data-line-number="13">            <span class="dt">color =</span> <span class="kw">alpha</span>(outlr_clr,<span class="dv">1</span>), <span class="dt">fontface =</span> <span class="st">&#39;bold&#39;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-14" data-line-number="14"><span class="st">  </span><span class="co"># add fst, delta dxy and gxp data</span></a>
+<a class="sourceLine" id="cb34-15" data-line-number="15"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> data, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> value),<span class="dt">size =</span> plot_size, <span class="dt">color =</span> plot_clr) <span class="op">+</span></a>
+<a class="sourceLine" id="cb34-16" data-line-number="16"><span class="st">  </span><span class="co"># add dxy data</span></a>
+<a class="sourceLine" id="cb34-17" data-line-number="17"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dxy_select,<span class="kw">aes</span>(<span class="dt">x=</span> GPOS, <span class="dt">y =</span> dxy),<span class="dt">size =</span> plot_size, <span class="dt">color =</span> plot_clr)<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-18" data-line-number="18"><span class="st">  </span><span class="co"># add pi data</span></a>
+<a class="sourceLine" id="cb34-19" data-line-number="19"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> pi_data_select, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> mean_pi),<span class="dt">size =</span> plot_size, <span class="dt">color =</span> plot_clr) <span class="op">+</span></a>
+<a class="sourceLine" id="cb34-20" data-line-number="20"><span class="st">  </span><span class="co"># add recombination data (points)</span></a>
+<a class="sourceLine" id="cb34-21" data-line-number="21"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> recombination_data, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> RHO),<span class="dt">size =</span> plot_size, <span class="dt">color =</span> plot_clr) <span class="op">+</span></a>
+<a class="sourceLine" id="cb34-22" data-line-number="22"><span class="st">  </span><span class="co"># add recombination data (smoothed)</span></a>
+<a class="sourceLine" id="cb34-23" data-line-number="23"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">data =</span> recombination_data, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> RHO, <span class="dt">group =</span> CHROM),</a>
+<a class="sourceLine" id="cb34-24" data-line-number="24">              <span class="dt">color =</span> <span class="st">&#39;red&#39;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>, <span class="dt">size =</span> <span class="fl">.7</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb34-25" data-line-number="25"><span class="st">  </span><span class="co"># add topology weighting data</span></a>
+<a class="sourceLine" id="cb34-26" data-line-number="26"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> twisst_data, <span class="kw">aes</span>(<span class="dt">x =</span> GPOS, <span class="dt">y =</span> weight, <span class="dt">color =</span> topo_rel),<span class="dt">size =</span> <span class="fl">.4</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb34-27" data-line-number="27"><span class="st">  </span><span class="co"># add topology weighting &quot;null expectation&quot;</span></a>
+<a class="sourceLine" id="cb34-28" data-line-number="28"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">data =</span> twisst_null,<span class="kw">aes</span>(<span class="dt">yintercept =</span>  weight), <span class="dt">color =</span> <span class="kw">rgb</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,.<span class="dv">5</span>), <span class="dt">size=</span>.<span class="dv">4</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb34-29" data-line-number="29"><span class="st">  </span><span class="co"># color scheme lg indication</span></a>
+<a class="sourceLine" id="cb34-30" data-line-number="30"><span class="st">  </span><span class="kw">scale_fill_hypo_LG_bg</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb34-31" data-line-number="31"><span class="st">  </span><span class="co"># layout x ayis</span></a>
+<a class="sourceLine" id="cb34-32" data-line-number="32"><span class="st">  </span><span class="kw">scale_x_hypo_LG</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-33" data-line-number="33"><span class="st">  </span><span class="co"># color scheme topology weighting</span></a>
+<a class="sourceLine" id="cb34-34" data-line-number="34"><span class="st">  </span><span class="kw">scale_color_gradient</span>( <span class="dt">low =</span> <span class="st">&quot;#f0a830ff&quot;</span>, <span class="dt">high =</span> <span class="st">&quot;#084082ff&quot;</span>, <span class="dt">guide =</span> <span class="ot">FALSE</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-35" data-line-number="35"><span class="st">  </span><span class="co"># facetting to separate the different stats</span></a>
+<a class="sourceLine" id="cb34-36" data-line-number="36"><span class="st">  </span><span class="kw">facet_grid</span>(window<span class="op">~</span>.,<span class="dt">scales =</span> <span class="st">&#39;free&#39;</span>,<span class="dt">switch =</span> <span class="st">&#39;y&#39;</span>, <span class="dt">labeller =</span> label_parsed)<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-37" data-line-number="37"><span class="st">    </span><span class="co"># tune plot appreance</span></a>
+<a class="sourceLine" id="cb34-38" data-line-number="38"><span class="st">  </span><span class="kw">theme_hypo</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-39" data-line-number="39"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&#39;bottom&#39;</span>,</a>
+<a class="sourceLine" id="cb34-40" data-line-number="40">    <span class="dt">axis.title =</span> <span class="kw">element_blank</span>(),</a>
+<a class="sourceLine" id="cb34-41" data-line-number="41">    <span class="dt">strip.background =</span> <span class="kw">element_blank</span>(),</a>
+<a class="sourceLine" id="cb34-42" data-line-number="42">    <span class="dt">strip.placement =</span> <span class="st">&#39;outside&#39;</span>)</a></code></pre></div>
 <center>
 <img src="plot_F2_files/figure-html/unnamed-chunk-22-1.png" width="1065.6" />
 </center>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw">hypo_save</span>(p_done, <span class="dt">filename =</span> <span class="st">&#39;figures/F2.png&#39;</span>, </a>
-<a class="sourceLine" id="cb34-2" data-line-number="2">          <span class="dt">width =</span> <span class="dv">297</span><span class="op">*</span>.<span class="dv">95</span>, <span class="dt">height =</span> <span class="dv">275</span><span class="op">*</span>.<span class="dv">95</span>, <span class="dt">units =</span> <span class="st">&#39;mm&#39;</span>,</a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">          <span class="dt">comment =</span> plot_comment)</a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw">hypo_save</span>(p_done, <span class="dt">filename =</span> <span class="st">&#39;figures/F2.png&#39;</span>, </a>
+<a class="sourceLine" id="cb35-2" data-line-number="2">          <span class="dt">width =</span> <span class="dv">297</span><span class="op">*</span>.<span class="dv">95</span>, <span class="dt">height =</span> <span class="dv">275</span><span class="op">*</span>.<span class="dv">95</span>, <span class="dt">units =</span> <span class="st">&#39;mm&#39;</span>,</a>
+<a class="sourceLine" id="cb35-3" data-line-number="3">          <span class="dt">comment =</span> plot_comment)</a></code></pre></div>
 <hr />
 
 </div>

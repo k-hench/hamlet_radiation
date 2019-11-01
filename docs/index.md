@@ -2,7 +2,7 @@
 title: "Script repository"
 subtitle: "(Hench *et al.* supplement)"
 author: "Kosmas Hench"
-date: "2019-10-29"
+date: "2019-11-01"
 documentclass: book
 bibliography: [book.bib]
 biblio-style: apalike
@@ -36,7 +36,18 @@ A documentation of the data preparation and the data analysis (git 1.x - 6.x) ca
 
 ## Figures
 
-A more detailed documentation exists for all the figures of the manuscript:
+The creation of the figures is bundled in a single script (git 7) which can be executed once all `nextflow` scripts have successfuly run.
+
+```sh
+cd $BASE_DIR
+bash sh/create_figures.sh
+```
+
+This is basically just a collection that will run all scripts located under `$BASE_DIR/R/fig`.
+Under this location, you will fin one `R` script per figure (and suppl. figure).
+So if you are only interrested in a single figure - thats te place to start looking.
+
+Furthermore, a more detailed documentation exists for all the figure scripts used for the manuscript:
 
 [F1](figure-1.html), [F2](figure-2.html) & [F3](figure-3.html)
 

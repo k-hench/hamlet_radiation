@@ -34,11 +34,11 @@ prod_recombination <- tibbler(c('step3_ch'))
 
 # Analysis IV (rho)
 
-
 ## Summary
 
 The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_recombination.nf` (located under `$BASE_DIR/nf/analysis_recombination/`), which runs on the _SNPs only_ data set.
 Below is an overview of the steps involved in the genotyping analysis.
+(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
 <div style="max-width:800px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
@@ -65,6 +65,8 @@ Channel
 	.set{ vcf_ch }
 ```
 
+The estimation of the population recombination rate using `FastEPRR` happens in three steps.
+The first step is run independently for all linkage groups, so we set up a channel for the LGs.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.2
@@ -75,6 +77,7 @@ Channel
 	.set{ lg_ch }
 ```
 
+To prepare the input, the genotypes are split by LG.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.3
@@ -101,6 +104,7 @@ process split_allBP {
 }
 ```
 
+The prepared data is then fed to the first step of `FastEPRR`.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.4
@@ -124,6 +128,7 @@ process fasteprr_s1 {
 }
 ```
 
+Since `nextflow` manages the results of its processes in a complex file structure, we need to collect all results of step 1 and bundle them before proceeding.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.5
@@ -145,6 +150,8 @@ process fasteprr_s1_summary {
 }
 ```
 
+The second step of `FastEPRR` is parallelized over an arbitrary number of subprocesses.
+Here, we initialize 250 parallel processes and combine the paralleliyation index with the results from step 1.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.6
@@ -156,6 +163,7 @@ Channel
 	.set{ step_2_run_ch }
 ```
 
+Taking this prepared bundle, we now can start the second step of `FastEPRR`.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.7
@@ -179,6 +187,7 @@ process fasteprr_s2 {
 }
 ```
 
+The file management of `nextflow` can be a bit complicated at times, so here duplicate the ouput of step 2 to later easily acess the paralleliyation indicees and the actual output.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.8
@@ -186,6 +195,7 @@ process fasteprr_s2 {
 step_2_out_ch.into{ step_2_indxs; step_2_files }
 ```
 
+We collect both clones of the step 2 results and bundle the results in a single directory.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.9
@@ -211,6 +221,7 @@ process fasteprr_s2_summary {
 }
 ```
 
+Then we feed the bundled results into the third step of `FastEPRR`.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.10
@@ -233,6 +244,7 @@ process fasteprr_s3 {
 }
 ```
 
+To ease the usage of the `FastEPRR` results downstream, we reformat them and compile a tidy table.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.11

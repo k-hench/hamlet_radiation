@@ -31,6 +31,8 @@ devtools::install_github("andland/logisticPCA")
 devtools::install_github("sjp/grImport2")
 devtools::install_github("k-hench/hpogen")
 devtools::install_github("k-hench/hypoimg")
+devtools::install_github("k-hench/geomfactory")
+devtools::install_github("k-hench/GenomicOriginsScripts")
 BiocManager::install("rtracklayer", version = "3.8")
 BiocManager::install("SNPRelate", version = "3.8")
 ```

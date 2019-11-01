@@ -39,6 +39,7 @@ prod_geno <- tibbler(c('phased_vcf', 'phased_mac2_vcf', 'filtered_snps', 'raw_me
 The genotyping procedure is controlled by the [**nextflow**](https://www.nextflow.io/) script `genotyping.nf` (located under `$BASE_DIR/nf/genotyping/`).
 It takes the analysis from the raw sequencing data to the genotyped and phased SNPs.
 Below is an overview of the steps involved in the genotyping process.
+(The <span style="color:#4DAF4A">green dot</span> indicates the raw data input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
 <div style="max-width:800px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
@@ -101,7 +102,7 @@ read_tsv('metadata/file_info.txt') %>%
   row_spec(0, bold = T, color = "#FFFFFF", background = "#333333")
 ```
 
-The first step to prepare the data for the [GATK best practices](https://gatkforums.broadinstitute.org/gatk/discussion/6483/how-to-map-and-clean-up-short-read-sequence-data-efficiently) is to convert the sample sequences from `*.fq` to `*.bam` format to assign read groups:
+The first step to prepare the data for the [GATK best practices](https://gatkforums.broadinstitute.org/gatk/discussion/6483/how-to-map-and-clean-up-short-read-sequence-data-efficiently), is to convert the sample sequences from `*.fq` to `*.bam` format to assign read groups:
 
 <div class="kclass">
 ```{r , eval = FALSE, hilang = 'nf'}

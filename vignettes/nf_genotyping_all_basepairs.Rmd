@@ -40,6 +40,7 @@ prod_geno_all <- tibbler(c('filtered_snps'))
 The genotyping procedure is controlled by the [**nextflow**](https://www.nextflow.io/) script `genotyping_all_basepairs.nf` (located under `$BASE_DIR/nf/genotyping_all_basepairs/`).
 Based on an intermediate step from `genotyping.nf`, this script produces a data set that includes _all callable sites_  - that is SNPs as well a invariant sites that are covered by sequence.
 Below is an overview of the steps involved in the genotyping process.
+(The <span style="color:#4DAF4A">green dot</span> indicates the data input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
 <div style="max-width:800px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}

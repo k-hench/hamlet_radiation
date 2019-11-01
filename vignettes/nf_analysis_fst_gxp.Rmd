@@ -41,6 +41,7 @@ prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'ge
 The genetic differentiation, as well as the genotype x phenotype association, are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_gxp.nf` (located under `$BASE_DIR/nf/analysis_fst_gxp/`).
 It takes the _SNPs only_ data set and computes _F<sub>ST</sub>_ and the GxP association.
 Below is an overview of the steps involved in the analysis.
+(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
 <div style="max-width:800px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
