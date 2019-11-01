@@ -44,8 +44,8 @@ bash sh/create_figures.sh
 ```
 
 This is basically just a collection that will run all scripts located under `$BASE_DIR/R/fig`.
-Under this location, you will fin one `R` script per figure (and suppl. figure).
-So if you are only interrested in a single figure - thats te place to start looking.
+Under this location, you will find one `R` script per figure (and suppl. figure).
+So if you are only interrested in a single figure - that is the place to start looking.
 
 Furthermore, a more detailed documentation exists for all the figure scripts used for the manuscript:
 
@@ -59,8 +59,4 @@ All scripts assume two variables to be set within the bash environment:
 
   - `$BASE_DIR` is assumed to point to the base folder of this repository
   - `$SFTWR` is a folder that contains all the software dependencies that are used within the scripts
-
-The dependencies need to be downloaded and installed separately.
-
-
 
