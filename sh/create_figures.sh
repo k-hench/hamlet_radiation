@@ -1,5 +1,5 @@
 #/usr/bin/bash
-# git 7
+# git 8
 
 Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
 

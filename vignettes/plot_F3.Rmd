@@ -276,7 +276,14 @@ data_dxy_summary <- dxy_data %>%
 To only load the relevant twisst data, we first load the positions of the $F_{ST}$ outlier regions.
 We also define a set of outliers of interest.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE}
+# twisst part ------------------
+outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
+  setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
+
+outlier_pick = c('LG04_1', 'LG12_2', 'LG12_3')
+```
+```{r, include = FALSE}
 # twisst part ------------------
 outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
   setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
@@ -301,7 +308,13 @@ cool_genes <-  c('arl3','kif16b','cdx1','hmcn2',
 
 Next, we load the twisst data for both locations and list all species from Belize (This will be needed to calculate their pair wise distances for the topology highlighting).
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE}
+data_tables <- list(bel = prep_data(loc = 'bel'),
+                    hon = prep_data(loc = 'hon'))
+
+pops_bel <- c('ind','may','nig','pue','uni')
+```
+```{r, include = FALSE}
 data_tables <- list(bel = prep_data(loc = 'bel'),
                     hon = prep_data(loc = 'hon'))
 
