@@ -33,7 +33,7 @@ process het_inds {
 
 	script:
 	"""
-	vcftools --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd.allBP.vcf.gz \
+	vcftools --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd_bi-allelic.allBP.vcf.gz \
 		--indv ${ind} \
 		--counts2 \
 		--stdout | \
