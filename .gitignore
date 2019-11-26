@@ -15,6 +15,7 @@ ressources/*
 1_genotyping
 2_analysis
 figures
+tables
 vignettes/*
 !vignettes/*.Rmd
 !vignettes/*.yml
