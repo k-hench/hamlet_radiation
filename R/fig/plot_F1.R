@@ -1,12 +1,12 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
+# Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script produces Figure 1 of the study "The genomic origins of a marine radiation"
 # by Hench, McMillan an Puebla
-# ---------------------------------------------------------------
+#   ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/')
+# args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -24,6 +24,7 @@ args <- process_input(script_name, args)
 # config -----------------------
 dxy_dir <- as.character(args[1])
 fst_dir <- as.character(args[2])
+fst_globals <- as.character(args[3])
 wdh <- .3          # The width of the boxplots
 scaler <- 20       # the ratio of the Fst and the dxy axis
 clr_sec <- 'gray'  # the color of the secondary axis (dxy)
@@ -133,3 +134,39 @@ p_done <- cowplot::plot_grid(p1,p2,
 hypo_save(p_done, filename = 'figures/F1.pdf',
           width = 9, height = 7,
           comment = plot_comment)
+
+table_all <- dxy_data %>%
+  select(run,mean_dxy) %>%
+  left_join( vroom::vroom(fst_globals, delim = '\t',
+                          col_names = c('loc','run','mean','weighted_fst')) %>%
+               mutate(run = str_c(loc,'-',run) %>%
+                        reformat_run_name())  %>%
+               select(run, weighted_fst)) %>%
+  pivot_longer(names_to = 'stat',2:3) %>%
+  separate(run, into = c('pop1', 'pop2'), sep = '-') %>% 
+  mutate(prep1 = ifelse(stat == "weighted_fst", pop2,pop1),
+         prep2 = ifelse(stat == "weighted_fst", pop1,pop2),
+         pop1 = factor(prep1, levels = pop_levels),
+         pop2 = factor(prep2, levels = pop_levels),
+         value = sprintf('%7.5f', value) ) %>%
+  select(pop1,pop2,value) %>%
+  arrange(pop2,pop1) %>%
+  mutate(pop2 = as.character(pop2) %>% 
+           str_replace(pattern = '([a-z]{3})([a-z]{3})',
+                       replacement = '\\1|\\2'),
+         pop1 = as.character(pop1) %>% 
+           str_replace(pattern = '([a-z]{3})([a-z]{3})',
+                       replacement = '\\1|\\2')) %>%
+  pivot_wider(values_from = value,
+              names_from = pop2) %>%
+  rename( Population = 'pop1') %>%
+  mutate(srt1 = str_sub(Population,-3, -1),
+         srt2 = str_sub(Population,1, 3))  %>%
+  arrange(srt1,srt2) %>%
+  select(-srt1,-srt2)
+
+table_all[is.na(table_all)] <- '-'
+
+table_all[1:5,c(1,2:6)] %>% export_2_latex(name = 'tables/suppl_tab3a.tex')
+table_all[6:11,c(1,7:12)] %>% export_2_latex(name = 'tables/suppl_tab3b.tex')
+table_all[12:14, c(1,13:15)] %>% export_2_latex(name = 'tables/suppl_tab3c.tex')
