@@ -57,6 +57,6 @@ process win_inds {
 
 	script:
 	"""
-	Rscript --vanilla \$BASE_DIR/R/het_by_ind.sh ${het} 50000
+	Rscript --vanilla \$BASE_DIR/R/het_by_ind.R ${het} 50000
 	"""
 }
