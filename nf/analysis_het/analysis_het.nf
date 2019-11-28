@@ -23,7 +23,7 @@ process split_inds {
 
 process het_inds {
 	publishDir "../../2_analysis/het/raw", mode: 'copy'
-	label "L_190g4h_inds"
+	label "L_190g15h_inds"
 
 	input:
 	val( ind ) from inds_ch.splitCsv().map{it[0]}
