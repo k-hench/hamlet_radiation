@@ -1,0 +1,26 @@
+digraph "analysis_het" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p1 [label="split_inds"];
+p0 -> p1 [label="vcf_by_ind"];
+
+p1 [label="split_inds"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p1 -> p2 [label="inds_ch"];
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p2 -> p3;
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p4 [label="het_inds"];
+p3 -> p4;
+
+p4 [label="het_inds"];
+p5 [label="win_inds"];
+p4 -> p5 [label="inds_out"];
+
+p5 [label="win_inds"];
+p6 [shape=point];
+p5 -> p6 [label="win_out"];
+
+}

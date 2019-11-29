@@ -3,9 +3,9 @@ library(ggraph)
 library(tidygraph)
 library(cowplot)
 
-node_meta <- tibble(name = 0:7 %>% as.character(),
+node_meta <- tibble(name = 0:8 %>% as.character(),
                    label = ifelse(name == 0, 'raw data',str_c('git ', name, '.x')) %>% 
-                     str_c(c('','\ngenotyping','\ngenotyping all bp', '\nfst/gxp','\ndxy','\nphylo','\nrecombination','\nfigs')))
+                     str_c(c('','\ngenotyping','\ngenotyping all bp', '\nfst/gxp','\ndxy','\nphylo','\nrecombination','\nheterozygosity','\nfigs')))
 
 start_buffer <- tibble(from = 1:8, start_buffer = c(10, 28, rep(25,6)))
 end_buffer <- tibble(from = 1:8, end_buffer = c(20, 25, rep(25,6)))
@@ -13,8 +13,8 @@ end_buffer <- tibble(from = 1:8, end_buffer = c(20, 25, rep(25,6)))
 
 graph <- as_tbl_graph(
   tibble(
-    from = c(0,1,1,2,1,1,3:6,3),
-    to = c(1,2:6,rep(7,4),4),
+    from = c(0,1,1,2,1,1,1,3:7,3),
+    to = c(1,2:7,rep(8,5),4),
     weight = 1
   )
 )
@@ -46,3 +46,4 @@ p_overall <- ggraph(graph,layout = 'sugiyama') +
   scale_x_continuous(expand = c(.2,.3))+
   scale_y_continuous(expand = c(.05,.1))+
   theme_graph()
+

@@ -23,7 +23,7 @@ The indivdual chapters of this documentation follow the separate main steps of t
 The individual steps partly depend on each other and were executed in the order depicted below.
 
 <div style="max-width:800px; margin:auto;">
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 8, fig.height = 6}
 p_overall
 ```
 </div>
@@ -38,10 +38,11 @@ A documentation of the data preparation and the data analysis (git 1.x - 6.x) ca
 - git 4.x: [Analysis (<i>d<sub>XY</sub></i> & $\pi$)](analysis-ii-dxy-pi.html)
 - git 5.x: [Analysis (phylogeny & topolgy weighting)](analysis-iii-phylogeny-topology-weighting.html)
 - git 6.x: [Analysis ($\rho$)](analysis-iv-rho.html)
+- git 7.x: [Analysis (<i>H<sub>O</sub></i> )](analysis-v-ho.html)
 
 ## Figures
 
-The creation of the figures is bundled in a single script (git 7) which can be executed once all `nextflow` scripts have successfuly run.
+The creation of the figures is bundled in a single script (git 8) which can be executed once all `nextflow` scripts have successfuly run.
 
 ```sh
 cd $BASE_DIR

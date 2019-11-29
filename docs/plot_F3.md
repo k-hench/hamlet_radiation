@@ -245,21 +245,10 @@ We also define a set of outliers of interest.
 # twisst part ------------------
 outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
   setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
-```
 
-```
-## Rows: 18
-## Cols: 7
-## chr [2]: gid, chrom
-## dbl [5]: start, end, gstart, gend, gpos
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-```
-
-```r
 outlier_pick = c('LG04_1', 'LG12_2', 'LG12_3')
 ```
+
 
 Then we define a set of genes of interest.
 These are the ones, that later will be labelled in the annotation panel.
@@ -283,66 +272,10 @@ Next, we load the twisst data for both locations and list all species from Beliz
 ```r
 data_tables <- list(bel = prep_data(loc = 'bel'),
                     hon = prep_data(loc = 'hon'))
-```
 
-```
-## Rows: 1,195
-## Cols: 15
-## dbl [15]: topo1, topo2, topo3, topo4, topo5, topo6, topo7, topo8, topo9, topo10, topo...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 1,195
-## Cols: 6
-## chr [1]: scaffold
-## dbl [5]: start, end, mid, sites, lnL
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 1,080
-## Cols: 15
-## dbl [15]: topo1, topo2, topo3, topo4, topo5, topo6, topo7, topo8, topo9, topo10, topo...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 1,080
-## Cols: 6
-## chr [1]: scaffold
-## dbl [5]: start, end, mid, sites, lnL
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 1,269
-## Cols: 105
-## dbl [105]: topo1, topo2, topo3, topo4, topo5, topo6, topo7, topo8, topo9, topo10, topo1...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 1,269
-## Cols: 6
-## chr [1]: scaffold
-## dbl [5]: start, end, mid, sites, lnL
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 1,141
-## Cols: 105
-## dbl [105]: topo1, topo2, topo3, topo4, topo5, topo6, topo7, topo8, topo9, topo10, topo1...
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-## Rows: 1,141
-## Cols: 6
-## chr [1]: scaffold
-## dbl [5]: start, end, mid, sites, lnL
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-```
-
-```r
 pops_bel <- c('ind','may','nig','pue','uni')
 ```
+
 
 ### Plotting
 
@@ -370,7 +303,7 @@ p_single <- outlier_table %>%
 ```
 
 <center>
-<img src="plot_F3_files/figure-html/unnamed-chunk-21-1.png" width="1344" />
+<img src="plot_F3_files/figure-html/unnamed-chunk-23-1.png" width="1344" />
 </center>
 
 At this point all that we miss is the figure legend.
@@ -405,7 +338,7 @@ p_leg <- cowplot::plot_grid(p_leg1, p_leg2,nrow = 1, rel_widths = c(.6, 1))
 ```
 
 <center>
-<img src="plot_F3_files/figure-html/unnamed-chunk-24-1.png" width="1344" />
+<img src="plot_F3_files/figure-html/unnamed-chunk-26-1.png" width="1344" />
 </center>
 
 After adding the legend to the main part, Figure 3 is done.
@@ -417,7 +350,7 @@ p_done <- cowplot::plot_grid(p_single, p_leg,ncol = 1,
 ```
 
 <center>
-<img src="plot_F3_files/figure-html/unnamed-chunk-26-1.png" width="1344" />
+<img src="plot_F3_files/figure-html/unnamed-chunk-28-1.png" width="1344" />
 </center>
 
 Finally, we can export Figure 3.

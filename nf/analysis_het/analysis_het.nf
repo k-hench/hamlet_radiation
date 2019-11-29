@@ -6,6 +6,8 @@ Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_by_ind; }
 
+// git 7.2
+// collect all sample names
 process split_inds {
 	label "L_loc_split_vcf"
 
@@ -21,6 +23,8 @@ process split_inds {
 	"""
 }
 
+// git 7.3
+// for each sample, record allele frequencies
 process het_inds {
 	publishDir "../../2_analysis/het/raw", mode: 'copy'
 	label "L_190g15h_inds"
@@ -44,19 +48,20 @@ process het_inds {
 	"""
 }
 
+// git 7.3
+// average heterozygosity over 50 kb windows
 process win_inds {
 	publishDir "../../2_analysis/het/50kb", mode: 'copy'
 	label "L_20g2h_inds"
-	module "R3.5.2"
 
 	input:
 	file( het ) from inds_out
 
 	output:
-	file( "*_win_het.gz" ) into win_out
+	file( ".*k.het.tsv.gz" ) into win_out
 
 	script:
 	"""
-	Rscript --vanilla \$BASE_DIR/R/het_by_ind.R ${het} 50000
+	\$BASE_DIR/sh/gxp_slider ${het} 50000 5000
 	"""
 }

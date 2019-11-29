@@ -1,0 +1,145 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include=FALSE}
+source('R/draw_workflow.R')
+prod_het <- tibbler(c('inds_out', 'win_out'))
+```
+
+# Analysis V (<i>H<sub>O</sub></i>)
+
+## Summary
+
+The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_het.nf` (located under `$BASE_DIR/nf/analysis_het/`), which runs on the _all BP_ data set.
+Below is an overview of the steps involved in the genotyping analysis.
+(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+
+<div style="max-width:500px; margin:auto;">
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_het.dot', git = 7, point_types = prod_het),
+        width_svg = 6, height_svg = 6)
+```
+</div>
+
+## Details of `analysis_het.nf`
+
+### Data preparation
+
+The nextflow script starts by opening the genotype data.
+Here we actually just do this to get a inventory of all genotyped samples - because of this we use the phased version (because it is the smaller file with the same samples) even though we are going to use the _all BP_ data set to actually estimate the heterozygosity.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+#!/usr/bin/env nextflow
+// nextflow run het.nf -c nextflow.config
+// git 7.1
+// open genotype data
+Channel
+	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
+	.set{ vcf_by_ind; }
+```
+
+The sample names are extracted from the genotype file and are fed into a channel.
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 7.2
+// collect all sample names
+process split_inds {
+	label "L_loc_split_vcf"
+
+	input:
+	set vcfId, file( vcf ) from vcf_by_ind
+
+	output:
+	file( "inds.txt" ) into inds_ch
+
+	script:
+	"""
+	vcfsamplenames ${vcf[0]} > inds.txt
+	"""
+}
+```
+
+The _all BP_ data set is split by sample, the allele counts for the sample are extracted and converted into a custom format.
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 7.3
+// for each sample, record allele frequencies
+process het_inds {
+	publishDir "../../2_analysis/het/raw", mode: 'copy'
+	label "L_190g15h_inds"
+
+	input:
+	val( ind ) from inds_ch.splitCsv().map{it[0]}
+
+	output:
+	file( "*.het.gz" ) into inds_out
+
+	script:
+	"""
+	vcftools --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd_bi-allelic.allBP.vcf.gz \
+		--indv ${ind} \
+		--counts2 \
+		--stdout | \
+		sed  's/{COUNT}/REF\\tALT/' | \
+		cut -f 1,2,5,6 | \
+		awk -v OFS='\\t' -v ind=${ind} '{if(NR==1){print \$1,\$2,"HET","IND"}else{x = \$3%2; ; print \$1,\$2,x/2,ind}}' | \
+		gzip > ${ind}.het.gz
+	"""
+}
+```
+
+The heterozygosity is computed along non-operlapping 50 kb windows.
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 7.3
+// average heterozygosity over 50 kb windows
+process win_inds {
+	publishDir "../../2_analysis/het/50kb", mode: 'copy'
+	label "L_20g2h_inds"
+	module "R3.5.2"
+
+	input:
+	file( het ) from inds_out
+
+	output:
+	file( "*_win_het.gz" ) into win_out
+
+	script:
+	"""
+	Rscript --vanilla \$BASE_DIR/R/het_by_ind.R ${het} 50000
+	"""
+}
+
+```
+</div>
+
+Finally, we are done with heterozygosity.
+
+---

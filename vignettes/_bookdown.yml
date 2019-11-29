@@ -2,7 +2,7 @@ book_filename: "Script repository Hench et al."
 chapter_name: ""
 repo: https://github.com/k-hench/bookdown
 output_dir: ../docs
-rmd_files: ["index.Rmd", "nf_genotyping.Rmd","nf_genotyping_all_basepairs.Rmd","nf_analysis_fst_gxp.Rmd","nf_analysis_dxy.Rmd","nf_analysis_phylo.Rmd","nf_analysis_recombination.Rmd","plot_F1.Rmd","plot_F2.Rmd","plot_F3.Rmd"]
+rmd_files: ["index.Rmd", "nf_genotyping.Rmd","nf_genotyping_all_basepairs.Rmd","nf_analysis_fst_gxp.Rmd","nf_analysis_dxy.Rmd","nf_analysis_phylo.Rmd","nf_analysis_recombination.Rmd", "nf_analysis_het.Rmd" ,"plot_F1.Rmd","plot_F2.Rmd","plot_F3.Rmd"]
 clean: [packages.bib, bookdown.bbl]
 new_session: yes
 delete_merged_file: True
