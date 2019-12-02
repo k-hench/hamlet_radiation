@@ -52,7 +52,7 @@ process het_inds {
 // average heterozygosity over 50 kb windows
 process win_inds {
 	publishDir "../../2_analysis/het/50kb", mode: 'copy'
-	label "L_20g2h_inds"
+	label "L_20g15h_win_inds"
 
 	input:
 	file( het ) from inds_out
