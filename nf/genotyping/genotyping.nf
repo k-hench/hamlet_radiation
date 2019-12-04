@@ -473,8 +473,10 @@ process merge_phased {
 
 
 /* ========================================= */
-// git 1.18
 /* appendix: generate indel masks for msmc: */
+
+// git 1.18
+// reopen the gvcf file to also genotype indels
 Channel
 	.fromFilePairs("../../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
 	.set{ cohort_gvcf }
@@ -509,6 +511,7 @@ process joint_genotype_indel {
 }
 
 // git 1.19
+// export indel metrics for filtering
 process indel_metrics {
 	label 'L_28g5h_genotype_metrics'
 	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
@@ -532,6 +535,7 @@ process indel_metrics {
 }
 
 // git 1.20
+// hard filter indels and create mask
 process filterIndels {
 	label 'L_78g10h_filter_indels'
 	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
@@ -591,9 +595,11 @@ Channel
 	.into{ lg_ch }
 
 // git 1.22
+// attach linkage groups to indel masks
 lg_ch.combine( filtered_indel ).set{ filtered_indel_lg }
 
 // git 1.23
+// split indel mask by linkage group
 process split_indel_mask {
 	label 'L_loc_split_indel_mask'
 	publishDir "../../ressources/indel_masks/", mode: 'copy'
