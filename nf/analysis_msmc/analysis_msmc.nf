@@ -18,7 +18,7 @@ Channel
 /* gather depth per individual ----------------------------- */
 process gather_depth {
 	label 'L_20g2h_split_by_sample'
-	publishDir "metadata", mode: 'copy'
+	publishDir "../../metadata", mode: 'copy'
 
 	input:
 	set vcfID, file( vcf ) from vcf_depth
