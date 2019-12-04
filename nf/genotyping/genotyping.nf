@@ -470,3 +470,144 @@ process merge_phased {
 	tabix -p vcf phased_mac2.vcf.gz
 	"""
 }
+
+
+/* ========================================= */
+// git 1.18
+/* appendix: generate indel masks for msmc: */
+Channel
+	.fromFilePairs("../../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
+	.set{ cohort_gvcf }
+
+process joint_genotype_indel {
+	label 'L_O88g90h_genotype_indel'
+	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
+
+	input:
+	set file( vcf ), file( tbi ) from gvcf_indel
+
+	output:
+	set file( "raw_var_indel.vcf.gz" ), file( "raw_var_indel.vcf.gz.tbi" ) into ( raw_indel, raw_indel_to_metrics )
+
+	script:
+	"""
+	gatk --java-options "-Xmx85g" \
+		GenotypeGVCFs \
+		-R=\$REF_GENOME \
+		-V=${vcf} \
+		-O=intermediate.vcf.gz
+
+	gatk --java-options "-Xmx85G" \
+		SelectVariants \
+		-R=\$REF_GENOME \
+		-V=intermediate.vcf.gz \
+		--select-type-to-include=INDEL \
+		-O=raw_var_indel.vcf.gz
+
+	rm intermediate.*
+	"""
+}
+
+// git 1.19
+process indel_metrics {
+	label 'L_28g5h_genotype_metrics'
+	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
+
+	input:
+	set file( vcf ), file( tbi ) from raw_indel_to_metrics
+
+	output:
+	file( "${vcf}.table.txt" ) into raw_indel_metrics
+
+	script:
+	"""
+	gatk --java-options "-Xmx25G" \
+		VariantsToTable \
+		--variant=${vcf} \
+		--output=${vcf}.table.txt \
+		-F=CHROM -F=POS -F=MQ \
+		-F=QD -F=FS -F=MQRankSum -F=ReadPosRankSum \
+		--show-filtered
+	"""
+}
+
+// git 1.20
+process filterIndels {
+	label 'L_78g10h_filter_indels'
+	publishDir "../../1_genotyping/3_gatk_filtered/", mode: 'copy'
+
+	input:
+	set file( vcf ), file( tbi ) from raw_indel
+
+	output:
+	set file( "filterd.indel.vcf.gz" ), file( "filterd.indel.vcf.gz.tbi" ) into filtered_indel
+	file( "indel_mask.bed.gz" ) into indel_mask_ch
+
+	/* FILTER THRESHOLDS NEED TO BE UPDATED */
+
+	script:
+	"""
+	gatk --java-options "-Xmx75G" \
+		VariantFiltration \
+		-R=\$REF_GENOME \
+		-V ${vcf} \
+		-O=intermediate.vcf.gz \
+		--filter-expression "QD < 2.5" \
+		--filter-name "filter_QD" \
+		--filter-expression "FS > 25.0" \
+		--filter-name "filter_FS" \
+		--filter-expression "MQ < 52.0 || MQ > 65.0" \
+		--filter-name "filter_MQ" \
+		--filter-expression "SOR > 3.0" \
+		--filter-name "filter_SOR" \
+		--filter-expression "InbreedingCoeff < -0.25" \
+		--filter-name "filter_InbreedingCoeff" \
+		--filter-expression "MQRankSum < -0.2 || MQRankSum > 0.2" \
+		--filter-name "filter_MQRankSum" \
+		--filter-expression "ReadPosRankSum < -2.0 || ReadPosRankSum > 2.0 " \
+		--filter-name "filter_ReadPosRankSum"
+
+	gatk --java-options "-Xmx75G" \
+		SelectVariants \
+		-R=\$REF_GENOME \
+		-V=intermediate.vcf.gz \
+		-O=filterd.indel.vcf.gz \
+		--exclude-filtered
+
+	zcat filterd.indel.vcf.gz | \
+		awk '! /\\#/' | \
+		awk '{if(length(\$4) > length(\$5)) print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$4)+4);  else print \$1"\\t"(\$2-6)"\\t"(\$2+length(\$5)+4)}' | \
+		gzip -c > indel_mask.bed.gz
+
+	rm intermediate.*
+	"""
+}
+
+// git 1.21
+/* create channel of linkage groups */
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.map{ "LG" + it }
+	.into{ lg_ch }
+
+// git 1.22
+lg_ch.combine( filtered_indel ).set{ filtered_indel_lg }
+
+// git 1.23
+process split_indel_mask {
+	label 'L_loc_split_indel_mask'
+	publishDir "../../ressources/indel_masks/", mode: 'copy'
+
+	input:
+	set val( lg ), file( bed ) from filtered_indel_lg
+
+	output:
+	set val( lg ), file( "indel_mask.${lg}.bed.gz " ) into lg_indel_mask
+
+	script:
+	"""
+		gzip -cd ${bed} | \
+		grep ${lg} | \
+		gzip -c > indel_mask.${lg}.bed.gz
+	"""
+}
