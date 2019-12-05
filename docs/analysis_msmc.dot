@@ -1,0 +1,194 @@
+digraph "analysis_msmc" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p0 -> p1;
+
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p1 -> p2;
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p2 -> p13 [label="lg_ch1"];
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p2 -> p26 [label="lg_ch2"];
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p36 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p2 -> p36 [label="lg_ch3"];
+
+p3 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p12 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p3 -> p12 [label="vcf_msmc"];
+
+p4 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p5 [label="gather_depth"];
+p4 -> p5 [label="vcf_depth"];
+
+p5 [label="gather_depth"];
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p5 -> p6 [label="depth_ch"];
+
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p6 -> p7;
+
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p7 -> p8;
+
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p8 -> p11 [label="depth_by_sample_ch"];
+
+p9 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
+p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p9 -> p10;
+
+p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p10 -> p11 [label="sample_bams"];
+
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p12 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p11 -> p12 [label="sample_bam_and_depth"];
+
+p12 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p12 -> p13;
+
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p14 [label="split_vcf_by_individual"];
+p13 -> p14 [label="samples_msmc"];
+
+p14 [label="split_vcf_by_individual"];
+p15 [label="bam_caller"];
+p14 -> p15 [label="sample_vcf"];
+
+p14 [label="split_vcf_by_individual"];
+p16 [label="generate_segsites"];
+p14 -> p16 [label="sample_vcf2"];
+
+p15 [label="bam_caller"];
+p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p15 -> p20 [label="coverage_by_sample_lg"];
+
+p16 [label="generate_segsites"];
+p23 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p16 -> p23 [label="segsites_by_sample_lg"];
+
+p17 [label="msmc_sample_grouping"];
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p17 -> p18 [label="msmc_grouping"];
+
+p17 [label="msmc_sample_grouping"];
+p34 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p17 -> p34 [label="cc_grouping"];
+
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p18 -> p19;
+
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p19 -> p26 [label="msmc_runs"];
+
+p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p20 -> p21;
+
+p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p22 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p21 -> p22;
+
+p22 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p22 -> p27 [label="coverage_done"];
+
+p22 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p37 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p22 -> p37 [label="coverage_cc"];
+
+p23 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p23 -> p24;
+
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p25 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p24 -> p25;
+
+p25 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p28 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p25 -> p28 [label="segsites_done"];
+
+p25 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p38 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p25 -> p38 [label="segsites_cc"];
+
+p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p26 -> p27;
+
+p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p28 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p27 -> p28;
+
+p28 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p29 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p28 -> p29;
+
+p29 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p30 [label="generate_multihetsep"];
+p29 -> p30 [label="msmc_grouping_after_segsites"];
+
+p30 [label="generate_multihetsep"];
+p31 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="groupTuple"];
+p30 -> p31 [label="msmc_input_lg"];
+
+p31 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="groupTuple"];
+p32 [label="msmc_run"];
+p31 -> p32 [label="msmc_input"];
+
+p32 [label="msmc_run"];
+p33 [shape=point];
+p32 -> p33 [label="msmc_output"];
+
+p34 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p35 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p34 -> p35;
+
+p35 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p36 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p35 -> p36 [label="cc_runs"];
+
+p36 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p37 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p36 -> p37;
+
+p37 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p38 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p37 -> p38;
+
+p38 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p39 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p38 -> p39;
+
+p39 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p40 [label="generate_multihetsep_cc"];
+p39 -> p40 [label="cc_grouping_after_segsites"];
+
+p40 [label="generate_multihetsep_cc"];
+p41 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="groupTuple"];
+p40 -> p41 [label="cc_input_lg"];
+
+p41 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="groupTuple"];
+p42 [label="cc_run"];
+p41 -> p42 [label="cc_input"];
+
+p42 [label="cc_run"];
+p43 [shape=point];
+p42 -> p43 [label="cc_output"];
+
+}

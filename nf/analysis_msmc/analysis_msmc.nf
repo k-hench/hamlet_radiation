@@ -319,13 +319,13 @@ process generate_multihetsep_cc {
 	"""
 }
 
-// git 8.21
+// git 8.22
 // collect all linkage groups for each run
 cc_input_lg
   .groupTuple()
 	.set {cc_input}
 
-// git 8.21
+// git 8.23
 // run cross coalescence
 process cc_run {
 	label "L_190g10ht24_cc_run"
