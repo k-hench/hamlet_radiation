@@ -62,6 +62,6 @@ process win_inds {
 
 	script:
 	"""
-	\$BASE_DIR/sh/gxp_slider ${het} 50000 5000
+	\$BASE_DIR/sh/het_slider ${het} 50000 5000
 	"""
 }
