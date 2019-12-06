@@ -293,16 +293,6 @@ recombination_data <- vroom::vroom(recombination_file,delim = '\t') %>%
   mutate(window = str_c('bold(',project_case('c'),'): rho'))
 ```
 
-```
-## Rows: 11,206
-## Cols: 4
-## chr [1]: CHROM
-## dbl [3]: BIN_START, BIN_END, RHO
-## 
-## Call `spec()` for a copy-pastable column specification
-## Specify the column types with `col_types` to quiet this message
-```
-
 Then we import the topology weighting data. 
 This is done once per location, the data sets are combined and specific columns are selected:
 The gnomic position, the topologie number (format: three digits with leading zeros, hence "topo3"), relative topology rank ranging from 0 to 1, the facceting column annd the actual weight data.

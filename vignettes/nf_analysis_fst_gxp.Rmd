@@ -46,7 +46,7 @@ Below is an overview of the steps involved in the analysis.
 <div style="max-width:800px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
-                         git = 1, point_types = prod_basic),
+                         git = 3, point_types = prod_basic),
         width_svg = 16, height_svg = 16)
 
 ```

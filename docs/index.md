@@ -2,7 +2,7 @@
 title: "Script repository"
 subtitle: "(Hench *et al.* supplement)"
 author: "Kosmas Hench"
-date: "2019-11-28"
+date: "2019-12-05"
 documentclass: book
 bibliography: [book.bib]
 biblio-style: apalike
@@ -34,10 +34,11 @@ A documentation of the data preparation and the data analysis (git 1.x - 6.x) ca
 - git 5.x: [Analysis (phylogeny & topolgy weighting)](analysis-iii-phylogeny-topology-weighting.html)
 - git 6.x: [Analysis ($\rho$)](analysis-iv-rho.html)
 - git 7.x: [Analysis (<i>H<sub>O</sub></i> )](analysis-v-ho.html)
+- git 8.x: [Analysis (demographic history)](analysis-vi-demographic-history.html)
 
 ## Figures
 
-The creation of the figures is bundled in a single script (git 8) which can be executed once all `nextflow` scripts have successfuly run.
+The creation of the figures is bundled in a single script (git 9) which can be executed once all `nextflow` scripts have successfuly run.
 
 ```sh
 cd $BASE_DIR
@@ -50,7 +51,7 @@ So if you are only interrested in a single figure - that is the place to start l
 
 Furthermore, a more detailed documentation exists for all the figure scripts used for the manuscript:
 
-[F1](figure-1.html), [F2](figure-2.html) & [F3](figure-3.html)
+[F1](figure-1.html), [F2](figure-2.html), [F3](figure-3.html) & [F4](figure-4.html)
 
 as well as for all the supplementary figures:
 

@@ -1,3 +1,63 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include=FALSE}
+source('R/draw_workflow.R')
+prod_msmc <- tibbler(c('coverage_by_sample_lg', 'msmc_grouping', 'segsites_by_sample_lg', 'cc_grouping', 'msmc_input_lg', 'msmc_output', 'cc_input_lg', 'cc_output'))
+```
+
+# Analysis VI (Demographic History)
+
+## Summary
+
+The demographic hisotry rate is inferred within the [**nextflow**](https://www.nextflow.io/) script `analysis_msmc.nf` (located under `$BASE_DIR/nf/analysis_msmc/`), which runs on the _SNPs only_ data set.
+Below is an overview of the steps involved in the inference.
+(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+
+<div style="max-width:750px; margin:auto;">
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_msmc.dot', git = 8, point_types = prod_msmc),
+        width_svg = 12, height_svg = 12)
+```
+</div>
+
+## Details of `analysis_msmc.nf`
+
+### Data preparation
+
+The first part of the scripts inclues a large block of preparation work.
+In this initial block, the data masks are being generated based in the samples coverages statistics cobined with the locations of idels and the refence genomes mappability. 
+
+The whole script is opened by a creating a channel for the linkage groups since the coverage statisitcs are being created on a linkage group basis. 
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 #!/usr/bin/env nextflow
 // git 8.1
 // create channel of linkage groups
@@ -5,19 +65,31 @@ Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
 	.into{ lg_ch1; lg_ch2; lg_ch3 }
+```
 
+Then the phased genotype data is opened (for later use in msmc).
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.2
 // open phased genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_msmc }
+```
 
+To extract the seqencing depth for each individual, the unphased genotypes are opened as well (as this information is lost during pahsing).
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.3
 // open unphased genotype data to extract depth information
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd_bi-allelic.vcf.{gz,gz.tbi}")
 	.set{ vcf_depth }
+```
 
+The outgroups are removed from the data set and the depth is reported for each individual.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.4
 // gather depth per individual
 process gather_depth {
@@ -41,7 +113,11 @@ process gather_depth {
 		--stdout > depth_by_sample.txt
 	"""
 }
+```
 
+The depth inforamtion is fed into a channel so that the information is accessible for `nextflow`.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.5
 // create channel out of sequencing depth table
 depth_ch
@@ -49,7 +125,11 @@ depth_ch
 	.map{ row -> [ id:row.INDV, sites:row.N_SITES, depth:row.MEAN_DEPTH] }
 	.map{ [it.id, it.sites, it.depth] }
 	.set { depth_by_sample_ch }
+```
 
+Next, a channel is created from all the original `.bam` files from the mapped sequences ([git 1.6](genotyping-i-snps-only.html)).
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.6
 // create channel from bam files and add sample id
 Channel
@@ -58,20 +138,32 @@ Channel
 				def key = file.name.toString().tokenize('.').get(0)
 				return tuple(key, file)}
 				.set{ sample_bams }
+```
 
+The previously created depth information is attached to the `bam` channel...
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.7
 // combine sample bams and sequencing depth
 sample_bams
 	.join( depth_by_sample_ch )
 	.set{ sample_bam_and_depth }
+```
 
+... and the genotype data and individual linkage groups are added.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.8
 // multiply the sample channel by the linkage groups
 sample_bam_and_depth
 	.combine( vcf_msmc )
 	.combine( lg_ch1 )
 	.set{ samples_msmc }
+```
 
+Now, the data is split by individual and all the additional information is passed on to the masking (git 8.10) as well as to the production of the the individuals segregating sites (git 8.11).
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.9
 // split vcf by individual
 process split_vcf_by_individual {
@@ -94,7 +186,11 @@ process split_vcf_by_individual {
 		-O phased_mac2.${id}.${lg}.vcf.gz
 	"""
 }
+```
 
+The individual coverage statistics are then being querried using the individuals average depth to create the coverage mask for each individual.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.10
 // create coverage mask from original mapped sequences
 process bam_caller {
@@ -120,7 +216,11 @@ process bam_caller {
 		gzip -c > ${id}.${lg}.bam_caller.vcf.gz
 	"""
 }
+```
 
+For each individual, the [segregating sites](https://github.com/stschiff/msmc-tools) are created.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.11
 // create segsites file
 process generate_segsites {
@@ -140,7 +240,13 @@ process generate_segsites {
 		gzip -c > ${id}.${lg}.segsites.vcf.gz
 	"""
 }
+```
 
+### Grouping of individuals
+
+At this point, the data masks are prepared and the samples can be assigned to their respective groups for their demographic history and and cross-coalescence rate inference.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.12
 //  assign samples randomly across MSMC and cross coalescence runs
 process msmc_sample_grouping {
@@ -161,21 +267,33 @@ process msmc_sample_grouping {
 			msmc
 	"""
 }
+```
 
+The results of the random assignment are being fed into a channel.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.13
 // read grouping into a channel
 msmc_grouping
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ run:row.msmc_run, spec:row.spec, geo:row.geo, group_nr:row.group_nr, group_size:row.group_size, samples:row.samples ] }
 	.set { msmc_runs }
+```
 
+Since this script uses an unorthodox way of making the results of the data preparation available to all following processes by exporting them back to the root folder, the following dummy process is installed to wait for the data preparation to finish before proceeding with the workflow.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.14
 // wait for bam_caller and generate_segsites to finish:
 /*this '.collect' is only meant to wait until the channel is done,
   files are being redirected via publishDir*/
 coverage_by_sample_lg.collect().map{ "coverage done!" }.into{ coverage_done; coverage_cc }
 segsites_by_sample_lg.collect().map{ "segsites done!" }.into{ segsites_done; segsites_cc }
+```
 
+To set up the `msmc2` runs, the sample grouping is wainig for the dummy process to finish.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.15
 // attach masks to MSMC group assignment
 lg_ch2
@@ -184,7 +302,11 @@ lg_ch2
 	.combine( segsites_done )
 	.map{[it[0], it[1].run, it[1]]}
 	.set{ msmc_grouping_after_segsites }
+```
 
+Then, the specific `msmc2` input files are compiled from the combined masks of the involved samples (for each linkge group individually).
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.16
 // generating MSMC input files (4 or 3 inds per species)
 process generate_multihetsep {
@@ -221,13 +343,21 @@ process generate_multihetsep {
 		\$SEG > msmc_run.${msmc_gr.run}.${msmc_gr.spec}.${msmc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }
+```
 
+The input files of all linkage group are collected for each sample grouping.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.17
 // collect all linkage groups for each run
 msmc_input_lg
 	.groupTuple()
 	.set {msmc_input}
+```
 
+And finally `msmc2` is executed to inferr the demographic history of the involved samples.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.18
 // run msmc
 process msmc_run {
@@ -254,14 +384,23 @@ process msmc_run {
 		\${INFILES}
 	"""
 }
+```
 
+The process cross-coalescence rate is similar (with git 8.19 being the equivalent of git 8.13).
+So, again the grouping information in fed into a channel.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.19
 // generate MSMC cross coalescence input files (2 inds x 2 species)
 cc_grouping
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ run:row.run_nr, geo:row.geo, spec_1:row.spec_1, spec_2:row.spec_2, contrast_nr:row.contrast_nr, samples_1:row.samples_1, samples_2:row.samples_2 ] }
 	.set { cc_runs }
+```
 
+The groups wait for the data preparation to fininsh.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.20
 // attach masks to cross coalescence group assignment
 lg_ch3
@@ -270,7 +409,11 @@ lg_ch3
 	.combine( segsites_cc )
 	.map{[it[0], it[1].run, it[1]]}
 	.set{ cc_grouping_after_segsites }
+```
 
+The `msmc2` input files are being compiled based on the involved samples (for each linkage group).
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.21
 // create multihetsep files (combination off all 4 individuals)
 process generate_multihetsep_cc {
@@ -317,13 +460,21 @@ process generate_multihetsep_cc {
 		> cc_run.${run}.${cc_gr.spec_1}-${cc_gr.spec_2}.${cc_gr.contrast_nr}.${cc_gr.geo}.${lg}.multihetsep.txt
 	"""
 }
+```
 
+The input files of all linkage group are collected for each sample grouping.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.22
 // collect all linkage groups for each run
 cc_input_lg
   .groupTuple()
 	.set {cc_input}
+```
 
+And  `msmc2` is executed to inferr the cross-coalescence rate of the involved samples.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 8.23
 // run cross coalescence
 process cc_run {
@@ -373,3 +524,9 @@ process cc_run {
 		gzip > cc_run.${cc_run}.final.txt.gz
 	"""
 }
+```
+</div>
+
+Finally, we are done with the inference of the demographic history.
+
+---

@@ -477,10 +477,6 @@ process merge_phased {
 
 // git 1.18
 // reopen the gvcf file to also genotype indels
-Channel
-	.fromFilePairs("../../1_genotyping/1_gvcfs/cohort.g.vcf.{gz,gz.tbi}")
-	.set{ cohort_gvcf }
-
 process joint_genotype_indel {
 	label 'L_O88g90h_genotype_indel'
 	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
