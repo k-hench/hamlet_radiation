@@ -168,4 +168,4 @@ PL17_126	PL17_126maybel	may	bel	NA	16.51037	-88.25462
 PL17_160	PL17_160floflo	flo	flo	2017-07-07	24.50768	-81.57143
 PL17_89	PL17_89maybel	may	bel	2017-07-04	16.66	-88.185
 PL17_95	PL17_95maybel	may	bel	2017-08-04	16.77096	-88.16366
-s_tort_3	s_tort_3torpan	tor	pan	NA	NA	NA
+s_tort_3	s_tort_3torpan	tor	pan	2016	NA	NA

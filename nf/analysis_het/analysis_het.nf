@@ -58,7 +58,7 @@ process win_inds {
 	file( het ) from inds_out
 
 	output:
-	file( ".*k.het.tsv.gz" ) into win_out
+	file( "*k.het.tsv.gz" ) into win_out
 
 	script:
 	"""
