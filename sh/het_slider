@@ -15,11 +15,10 @@ RED='\033[0;31m';
 NC='\033[0m';
 
 # CHROM	POS	HET	IND
+echo -e "CHROM\tBIN_START\tBIN_END\tN_SNPs\t$j" > ${j}.${WIN_LAB}k.${STEP_LAB}k.het.tsv
 
 for k in {01..24};do
   echo -e  "--- ${RED}$j${NC} - $k ---"
-  echo -e "CHROM\tBIN_START\tBIN_END\tN_SNPs\t$j" > ${j}.${WIN_LAB}k.${STEP_LAB}k.het.tsv
-
 	zcat $1 | grep LG$k | cut -f 1-3 | \
 	awk -v OFS="\t" -v w=$WIN -v s=$STEP -v r=$k 'BEGIN{window=w;slide=s;g=0;OL=int(window/slide);}
 	{g=int(($2-1)/slide)+1;{for (i=0;i<=OL-1;i++){if(g-i >0){A[g-i]+=$3; B[g-i]++;G[g-i]=g-i;H[g-i]=$1;}}}}

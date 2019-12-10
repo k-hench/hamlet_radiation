@@ -101,7 +101,8 @@ p <- ggplot()+
                                        labels = sprintf("%.2f", sc_ax$breaks),
                                        name = expression(Genomic~position/~Genome~wide~weighted~italic(F[ST])))) +
   scale_y_continuous(name = expression(italic('F'[ST])),
-                     limits = c(-.1,1)) +
+                     limits = c(-.1,1),
+                     breaks = c(0,.5,1)) +
   theme_hypo() +
   theme(strip.text = element_blank(),
         legend.position = 'none',
