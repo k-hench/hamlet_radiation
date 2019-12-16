@@ -8,12 +8,12 @@
 # args <- c('2_analysis/fasttree/', 'no_outgroups.all.whg.SNP.tree')
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
-library(GenomicOriginsScripts)
 library(ggtree)
 library(ape)
 library(phytools)
 library(hypoimg)
 library(geomfactory)
+library(GenomicOriginsScripts)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -70,7 +70,7 @@ geo_chunks <- tree_df %>%
             ymax = max(y))
 
 c_vals <- c(ungrouped = rgb(.6, .6, .6),
-            R = rgb(.6, .6, .6), clr2)
+            R = rgb(.6, .6, .6), clr2 )
 c_labs <- c(R = "",ungrouped = "",sp_labs)
 c_breaks <- c(NA, NA, names(clr2))
 

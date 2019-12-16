@@ -81,7 +81,7 @@ sc_ax <- scales::cbreaks(c(0,max(globals$weighted)),
                          scales::pretty_breaks(4))
 
 p <- ggplot()+
-  facet_wrap( . ~ run, as.table = TRUE, ncol = 2,dir = 'v') +
+  facet_wrap( . ~ run, as.table = TRUE, ncol = 1,dir = 'v') +
   geom_rect(data = global_bar %>%
               mutate(xmax = xmax * hypo_karyotype$GEND[24]),
             aes(xmin = 0, xmax = xmax,
@@ -111,6 +111,6 @@ p <- ggplot()+
 
 hypo_save(filename = 'figures/SX3.png',
           plot = p,
-          width = 16,
-          height = 9,
+          width = 8,
+          height = 12,
           comment = plot_comment)

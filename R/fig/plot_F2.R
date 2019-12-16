@@ -188,6 +188,11 @@ outlier_label <- outliers %>%
 outlier_y <- .45
 outlier_yend <- .475
 
+trait_tibble <- tibble(window = c("bold(h):italic(p)~(GxP[Bars])",
+                                  "bold(i):italic(p)~(GxP[Peduncle])", 
+                                  "bold(j):italic(p)~(GxP[Snout])"),
+                       grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
+
 p_done <- ggplot()+
   geom_hypo_LG()+
   geom_vline(data = outliers, aes(xintercept = gpos), color = outlr_clr)+
@@ -202,9 +207,12 @@ p_done <- ggplot()+
   geom_point(data = pi_data_select, aes(x = GPOS, y = mean_pi),size = plot_size, color = plot_clr) +
   geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
   geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
-              color = 'red', se = FALSE, size = .7) +
-  geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel),size = .4) +
-  geom_hline(data = twisst_null,aes(yintercept =  weight), color = rgb(1,1,1,.5), size=.4) +
+               color = 'red', se = FALSE, size = .7) +
+  geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel), size = .4) +
+  geom_hline(data = twisst_null, aes(yintercept = weight), color = rgb(1, 1, 1, .5), size = .4) +
+  geom_hypo_grob(data = trait_tibble,
+                 aes(grob = grob, angle = 0, height = .65),
+                 inherit.aes = FALSE, x = .95, y = 0.65)+
   scale_fill_hypo_LG_bg() +
   scale_x_hypo_LG()+
   scale_color_gradient( low = "#f0a830ff", high = "#084082ff", guide = FALSE)+
@@ -216,5 +224,6 @@ p_done <- ggplot()+
     strip.placement = 'outside')
 
 hypo_save(p_done, filename = 'figures/F2.png',
-          width = 297*.95, height = 275*.95, units = 'mm',
+          width = 297*.95, height = 275*.95, 
+          units = 'mm',
           comment = plot_comment)

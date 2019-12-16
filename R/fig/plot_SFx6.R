@@ -68,7 +68,7 @@ data <- data %>%
   mutate(run = factor(run, levels = levels(global_bar$run)))
 
 p <- ggplot()+
-  facet_wrap( .~run, as.table = TRUE, ncol = 2,dir = 'v')+
+  facet_wrap( .~run, as.table = TRUE, ncol = 1,dir = 'v')+
   geom_rect(data = global_bar %>% mutate(xmax = scaled_dxy * hypo_karyotype$GEND[24]),
             aes(xmin = 0, xmax = xmax, ymin = -Inf, ymax = Inf), color = rgb(1,1,1,0),fill = clr_below)+
   geom_vline(data = hypogen::hypo_karyotype,aes(xintercept = GEND),color = hypo_clr_lg)+
@@ -81,7 +81,7 @@ p <- ggplot()+
                                        breaks = (sc_ax$breaks/max(global_bar$genome_wide_dxy))[1:5],
                                        labels = labels,
                                        name = expression(Genomic~position/~Genome~wide~italic(d[XY]))))+
-  scale_y_continuous(name = expression(italic(d[XY])))+
+  scale_y_continuous(name = expression(italic(d[XY])), breaks = c(0,.01, .02))+
   coord_cartesian(xlim = c(0,hypo_karyotype$GEND[24]*1.135))+
   theme_hypo()+
   theme(strip.text = element_blank(),
@@ -91,6 +91,6 @@ p <- ggplot()+
 
 hypo_save(filename = 'figures/SX6.png',
           plot = p,
-          width = 16,
-          height = 9,
+          width = 8,
+          height = 12,
           comment = plot_comment)

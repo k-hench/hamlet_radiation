@@ -420,6 +420,17 @@ outlier_y <- .45
 outlier_yend <- .475
 ```
 
+We prepare a set of trait annotations for the genotype $\times$ phenotype association panels.
+
+```{r}
+trait_tibble <- tibble(window = c("bold(h):italic(p)~(GxP[Bars])",
+                                  "bold(i):italic(p)~(GxP[Peduncle])", 
+                                  "bold(j):italic(p)~(GxP[Snout])"),
+                       grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
+
+
+```
+
 ### Plotting
 
 Finally it is time to put the pieces together with one giant `ggplot():`
@@ -453,6 +464,10 @@ p_done <- ggplot()+
   geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel),size = .4) +
   # add topology weighting "null expectation"
   geom_hline(data = twisst_null,aes(yintercept =  weight), color = rgb(1,1,1,.5), size=.4) +
+  # add G x P annotations
+  geom_hypo_grob(data = trait_tibble,
+                 aes(grob = grob, angle = 0, height = .65),
+                 inherit.aes = FALSE, x = .95, y = 0.65)+
   # color scheme lg indication
   scale_fill_hypo_LG_bg() +
   # layout x ayis

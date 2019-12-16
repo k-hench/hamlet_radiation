@@ -110,7 +110,7 @@ data_dxy_summary <- dxy_data %>%
 outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
   setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
 
-outlier_pick = c('LG04_1', 'LG12_2', 'LG12_3')
+outlier_pick = c('LG04_1', 'LG12_3', 'LG12_4')
 
 cool_genes <-  c('arl3','kif16b','cdx1','hmcn2',
                  'sox10','smarca4',
@@ -135,13 +135,14 @@ p_single <- outlier_table %>%
   filter(outlier_id %in% outlier_pick) %>%
   left_join(neighbour_tibbles) %>%
   mutate(outlier_nr = row_number(),
-         text = ifelse(outlier_nr == 1,TRUE,FALSE)) %>%
+         text = ifelse(outlier_nr == 1,TRUE,FALSE),
+         trait = c('Snout', 'Bars', 'Peduncle')) %>%
   pmap(plot_curtain, cool_genes = cool_genes) %>%
   cowplot::plot_grid(plotlist = ., nrow = 1,
                      labels = letters[1:length(outlier_pick)] %>% project_case())
 
 p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_fst) %>% .[[1]]
-p_dummy_gxp <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_gxp) %>% .[[1]]
+p_dummy_gxp <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_gxp, trait = 'Bars') %>% .[[1]]
 p_leg_fst <- (p_dummy_fst+theme(legend.position = 'bottom')) %>% get_legend()
 p_leg_gxp <- (p_dummy_gxp+theme(legend.position = 'bottom')) %>% get_legend()
 p_leg1 <- cowplot::plot_grid(p_leg_fst,p_leg_gxp,

@@ -281,14 +281,14 @@ We also define a set of outliers of interest.
 outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
   setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
 
-outlier_pick = c('LG04_1', 'LG12_2', 'LG12_3')
+outlier_pick = c('LG04_1', 'LG12_3', 'LG12_4')
 ```
 ```{r, include = FALSE}
 # twisst part ------------------
 outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
   setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
 
-outlier_pick = c('LG04_1', 'LG12_2', 'LG12_3')
+outlier_pick = c('LG04_1', 'LG12_3', 'LG12_4')
 ```
 
 Then we define a set of genes of interest.

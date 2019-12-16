@@ -38,3 +38,7 @@ Rscript --vanilla R/fig/plot_SFx5.R 2_analysis/pi/50k/ \
 Rscript --vanilla R/fig/plot_SFx6.R 2_analysis/dxy/50k/
 
 Rscript --vanilla R/fig/plot_SFx7.R 2_analysis/fasttree/ no_outgroups.all.whg.SNP.tree
+
+Rscript --vanilla R/fig/plot_SFx8.R 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
+
+Rscript --vanilla R/fig/plot_SFx9.R 2_analysis/het/50kb/

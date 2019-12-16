@@ -61,7 +61,7 @@ data <- data %>%
   mutate(spec = factor(spec, levels = levels(global_bar$spec)))
 
 p <- ggplot()+
-  facet_wrap( .~spec, as.table = TRUE, ncol = 2,dir = 'v')+
+  facet_wrap( .~spec, as.table = TRUE, ncol = 1,dir = 'v')+
   geom_rect(data = global_bar %>% mutate(xmax = scaled_pi * hypo_karyotype$GEND[24]),
             aes(xmin = 0, xmax = xmax, ymin = -Inf, ymax = Inf),
             color = rgb(1,1,1,0),
@@ -76,7 +76,7 @@ p <- ggplot()+
                                        breaks = (sc_ax$breaks/max(global_bar$genome_wide_pi)),
                                        labels = labels,
                                        name = expression(Genomic~position/~Genome~wide~italic(pi))))+
-  scale_y_continuous(name = expression(italic(pi)))+
+  scale_y_continuous(name = expression(italic(pi)), breaks = c(0,.006,.012))+
   coord_cartesian(xlim = c(0,hypo_karyotype$GEND[24]*1.06))+
   theme_hypo()+
   theme(strip.text = element_blank(),
@@ -86,6 +86,6 @@ p <- ggplot()+
 
 hypo_save(filename = 'figures/SX4.png',
           plot = p,
-          width = 16,
-          height = 5,
+          width = 8,
+          height = 8,
           comment = plot_comment)
