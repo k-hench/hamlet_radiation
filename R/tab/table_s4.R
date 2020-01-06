@@ -49,4 +49,4 @@ table_out <- outlier_data %>%
   select(chrom, gid, start, end, n_genes, genes) %>%
   rename(LG = chrom, Id = gid, n = n_genes, Start = start, End = end, Genes = genes)
 
-export_2_latex(table = table_out,name = '~/Desktop/suppl_tab4.tex')
+export_2_latex(table = table_out,name = 'tables/suppl_tab4.tex')
