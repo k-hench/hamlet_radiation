@@ -3,65 +3,72 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Figure 4
+# Figure 3
 
-```{r setup, include = FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
 library(GenomicOriginsScripts)
-library(patchwork)
-args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
-'2_analysis/msmc/setup/msmc_grouping.txt', '2_analysis/msmc/setup/msmc_cc_grouping.txt',
-'2_analysis/summaries/fst_globals.txt')
+library(hypoimg)
+library(furrr)
+args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
+          'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
+          '2_analysis/summaries/fst_outliers_998.tsv',
+          '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
+          '2_analysis/summaries/fst_globals.txt',
+          '2_analysis/GxP/50000/', 200, 5)
 ```
 
 ## Summary
 
-This is the accessory documentation of Figure 4.
-It should be possible to recreate the figure by running the **R** script `plot_F4.R`:
-
+This is the accessory documentation of Figure 3.
+The Figure can be recreated by running the **R** script `plot_F3.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_F4.R \
-  2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
-  2_analysis/msmc/setup/msmc_cc_grouping.txt 2_analysis/msmc/setup/msmc_grouping.txt \
-  2_analysis/summaries/fst_globals.txt
+Rscript --vanilla R/fig/plot_F3.R \
+  2_analysis/twisst/weights/ ressources/plugin/trees/ \
+  https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+  2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
+  2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
+  2_analysis/GxP/50000/ 200 5
+
 ```
 
-Unfortunately, currently this fails on my local machine apparently due to some insconsitencies between `Rscript` and interactive **R** sessions with regard to the library management.
-If running the script from the command line fails, the script can also be run interactively by un-comenting the `args <- ...` statement in the header and skipping the  header until the `# config ...` line.
-
-## Details of `plot_F4.R`
+## Details of `plot_F3.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory **R** packages **GenomicOriginsScripts** and on the **R** package [**patchwork**](https://patchwork.data-imaginist.com/).
+It is an executable R script that depends on the accessory R package **GenomicOriginsScripts**.
 
 ### Config
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, include = FALSE}
+```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F4.R \
-#   2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
-#   2_analysis/msmc/setup/msmc_cc_grouping.txt 2_analysis/msmc/setup/msmc_grouping.txt \
-#   2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_F3.R \
+#   2_analysis/twisst/weights/ ressources/plugin/trees/ \
+#   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+#   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
+#   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
+#   2_analysis/GxP/50000/ 200 5
 # ===============================================================
-# This script produces Figure 4 of the study "The genomic origins of a marine radiation"
+# This script produces Figure 3 of the study "The genomic origins of a marine radiation"
 # by Hench, McMillan an Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
-# '2_analysis/msmc/setup/msmc_grouping.txt', '2_analysis/msmc/setup/msmc_cc_grouping.txt',
-# '2_analysis/summaries/fst_globals.txt')
-# ----------------------------------------
+# args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
+#           'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
+#           '2_analysis/summaries/fst_outliers_998.tsv',
+#           '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
+#           '2_analysis/summaries/fst_globals.txt',
+#           '2_analysis/GxP/50000/', 200, 5)
 ```
 
-The next section processes the input from the command line (supposedly...).
+The next section processes the input from the command line.
 It stores the arguments in the vector `args`.
-The **R** packages **GenomicOriginsScripts** and **patchwork** are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+The R package **GenomicOriginsScripts** is loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
@@ -70,176 +77,334 @@ Then we drop all the imported information besides the arguments following the sc
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
-library(patchwork)
-
+library(hypoimg)
+library(furrr)
 cat('\n')
-script_name <- args[5] %>%
+script_name <- args[5] %>% 
   str_remove(.,'--file=')
 
-plot_comment <- script_name %>%
-  str_c('mother-script = ',getwd(),'/',.)
+plot_comment <- script_name %>% 
+  str_c('mother-script = ',getwd(),'/',.) 
 
 args <- process_input(script_name, args)
 ```
 
-The directories for the demographic inffernce and the cross-coalescence data are received and stored in respective variables.
-Also, the files containing the groupings for demographic inffernce and cross-coalescence as well as the reference file for the genome wide $F_{ST}$ values are received.
+```r
+── Script: scripts/plot_F3.R ────────────────────────────────────────────
+Parameters read:
+ ★ 1: figures/data/twisst_weights/
+ ★ 2: figures/data/twisst_positions/
+ ★ 3: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
+ ★ 4: figures/data/summaries/all_multi_fst_outliers_998.tsv
+ ★ 5: figures/data/dxy/
+ ★ 6: figures/data/fst/
+ ★ 7: figures/data/summaries/fst_globals.txt
+ ★ 8: figures/data/GxP/
+ ★ 9: 200
+─────────────────────────────────────────── /current/working/directory ──
+```
+
+The directories for the different data types are received and stored in respective variables.
+Also, we source an external r script from the [original twisst github repository](https://github.com/simonhmartin/twisst) that we need to import the twisst data:
 
 ```{r, message = FALSE, warning = FALSE}
 # config -----------------------
-msmc_path <- as.character(args[1])
-cc_path <- as.character(args[2])
-msmc_group_file <- as.character(args[3])
-cc_group_file <- as.character(args[4])
-fst_globals_file <- as.character(args[5])
+w_path <- as.character(args[1])
+d_path <- as.character(args[2])
+twisst_functions <- as.character(args[3])
+out_table <- as.character(args[4])
+dxy_dir <- as.character(args[5])
+fst_dir <- as.character(args[6])
+fst_globals <- as.character(args[7])
+gxp_dir <- as.character(args[8])
+twisst_size <- as.numeric(args[9])
+source(twisst_functions, local = TRUE)
+
+plan(multiprocess)
 ```
 
-The **msmc** sample groupings are imported and the $F_{ST}$ values loaded.
+The we define a buffer width.
+This is the extent left and right of the $F_{ST}$  outlier windows that is included in the plots.
+We also load the R packages **ape** and **igraph** that will help us workung with phylogenetic objects (the twisst topologies).
 
 ```{r, message = FALSE, warning = FALSE}
-# actual script =========================================================
-msmc_groups <- read_tsv(msmc_group_file)
-cc_groups <- read_tsv(cc_group_file)
+window_buffer <- 2.5*10^5
+#-------------------
+library(ape)
+library(igraph)
+```
 
-fst_globals <- vroom::vroom(fst_globals_file, delim = '\t',
-                            col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
+### Data import
+
+Then, we start with the data import.
+For the figure we are going to need:
+
+- $d_{XY}$ data
+- genotype $\times$ phenotype data
+- $F_{ST}$ data
+- topology weighing data
+- the positions of the genome annotations
+- the positions of the $F_{ST}$ outlier windows
+
+We start by importing $d_{XY}$ by first listing all $d_{XY}$ data files and then iterating the $d_{XY}$ import function over the files.
+
+```{r, include = FALSE}
+# actual script =========================================================
+
+dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.50kb-5kb.tsv.gz'))
+
+dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
+  purrr::pmap(get_dxy) %>% 
+  bind_rows()
+```
+```{r, eval = FALSE}
+# actual script =========================================================
+
+dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.50kb-5kb.tsv.gz'))
+
+dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
+  purrr::pmap(get_dxy) %>% 
+  bind_rows()
+```
+
+Next we iterate the genotype $\times$ phenotype import function over the trait names *Bars*, *Snout* and *Peduncle*.
+
+```{r, include = FALSE}
+gxp_traits <- c('Bars', 'Snout', 'Peduncle')
+
+gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.50k.5k.txt.gz') %>% 
+  future_map(get_gxp_long) %>%
+  bind_rows()
+```
+```{r, eval = FALSE}
+gxp_traits <- c('Bars', 'Snout', 'Peduncle')
+
+gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.50k.5k.txt.gz') %>% 
+  future_map(get_gxp_long) %>%
+  bind_rows()
+```
+
+Then, we define two sets of colors - one for the topology highlighting schemes and one for the traits of the genotype $\times$ phenotype association.
+
+```{r, message = FALSE, warning = FALSE}
+twisst_clr <- c(Blue = "#0140E5", Bars = "#E32210", Butter = "#E4E42E")
+gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>% 
+  darken(factor = .95) %>%
+  set_names(., nm = gxp_traits)
+```
+
+Next, we compute the average genome wide $d_{XY}$ and load the average genome wide $F_{ST}$ values for all 28 pair wise species comparisons.
+
+```{r, include = FALSE}
+dxy_globals <- dxy_data %>%
+  filter(BIN_START %% 50000 == 1 ) %>%
+  group_by( run ) %>%
+  summarise(mean_global_dxy = sum(dxy*N_SITES)/sum(N_SITES)) %>%
+  mutate(run = fct_reorder(run,mean_global_dxy)) 
+
+fst_globals <- vroom::vroom(fst_globals,delim = '\t',
+                        col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
+  separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
+  mutate(run = str_c(pop1,loc,'-',pop2,loc),
+         run = fct_reorder(run,weighted_fst))
+```
+```{r, eval = FALSE}
+dxy_globals <- dxy_data %>%
+  filter(BIN_START %% 50000 == 1 ) %>%
+  group_by( run ) %>%
+  summarise(mean_global_dxy = sum(dxy*N_SITES)/sum(N_SITES)) %>%
+  mutate(run = fct_reorder(run,mean_global_dxy)) 
+
+fst_globals <- vroom::vroom(fst_globals,delim = '\t',
+                        col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
   separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
   mutate(run = str_c(pop1,loc,'-',pop2,loc),
          run = fct_reorder(run,weighted_fst))
 ```
 
-Next, the filenames of all **msmc** results are collected.
+After this, we import $F_{ST}$ by first listing all $F_{ST}$ data files and then iterating the $F_{ST}$ import function over the files.
 
-```{r, message = FALSE, warning = FALSE}
-msmc_files <- dir(msmc_path, pattern = '.final.txt.gz')
-cc_files <- dir(cc_path, pattern = '.final.txt.gz')
+```{r, include = FALSE}
+fst_files <- dir(fst_dir ,pattern = '.50k.windowed.weir.fst.gz')
+fst_data <- str_c(fst_dir,fst_files) %>%
+  future_map(get_fst) %>%
+  bind_rows()%>%
+  left_join(dxy_globals) %>%
+  left_join(fst_globals) %>%
+  mutate(run = refactor(., fst_globals),
+         BIN_MID = (BIN_START+BIN_END)/2)
+```
+```{r, eval = FALSE}
+fst_files <- dir(fst_dir ,pattern = '.50k.windowed.weir.fst.gz')
+fst_data <- str_c(fst_dir,fst_files) %>%
+  future_map(get_fst) %>%
+  bind_rows()%>%
+  left_join(dxy_globals) %>%
+  left_join(fst_globals) %>%
+  mutate(run = refactor(., fst_globals),
+         BIN_MID = (BIN_START+BIN_END)/2)
 ```
 
-Separately, all the  demographic inffernce and cross-coalescence data are read in an compiled into two data sets.
+We then add the genome wide averages of $F_{ST}$ and $d_{XY}$ as new columns to the $d_{XY}$ data.
+This will be used later for coloring the $d_{XY}$ panel.
 
 ```{r, message = FALSE, warning = FALSE}
-msmc_data <- msmc_files %>%
-  map_dfr(.f = get_msmc, msmc_path = msmc_path)
-
-cc_data <- cc_files %>%
-  map_dfr(get_cc, cc_groups = cc_groups, cc_path = cc_path) %>%
-  mutate( run = factor(run, levels = levels(fst_globals$run)))
+dxy_data <- dxy_data %>% 
+  left_join(dxy_globals) %>%
+  left_join(fst_globals) %>%
+  mutate(run = refactor(dxy_data, fst_globals),
+         window = 'bold(italic(d[xy]))')
 ```
 
-The default color sheme is adjusted (to keep _H. unicolor_ visible) and the tick color for the plots is defined.
+Then, we summarise the $d_{XY}$ data to compute $\Delta d_{XY}$.
 
 ```{r, message = FALSE, warning = FALSE}
-clr_alt <- clr
-clr_alt['uni'] <- rgb(.8,.8,.8)
-clr_ticks <- 'lightgray'
+data_dxy_summary <- dxy_data %>%
+  group_by(GPOS) %>%
+  summarise(scaffold = CHROM[1],
+            start = BIN_START[1],
+            end = BIN_END[1],
+            mid = BIN_MID[1],
+            min_dxy = min(dxy),
+            max_dxy = max(dxy),
+            mean_dxy = mean(dxy),
+            median_dxy = median(dxy),
+            sd_dxy = sd(dxy),
+            delta_dxy = max(dxy)-min(dxy))
 ```
 
-The first panel containing the demographic history is created.
+To only load the relevant twisst data, we first load the positions of the $F_{ST}$ outlier regions.
+We also define a set of outliers of interest.
 
-```{r, message = FALSE, warning = FALSE}
-p_msmc <- msmc_data %>%
-  # remove the two first and last time segments
-  filter(!time_index %in% c(0:2,29:31)) %>%
-  ggplot( aes(x=YBP, y=Ne, group = run_nr, colour = spec)) +
-  # add guides for the logarithmic axes
-  annotation_logticks(sides="tl", color = clr_ticks) +
-  # add the msmc data as lines
-  geom_line()+
-  # set the color scheme
-  scale_color_manual('Species',
-                     values = clr_alt, label = sp_labs) +
-  # format the x axis
-  scale_x_log10(expand = c(0,0),
-                breaks = c(10^3, 10^4, 10^5),
-                position = 'top',
-                labels = c("1-3 kya", "10-30 kya", "100-300 kya"),
-                name = "Years Before Present") +
-  # format the y axis
-  scale_y_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
-                breaks = c(10^3,10^4,10^5,10^6)) +
-  # format the color legend
-  guides(colour = guide_legend(title.position = "top",
-                               override.aes = list(alpha = 1, size=1),
-                               nrow = 2, byrow=TRUE)) + 
-  # set the axis titles
-  labs(x="Generations Before Present", 
-       y = expression(Effective~Population~Size~(italic(N[e])))) +
-  # set plot range
-  coord_cartesian(xlim = c(250, 5*10^5)) +
-  # tune plot appreance
-  theme_minimal()+
-  theme(axis.ticks = element_line(colour = clr_ticks),
-        legend.position = c(1,.03),
-        legend.justification = c(1,0),
-        legend.text.align = 0,
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        title = element_text(face = 'bold'),
-        axis.title = element_text(face = 'plain'),
-        legend.title = element_text(face = 'plain'))
+```{r, eval = FALSE}
+# twisst part ------------------
+outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
+  setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
+
+outlier_pick = c('LG04_1', 'LG12_3', 'LG12_4')
+```
+```{r, include = FALSE}
+# twisst part ------------------
+outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
+  setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
+
+outlier_pick = c('LG04_1', 'LG12_3', 'LG12_4')
 ```
 
-The second panel containing the cross-coalescence is created.
+Then we define a set of genes of interest.
+These are the ones, that later will be labelled in the annotation panel.
 
 ```{r, message = FALSE, warning = FALSE}
-p_cc <- cc_data %>%
-  # remove the two first and last time segments
-  filter( !time_index %in% c(0:2,29:31)) %>%
-  arrange(run_nr) %>%
-  # attach fst data
-  left_join(fst_globals %>% 
-              select(run, weighted_fst)) %>%
-  ggplot(aes(x = YBP, y = Cross_coal, group = run_nr, color = weighted_fst)) +
-  # add guides for the logarithmic axis
-  annotation_logticks(sides="b", color = clr_ticks) +
-  # add the msmc data as lines
-  geom_line(alpha = 0.2)+
-  # set the color scheme
-  scale_color_gradientn(name = expression(Global~weighted~italic(F[ST])),
-                        colours = hypogen::hypo_clr_LGs[1:24])+
-  # format the x axis
-  scale_x_log10(expand = c(0,0),
-                labels = scales::trans_format("log10", scales::math_format(10^.x))) +
-  # set the axis titles
-  guides(color = guide_colorbar(barheight = unit(7, 'pt'),
-                                barwidth = unit(150, 'pt'),
-                                title.position = 'top'))+
-  # set the axis titles
-  labs(x = "Generations Before Present",
-       y = 'Cross-coalescence Rate') +
-  # set plot range
-  coord_cartesian(xlim = c(250, 5*10^5)) +
-  # tune plot appreance
-  theme_minimal()+
-  theme(axis.ticks = element_line(colour = clr_ticks),
-        legend.position = c(1,.03),
-        legend.direction = 'horizontal',
-        legend.justification = c(1,0),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        title = element_text(face = 'bold'),
-        axis.title = element_text(face = 'plain'),
-        legend.title = element_text(face = 'plain'))
+cool_genes <-  c('arl3','kif16b','cdx1','hmcn2',
+                 'sox10','smarca4',
+                 'rorb',
+                 'alox12b','egr1',
+                 'ube4b','casz1',
+                 'hoxc8a','hoxc9','hoxc10a',#'hoxc6a',
+                 #'hoxc8a',
+                 'hoxc13a','rarga','rarg',
+                 'snai1','fam83d','mafb','sws2abeta','sws2aalpha','sws2b','lws','grm8')
 ```
 
-Then, the figure is composed from both panels.
+Next, we load the twisst data for both locations and list all species from Belize (This will be needed to calculate their pair wise distances for the topology highlighting).
+
+```{r, eval = FALSE}
+data_tables <- list(bel = prep_data(loc = 'bel'),
+                    hon = prep_data(loc = 'hon'))
+
+pops_bel <- c('ind','may','nig','pue','uni')
+```
+```{r, include = FALSE}
+data_tables <- list(bel = prep_data(loc = 'bel'),
+                    hon = prep_data(loc = 'hon'))
+
+pops_bel <- c('ind','may','nig','pue','uni')
+```
+
+### Plotting
+
+As a last step before the actual plotting, we are defing a list of outliers to be included within the final plots.
 
 ```{r, message = FALSE, warning = FALSE}
-p_done <- p_msmc / p_cc + plot_annotation(tag_levels = c('a'))
+neighbour_tibbles <- tibble(outlier_id = outlier_pick,
+                            loc = c(rep('bel',3)),
+                            label = c('A','B','C'))
+```
+
+Then, we iterate the main plotting function over all selected $F_{ST}$ outlier windows and combine the resulting plots into a multi panel plot.
+
+```{r, message = FALSE, warning = FALSE}
+p_single <- outlier_table %>%
+  filter(outlier_id %in% outlier_pick) %>%
+  left_join(neighbour_tibbles) %>%
+  mutate(outlier_nr = row_number(),
+         text = ifelse(outlier_nr == 1,TRUE,FALSE)) %>%
+  pmap(plot_curtain, cool_genes = cool_genes) %>%
+  cowplot::plot_grid(plotlist = ., nrow = 1,
+                     labels = letters[1:length(outlier_pick)] %>% project_case())
 ```
 
 <center>
-```{r, echo = FALSE, fig.width = 10, fig.height = 7}
+```{r, echo = FALSE, fig.width = 14, fig.height = 9.33}
+p_single
+```
+</center>
+
+At this point all that we miss is the figure legend.
+So, for the $F_{ST}$, $d_{XY}$ and genotype $\times$ phenotype color shemes we create two dummy plots from where we can export the legends.
+We combine those two classical color legends into what will become the left column of the legend.
+
+```{r, message = FALSE, warning = FALSE}
+p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_fst) %>% .[[1]]
+p_dummy_gxp <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_gxp) %>% .[[1]]
+p_leg_fst <- (p_dummy_fst+theme(legend.position = 'bottom')) %>% get_legend()
+p_leg_gxp <- (p_dummy_gxp+theme(legend.position = 'bottom')) %>% get_legend()
+p_leg1 <- cowplot::plot_grid(p_leg_fst,p_leg_gxp,
+                             ncol = 1)
+```
+
+Then, we construct the topology highlighting color legend.
+We first define the three higlighting scenarios, the involved species and their base color and then iterate the legend plotting functions over those configurations.
+The resulting legend elements are then combined to create the right side of the figure legend and the two main legend elements are combined.
+
+```{r, message = FALSE, warning = FALSE}
+p_leg2 <- tibble(spec1 = c('indigo', 'indigo','unicolor'),
+                 spec2 = c('maya', 'puella',NA),
+                 color = twisst_clr %>% unname() %>% darken(.,factor = .8),
+                 mode = c(rep('pair',2),'isolation')) %>%
+  future_pmap(plot_leg) %>%
+  cowplot::plot_grid(plotlist = .,
+                     nrow = 1)
+
+p_leg <- cowplot::plot_grid(p_leg1, p_leg2,nrow = 1, rel_widths = c(.6, 1))
+
+```
+
+<center>
+```{r, echo = FALSE, fig.width = 14, fig.height = 1.87}
+p_leg
+```
+</center>
+
+After adding the legend to the main part, Figure 3 is done.
+
+```{r, message = FALSE, warning = FALSE}
+p_done <- cowplot::plot_grid(p_single, p_leg,ncol = 1, 
+                            rel_heights = c(1, .2))
+```
+
+<center>
+```{r, echo = FALSE, fig.width = 14, fig.height = 11.2}
 p_done
 ```
 </center>
 
-Finally, we can export Figure 4.
+Finally, we can export Figure 3.
 
 ```{r, eval = FALSE}
-hypo_save(plot = p_done, filename = 'figures/F4.pdf',
-          width = 10, height = 7,
-          comment = 'Rscript srews this one up',
+hypo_save(plot = p_done, filename = 'figures/F3.pdf',
+          width = 14, height = 11.2,
+          comment = script_name, 
           device = cairo_pdf)
 ```
 
