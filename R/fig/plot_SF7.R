@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx7.R 2_analysis/fasttree/ no_outgroups.all.whg.SNP.tree
+# Rscript --vanilla R/fig/plot_SF7.R 2_analysis/fasttree/ no_outgroups.all.whg.SNP.tree
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
@@ -116,7 +116,7 @@ p <- ggtree(tree_df, layout = lyout,
                               label.hjust = 0))+
   theme_void()
 
-hypo_save(filename = 'figures/SX7.pdf',
+hypo_save(filename = 'figures/SF7.pdf',
           plot = p,
           width = 9,
           height = 6,

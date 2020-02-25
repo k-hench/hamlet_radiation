@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx2.R \
+# Rscript --vanilla R/fig/plot_SF8.R \
 #   metadata/phenotypes.sc ressources/img/
 # ===============================================================
 # This script
@@ -78,6 +78,6 @@ p_done <- pheno_data %>%
         plot.background = element_blank())
 
 
-hypo_save(p_done, filename = 'figures/SX2.pdf',
+hypo_save(p_done, filename = 'figures/SF8.pdf',
           width = 10, height = 5.5,
           comment = plot_comment)

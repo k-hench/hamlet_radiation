@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx6.R 2_analysis/dxy/50k/
+# Rscript --vanilla R/fig/plot_SF3.R 2_analysis/dxy/50k/
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
@@ -89,7 +89,7 @@ p <- ggplot()+
         axis.title.x = element_text(),
         axis.text.x.bottom = element_text(colour = 'darkgray'))
 
-hypo_save(filename = 'figures/SX6.png',
+hypo_save(filename = 'figures/SF3.png',
           plot = p,
           width = 8,
           height = 12,

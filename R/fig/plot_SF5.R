@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx5.R 2_analysis/pi/50k/ \
+# Rscript --vanilla R/fig/plot_SF5.R 2_analysis/pi/50k/ \
 #   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
 # This script
@@ -97,7 +97,7 @@ p <- combined_data %>%
   theme(legend.position = c(.84,.01),
         strip.text = element_blank())
 
-hypo_save(filename = 'figures/SX5.pdf',
+hypo_save(filename = 'figures/SF5.pdf',
           plot = p,
           width = 8,
           height = 10,

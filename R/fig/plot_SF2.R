@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx1.R \
+# Rscript --vanilla R/fig/plot_SF2.R \
 #   2_analysis/summaries/fst_globals.txt \
 #   2_analysis/fst/50k/ \
 #   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
@@ -163,7 +163,7 @@ p <- plot_grid(p1, p2,
           rel_heights = c(1,.3),
           labels = letters[1:2] %>% project_case())
 
-hypo_save(filename = 'figures/SX1.pdf',
+hypo_save(filename = 'figures/SF2.pdf',
           plot = p,
           width = 10,
           height = 16,

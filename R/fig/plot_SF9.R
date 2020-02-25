@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx4.R 2_analysis/pi/50k/
+# Rscript --vanilla R/fig/plot_SF9.R 2_analysis/pi/50k/
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
@@ -84,7 +84,7 @@ p <- ggplot()+
         axis.title.x = element_text(),
         axis.text.x.bottom = element_text(colour = 'darkgray'))
 
-hypo_save(filename = 'figures/SX4.png',
+hypo_save(filename = 'figures/SF9.png',
           plot = p,
           width = 8,
           height = 8,

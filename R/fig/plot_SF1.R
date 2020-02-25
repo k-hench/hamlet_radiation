@@ -1,13 +1,13 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx3.R 2_analysis/fst/50k/ \
+# Rscript --vanilla R/fig/plot_SF1.R 2_analysis/fst/50k/ \
 #   2_analysis/summaries/fst_outliers_998.tsv \
 #   2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('R/fig/plot_SFx3.R 2_analysis/fst/50k/',
+# args <- c('2_analysis/fst/50k/',
 #           '2_analysis/summaries/fst_outliers_998.tsv',
 #           '2_analysis/summaries/fst_globals.txt')
 args <- commandArgs(trailingOnly=FALSE)
@@ -109,7 +109,7 @@ p <- ggplot()+
         axis.title.x = element_text(),
         axis.text.x.bottom = element_text(colour = 'darkgray'))
 
-hypo_save(filename = 'figures/SX3.png',
+hypo_save(filename = 'figures/S1.png',
           plot = p,
           width = 8,
           height = 12,

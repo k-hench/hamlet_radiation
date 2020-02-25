@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx9.R 2_analysis/het/50kb/
+# Rscript --vanilla R/fig/plot_SF6.R 2_analysis/het/50kb/
 # ===============================================================
 # by Hench, McMillan an Puebla
 #   ---------------------------------------------------------------
@@ -10,7 +10,6 @@ args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(hypoimg)
 library(GenomicOriginsScripts)
-
 
 cat('\n')
 script_name <- args[5] %>%
@@ -35,9 +34,9 @@ collapse_bins <- function(tib){
 data <- str_c(het_dir, files) %>%
   map(vroom, delim = '\t') %>%
   map(collapse_bins) %>%
-  reduce(left_join) %>% 
+  reduce(left_join) %>%
   pivot_longer(names_to = 'ind', values_to = 'het', cols = -win_id) %>%
-  separate(win_id, 
+  separate(win_id,
            into = c('CHROM', 'win_start', 'win_end'),
            sep = '_',convert = TRUE) %>%
   left_join(hypo_karyotype) %>%
@@ -56,13 +55,13 @@ grp_summary <- data %>%
 clr_alt <- clr
 clr_alt['uni'] <- rgb(.7,.7,.7)
 
-p_het_wg <- data %>% 
+p_het_wg <- data %>%
   ggplot() +
   geom_hypo_LG() +
   geom_line(mapping = aes(x = gpos, y = het, group = ind,
                           color = spec), alpha = .4)+
   scale_x_hypo_LG()+
-  scale_y_continuous(name = 'Heterozygosity', 
+  scale_y_continuous(name = 'Heterozygosity',
                      breaks = c(0,.01,.02))+
   scale_fill_hypo_LG_bg()+
   scale_color_manual(values = clr_alt)+
@@ -80,13 +79,13 @@ hypo_save(plot = p_het_wg,
           dpi = 200,
           comment = plot_comment)
 
-p_het_lg06 <- data %>% 
+p_het_lg06 <- data %>%
   filter(CHROM == 'LG06') %>%
   ggplot() +
   geom_line(mapping = aes(x = gpos, y = het, group = ind,
                           color = spec), alpha = .4)+
   scale_x_continuous(expand = c(0, 0))+
-  scale_y_continuous(name = 'Heterozygosity', 
+  scale_y_continuous(name = 'Heterozygosity',
                      breaks = c(0,.01,.02))+
   scale_fill_hypo_LG_bg()+
   scale_color_manual(values = clr_alt)+
@@ -98,14 +97,14 @@ p_het_lg06 <- data %>%
         strip.background = element_blank())
 
 hypo_save(plot = p_het_lg06,
-          filename = 'figures/SX9b.png',
+          filename = 'figures/SF6.png',
           width = 10,
           height = 10,
           dpi = 200,
           comment = plot_comment)
-  
-# 
-# grp_summary %>% 
+
+#
+# grp_summary %>%
 #   filter(!(spec %in% c('tor', 'tab', 'flo'))) %>%
 #   group_by(spec) %>%
 #   summarise(genome_wide_het = mean(avg_het)) %>%
