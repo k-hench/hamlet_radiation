@@ -2,7 +2,8 @@
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F2.R 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script
+# This script produces Figure 1 of the study "The genomic onset of a marine radiation"
+# by Hench, McMillan an Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
@@ -84,7 +85,7 @@ p <- ggplot(data2, aes(x = weighted, y = Value))+
         strip.placement = 'outside')
 
 scl <- .75
-hypo_save(filename = 'figures/SX8.pdf',
+hypo_save(filename = 'figures/F2.pdf',
           plot = p,
           width = 16*scl,
           height = 10*scl,

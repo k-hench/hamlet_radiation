@@ -2,7 +2,7 @@
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 1 of the study "The genomic origins of a marine radiation"
+# This script produces Figure 1 of the study "The genomic onset of a marine radiation"
 # by Hench, McMillan an Puebla
 #   ---------------------------------------------------------------
 # ===============================================================
@@ -143,7 +143,7 @@ table_all <- dxy_data %>%
                         reformat_run_name())  %>%
                select(run, weighted_fst)) %>%
   pivot_longer(names_to = 'stat',2:3) %>%
-  separate(run, into = c('pop1', 'pop2'), sep = '-') %>% 
+  separate(run, into = c('pop1', 'pop2'), sep = '-') %>%
   mutate(prep1 = ifelse(stat == "weighted_fst", pop2,pop1),
          prep2 = ifelse(stat == "weighted_fst", pop1,pop2),
          pop1 = factor(prep1, levels = pop_levels),
@@ -151,10 +151,10 @@ table_all <- dxy_data %>%
          value = sprintf('%7.5f', value) ) %>%
   select(pop1,pop2,value) %>%
   arrange(pop2,pop1) %>%
-  mutate(pop2 = as.character(pop2) %>% 
+  mutate(pop2 = as.character(pop2) %>%
            str_replace(pattern = '([a-z]{3})([a-z]{3})',
                        replacement = '\\1|\\2'),
-         pop1 = as.character(pop1) %>% 
+         pop1 = as.character(pop1) %>%
            str_replace(pattern = '([a-z]{3})([a-z]{3})',
                        replacement = '\\1|\\2')) %>%
   pivot_wider(values_from = value,
