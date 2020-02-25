@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F2.R 2_analysis/dxy/50k/ \
+# Rscript --vanilla R/fig/plot_SF4 2_analysis/dxy/50k/ \
 #    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
 #    2_analysis/summaries/fst_outliers_998.tsv \
 #    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
@@ -8,7 +8,7 @@
 #    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
 #    2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 2 of the study "The genomic origins of a marine radiation"
+# This script produces Suppl. Figure 4 of the study "The genomic origins of a marine radiation"
 # by Hench, McMillan an Puebla
 # ---------------------------------------------------------------
 # ===============================================================
@@ -189,7 +189,7 @@ outlier_y <- .45
 outlier_yend <- .475
 
 trait_tibble <- tibble(window = c("bold(h):italic(p)~(GxP[Bars])",
-                                  "bold(i):italic(p)~(GxP[Peduncle])", 
+                                  "bold(i):italic(p)~(GxP[Peduncle])",
                                   "bold(j):italic(p)~(GxP[Snout])"),
                        grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
 
@@ -223,7 +223,7 @@ p_done <- ggplot()+
     strip.background = element_blank(),
     strip.placement = 'outside')
 
-hypo_save(p_done, filename = 'figures/F2.png',
-          width = 297*.95, height = 275*.95, 
+hypo_save(p_done, filename = 'figures/SF4.png',
+          width = 297*.95, height = 275*.95,
           units = 'mm',
           comment = plot_comment)

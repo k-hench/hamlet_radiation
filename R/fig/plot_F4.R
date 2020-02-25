@@ -2,7 +2,7 @@
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F4.R \
 #   2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
-#   2_analysis/msmc/setup/msmc_cc_grouping.txt 2_analysis/msmc/setup/msmc_grouping.txt \
+#   2_analysis/msmc/setup/msmc_grouping.txt 2_analysis/msmc/setup/msmc_cc_grouping.txt \
 #   2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script produces Figure 4 of the study "The genomic origins of a marine radiation"
@@ -16,6 +16,7 @@
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
+library(hypoimg)
 library(patchwork)
 
 cat('\n')
@@ -95,6 +96,8 @@ p_msmc <- msmc_data %>%
         panel.grid.minor.y = element_blank(),
         title = element_text(face = 'bold'),
         axis.title = element_text(face = 'plain'),
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
         legend.title = element_text(face = 'plain'))
 
 p_cc <- cc_data %>%
