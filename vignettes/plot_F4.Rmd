@@ -3,7 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Figure 3
+# Figure 4
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -21,12 +21,12 @@ args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
 
 ## Summary
 
-This is the accessory documentation of Figure 3.
-The Figure can be recreated by running the **R** script `plot_F3.R`:
+This is the accessory documentation of Figure 4.
+The Figure can be recreated by running the **R** script `plot_F4.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_F3.R \
+Rscript --vanilla R/fig/plot_F4.R \
   2_analysis/twisst/weights/ ressources/plugin/trees/ \
   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
@@ -35,7 +35,7 @@ Rscript --vanilla R/fig/plot_F3.R \
 
 ```
 
-## Details of `plot_F3.R`
+## Details of `plot_F4.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package **GenomicOriginsScripts**.
@@ -47,15 +47,15 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F3.R \
+# Rscript --vanilla R/fig/plot_F4.R \
 #   2_analysis/twisst/weights/ ressources/plugin/trees/ \
 #   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
 #   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
 #   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
 #   2_analysis/GxP/50000/ 200 5
 # ===============================================================
-# This script produces Figure 3 of the study "The genomic origins of a marine radiation"
-# by Hench, McMillan an Puebla
+# This script produces Figure 4 of the study "The genomic onset of a marine radiation"
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
@@ -80,17 +80,17 @@ library(GenomicOriginsScripts)
 library(hypoimg)
 library(furrr)
 cat('\n')
-script_name <- args[5] %>% 
+script_name <- args[5] %>%
   str_remove(.,'--file=')
 
-plot_comment <- script_name %>% 
-  str_c('mother-script = ',getwd(),'/',.) 
+plot_comment <- script_name %>%
+  str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
 ```
 
 ```r
-── Script: scripts/plot_F3.R ────────────────────────────────────────────
+── Script: scripts/plot_F4.R ────────────────────────────────────────────
 Parameters read:
  ★ 1: figures/data/twisst_weights/
  ★ 2: figures/data/twisst_positions/
@@ -154,7 +154,7 @@ We start by importing $d_{XY}$ by first listing all $d_{XY}$ data files and then
 dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.50kb-5kb.tsv.gz'))
 
 dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
-  purrr::pmap(get_dxy) %>% 
+  purrr::pmap(get_dxy) %>%
   bind_rows()
 ```
 ```{r, eval = FALSE}
@@ -163,7 +163,7 @@ dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
 dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.50kb-5kb.tsv.gz'))
 
 dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
-  purrr::pmap(get_dxy) %>% 
+  purrr::pmap(get_dxy) %>%
   bind_rows()
 ```
 
@@ -172,14 +172,14 @@ Next we iterate the genotype $\times$ phenotype import function over the trait n
 ```{r, include = FALSE}
 gxp_traits <- c('Bars', 'Snout', 'Peduncle')
 
-gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.50k.5k.txt.gz') %>% 
+gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.50k.5k.txt.gz') %>%
   future_map(get_gxp_long) %>%
   bind_rows()
 ```
 ```{r, eval = FALSE}
 gxp_traits <- c('Bars', 'Snout', 'Peduncle')
 
-gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.50k.5k.txt.gz') %>% 
+gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.50k.5k.txt.gz') %>%
   future_map(get_gxp_long) %>%
   bind_rows()
 ```
@@ -188,7 +188,7 @@ Then, we define two sets of colors - one for the topology highlighting schemes a
 
 ```{r, message = FALSE, warning = FALSE}
 twisst_clr <- c(Blue = "#0140E5", Bars = "#E32210", Butter = "#E4E42E")
-gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>% 
+gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
   darken(factor = .95) %>%
   set_names(., nm = gxp_traits)
 ```
@@ -200,7 +200,7 @@ dxy_globals <- dxy_data %>%
   filter(BIN_START %% 50000 == 1 ) %>%
   group_by( run ) %>%
   summarise(mean_global_dxy = sum(dxy*N_SITES)/sum(N_SITES)) %>%
-  mutate(run = fct_reorder(run,mean_global_dxy)) 
+  mutate(run = fct_reorder(run,mean_global_dxy))
 
 fst_globals <- vroom::vroom(fst_globals,delim = '\t',
                         col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
@@ -213,7 +213,7 @@ dxy_globals <- dxy_data %>%
   filter(BIN_START %% 50000 == 1 ) %>%
   group_by( run ) %>%
   summarise(mean_global_dxy = sum(dxy*N_SITES)/sum(N_SITES)) %>%
-  mutate(run = fct_reorder(run,mean_global_dxy)) 
+  mutate(run = fct_reorder(run,mean_global_dxy))
 
 fst_globals <- vroom::vroom(fst_globals,delim = '\t',
                         col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
@@ -249,7 +249,7 @@ We then add the genome wide averages of $F_{ST}$ and $d_{XY}$ as new columns to 
 This will be used later for coloring the $d_{XY}$ panel.
 
 ```{r, message = FALSE, warning = FALSE}
-dxy_data <- dxy_data %>% 
+dxy_data <- dxy_data %>%
   left_join(dxy_globals) %>%
   left_join(fst_globals) %>%
   mutate(run = refactor(dxy_data, fst_globals),
@@ -386,10 +386,10 @@ p_leg
 ```
 </center>
 
-After adding the legend to the main part, Figure 3 is done.
+After adding the legend to the main part, Figure 4 is done.
 
 ```{r, message = FALSE, warning = FALSE}
-p_done <- cowplot::plot_grid(p_single, p_leg,ncol = 1, 
+p_done <- cowplot::plot_grid(p_single, p_leg,ncol = 1,
                             rel_heights = c(1, .2))
 ```
 
@@ -399,12 +399,12 @@ p_done
 ```
 </center>
 
-Finally, we can export Figure 3.
+Finally, we can export Figure 4.
 
 ```{r, eval = FALSE}
-hypo_save(plot = p_done, filename = 'figures/F3.pdf',
+hypo_save(plot = p_done, filename = 'figures/F4.pdf',
           width = 14, height = 11.2,
-          comment = script_name, 
+          comment = script_name,
           device = cairo_pdf)
 ```
 

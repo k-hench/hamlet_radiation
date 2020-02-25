@@ -3,7 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Figure 4
+# Figure 3
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -17,13 +17,13 @@ args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
 
 ## Summary
 
-This is the accessory documentation of Figure 4.
-It should be possible to recreate the figure by running the **R** script `plot_F4.R`:
+This is the accessory documentation of Figure 3.
+It should be possible to recreate the figure by running the **R** script `plot_F3.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_F4.R \
+Rscript --vanilla R/fig/plot_F3.R \
   2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
   2_analysis/msmc/setup/msmc_cc_grouping.txt 2_analysis/msmc/setup/msmc_grouping.txt \
   2_analysis/summaries/fst_globals.txt
@@ -32,7 +32,7 @@ Rscript --vanilla R/fig/plot_F4.R \
 Unfortunately, currently this fails on my local machine apparently due to some insconsitencies between `Rscript` and interactive **R** sessions with regard to the library management.
 If running the script from the command line fails, the script can also be run interactively by un-comenting the `args <- ...` statement in the header and skipping the  header until the `# config ...` line.
 
-## Details of `plot_F4.R`
+## Details of `plot_F3.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory **R** packages **GenomicOriginsScripts** and on the **R** package [**patchwork**](https://patchwork.data-imaginist.com/).
@@ -44,13 +44,13 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, include = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F4.R \
+# Rscript --vanilla R/fig/plot_F3.R \
 #   2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
 #   2_analysis/msmc/setup/msmc_cc_grouping.txt 2_analysis/msmc/setup/msmc_grouping.txt \
 #   2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 4 of the study "The genomic origins of a marine radiation"
-# by Hench, McMillan an Puebla
+# This script produces Figure 3 of the study "The genomic onset of a marine radiation"
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
@@ -160,9 +160,9 @@ p_msmc <- msmc_data %>%
   # format the color legend
   guides(colour = guide_legend(title.position = "top",
                                override.aes = list(alpha = 1, size=1),
-                               nrow = 2, byrow=TRUE)) + 
+                               nrow = 2, byrow=TRUE)) +
   # set the axis titles
-  labs(x="Generations Before Present", 
+  labs(x="Generations Before Present",
        y = expression(Effective~Population~Size~(italic(N[e])))) +
   # set plot range
   coord_cartesian(xlim = c(250, 5*10^5)) +
@@ -187,7 +187,7 @@ p_cc <- cc_data %>%
   filter( !time_index %in% c(0:2,29:31)) %>%
   arrange(run_nr) %>%
   # attach fst data
-  left_join(fst_globals %>% 
+  left_join(fst_globals %>%
               select(run, weighted_fst)) %>%
   ggplot(aes(x = YBP, y = Cross_coal, group = run_nr, color = weighted_fst)) +
   # add guides for the logarithmic axis

@@ -9,7 +9,7 @@
 #    2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script produces Suppl. Figure 4 of the study "The genomic origins of a marine radiation"
-# by Hench, McMillan an Puebla
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/','2_analysis/fst/50k/multi_fst.50k.tsv.gz',

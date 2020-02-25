@@ -6,7 +6,7 @@
 #   2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script produces Figure 3 of the study "The genomic onset of a marine radiation"
-# by Hench, McMillan an Puebla
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',

@@ -8,7 +8,7 @@
 #   2_analysis/GxP/50000/ 200 5
 # ===============================================================
 # This script produces Figure 4 of the study "The genomic onset of a marine radiation"
-# by Hench, McMillan an Puebla
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',

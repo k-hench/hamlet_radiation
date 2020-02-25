@@ -39,8 +39,8 @@ The scripts start with a header that contains copy & paste templates to execute 
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
 # ===============================================================
-# This script produces Figure 1 of the study "The genomic origins of a marine radiation"
-# by Hench, McMillan an Puebla
+# This script produces Figure 1 of the study "The genomic onset of a marine radiation"
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/')
@@ -60,11 +60,11 @@ library(GenomicOriginsScripts)
 library(hypoimg)
 
 cat('\n')
-script_name <- args[5] %>% 
+script_name <- args[5] %>%
   str_remove(.,'--file=')
 
-plot_comment <- script_name %>% 
-  str_c('mother-script = ',getwd(),'/',.) 
+plot_comment <- script_name %>%
+  str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
 ```
@@ -96,14 +96,14 @@ This is done for both *F<sub>ST</sub>* and *d<sub>XY</sub>*.
 ```{r, eval = FALSE}
 # start script -------------------
 
-# import Fst 
+# import Fst
 fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
 
 fst_data <- str_c(fst_dir,fst_files) %>%
   purrr::map(summarize_fst) %>%
   bind_rows()
 
-# import dxy 
+# import dxy
 dxy_files <- dir(dxy_dir)
 
 dxy_data <-  str_c(dxy_dir,dxy_files) %>%
@@ -113,14 +113,14 @@ dxy_data <-  str_c(dxy_dir,dxy_files) %>%
 ```{r, include = FALSE}
 # start script -------------------
 
-# import Fst 
+# import Fst
 fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
 
 fst_data <- str_c(fst_dir,fst_files) %>%
   purrr::map(summarize_fst) %>%
   bind_rows()
 
-# import dxy 
+# import dxy
 dxy_files <- dir(dxy_dir)
 
 dxy_data <-  str_c(dxy_dir,dxy_files) %>%
@@ -131,7 +131,7 @@ dxy_data <-  str_c(dxy_dir,dxy_files) %>%
 We use the genome wide average *F<sub>ST</sub>* to rank the individual pair wise comparisons.
 
 ```{r, message = FALSE, warning = FALSE}
-fst_order <- fst_data %>% 
+fst_order <- fst_data %>%
   select(run, `mean_weighted-fst`) %>%
   mutate(run = fct_reorder(run,`mean_weighted-fst`))
 ```
@@ -141,13 +141,13 @@ Then, we merge the *F<sub>ST</sub>* and *d<sub>XY</sub>* data sets and do quite 
 ```{r, message = FALSE, warning = FALSE}
 data <- left_join(fst_data, dxy_data) %>%
   select(c(8,1:7,9:15)) %>%
-  # transfrom table from short to long format 
+  # transfrom table from short to long format
   gather(key = 'stat', value = 'val',2:15) %>%
   # separating the boxplot element from the population genetic parameter
   separate(stat, into = c('sumstat','popstat'),sep = '_') %>%
   # rescaleing the dxy values to fall in the range of Fst
-  mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>% 
-  # combining original and rescaled values 
+  mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
+  # combining original and rescaled values
   unite(temp, val, val_scaled) %>%
   # back transforming to short format
   spread(.,key = 'sumstat',value = 'temp') %>%
@@ -166,7 +166,7 @@ data <- left_join(fst_data, dxy_data) %>%
          x_dodge = ifelse(popstat == 'dxy',x + .25,x - .25), # shift dxy to the right, fst left
          x_start_dodge = x_dodge - wdh/2,                    # boxplot left border
          x_end_dodge = x_dodge + wdh/2,                      # boxplot right border
-         popstat_loc = str_c(popstat,'[',loc,']'))           # parameter X location (for color) 
+         popstat_loc = str_c(popstat,'[',loc,']'))           # parameter X location (for color)
 ```
 
 At this point, the data is ready for the boxplots.
@@ -184,12 +184,12 @@ run_ord <- tibble(run = levels(data$run),
        run_ord = 1:length(levels(data$run)))
 
 # network config and layout
-networx <- tibble( loc = c('bel','hon', 'pan'), 
+networx <- tibble( loc = c('bel','hon', 'pan'),
                    n = c(5,6,3),
                    label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
                                 str_c(c('abe','gum','nig','pue','ran','uni'),'hon'),
                                 str_c(c('nig','pue','uni'),'pan')),
-                   weight = c(1,1.45,1)) %>% 
+                   weight = c(1,1.45,1)) %>%
   purrr::pmap(network_layout) %>%
   bind_rows()
 
@@ -206,7 +206,7 @@ p1 <- cowplot::plot_grid(
   grid::textGrob('Belize'),
   grid::textGrob('Honduras'),
   grid::textGrob('Panama'),
-  plot_list[[1]], plot_list[[2]], plot_list[[3]], 
+  plot_list[[1]], plot_list[[2]], plot_list[[3]],
   ncol = 3, rel_heights = c(.1,1))
 ```
 
@@ -224,11 +224,11 @@ We are going to plot each boxplot element as a single layer.
 p2 <- data %>%
   ggplot(aes(color = popstat_loc)) +
   # adding whiskers
-  geom_segment(aes(x = x_dodge, xend = x_dodge, 
+  geom_segment(aes(x = x_dodge, xend = x_dodge,
                    y = lowpoint_scaled,yend = highpoint_scaled)) +
   # adding box (inter quartile range)
   geom_rect(aes(xmin = x_start_dodge, xmax = x_end_dodge,
-                ymin = lower_scaled, ymax = upper_scaled), 
+                ymin = lower_scaled, ymax = upper_scaled),
              fill='white')+
   # adding bar (median)
   geom_segment(aes(x = x_start_dodge,
@@ -244,7 +244,7 @@ p2 <- data %>%
                      name = expression(italic(F[ST])),
                      # layout secondary y axis (dxy)
                      sec.axis = sec_axis(~ . /scaler,
-                                         name = expression(italic(d[XY])), 
+                                         name = expression(italic(d[XY])),
                                          breaks = c(0,.005,.01)))+
   # define color scheme
   scale_color_manual(values = c(make_faint_clr('bel'),
