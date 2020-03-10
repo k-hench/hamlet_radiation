@@ -86,7 +86,7 @@ The directories for the demographic inffernce and the cross-coalescence data are
 Also, the files containing the groupings for demographic inffernce and cross-coalescence as well as the reference file for the genome wide $F_{ST}$ values are received.
 
 ```{r, message = FALSE, warning = FALSE}
-# config -----------------------
+# config ---------------------an--
 msmc_path <- as.character(args[1])
 cc_path <- as.character(args[2])
 msmc_group_file <- as.character(args[3])
@@ -234,10 +234,10 @@ p_done
 ```
 </center>
 
-Finally, we can export Figure 4.
+Finally, we can export Figure 3.
 
 ```{r, eval = FALSE}
-hypo_save(plot = p_done, filename = 'figures/F4.pdf',
+hypo_save(plot = p_done, filename = 'figures/F3.pdf',
           width = 10, height = 7,
           comment = 'Rscript srews this one up',
           device = cairo_pdf)

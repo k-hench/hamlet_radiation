@@ -76,6 +76,7 @@ p <- ggplot(data2, aes(x = weighted, y = Value))+
   geom_point(color = plot_clr, size = .8)+
   facet_grid(variable~threshold_value,
              scale='free',
+             #nrow = 3,
              switch = 'y',
              labeller = label_parsed)+
   scale_x_continuous(expression(Whole-genome~differentiation~(weighted~italic(F[ST]))))+
