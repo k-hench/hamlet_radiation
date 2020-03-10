@@ -5,6 +5,8 @@ Each Nextflow script is placed within its own sub directory to allow praralell e
 
 Of course, the **genotyping\*** pipelines need to be run *before* the **analysis\*** pipelines.
 
+To get an idea about the order of pipelines, please refer to the [documentation](https://k-hench.github.io/chapter2/).
+
 ---
 
 <p align="center"><img src="../logo.svg" alt="logo" width="150"/></p>
