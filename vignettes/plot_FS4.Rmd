@@ -3,7 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Figure 2
+# Supplementary Figure 4
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -19,12 +19,12 @@ args <- c('2_analysis/dxy/50k/','2_analysis/fst/50k/multi_fst.50k.tsv.gz',
 
 ## Summary
 
-This is the accessory documentation of Figure 2.
-The Figure can be recreated by running the **R** script `plot_F2.R`:
+This is the accessory documentation of supplementary Figure 4.
+The Figure can be recreated by running the **R** script `plot_SF4.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_F2.R 2_analysis/dxy/50k/ \
+Rscript --vanilla R/fig/plot_SF4.R 2_analysis/dxy/50k/ \
    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
    2_analysis/summaries/fst_outliers_998.tsv \
    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
@@ -34,7 +34,7 @@ Rscript --vanilla R/fig/plot_F2.R 2_analysis/dxy/50k/ \
 
 ```
 
-## Details of `plot_F2.R`
+## Details of `plot_SF4.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package **GenomicOriginsScripts**.
@@ -46,7 +46,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F2.R 2_analysis/dxy/50k/ \
+# Rscript --vanilla R/fig/plot_SF4.R 2_analysis/dxy/50k/ \
 #    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
 #    2_analysis/summaries/fst_outliers_998.tsv \
 #    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
@@ -54,7 +54,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 #    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
 #    2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 2 of the study "The genomic origins of a marine radiation"
+# This script produces Suppl. Figure 4 of the study "The genomic origins of a marine radiation"
 # by Hench, McMillan an Puebla
 # ---------------------------------------------------------------
 # ===============================================================
@@ -79,17 +79,17 @@ library(GenomicOriginsScripts)
 library(hypoimg)
 
 cat('\n')
-script_name <- args[5] %>% 
+script_name <- args[5] %>%
   str_remove(.,'--file=')
 
-plot_comment <- script_name %>% 
-  str_c('mother-script = ',getwd(),'/',.) 
+plot_comment <- script_name %>%
+  str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_F2.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF4.R ────────────────────────────────────────────
 #> Parameters read:
 #>  ★ 1: 2_analysis/dxy/50k/
 #>  ★ 2: 2_analysis/fst/50k/multi_fst.50k.tsv.gz
@@ -122,7 +122,7 @@ source(twisst_script)
 
 ### Data import
 
-Figure 2 contains wuite a lot of different data sets.
+Supplementary Figure 4 contains quite a lot of different data sets.
 The main part of this script is just importing and organizing all of this data:
 In the following we'll go step by step through the import of:
 
@@ -135,7 +135,7 @@ In the following we'll go step by step through the import of:
 We start with the import of the $F_{ST}$ data, specifically the data set containing the genome wide $F_{ST}$ computed for all populations simultaneously (joint $F_{ST}$).
 
 The data file is read, the columns are renamed and the genomic position is added.
-Then, only the genomic position and the $F_{ST}$ columns are selected and a window column is added for facetting in `ggplot()`.
+Then, only the genomic position and the $F_{ST}$ columns are selected and a window column is added for faceting in `ggplot()`.
 
 ```{r, include = FALSE}
 # start script -------------------
@@ -216,9 +216,9 @@ trait_panels <- c(Bars = str_c('bold(',project_case('h'),')'),
                   Snout = str_c('bold(',project_case('j'),')'))
 
 
-gxp_data <- str_c(gxp_dir,traits) %>% 
+gxp_data <- str_c(gxp_dir,traits) %>%
   purrr::map(get_gxp) %>%
-  join_list() %>% 
+  join_list() %>%
   gather(key = 'window', value = 'value',2:4)
 ```
 ```{r, include = FALSE}
@@ -230,9 +230,9 @@ trait_panels <- c(Bars = str_c('bold(',project_case('h'),')'),
                   Snout = str_c('bold(',project_case('j'),')'))
 
 
-gxp_data <- str_c(gxp_dir,traits) %>% 
+gxp_data <- str_c(gxp_dir,traits) %>%
   purrr::map(get_gxp) %>%
-  join_list() %>% 
+  join_list() %>%
   gather(key = 'window', value = 'value',2:4)
 ```
 
@@ -243,19 +243,19 @@ Then, we import the genome wide $F_{ST}$ summary for all 28 pair wise comparison
 globals <- vroom::vroom(global_fst_file, delim = '\t',
                       col_names = c('loc','run','mean','weighted')) %>%
   mutate(run = str_c(str_sub(run,1,3),loc,'-',str_sub(run,5,7),loc),
-         run = fct_reorder(run,weighted)) 
+         run = fct_reorder(run,weighted))
 
 # select dxy data
-selectors_dxy <- globals %>% 
-  arrange(weighted) %>% 
-  .$weighted %>% 
+selectors_dxy <- globals %>%
+  arrange(weighted) %>%
+  .$weighted %>%
   .[15]
 
 select_dxy_runs <- globals %>%
   filter(weighted %in% selectors_dxy) %>%
   .$run %>% as.character()
 
-dxy_select <- dxy_data %>% 
+dxy_select <- dxy_data %>%
   filter(run %in% select_dxy_runs) %>%
   mutate(window = str_c('bold(',project_case('d'),'): italic(d[XY])'))
 ```
@@ -264,19 +264,19 @@ dxy_select <- dxy_data %>%
 globals <- vroom::vroom(global_fst_file, delim = '\t',
                       col_names = c('loc','run','mean','weighted')) %>%
   mutate(run = str_c(str_sub(run,1,3),loc,'-',str_sub(run,5,7),loc),
-         run = fct_reorder(run,weighted)) 
+         run = fct_reorder(run,weighted))
 
 # select dxy data
-selectors_dxy <- globals %>% 
-  arrange(weighted) %>% 
-  .$weighted %>% 
+selectors_dxy <- globals %>%
+  arrange(weighted) %>%
+  .$weighted %>%
   .[15]
 
 select_dxy_runs <- globals %>%
   filter(weighted %in% selectors_dxy) %>%
   .$run %>% as.character()
 
-dxy_select <- dxy_data %>% 
+dxy_select <- dxy_data %>%
   filter(run %in% select_dxy_runs) %>%
   mutate(window = str_c('bold(',project_case('d'),'): italic(d[XY])'))
 ```
@@ -298,7 +298,7 @@ pi_summary <- dxy_data %>%
   ungroup() %>%
   set_names(., nm = c('pop','run','avg_pi')) %>%
   bind_rows(pi_summary_1)  %>%
-  group_by(pop) %>% 
+  group_by(pop) %>%
   summarise(n = length(pop),
             mean_pi = mean(avg_pi),
             min_pi = min(avg_pi),
@@ -319,13 +319,13 @@ select_pi_pops <- pi_summary %>%
   filter(mean_pi %in% selectors_pi) %>%
   .$pop %>% as.character
 
-pi_data_select <- dxy_data %>% 
+pi_data_select <- dxy_data %>%
   select(GPOS, PI_POP1, pop1 )%>%
   set_names(., nm = c('GPOS','pi','pop')) %>%
-  bind_rows(.,dxy_data %>% 
+  bind_rows(.,dxy_data %>%
               select(GPOS, PI_POP2, pop2 )%>%
               set_names(., nm = c('GPOS','pi','pop'))) %>%
-  group_by(GPOS,pop) %>% 
+  group_by(GPOS,pop) %>%
   summarise(n = length(pop),
             mean_pi = mean(pi),
             min_pi = min(pi),
@@ -345,9 +345,9 @@ recombination_data <- vroom::vroom(recombination_file,delim = '\t') %>%
   mutate(window = str_c('bold(',project_case('c'),'): rho'))
 ```
 
-Then we import the topology weighting data. 
+Then we import the topology weighting data.
 This is done once per location, the data sets are combined and specific columns are selected:
-The gnomic position, the topologie number (format: three digits with leading zeros, hence "topo3"), relative topology rank ranging from 0 to 1, the facceting column annd the actual weight data.
+The gnomic position, the topology number (format: three digits with leading zeros, hence "topo3"), relative topology rank ranging from 0 to 1, the faceting column and the actual weight data.
 
 We also create a dummy tibble that contains the null expectation of the topology weight for the two locations (1/n, with n = number of possible topologies - n = 15 for Belize and 105 for Honduras).
 
@@ -356,7 +356,7 @@ We also create a dummy tibble that contains the null expectation of the topology
 twisst_data <- tibble(loc = c('bel','hon'),
                       panel = c('f','g') %>% project_case() %>% str_c('bold(',.,')')) %>%
   purrr::pmap(match_twisst_files) %>%
-  bind_rows() %>% 
+  bind_rows() %>%
   select(GPOS, topo3,topo_rel,window,weight)
 
 twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~weighting[bel]'),
@@ -368,7 +368,7 @@ twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~weighting[b
 twisst_data <- tibble(loc = c('bel','hon'),
                       panel = c('f','g') %>% project_case() %>% str_c('bold(',.,')')) %>%
   purrr::pmap(match_twisst_files) %>%
-  bind_rows() %>% 
+  bind_rows() %>%
   select(GPOS, topo3,topo_rel,window,weight)
 
 twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~weighting[bel]'),
@@ -376,14 +376,14 @@ twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~weighting[b
                       weight = c(1/15, 1/105))
 ```
 
-We craete a single data set for $d_{XY}$, $F_{ST}$ and genotype $\times$ phenotype data.
+We create a single data set for $d_{XY}$, $F_{ST}$ and genotype $\times$ phenotype data.
 
 ```{r, message = FALSE, warning = FALSE}
 # combine data types --------
 data <- bind_rows(dxy_summary, fst_data, gxp_data)
 ```
 
-Then we load the positions of the the $F_{ST}$ outlier windows, select the focal outliers that will receive individual labels and create a tibnble and two parameters for the label placement within the plot.
+Then we load the positions of the the $F_{ST}$ outlier windows, select the focal outliers that will receive individual labels and create a tibble and two parameters for the label placement within the plot.
 
 ```{r, include = FALSE}
 # import fst outliers
@@ -424,7 +424,7 @@ We prepare a set of trait annotations for the genotype $\times$ phenotype associ
 
 ```{r}
 trait_tibble <- tibble(window = c("bold(h):italic(p)~(GxP[Bars])",
-                                  "bold(i):italic(p)~(GxP[Peduncle])", 
+                                  "bold(i):italic(p)~(GxP[Peduncle])",
                                   "bold(j):italic(p)~(GxP[Snout])"),
                        grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
 
@@ -439,11 +439,11 @@ Finally it is time to put the pieces together with one giant `ggplot():`
 p_done <- ggplot()+
   # add lg indication in the backgroud
   geom_hypo_LG()+
-  # add fst outlier window indication in the background 
+  # add fst outlier window indication in the background
   geom_vline(data = outliers, aes(xintercept = gpos), color = outlr_clr)+
   # add outlier label flags
-  geom_segment(data = outlier_label, 
-               aes(x = gpos, 
+  geom_segment(data = outlier_label,
+               aes(x = gpos,
                    xend = gpos_label2, y = outlier_y, yend = outlier_yend),
                color = alpha(outlr_clr,1),size = .2)+
   # add outlier labels
@@ -491,7 +491,7 @@ p_done
 </center>
 
 ```r
-hypo_save(p_done, filename = 'figures/F2.png', 
+hypo_save(p_done, filename = 'figures/SF4.png',
           width = 297*.95, height = 275*.95, units = 'mm',
           comment = plot_comment)
 ```

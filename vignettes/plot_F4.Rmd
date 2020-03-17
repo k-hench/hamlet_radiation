@@ -90,18 +90,18 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-── Script: scripts/plot_F4.R ────────────────────────────────────────────
-Parameters read:
- ★ 1: figures/data/twisst_weights/
- ★ 2: figures/data/twisst_positions/
- ★ 3: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
- ★ 4: figures/data/summaries/all_multi_fst_outliers_998.tsv
- ★ 5: figures/data/dxy/
- ★ 6: figures/data/fst/
- ★ 7: figures/data/summaries/fst_globals.txt
- ★ 8: figures/data/GxP/
- ★ 9: 200
-─────────────────────────────────────────── /current/working/directory ──
+#> ── Script: R/fig/plot_F4.R ────────────────────────────────────────────
+#> Parameters read:
+#>  ★ 1: figures/data/twisst_weights/
+#>  ★ 2: figures/data/twisst_positions/
+#>  ★ 3: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
+#>  ★ 4: figures/data/summaries/all_multi_fst_outliers_998.tsv
+#>  ★ 5: figures/data/dxy/
+#>  ★ 6: figures/data/fst/
+#>  ★ 7: figures/data/summaries/fst_globals.txt
+#>  ★ 8: figures/data/GxP/
+#>  ★ 9: 200
+#> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
 The directories for the different data types are received and stored in respective variables.

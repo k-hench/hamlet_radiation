@@ -5,7 +5,6 @@ editor_options:
 ---
 # Figure 1
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
@@ -70,7 +69,7 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_F1.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_F1.R ────────────────────────────────────────────
 #> Parameters read:
 #>  ★ 1: 2_analysis/dxy/50k/
 #>  ★ 2: 2_analysis/fst/50k/
