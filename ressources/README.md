@@ -91,7 +91,7 @@ These files are not tracked to minimize the repository size but the following st
 13 directories, 4448 files
 ```
 
-Refernces:
+References:
 
 Han, F. *et al.* Gene flow, ancient polymorphism, and ecological adaptation shape the genomic landscape of divergence among darwin’s finches. Genome research 27, 1004–1015 (2017).
 
