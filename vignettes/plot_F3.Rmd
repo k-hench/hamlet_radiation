@@ -29,7 +29,7 @@ Rscript --vanilla R/fig/plot_F3.R \
   2_analysis/summaries/fst_globals.txt
 ```
 
-Unfortunately, currently this fails on my local machine apparently due to some insconsitencies between `Rscript` and interactive **R** sessions with regard to the library management.
+Unfortunately, currently this fails on my local machine apparently due to some inconsistencies between `Rscript` and interactive **R** sessions with regard to the library management.
 If running the script from the command line fails, the script can also be run interactively by un-comenting the `args <- ...` statement in the header and skipping the  header until the `# config ...` line.
 
 ## Details of `plot_F3.R`
@@ -82,8 +82,8 @@ plot_comment <- script_name %>%
 args <- process_input(script_name, args)
 ```
 
-The directories for the demographic inffernce and the cross-coalescence data are received and stored in respective variables.
-Also, the files containing the groupings for demographic inffernce and cross-coalescence as well as the reference file for the genome wide $F_{ST}$ values are received.
+The directories for the demographic inference and the cross-coalescence data are received and stored in respective variables.
+Also, the files containing the groupings for demographic inference and cross-coalescence as well as the reference file for the genome wide $F_{ST}$ values are received.
 
 ```{r, message = FALSE, warning = FALSE}
 # config ---------------------an--
@@ -115,7 +115,7 @@ msmc_files <- dir(msmc_path, pattern = '.final.txt.gz')
 cc_files <- dir(cc_path, pattern = '.final.txt.gz')
 ```
 
-Separately, all the  demographic inffernce and cross-coalescence data are read in an compiled into two data sets.
+Separately, all the  demographic inference and cross-coalescence data are read in an compiled into two data sets.
 
 ```{r, message = FALSE, warning = FALSE}
 msmc_data <- msmc_files %>%
@@ -126,7 +126,7 @@ cc_data <- cc_files %>%
   mutate( run = factor(run, levels = levels(fst_globals$run)))
 ```
 
-The default color sheme is adjusted (to keep _H. unicolor_ visible) and the tick color for the plots is defined.
+The default color scheme is adjusted (to keep _H. unicolor_ visible) and the tick color for the plots is defined.
 
 ```{r, message = FALSE, warning = FALSE}
 clr_alt <- clr
