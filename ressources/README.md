@@ -36,15 +36,20 @@ These files are not tracked to minimize the repository size but the following st
 |-- genotypes
 |   |-- gvcfs
 |   |   |-- 16_21-30nigpan.g.vcf.gz
-|   |   |--  ...
+|   |   |-- ...
 |   |   `-- s_tort_3torpan.g.vcf.gz
 |   |-- raw_var_sites.vcf.gz
 |   `-- raw_var_sites.vcf.gz.tbi
 |-- img
 |   |-- bars_r.c.svg
+|   |-- finch.c.svg
+|   |-- flycatcher.c.svg
 |   |-- generic_hamlet.c.svg
+|   |-- heliconius.c.svg
+|   |-- monkeyflower.c.svg
 |   |-- peduncle_r.c.svg
-|   `-- snout_r.c.svg
+|   |-- snout_r.c.svg
+|   `-- sunflower.c.svg
 |-- indel_masks
 |   |-- indel_mask.LG01.bed.gz
 |   |-- ...
@@ -54,6 +59,12 @@ These files are not tracked to minimize the repository size but the following st
 |   |-- ...
 |   |-- LG24.mapmask.bed.txt.gz
 |   `-- LG_M.mapmask.bed.txt.gz
+|-- other_studies
+|   |-- all_9_taxa_G1_vars.bgziped.vcf.gz
+|   |-- all_9_taxa_G1_vars.bgziped.vcf.gz.tbi
+|   |-- han_etal_2017.tsv
+|   |-- stankowski_etal_2019.tsv
+|   `-- stankowski_etal_2019_spec_short.tsv
 `-- plugin
     |-- indel_masks
     |   |-- indel_mask.LG01.bed.gz
@@ -62,18 +73,22 @@ These files are not tracked to minimize the repository size but the following st
     `-- trees
         |-- bel
         |   |-- bel.LG01.w200.phyml_bionj.data.tsv
+        |   |-- bel.LG01.w200.phyml_bionj.trees.gz
         |   |-- ...
+        |   |-- bel.LG24.w50.phyml_bionj.data.tsv
         |   |-- bel.LG24.w50.phyml_bionj.trees.gz
         |   |-- bel.phyml_bionj.data.tsv
         |   `-- bel.phyml_bionj.trees.gz
         `-- hon
             |-- hon.LG01.w200.phyml_bionj.data.tsv
+            |-- hon.LG01.w200.phyml_bionj.trees.gz
             |-- ...
+            |-- hon.LG24.w50.phyml_bionj.data.tsv
             |-- hon.LG24.w50.phyml_bionj.trees.gz
             |-- hon.phyml_bionj.data.tsv
             `-- hon.phyml_bionj.trees.gz
 
-12 directories, 4438 files
+13 directories, 4448 files
 ```
 
 Refernces:

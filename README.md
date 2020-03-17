@@ -1,3 +1,9 @@
+---
+
+ <font color="red" size = 5> Disclaimer: The repository is still in development! While the scripts of the actual analysis are finalized, details (particularly of the documentation) will still change before publication. </font>
+
+ ---
+
 # The **chapter2** repository
 
 This project contains the analysis of differentiation, divergence and  the phylogenetic relationships between hamlet species (*Hypoplectrus* spp) from Belize, Honduras and Panama.
