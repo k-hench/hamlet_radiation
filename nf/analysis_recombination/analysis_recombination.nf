@@ -1,5 +1,5 @@
 #!/usr/bin/env nextflow
-// This pipelie includes the recombination anlysis
+// This pipeline includes the recombination anlysis
 // git 6.1
 // load genotypes
 Channel

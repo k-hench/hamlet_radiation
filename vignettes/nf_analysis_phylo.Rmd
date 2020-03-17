@@ -67,7 +67,7 @@ Channel
 ### Whole genome phylogeny
 
 During data exploration, various subsets of the data set were investigated, including the different sampling locations, _whole genome_ vs. _non-outlier regions_ and all samples vs. _hamlets only_.
-(Now, most of the oftions have been muted by commenting most options out.)
+(Now, most of the options have been muted by commenting these options out.)
 
 Here, we set up a channel managing the subset by location.
 
@@ -192,7 +192,7 @@ process fasttree_whg_prep {
 }
 ```
 
-Then, the phylogeny is reconstucted based on the converted geneotypes.
+Then, the phylogeny is reconstructed based on the converted geneotypes.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 5.8
@@ -217,7 +217,7 @@ process fasttree_whg_run {
 
 ### Topology weighting
 
-The complexety of topology weighting increases non-linearely with the number of included populations as the number of possible unrooted topologies skyrockets.
+The complexity of topology weighting increases non-linearely with the number of included populations as the number of possible unrooted topologies skyrockets.
 The maximum number of possible populations allowed within `twisst` is eight, so we are running the topology weighting for Belize and Honduras independently (for the three species at Panama only one unrooted topology is possible, so we don't run `twisst` here).
 
 We start by setting up a channel for the sampling location.
@@ -239,7 +239,7 @@ locations_ch
 	.set{ vcf_location_combo }
 ```
 
-The anlysis is split by linkage group, so we need to initialize the LGs.
+The analysis is split by linkage group, so we need to initialize the LGs.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 5.11
@@ -280,13 +280,13 @@ process subset_vcf_by_location {
 }
 ```
 
-> While runing `twisst`, we ran into an issues regarding incompatibilities of the used scheduling system used on our computing cluster and the threading within the python scripts used in the preparation of `twisst`.
+> While running `twisst`, we ran into an issues regarding incompatibilities of the used scheduling system used on our computing cluster and the threading within the python scripts used in the preparation of `twisst`.
 Unfortunately, this prevented us running the preparation _in place_ (as part of the `nextflow` script).
-Instead, we rand the preparation separately on a local computer and clumsitly plugged the results into the `nextflow` process.
+Instead, we rand the preparation separately on a local computer and clumsily plugged the results into the `nextflow` process.
 
-> Below we include the originally intended workflow which we muted so that the script is runnable using the plugg in approach.
-Still, the the original workflow describes the steps excuted locally and convays the intermediate steps more clearly.
-Also, on a different computer cluster, the original script should work allright.
+> Below we include the originally intended workflow which we muted so that the script is runnable using the plug-in approach.
+Still, the the original workflow describes the steps executed locally and conveys the intermediate steps more clearly.
+Also, on a different computer cluster, the original script should work alright.
 
 The next step is to attach the LGs to the genotype subsets.
 
@@ -297,7 +297,7 @@ The next step is to attach the LGs to the genotype subsets.
 // ('in place'), so I had to setup the files locally and then plug
 // them into this workflow.
 // Below is the originally intended clean workflow (commented out),
-// while the plugin vesion picks up at git 5.19.
+// while the plugin version picks up at git 5.19.
 // ---------------------------------------------------------------
 
 /* MUTE:
@@ -361,7 +361,7 @@ snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 */
 ```
 
-To conduct topology weighting, we need some undelying phylogenies, so we run `PhyML` along the sliding window.
+To conduct topology weighting, we need some underlying phylogenies, so we run `PhyML` along the sliding window.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
@@ -489,6 +489,6 @@ process twisst_plugin {
 ```
 </div>
 
-At this step we are done with phlyogeny and the topology weighting.
+At this step we are done with phylogeny and the topology weighting.
 
 ---

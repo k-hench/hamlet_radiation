@@ -204,7 +204,7 @@ dxy_summary <- dxy_data %>%
 ```
 
 Then we import the genotype $\times$ phenotype association data.
-For this, we list all the traits we want to include and then iterate the import funtion over all traits.
+For this, we list all the traits we want to include and then iterate the import function over all traits.
 We combine the data sets and transform the table to *long* format.
 
 ```{r, eval = FALSE}
@@ -236,7 +236,7 @@ gxp_data <- str_c(gxp_dir,traits) %>%
   gather(key = 'window', value = 'value',2:4)
 ```
 
-Then, we import the genome wide $F_{ST}$ summary for all 28 pair wise comparisons to be able to pick a divergence data set of an intermediatly differentiated species pair (the species pair of rank 15, close to 14.5 - the median of rank 1 to 28).
+Then, we import the genome wide $F_{ST}$ summary for all 28 pair wise comparisons to be able to pick a divergence data set of an intermediately differentiated species pair (the species pair of rank 15, close to 14.5 - the median of rank 1 to 28).
 
 ```{r, eval = FALSE}
 # import genome wide Fst data summary  --------
@@ -307,7 +307,7 @@ pi_summary <- dxy_data %>%
   arrange(n)
 ```
 
-Then, we determine an intermediatly diverse candidate of our 14 populations (rank 7, again: $7 \approx median(1:14)$) and average over the diversities estimated in all pairwise comparisons this population was involved in.
+Then, we determine an intermediately diverse candidate of our 14 populations (rank 7, again: $7 \approx median(1:14)$) and average over the diversities estimated in all pairwise comparisons this population was involved in.
 
 ```{r, message = FALSE, warning = FALSE}
 selectors_pi <- pi_summary %>%

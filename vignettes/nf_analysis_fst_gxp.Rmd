@@ -102,7 +102,7 @@ For each location, the data is subset to include only local hamlets.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 3.5
-// subset data to loacal hamlets
+// subset data to local hamlets
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
@@ -171,7 +171,7 @@ Using this subset, we compute the global differentiation among all hamlet popula
 ```{r , eval = FALSE, hilang = 'nf'}
 // ----------- Fst section -----------
 // git 3.7
-// compute global fst 
+// compute global fst
 process fst_multi {
 	label 'L_20g15h_fst_multi'
 	publishDir "../../2_analysis/fst/50k/", mode: 'copy' , pattern: "*.50k.tsv.gz"
@@ -250,7 +250,7 @@ Then, we set up the pair wise species comparisons...
 /* (create all possible species pairs depending on location
    and combine with genotype subset (for the respective location))*/
 // ------------------------------
-/* channel content after joinig: 
+/* channel content after joinig:
   set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]*/
 // ------------------------------
 bel_pairs_ch = Channel.from( "bel" )
@@ -418,7 +418,7 @@ Channel
 	.set{ phenotypes_raw }
 ```
 
-For historic reasons, we perform a PCA on the phenotypes and reoport the extended phenotype data including the scoring on PC1 & PC2.
+For historic reasons, we perform a PCA on the phenotypes and report the extended phenotype data including the scoring on PC1 & PC2.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 3.13
@@ -452,7 +452,7 @@ Channel
 	.set{ traits_ch }
 ```
 
-Then, we combine the reformatted genotypes with the phenotyes and the traits of interrest.
+Then, we combine the reformatted genotypes with the phenotyes and the traits of interest.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 3.15
@@ -460,7 +460,7 @@ Then, we combine the reformatted genotypes with the phenotyes and the traits of 
 traits_ch.combine( plink_binary ).combine( phenotype_file ).set{ trait_plink_combo }
 ```
 
-Having collectet all the input, we can now run the GxP.
+Having collected all the input, we can now run the GxP.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 3.16
@@ -505,7 +505,7 @@ process gemma_run {
 }
 ```
 
-To smooth the GxP results, we initialize two resolutions (50 kb windows with 5 kb increments and 10 kb windows with 1 kb increments). 
+To smooth the GxP results, we initialize two resolutions (50 kb windows with 5 kb increments and 10 kb windows with 1 kb increments).
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 3.17

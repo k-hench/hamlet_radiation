@@ -17,7 +17,7 @@ Channel
 ch_LG_ids.combine( vcf_cohort ).set{ vcf_lg_combo }
 
 // git 2.4
-// actual genotyping step (including invarinat sites)
+// actual genotyping step (including invariant sites)
 process joint_genotype_snps {
 	label "L_O88g90h_LGs_genotype"
 

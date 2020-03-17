@@ -1,5 +1,5 @@
 #!/usr/bin/env nextflow
-// This pipelie includes the anlysis run on the
+// This pipeline includes the analysis run on the
 //   all callable sites data sheet (dxy).
 
 // git 4.1
@@ -65,7 +65,7 @@ Channel
 // create all possible species pairs depending on location
 //   and combine with genotype subset (for the respective location)
 // ------------------------------
-// channel content after joinig:
+// channel content after joining:
 // set [0:val(loc), 1:file(vcf), 2:file(pop), 3:val(spec1), 4:val(spec2)]
 // ------------------------------
 bel_pairs_ch = Channel.from( "bel" )
@@ -135,7 +135,7 @@ dxy_lg_ch
   .set{ tubbled_dxy }
 
 // git 4.11
-// concatinate all LGs for each species pair
+// concatenate all LGs for each species pair
 process receive_tuple {
 	label 'L_20g2h_receive_tuple'
 	publishDir "../../2_analysis/dxy/${kb[0]}0k/", mode: 'copy'
@@ -169,7 +169,7 @@ Channel
 	.set{ random_run_ch }
 
 // git 4.13
-// setup channel contnent for random channel
+// setup channel content for random channel
 Channel
 	.from( 1 )
 	.combine( random_run_ch )

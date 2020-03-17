@@ -172,7 +172,7 @@ process subset_vcf_by_location {
 // ('in place'), so I had to setup the files locally and then plug
 // them into this workflow.
 // Below is the originally intended clean workflow (commented out),
-// while the plugin vesion picks up at git 5.19.
+// while the plugin version picks up at git 5.19.
 // ---------------------------------------------------------------
 
 /* MUTE:

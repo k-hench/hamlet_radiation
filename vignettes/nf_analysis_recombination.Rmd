@@ -150,8 +150,8 @@ process fasteprr_s1_summary {
 }
 ```
 
-The second step of `FastEPRR` is parallelized over an arbitrary number of subprocesses.
-Here, we initialize 250 parallel processes and combine the paralleliyation index with the results from step 1.
+The second step of `FastEPRR` is parallelized over an arbitrary number of sub-processes.
+Here, we initialize 250 parallel processes and combine the parallelization index with the results from step 1.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.6
@@ -187,7 +187,7 @@ process fasteprr_s2 {
 }
 ```
 
-The file management of `nextflow` can be a bit complicated at times, so here duplicate the ouput of step 2 to later easily acess the paralleliyation indicees and the actual output.
+The file management of `nextflow` can be a bit complicated at times, so here duplicate the output of step 2 to later easily access the parallelization indices and the actual output.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 6.8

@@ -143,7 +143,7 @@ process split_samples {
 ```
 </div>
 
-The second step is mariking the *Illumina* adaptors.
+The second step is marking the *Illumina* adapters.
 
 <div class="kclass">
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -340,7 +340,7 @@ indexed_bams
 ```
 </div>
 
-Now, we can create the genotype likelyhoods for each individual sample.
+Now, we can create the genotype likelihoods for each individual sample.
 
 <div class="kclass">
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -372,7 +372,7 @@ process receive_tuple {
 ```
 </div>
 
-The individual genotype likelyhoods are collected and combined for the entire data set.
+The individual genotype likelihoods are collected and combined for the entire data set.
 
 <div class="kclass">
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -554,7 +554,7 @@ At this point, the genotying is done.
 To get from genotypes to haplotypes, we apply read-aware phasing using [**Shapeit**](https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html).
 This takes the original sequencing reads into account, so in the first step the reads are screened for *Phase Informative Reads* (i.e. reads containing more than a single SNP).
 
-This needs to be done for each LG independedly, so we first need to split the genotypes before running `extractPIRs`.
+This needs to be done for each LG independently, so we first need to split the genotypes before running `extractPIRs`.
 
 <a name="phasing_start"></a>
 
@@ -682,7 +682,7 @@ Finally, we are done with the entire genotyping procedure for the _SNPs olny_ da
 
 ### Indel masks
 
-The `genotyping.nf` workflow contains an appendix that makes use of the genotyping likelyhoods created in step git 1.10 to create an indel mask that is later used in the inference of the hamlet demographic history ([git 8.x](analysis-vi-demographic-history.html)).
+The `genotyping.nf` workflow contains an appendix that makes use of the genotyping likelihoods created in step git 1.10 to create an indel mask that is later used in the inference of the hamlet demographic history ([git 8.x](analysis-vi-demographic-history.html)).
 (This part is excluded from the initial visualization of this script)
 
 We restart by reopening the joint-sample genotype likelyhoods file and calling the indels from it.
@@ -851,6 +851,6 @@ process split_indel_mask {
 }
 ```
 
-All indel masks are exported to the ressources folder within the root directory.
+All indel masks are exported to the resources folder within the root directory.
 
 ---

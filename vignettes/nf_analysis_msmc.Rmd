@@ -36,7 +36,7 @@ prod_msmc <- tibbler(c('coverage_by_sample_lg', 'msmc_grouping', 'segsites_by_sa
 
 ## Summary
 
-The demographic hisotry rate is inferred within the [**nextflow**](https://www.nextflow.io/) script `analysis_msmc.nf` (located under `$BASE_DIR/nf/analysis_msmc/`), which runs on the _SNPs only_ data set.
+The demographic history rate is inferred within the [**nextflow**](https://www.nextflow.io/) script `analysis_msmc.nf` (located under `$BASE_DIR/nf/analysis_msmc/`), which runs on the _SNPs only_ data set.
 Below is an overview of the steps involved in the inference.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
@@ -51,10 +51,10 @@ girafe( ggobj = dot_plot(file = 'docs/analysis_msmc.dot', git = 8, point_types =
 
 ### Data preparation
 
-The first part of the scripts inclues a large block of preparation work.
-In this initial block, the data masks are being generated based in the samples coverages statistics cobined with the locations of idels and the refence genomes mappability. 
+The first part of the scripts includes a large block of preparation work.
+In this initial block, the data masks are being generated based on the samples coverage statistics combined with the locations of idels and the reference genomes mappability.
 
-The whole script is opened by a creating a channel for the linkage groups since the coverage statisitcs are being created on a linkage group basis. 
+The whole script is opened by a creating a channel for the linkage groups since the coverage statistics are being created on a linkage group basis.
 
 <div class="kclass">
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -77,7 +77,7 @@ Channel
 	.set{ vcf_msmc }
 ```
 
-To extract the seqencing depth for each individual, the unphased genotypes are opened as well (as this information is lost during pahsing).
+To extract the sequencing depth for each individual, the unphased genotypes are opened as well (as this information is lost during phasing).
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 8.3
@@ -115,7 +115,7 @@ process gather_depth {
 }
 ```
 
-The depth inforamtion is fed into a channel so that the information is accessible for `nextflow`.
+The depth information is fed into a channel so that the information is accessible for `nextflow`.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 8.5
@@ -188,7 +188,7 @@ process split_vcf_by_individual {
 }
 ```
 
-The individual coverage statistics are then being querried using the individuals average depth to create the coverage mask for each individual.
+The individual coverage statistics are then being queried using the individuals average depth to create the coverage mask for each individual.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 8.10
@@ -291,7 +291,7 @@ coverage_by_sample_lg.collect().map{ "coverage done!" }.into{ coverage_done; cov
 segsites_by_sample_lg.collect().map{ "segsites done!" }.into{ segsites_done; segsites_cc }
 ```
 
-To set up the `msmc2` runs, the sample grouping is wainig for the dummy process to finish.
+To set up the `msmc2` runs, the sample grouping is waiting for the dummy process to finish.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 8.15
@@ -304,7 +304,7 @@ lg_ch2
 	.set{ msmc_grouping_after_segsites }
 ```
 
-Then, the specific `msmc2` input files are compiled from the combined masks of the involved samples (for each linkge group individually).
+Then, the specific `msmc2` input files are compiled from the combined masks of the involved samples (for each linkage group individually).
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 8.16
@@ -355,7 +355,7 @@ msmc_input_lg
 	.set {msmc_input}
 ```
 
-And finally `msmc2` is executed to inferr the demographic history of the involved samples.
+And finally `msmc2` is executed to infer the demographic history of the involved samples.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 8.18
@@ -398,7 +398,7 @@ cc_grouping
 	.set { cc_runs }
 ```
 
-The groups wait for the data preparation to fininsh.
+The groups wait for the data preparation to finish.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 8.20
@@ -472,7 +472,7 @@ cc_input_lg
 	.set {cc_input}
 ```
 
-And  `msmc2` is executed to inferr the cross-coalescence rate of the involved samples.
+And  `msmc2` is executed to infer the cross-coalescence rate of the involved samples.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 8.23

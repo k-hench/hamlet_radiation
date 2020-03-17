@@ -1,14 +1,23 @@
 #!/usr/bin/env nextflow
+// This pipelie includes the re-analysis of the monkeyflower differentiation
+// git 10.1
+// open genotype data
 Channel
 	.fromFilePairs("../../ressources/other_studies/all_9_taxa_G1_vars.bgziped.vcf.{gz,gz.tbi}")
 	.set{ vcf_fl }
 
+// git 10.2
+// open population assignment for the samples
 Channel
 	.fromPath("../../ressources/other_studies/stankowski_etal_2019_spec_short.tsv")
 	.set{ pop_fl }
 
+	// git 10.3
+	// define sepcies set
 Channel.from( [[1, "ari"], [2, "aur"], [3, "cal"], [4, "cle"], [5, "gra"], [6, "lon"], [7, "par"], [8, "pur"], [9, "puy"]] ).into{ specs_ch1; specs_ch2 }
 
+// git 10.4
+// create all possible species pairs
 all_fst_pairs_ch = pop_fl
 	.combine(specs_ch1)
 	.combine(specs_ch2)
@@ -16,6 +25,8 @@ all_fst_pairs_ch = pop_fl
 	.map{ it[0,2,4]}
 	.combine(vcf_fl)
 
+// git 10.5
+// comute pairwise fsts
 process fst_run {
 	label 'L_32g2h_fst_run'
 	publishDir "../../ressources/other_studies/stankowski_logs/", mode: 'copy'
@@ -38,6 +49,8 @@ process fst_run {
 	"""
 }
 
+// git 10.6
+// collect the genome wide average for all species pairs
 process fst_collect {
 	label 'L_loc_fst_collect'
 	publishDir "../../ressources/other_studies/", mode: 'copy'

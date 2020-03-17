@@ -54,7 +54,7 @@ girafe( ggobj = dot_plot(file = 'docs/genotyping_all_basepairs.dot', git = 2, po
 
 ### Data preparation
 
-The nextflow script starts with a small header and then imports the joint genotyping likelyhoods for all samples produced by `genotyping_all_basepairs.nf`.
+The nextflow script starts with a small header and then imports the joint genotyping likelihoods for all samples produced by `genotyping_all_basepairs.nf`.
 
 <div class="kclass">
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -76,7 +76,7 @@ Channel
 	.set{ ch_LG_ids }
 ```
 
-The genotyping likelyhoods are combined, efectively linking the data set to the 24 parallel LGs.
+The genotyping likelihoods are combined, effectively linking the data set to the 24 parallel LGs.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 2.3
@@ -84,11 +84,11 @@ The genotyping likelyhoods are combined, efectively linking the data set to the 
 ch_LG_ids.combine( vcf_cohort ).set{ vcf_lg_combo }
 ```
 
-The samples are jointly genotyped, indepently for each LG and including invariant sites.
+The samples are jointly genotyped, independently for each LG and including invariant sites.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 2.4
-// actual genotyping step (including invarinat sites)
+// actual genotyping step (including invariant sites)
 process joint_genotype_snps {
 	label "L_O88g90h_LGs_genotype"
 
