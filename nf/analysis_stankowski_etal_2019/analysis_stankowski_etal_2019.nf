@@ -18,6 +18,7 @@ all_fst_pairs_ch = pop_fl
 
 process fst_run {
 	label 'L_32g2h_fst_run'
+	publishDir "../../ressources/other_studies/stankowski_logs/", mode: 'copy'
 
 	input:
 	set file( pop ), val( spec1 ), val( spec2 ), file( vcf_idx ), file( vcf ) from all_fst_pairs_ch
@@ -49,7 +50,7 @@ process fst_collect {
 
 	script:
 	"""
-	grep "mean Fst estimate" *.log | \
+	grep "mean Fst estimate" \$BASE_DIR/ressources/other_studies/stankowski_logs/*.log | \
 	  sed "s/.log:Weir and Cockerham mean Fst estimate: /\\t/" |
 		> stankowski_etal_2019.tsv
 	"""
