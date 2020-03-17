@@ -32,9 +32,9 @@ files <- dir(path = data_dir, pattern = '.50k.windowed.weir.fst.gz')
 globals <- vroom::vroom(globals_file, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
   mutate(run = str_c(loc,'-',run) %>%
-         reformat_run_name()#,
+           reformat_run_name()#,
          #run = fct_reorder(run,weighted)
-         )
+  )
 
 # fixed fst -----------
 import_table <- list(file = str_c(data_dir,files),
@@ -66,10 +66,10 @@ data2 <- data %>%
 
 p <- ggplot(data2, aes(x = weighted, y = Value))+
   geom_hline(data = tibble(variable = factor(c('Cummulative~region~length~(Mb)',
-                                        'Average~region~length~(kb)',
-                                        'Number~of~regions'), levels = c('Number~of~regions',
-                                                                                 'Average~region~length~(kb)',
-                                                                                 'Cummulative~region~length~(Mb)')),
+                                               'Average~region~length~(kb)',
+                                               'Number~of~regions'), levels = c('Number~of~regions',
+                                                                                'Average~region~length~(kb)',
+                                                                                'Cummulative~region~length~(Mb)')),
                            y = c(559649677/(10^6),NA,NA)),
              aes(yintercept = y),
              color=rgb(1,0,0,.25))+
