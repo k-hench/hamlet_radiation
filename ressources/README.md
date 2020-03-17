@@ -93,7 +93,9 @@ These files are not tracked to minimize the repository size but the following st
 
 Refernces:
 
-Han, F. *et al.* Gene flow, ancient polymorphism, and ecological adaptation shape the genomic landscape of divergence among darwin’s finches.Genome research 27, 1004–1015 (2017).
+Han, F. *et al.* Gene flow, ancient polymorphism, and ecological adaptation shape the genomic landscape of divergence among darwin’s finches. Genome research 27, 1004–1015 (2017).
+
+Stankowski, S. *et al.* Widespread selection and gene flow shape the genomic landscape during a radiation of monkeyflowers. PLoS biology 17, e3000391 (2019).
 
 ---
 
