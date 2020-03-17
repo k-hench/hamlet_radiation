@@ -17,7 +17,7 @@
 # 'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
 # '2_analysis/twisst/weights/', 'ressources/plugin/trees/',
 # '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
-args <- commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
