@@ -51,7 +51,7 @@ process fst_collect {
 	script:
 	"""
 	grep "mean Fst estimate" \$BASE_DIR/ressources/other_studies/stankowski_logs/*.log | \
-	  sed "s/.log:Weir and Cockerham mean Fst estimate: /\\t/; s=^\$BASE_DIR/ressources/other_studies/stankowski_logs/==" |
+	  sed "s/.log:Weir and Cockerham mean Fst estimate: /\\t/; s=^../../../../../ressources/other_studies/stankowski_logs/==" |
 		> stankowski_etal_2019.tsv
 	"""
 }
