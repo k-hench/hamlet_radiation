@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx1.R 2_analysis/summaries/fst_globals.txt \
+# Rscript --vanilla R/fig/plot_SF1.R 2_analysis/summaries/fst_globals.txt \
 # ressources/other_studies/stankowski_etal_2019.tsv \
 # ressources/other_studies/han_etal_2017.tsv
 # ===============================================================
@@ -114,7 +114,7 @@ p <- data %>%
         panel.grid.major.x = element_line(color = clr_below, size =.2),
         plot.caption = element_text(color = rgb(.4, .4, .4)))
 
-hypo_save(filename = 'figures/SFx1.pdf',
+hypo_save(filename = 'figures/SF1.pdf',
           plot = p,
           width = 6,
           height = 3,

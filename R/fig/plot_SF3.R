@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF2.R \
+# Rscript --vanilla R/fig/plot_SF3.R \
 #   2_analysis/summaries/fst_globals.txt \
 #   2_analysis/fst/50k/ \
 #   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
@@ -34,61 +34,6 @@ cli::rule(right = getwd())
 global_fst_file <- as.character(args[1])
 fst_dir <- as.character(args[2])
 rho_dir <- as.character(args[3])
-# functions --------------------
-# geom_hypo_grob2 <- function(mapping = NULL,
-#                             data = NULL,
-#                             stat = "identity",
-#                             position = "identity",
-#                             na.rm = FALSE,
-#                             show.legend = NA,
-#                             inherit.aes = FALSE,
-#                             ...) {
-#   layer(
-#     geom = hypo_geom_grob_custom2,
-#     mapping = mapping,
-#     data = data,
-#     stat = stat,
-#     position = position,
-#     show.legend = show.legend,
-#     inherit.aes = inherit.aes,
-#     params = list(na.rm = na.rm, ...)
-#   )
-# }
-#
-# hypo_geom_grob_custom2 <- ggproto(
-#   "hypo_geom_grob_custom2",
-#   Geom,
-#   setup_data = function(self, data, params) {
-#     data <- ggproto_parent(Geom, self)$setup_data(data, params)
-#     data
-#   },
-#
-#   draw_group = function(data, panel_scales, coord) {
-#     vp <- grid::viewport(x=data$rel_x,
-#                          y=data$rel_y,
-#                          h = data$height,
-#                          width = data$width,
-#                          angle = data$angle)
-#     g <- grid::editGrob(data$grob[[1]], vp=vp)
-#     ggplot2:::ggname("geom_hypo_grob2", g)
-#   },
-#
-#   required_aes = c("grob","rel_x","rel_y"),
-#   default_aes = list(height = 1, width = 1, angle = 0)
-# )
-#
-#
-# fish_plot2 <- function(spec){
-#
-#   p <- ggplot()+
-#     hypoimg::hypo_anno_flag(geo = loc_names[str_sub(spec,4,6)] %>% str_to_lower(),xmax = 0)+
-#     hypoimg::hypo_anno_r(species = sp_names[str_sub(spec,1,3)],xmin = 0)+
-#     scale_y_continuous(limits = c(-1,1))+
-#     scale_x_continuous(limits = c(-.4,1))+
-#     theme_void()
-#
-#   tibble(spec = spec, grob = list(p %>% ggplotGrob()))
-# }
 
 # load data -------------------
 fst_globals <- vroom::vroom(global_fst_file, delim = '\t',
@@ -163,7 +108,7 @@ p <- plot_grid(p1, p2,
           rel_heights = c(1,.3),
           labels = letters[1:2] %>% project_case())
 
-hypo_save(filename = 'figures/SF2.pdf',
+hypo_save(filename = 'figures/SF3.pdf',
           plot = p,
           width = 10,
           height = 16,
