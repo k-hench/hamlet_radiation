@@ -1,17 +1,14 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF5.R 2_analysis/pi/50k/ \
-#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+# Rscript --vanilla R/fig/plot_SF3.R 2_analysis/dxy/50k/
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/pi/50k/',
-#           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
+# args <- c('2_analysis/dxy/50k/')
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
-library(vroom)
 library(hypoimg)
 
 cat('\n')
@@ -22,83 +19,78 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+
 # config -----------------------
-pi_path <- as.character(args[1])
-rho_path <- as.character(args[2])
+dxy_path <- as.character(args[1])
 
 # load data -------------------
-files <- dir(pi_path, pattern = '^[a-z]{6}.50k')
-data <- str_c(pi_path, files) %>%
-  purrr::map(get_pi) %>%
-  bind_rows()
+files <- dir(dxy_path)
+data <- str_c(dxy_path,files) %>%
+  purrr::map(get_dxy) %>%
+  bind_rows() %>%
+  set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
+                      'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
 
-# global pi ------------------------
+# global bars ------------------------
 global_bar <- data %>%
-  filter( BIN_START %% 50000 == 1) %>%
-  select(N_VARIANTS, PI, spec) %>%
-  group_by(spec) %>%
-  summarise(genome_wide_pi = sum(N_VARIANTS*PI)/sum(N_VARIANTS)) %>%
-  arrange(genome_wide_pi) %>%
+  filter( start %% 50000 == 1) %>%
+  select(sites, dxy, run) %>%
+  group_by(run) %>%
+  summarise(genome_wide_dxy = sum(sites*dxy)/sum(sites)) %>%
+  arrange(genome_wide_dxy) %>%
   ungroup() %>%
-  mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
-         scaled_pi = genome_wide_pi/max(genome_wide_pi))
+  mutate(run = fct_reorder(.f = run, .x = genome_wide_dxy),
+         scaled_dxy = genome_wide_dxy/max(genome_wide_dxy))
 
 global_bar %>%
-  summarise(avg_pi = mean(genome_wide_pi),
-            sd_pi = sd(genome_wide_pi))
-
-data <- data %>%
-  mutate(spec = factor(spec, levels = levels(global_bar$spec)))
-
-# regression pi vs. rho ------------------
-rho_data <- vroom(rho_path, delim = '\t') %>%
-  select(-BIN_END)
-
-rho_data %>%
-  summarise(mean_rho = mean(RHO),
-            sd_rho = sd(RHO))
-
-combined_data <- data %>%
-  filter(BIN_START %% 50000 == 1 ) %>%
-  mutate(spec = factor(spec, levels = levels(global_bar$spec))) %>%
-  left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START'))
-
-model_data <- combined_data %>%
-  group_by(spec) %>%
-  nest() %>%
-  left_join(., global_bar) %>%
-  mutate(mod =  map(data, ~ lm(.$PI ~ .$RHO))) %>%
-  bind_cols(., summarise_model(.))
-
-grob_tibble2 <- global_bar$spec %>%
-  purrr::map(fish_plot2) %>%
+  summarise(avg_dxy = mean(genome_wide_dxy),
+            sd_dxy = sd(genome_wide_dxy))
+# annotaton ---------------------------
+grob_tibble <-  global_bar %>%
+  mutate(loc = str_sub(run,4,6),
+         right = str_sub(run,1,3),
+         left = str_sub(run,8,10)) %>%
+  select(1,4:6) %>%
+  pmap(.,plot_pair_run) %>%
   bind_rows()
 
-p <- combined_data %>%
-  ggplot()+
-  geom_hypo_grob2(data = grob_tibble2,
-                  aes(grob = grob, rel_x = .25,rel_y = .75),
-                  angle = 0, height = .5,width = .5)+
-  geom_hex(bins = 30,color = rgb(0,0,0,.3),
-           aes(fill=log10(..count..), x = RHO, y = PI))+
-  geom_abline(data = model_data, color = rgb(1,1,1,.8),linetype = 2,
-              aes(intercept = intercept, slope = slope)) +
-  geom_text(data = model_data, x = 510, y = .01125,parse = TRUE,hjust = 0,
-            aes(label = str_c('italic(R)^2:~',round(r.squared,2)))) +
-  facet_wrap(spec ~., ncol = 3)+
-  scale_x_continuous(name = expression(rho))+
-  scale_y_continuous(name = expression(pi))+
-  scico::scale_fill_scico(palette = 'berlin') +
-  guides(fill = guide_colorbar(direction = 'horizontal',
-                               title.position = 'top',
-                               barheight = unit(7,'pt'),
-                               barwidth = unit(130,'pt')))+
-  theme_minimal()+
-  theme(legend.position = c(.84,.01),
-        strip.text = element_blank())
+# plotting ---------------
+sc_ax <- scales::cbreaks(c(0,max(global_bar$genome_wide_dxy)),
+                         scales::pretty_breaks(4))
 
-hypo_save(filename = 'figures/SF5.pdf',
+labels <-  c("0",
+             substitute(a%.%10^-3, list(a = sprintf("%.0f", sc_ax$breaks[2]*1000))),
+             substitute(a%.%10^-3, list(a = sprintf("%.0f", sc_ax$breaks[3]*1000))),
+             substitute(a%.%10^-3, list(a = sprintf("%.0f", sc_ax$breaks[4]*1000))),
+             substitute(a%.%10^-3, list(a = sprintf("%.0f", sc_ax$breaks[5]*1000))))
+
+data <- data %>%
+  mutate(run = factor(run, levels = levels(global_bar$run)))
+
+p <- ggplot()+
+  facet_wrap( .~run, as.table = TRUE, ncol = 1,dir = 'v')+
+  geom_rect(data = global_bar %>% mutate(xmax = scaled_dxy * hypo_karyotype$GEND[24]),
+            aes(xmin = 0, xmax = xmax, ymin = -Inf, ymax = Inf), color = rgb(1,1,1,0),fill = clr_below)+
+  geom_vline(data = hypogen::hypo_karyotype,aes(xintercept = GEND),color = hypo_clr_lg)+
+  geom_point(data = data, aes(x = gpos, y = dxy),
+             size=.2,color = plot_clr) +
+  geom_hypo_grob2(data = grob_tibble,
+                  aes(grob = grob, rel_x = .945,rel_y = .5),
+                  angle = 0, height = .9,width = .13)+
+  scale_x_hypo_LG(sec.axis =  sec_axis(~ ./hypo_karyotype$GEND[24],
+                                       breaks = (sc_ax$breaks/max(global_bar$genome_wide_dxy))[1:5],
+                                       labels = labels,
+                                       name = expression(Genomic~position/~Genome~wide~italic(d[XY]))))+
+  scale_y_continuous(name = expression(italic(d[XY])), breaks = c(0,.01, .02))+
+  coord_cartesian(xlim = c(0,hypo_karyotype$GEND[24]*1.135))+
+  theme_hypo()+
+  theme(strip.text = element_blank(),
+        legend.position = 'none',
+        axis.title.x = element_text(),
+        axis.text.x.bottom = element_text(colour = 'darkgray'))
+
+hypo_save(filename = 'figures/SF3.png',
           plot = p,
           width = 8,
-          height = 10,
+          height = 12,
           comment = plot_comment)
