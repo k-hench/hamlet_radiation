@@ -37,7 +37,7 @@ process subset_vcf_by_location_whg {
 		publishDir "../../2_analysis/twisst_crossloc/run_${grouping.runnr}/positions/", mode: 'copy', patttern: "*.data.tsv"
 
 		input:
-		set val( nSNP ), file( grouping ), val( lg ), val( vcfidx ), file( vcf ) from twisst_runs_ch
+		set val( nSNP ), val( grouping ), val( lg ), val( vcfidx ), file( vcf ) from twisst_runs_ch
 
 		output:
 		set val( nSNP ), file( grouping ), val( lg ), file( ".trees.gz" ), file( "*.data.tsv" ), file("pop_all.*") into twisst_phylos_ch
