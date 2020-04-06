@@ -62,13 +62,13 @@ process subset_vcf_by_location_whg {
 			--keep pop4.pop \
 			--chr ${lg} \
 			--recode --stdout | \
-			gzip > twisst_crossloc.${grouping.runnr}.${lg}.vcf.gz
+			gzip > twisst_crossloc.${grouping.runnr}.${lg}.${nSNP}SNPS.vcf.gz
 
 		python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-			-i  twisst_crossloc.${grouping.runnr}.${lg}.vcf.gz |
+			-i  twisst_crossloc.${grouping.runnr}.${lg}.${nSNP}SNPS.vcf.gz |
 			python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
 			--threads 2 \
-			--prefix twisst_crossloc.${grouping.runnr}.${lg} \
+			--prefix twisst_crossloc.${grouping.runnr}.${lg}.${nSNP}SNPS \
 			--windType sites \
 			-w ${nSNP} \
 			--model GTR \
@@ -91,7 +91,7 @@ process run_twisst {
 	"""
 	python \$SFTWR/twisst/twisst.py \
 		-t ${trees} \
-		-w twisst_crossloc.${grouping.runnr}.${lg}.weights.tsv \
+		-w twisst_crossloc.${grouping.runnr}.${lg}.${nSNP}SNPS.weights.tsv \
 		-g ${grouping.pop1} \
 		-g ${grouping.pop2} \
 		-g ${grouping.pop3} \
