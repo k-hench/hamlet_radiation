@@ -40,7 +40,7 @@ process subset_vcf_by_location_whg {
 		set val( nSNP ), val( grouping ), val( lg ), val( vcfidx ), file( vcf ) from twisst_runs_ch
 
 		output:
-		set val( nSNP ), file( grouping ), val( lg ), file( ".trees.gz" ), file( "*.data.tsv" ), file("pop_all.*") into twisst_phylos_ch
+		set val( nSNP ), val( grouping ), val( lg ), file( ".trees.gz" ), file( "*.data.tsv" ), file("pop_all.*") into twisst_phylos_ch
 
 		script:
 		"""
@@ -82,7 +82,7 @@ process run_twisst {
 	publishDir "../../2_analysis/twisst_crossloc/run_${grouping.runnr}/weights/", mode: 'copy'
 
 	input:
-	set val( nSNP ), file( grouping ), val( lg ), file( trees ), file( data ), file( groups ) from twisst_phylos_ch
+	set val( nSNP ), val( grouping ), val( lg ), file( trees ), file( data ), file( groups ) from twisst_phylos_ch
 
 	output:
 	file( "*.weights.tsv" ) into final_result
