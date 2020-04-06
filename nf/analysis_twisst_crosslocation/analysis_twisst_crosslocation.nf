@@ -40,7 +40,7 @@ process subset_vcf_by_location_whg {
 		set val( nSNP ), val( grouping ), val( lg ), val( vcfidx ), file( vcf ) from twisst_runs_ch
 
 		output:
-		set val( nSNP ), val( grouping ), val( lg ), file( ".trees.gz" ), file( "*.data.tsv" ), file("pop_all.*") into twisst_phylos_ch
+		set val( nSNP ), val( grouping ), val( lg ), file( "*.trees.gz" ), file( "*.data.tsv" ), file("pop_all.*") into twisst_phylos_ch
 
 		script:
 		"""
