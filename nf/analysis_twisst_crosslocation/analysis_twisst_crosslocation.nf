@@ -52,7 +52,7 @@ process subset_vcf_by_location_whg {
 		grep  ${grouping.pop4} pop_prep.txt > pop4.pop
 
 		cat *.pop | \
-			awk -v OTF="\\t" '{print \$1,substr( \$1, length(\$1) - 5, length(\$1) )}' | \
+			awk -v OTF="\\t" '{print \$1,substr( \$1, length(\$1) - 5, length(\$1) )}' \
 			> pop_all.${grouping.runnr}.pop
 
 		vcftools --gzvcf  ${vcf[0]} \
