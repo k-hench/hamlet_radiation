@@ -89,6 +89,9 @@ process run_twisst {
 
 	script:
 	"""
+	awk -v OFT="\\t" '{print \$1"_A",\$2"\\n"\$1"_B",\$2}' ${groups} \
+		> twisst.${grouping.runnr}.pop
+
 	python \$SFTWR/twisst/twisst.py \
 		-t ${trees} \
 		-w twisst_crossloc.${grouping.runnr}.${lg}.${nSNP}SNPS.weights.tsv \
