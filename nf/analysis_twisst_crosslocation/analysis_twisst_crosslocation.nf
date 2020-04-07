@@ -99,6 +99,6 @@ process run_twisst {
 		-g ${grouping.pop2} \
 		-g ${grouping.pop3} \
 		-g ${grouping.pop4} \
-		--groupsFile ${groups}
+		--groupsFile twisst.${grouping.runnr}.pop
 	"""
 }
