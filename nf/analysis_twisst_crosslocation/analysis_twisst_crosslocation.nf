@@ -78,7 +78,7 @@ process subset_vcf_by_location_whg {
 
 
 process run_twisst {
-	label "L_20g2h_run_twisst"
+	label "L_20g6h_run_twisst"
 	publishDir "../../2_analysis/twisst_crossloc/run_${grouping.runnr}/weights/", mode: 'copy'
 
 	input:
