@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF1.R 2_analysis/summaries/fst_globals.txt \
+# Rscript --vanilla R/fig_rev/plot_SF1_r.R 2_analysis/summaries/fst_globals.txt \
 # ressources/other_studies/stankowski_etal_2019.tsv \
-# ressources/other_studies/han_etal_2017.tsv
+# ressources/other_studies/han_etal_2017.tsv \
+# ressources/other_studies/campagna_etal_2017.tsv
 # ===============================================================
 # This script produces Figure 1 of the study "The genomic onset of a marine radiation"
 # by Hench, McMillan and Puebla
@@ -10,7 +11,8 @@
 # ===============================================================
 # args <- c('2_analysis/summaries/fst_globals.txt',
 #           "ressources/other_studies/stankowski_etal_2019.tsv",
-#           "ressources/other_studies/han_etal_2017.tsv")
+#           "ressources/other_studies/han_etal_2017.tsv",
+#           "ressources/other_studies/campagna_etal_2017.tsv")
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(tidyverse)
@@ -32,6 +34,7 @@ args <- process_input(script_name, args)
 globals_file <- as.character(args[1])
 monkeyflower_file <- as.character(args[2])
 finches_file <- as.character(args[3])
+seedeater_file <- as.character(args[4])
 # load data -------------------
 fst_range <- c(87.690, 208.643)
 
@@ -61,12 +64,18 @@ flycatchers <- tibble(run = c("close", "far","alb-hyp", "alb-spe", "alb-sem", "h
                       mean_fst = c(0.023, 0.041, 0.274, 0.201, 0.326, 0.322, 0.398, 0.394),
                       study = "Flycatchers")
 
+seedeater <- read_tsv(seedeater_file) %>%
+  select(`pop`, `FST`) %>%
+  set_names(nm = c("run", "mean_fst")) %>%
+  mutate(study = "Seedeaters")
+
 data <- hamlets %>% select(run, mean_fst, study) %>%
   bind_rows(monkeyflowers %>% select(run, mean_fst, study)) %>%
   bind_rows(finches) %>%
   bind_rows(heliconius) %>%
   bind_rows(sunflowers) %>%
   bind_rows(flycatchers) %>%
+  bind_rows(seedeater) %>%
   mutate(study = fct_reorder(study,.x = mean_fst, .fun = median,.desc = TRUE))
 
 data_sumary <- data %>% 
@@ -84,6 +93,7 @@ img_sun <- hypo_read_svg("ressources/img/sunflower.c.svg")
 img_fin <- hypo_read_svg("ressources/img/finch.c.svg")
 img_fly <- hypo_read_svg("ressources/img/flycatcher.c.svg")
 img_mon <- hypo_read_svg("ressources/img/monkeyflower.c.svg")
+img_see <- hypo_read_svg("ressources/img/seedeater.c.svg")
 
 img_hyp <- (hypoimg::hypo_outline %>%
               ggplot(aes(x,y))+
@@ -92,6 +102,7 @@ img_hyp <- (hypoimg::hypo_outline %>%
               theme_void() ) %>% ggplotGrob()
 p <- data %>%
   ggplot(aes(y = study))+
+  annotation_custom(grob = img_see, xmax = 1.35, xmin = 1, ymin = 6.5, ymax = 7.5)+
   annotation_custom(grob = img_hyp, xmax = 1.35, xmin = 1, ymin = 5.55, ymax = 6.45)+
   annotation_custom(grob = img_hel, xmax = 1.35, xmin = 1, ymin = 4.5, ymax = 5.5)+
   annotation_custom(grob = img_fin, xmax = 1.35, xmin = 1, ymin = 3.55, ymax = 4.45)+
@@ -114,9 +125,9 @@ p <- data %>%
         panel.grid.major.x = element_line(color = clr_below, size =.2),
         plot.caption = element_text(color = rgb(.4, .4, .4)))
 
-hypo_save(filename = 'figures/SF1.pdf',
+hypo_save(filename = 'figures/SF1r.pdf',
           plot = p,
           width = 6,
-          height = 3,
+          height = 3.5,
           device = cairo_pdf,
           comment = plot_comment)
