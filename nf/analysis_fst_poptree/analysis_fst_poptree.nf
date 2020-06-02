@@ -19,7 +19,7 @@ Channel
 
 process outlier_fst {
 		label "L_loc_collect_fst"
-		publishDir "results/fst/poptree/single", mode: 'copy'
+		publishDir "../../2_analysis/fst/poptree/single", mode: 'copy'
 
 		input:
 		set val( grouping ),  val( vcfidx ), file( vcf ), val( cross_pop ) from crosses_vcf
@@ -56,7 +56,7 @@ process outlier_fst {
 
 process outlier_fst_collect {
 		label "L_20g2h_outlier_fst"
-		publishDir "results/fst/poptree/summary", mode: 'copy'
+		publishDir "../../2_analysis/fst/poptree/summary", mode: 'copy'
 
 		input:
 		set val( gid ), val( cross_pop ), file( fst ) from outlier_fst_gid_ch.groupTuple()
