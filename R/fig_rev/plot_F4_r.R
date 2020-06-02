@@ -131,6 +131,17 @@ neighbour_tibbles <- tibble(outlier_id = outlier_pick,
                             #loc = c(rep('bel',3)),
                             label = c('A','B','C'))
 
+
+
+
+trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_trait_img$trait %in% gxp_traits], 
+                     layer = c(4,3,7),
+                     color = gxp_clr[gxp_traits %>% sort()])%>%
+  pmap(.f = hypo_recolor_svg) %>%
+  set_names(nm = gxp_traits %>% sort())
+
+trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7,color = gxp_clr[["Bars"]])
+
 p_single <- outlier_table %>%
   filter(outlier_id %in% outlier_pick) %>%
   left_join(neighbour_tibbles) %>%
