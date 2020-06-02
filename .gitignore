@@ -14,6 +14,7 @@ ressources/*
 !ressources/img
 !ressources/other_studies/
 ressources/other_studies/stankowski_etal_2019.tsv
+!ressources/plugin/poptrees/*
 1_genotyping
 2_analysis
 figures
