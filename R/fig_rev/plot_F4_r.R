@@ -16,12 +16,15 @@
 #           '2_analysis/summaries/fst_outliers_998.tsv',
 #           '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
 #           '2_analysis/summaries/fst_globals.txt',
-#           '2_analysis/GxP/50000/', 200, 5)
+#           '2_analysis/GxP/50000/', 200, 5,
+#           "2_analysis/fst/poptree/summary/")
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(furrr)
+library(ggraph)
+library(tidygraph)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -42,6 +45,7 @@ fst_globals <- as.character(args[7])
 gxp_dir <- as.character(args[8])
 twisst_size <- as.numeric(args[9])
 resolution <- as.numeric(args[10])
+fst_summary_path <- as.character(args[11])
 source(twisst_functions, local = TRUE)
 
 plan(multiprocess)
@@ -142,6 +146,13 @@ trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_tra
 
 trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7,color = gxp_clr[["Bars"]])
 
+
+tree_list <- outlier_pick %>% 
+  purrr::map_dfr(get_fst_summary_data)
+
+poptree_plot_list <-  tree_list %>%
+  purrr::pmap(plot_fst_poptree)
+
 p_single <- outlier_table %>%
   filter(outlier_id %in% outlier_pick) %>%
   left_join(neighbour_tibbles) %>%
@@ -149,14 +160,18 @@ p_single <- outlier_table %>%
          text = ifelse(outlier_nr == 1,TRUE,FALSE),
          trait = c('Snout', 'Bars', 'Peduncle')) %>%
   pmap(plot_curtain, cool_genes = cool_genes) %>%
-  cowplot::plot_grid(plotlist = ., nrow = 1,
+  c(., poptree_plot_list) %>%
+  cowplot::plot_grid(plotlist = ., nrow = 2,
+                     rel_heights = c(1, .17),
                      labels = letters[1:length(outlier_pick)] %>% project_case())
 
 p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_fst) %>% .[[1]]
 p_dummy_gxp <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_gxp, trait = 'Bars') %>% .[[1]]
 p_leg_fst <- (p_dummy_fst+theme(legend.position = 'bottom')) %>% get_legend()
+p_leg_poptree <- (poptree_plot_list[[1]] + theme(legend.position = "bottom")) %>% get_legend()
 p_leg_gxp <- (p_dummy_gxp+theme(legend.position = 'bottom')) %>% get_legend()
-p_leg1 <- cowplot::plot_grid(p_leg_fst,p_leg_gxp,
+p_leg1 <- cowplot::plot_grid(p_leg_fst,
+                             p_leg_gxp,
                              ncol = 1)
 
 p_leg2 <- tibble(spec1 = c('indigo', 'indigo','unicolor'),
@@ -167,12 +182,25 @@ p_leg2 <- tibble(spec1 = c('indigo', 'indigo','unicolor'),
   cowplot::plot_grid(plotlist = .,
                      nrow = 1)
 
-p_leg <- cowplot::plot_grid(p_leg1, p_leg2,nrow = 1, rel_widths = c(.6, 1))
+p_leg_3 <- cowplot::plot_grid(p_leg1, 
+                            p_leg2,
+                            nrow = 1, rel_widths = c(.6, 1))
 
-p_done <- cowplot::plot_grid(p_single, p_leg,ncol = 1,
-                            rel_heights = c(1, .2))
+p_leg <- cowplot::plot_grid(
+  p_leg_poptree,
+  p_leg_3,
+  ncol = 1, 
+  rel_heights = c(.2, 1))
+
+p_done <- cowplot::plot_grid(p_single, p_leg,
+                             ncol = 1,
+                             rel_heights = c(1, .17))
 
 hypo_save(plot = p_done, filename = 'figures/F4.pdf',
-          width = 14, height = 11.2,
+          width = 14, height = 12,
           comment = script_name,
           device = cairo_pdf)
+
+# ggsave(plot = p_done, filename = '~/Desktop/F4.pdf',
+#        width = 14, height = 12,
+#        device = cairo_pdf)

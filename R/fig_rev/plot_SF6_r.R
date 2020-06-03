@@ -81,10 +81,10 @@ p <- combined_data %>%
                   angle = 0, height = .5,width = .5)+
   geom_hex(bins = 30,color = rgb(0,0,0,.3),
            aes(fill=log10(..count..), x = RHO, y = PI))+
-  geom_abline(data = model_data, color = rgb(1,1,1,.8),linetype = 2,
-              aes(intercept = intercept, slope = slope)) +
-  geom_text(data = model_data, x = 510, y = .01125,parse = TRUE,hjust = 0,
-            aes(label = str_c('italic(R)^2:~',round(r.squared,2)))) +
+  # geom_abline(data = model_data, color = rgb(1,1,1,.8),linetype = 2,
+  #             aes(intercept = intercept, slope = slope)) +
+  # geom_text(data = model_data, x = 510, y = .01125,parse = TRUE,hjust = 0,
+  #           aes(label = str_c('italic(R)^2:~',round(r.squared,2)))) +
   facet_wrap(spec ~., ncol = 3)+
   scale_x_continuous(name = expression(rho))+
   scale_y_continuous(name = expression(pi))+
@@ -102,3 +102,8 @@ hypo_save(filename = 'figures/SF6.pdf',
           width = 8,
           height = 10,
           comment = plot_comment)
+
+ggsave(filename = '~/Desktop/SF6.pdf',
+          plot = p,
+          width = 8,
+          height = 10)

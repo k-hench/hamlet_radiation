@@ -60,7 +60,8 @@ model_data <- combined_data %>%
   group_by(run) %>%
   nest() %>%
   left_join(., fst_globals) %>%
-  mutate(mod =  map(data, ~ lm(.$WEIGHTED_FST ~ .$RHO))) %>%
+#  mutate(mod =  map(data, ~ lm(.$WEIGHTED_FST ~ .$RHO))) %>%
+  mutate(mod =  map(data, function(data){lm(WEIGHTED_FST ~ RHO, data = data)})) %>%
   bind_cols(., summarise_model(.))
 
 grob_tibble <- model_data %>%
@@ -76,11 +77,15 @@ p1 <- combined_data %>%
    geom_hypo_grob2(data = grob_tibble,
                    aes(grob = grob, rel_x = .75,rel_y = .75),
                    angle = 0, height = .5,width = .5)+
-  geom_hex(bins = 30,color = rgb(0,0,0,.3),
-           aes(fill=log10(..count..), x = RHO, y = WEIGHTED_FST))+
-  geom_abline(data = model_data, color = rgb(1,1,1,.8),linetype = 2,
+  geom_hex(bins = 30, color = rgb(0,0,0,.3),
+           aes(fill=log10(..count..), 
+               x = RHO, y = WEIGHTED_FST))+
+  geom_abline(data = model_data, 
+              color = rgb(1,1,1,.8),
+              linetype = 2,
               aes(intercept = intercept, slope = slope)) +
-  geom_text(data = model_data, x = 0, y = .8,parse = TRUE,hjust = 0,vjust = 1,
+  geom_text(data = model_data, x = 0, y = .875,
+            parse = TRUE, hjust = 0, vjust = 1,
             aes(label = str_c('italic(R)^2:~',round(r.squared,2)))) +
   geom_text(data = model_data, x = 0, y = .95,hjust = 0,
               aes(label = run)) +
@@ -96,20 +101,59 @@ p1 <- combined_data %>%
   theme(legend.position = c(.8,.08),
         strip.text = element_blank())
 
+slope_mod <- lm(model_data$slope ~ model_data$weighted_fst) 
+r_mod <- lm(model_data$r.squared ~ model_data$weighted_fst) 
+
 p2 <- model_data %>%
-  ggplot(aes(x = weighted_fst, y = slope))+
-  geom_point(color = plot_clr)+
+  ggplot()+
+  geom_abline(intercept = slope_mod$coefficients[[1]],
+              slope = slope_mod$coefficients[[2]],
+              linetype = 2,
+              color = "darkgray")+
+  geom_text(data = tibble(lab = slope_mod %>% broom::glance() %>% 
+                            .$r.squared %>% round(digits = 2) %>%
+                            str_c('italic(R)^2:~',.)), 
+            parse = TRUE,
+            aes(x = .092, y = -.00003, label = lab))+
+  geom_point(color = plot_clr,
+             aes(x = weighted_fst, y = slope))+
   labs(x = expression(genome~wide~weighted~mean~italic(F[ST])),
        y = expression(slope~(f(italic(F[ST]))==a~rho+b)))+
   theme_minimal()
 
-p <- plot_grid(p1, p2,
+
+p3 <- model_data %>%
+  ggplot()+
+  geom_abline(intercept = r_mod$coefficients[[1]],
+              slope = r_mod$coefficients[[2]],
+              linetype = 2,
+              color = "darkgray")+
+  geom_text(data = tibble(lab = r_mod %>% broom::glance() %>% 
+                            .$r.squared %>% round(digits = 2) %>%
+                            str_c('italic(R)^2:~',.)), 
+            parse = TRUE,
+            aes(x = .01, y = .1125, label = lab))+
+  geom_point(color = plot_clr,
+             aes(x = weighted_fst, y = r.squared))+
+  labs(x = expression(genome~wide~weighted~mean~italic(F[ST])),
+       y = expression(italic(R^2)))+
+  theme_minimal()
+
+p <- plot_grid(p1,
+               plot_grid(p2,p3,
+                         nrow = 1,
+                         labels = letters[2:3] %>% 
+                           project_case()),
           ncol = 1,
-          rel_heights = c(1,.3),
-          labels = letters[1:2] %>% project_case())
+          rel_heights = c(1,.3),labels = project_case(c("a")))
 
 hypo_save(filename = 'figures/SF3.pdf',
           plot = p,
           width = 10,
           height = 16,
           comment = plot_comment)
+
+# ggsave(filename = '~/Desktop/SF3.pdf',
+#           plot = p,
+#           width = 10,
+#           height = 16)
