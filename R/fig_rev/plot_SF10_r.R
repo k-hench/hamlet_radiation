@@ -1,9 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF3.R \
-#   2_analysis/summaries/fst_globals.txt \
-#   2_analysis/fst/50k/ \
-#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+# Rscript --vanilla R/fig/plot_SF10.R 2_analysis/admixture/ metadata/phenotypes.sc
 # ===============================================================
 # This script
 # ---------------------------------------------------------------
@@ -34,7 +31,6 @@ cli::rule(right = getwd())
 # config -----------------------
 admx_path <- as.character(args[1])
 pheno_file <- as.character(args[2])
-
 
 gids <- dir(admx_path,
             pattern = "pop.*15.txt") %>% 
