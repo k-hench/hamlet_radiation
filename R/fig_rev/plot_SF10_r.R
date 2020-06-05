@@ -9,7 +9,6 @@
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(paletteer)
-#library(ggstance)
 library(patchwork)
 library(GenomicOriginsScripts)
 library(hypoimg)

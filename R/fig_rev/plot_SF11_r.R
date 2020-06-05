@@ -42,14 +42,47 @@ p_loc <- c("bel", "hon", "pan") %>%
 #               heights = c(3,6,1.5,.5),
 #               guides = "collect")
 
-p <- (((p_loc[[1]]  + theme(legend.position = "none")) +
-    (p_loc[[3]]  + theme(legend.position = "none")) +
-    plot_layout(ncol = 1,heights = c(1,.4))) |
-  (p_loc[[2]] + theme(legend.position = c(.025,.0125), legend.justification = c(0,0)))) + 
+theme_hyb <-  function(legend.position = "none",...){
+  list(scale_y_continuous(breaks = c(0,.5,1)),
+       theme(legend.position = legend.position, 
+        legend.background = element_rect(fill = "white",colour = rgb(1,1,1,0)),
+        legend.direction = "horizontal",
+        legend.justification = c(1,1),
+        strip.text.y = element_text(angle = 0), 
+        ...))
+}
+
+label_spacer <- function(x, plus = 1.1){x + plus}
+
+
+p <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) + 
+  (p_loc[[2]] + theme_hyb() ) + 
+  (p_loc[[3]] + theme_hyb() )  + 
+  plot_layout(ncol = 1, heights = c(10,15,3) %>% label_spacer())+ 
   plot_annotation(tag_levels = 'a')
+  
 
 ggsave(filename = "figures/SF11.pdf",
        plot = p,
        height = 16,
-       width = 22, 
+       width = 10, 
        device = cairo_pdf)
+
+# get_data <- function (loc) 
+# {
+#   data <- map_dfr(.x = folders[str_detect(folders, loc)], .f = getPofZ, 
+#                   base_dir = base_dir)
+#   data 
+# }
+# 
+# 
+# 
+# data_loc <- c("bel", "hon", "pan") %>%
+#   map_dfr(get_data)
+# 
+# data_loc %>%
+#   filter(!grepl(pattern = "_pure", bin))%>%
+#   filter(post_prob > .99) %>%
+#   arrange(IndivName) %>%
+#   group_by(IndivName) %>%
+#   nest()

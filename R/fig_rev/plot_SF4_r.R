@@ -151,7 +151,7 @@ pi_data_select <- dxy_data %>%
             max_pi = max(pi),
             sd_pi = sd(pi)) %>%
   filter(pop %in% select_pi_pops) %>%
-  mutate(window = str_c('bold(',project_case('c'),'): italic(pi)'))
+  mutate(window = str_c('bold(',project_case('c'),'): pi'))
 
 # import recombination data
 recombination_data <- vroom::vroom(recombination_file,delim = '\t') %>%
@@ -175,7 +175,7 @@ data <- bind_rows(dxy_summary, fst_data, gxp_data)
 # import fst outliers
 outliers <-  vroom::vroom(outlier_table, delim = '\t')
 
-outlier_pick <- c('LG04_1', 'LG12_2', 'LG12_3')
+outlier_pick <- c('LG04_1', 'LG12_3', 'LG12_4')
 
 outlier_label <- outliers %>%
   filter(gid %in% outlier_pick) %>%
@@ -193,7 +193,11 @@ trait_tibble <- tibble(window = c("bold(h):italic(p)~(GxP[Bars])",
                                   "bold(j):italic(p)~(GxP[Snout])"),
                        grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
 
-p_done <- ggplot()+
+
+# trait_tibble$grob[[2]] <- trait_tibble$grob[[2]] %>% hypo_recolor_svg("white",layer = 4)
+# trait_tibble$grob[[1]] <- trait_tibble$grob[[1]] %>% reduce(.init = .,.f = hypo_recolor_svg, .x = c(4,5,6,7),color = "gray")
+
+(p_done <- ggplot()+
   geom_hypo_LG()+
   geom_vline(data = outliers, aes(xintercept = gpos), color = outlr_clr)+
   geom_segment(data = outlier_label,
@@ -206,8 +210,8 @@ p_done <- ggplot()+
   geom_point(data = dxy_select,aes(x= GPOS, y = dxy),size = plot_size, color = plot_clr)+
   geom_point(data = pi_data_select, aes(x = GPOS, y = mean_pi),size = plot_size, color = plot_clr) +
   geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
-  geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
-               color = 'red', se = FALSE, size = .7) +
+  # geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
+  #              color = 'red', se = FALSE, size = .7) +
   geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel), size = .4) +
   geom_hline(data = twisst_null, aes(yintercept = weight), color = rgb(1, 1, 1, .5), size = .4) +
   geom_hypo_grob(data = trait_tibble,
@@ -221,9 +225,12 @@ p_done <- ggplot()+
   theme(legend.position = 'bottom',
     axis.title = element_blank(),
     strip.background = element_blank(),
-    strip.placement = 'outside')
+    strip.placement = 'outside'))
 
+scl <- .85
 hypo_save(p_done, filename = 'figures/SF4.png',
-          width = 297*.95, height = 275*.95,
+          width = 297*scl, height = 275*scl,
           units = 'mm',
+          #type = "cairo-png",
+          type = "cairo",
           comment = plot_comment)

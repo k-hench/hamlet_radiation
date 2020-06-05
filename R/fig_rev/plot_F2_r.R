@@ -64,7 +64,10 @@ data2 <- data %>%
                                                 'Average~region~length~(kb)',
                                                 'Cummulative~region~length~(Mb)')))
 
-p <- ggplot(data2, aes(x = weighted, y = Value))+
+p <- data2 %>%
+ filter(!(threshold_value %in% (c(0.02,.1,0.3) %>%
+        str_c("italic(F[ST])~threshold:~",.)))) %>%
+  ggplot(aes(x = weighted, y = Value))+
   geom_hline(data = tibble(variable = factor(c('Cummulative~region~length~(Mb)',
                                                'Average~region~length~(kb)',
                                                'Number~of~regions'), levels = c('Number~of~regions',
@@ -92,3 +95,4 @@ hypo_save(filename = 'figures/F2.pdf',
           height = 10*scl,
           device = cairo_pdf,
           comment = plot_comment)
+
