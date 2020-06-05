@@ -70,11 +70,11 @@ dxy_summary <- dxy_data %>%
             delt_pi = max(c(max(PI_POP1),max(PI_POP2))) - min(c(min(PI_POP1),min(PI_POP2)))) %>%
   ungroup() %>%
   setNames(., nm = c('GPOS',
-                     str_c('bold(',project_case('e'),'):Delta~italic(d[xy])'),
+                     str_c('bold(',project_case('e'),'):\u0394~italic(d[xy])'),
                      str_c('bold(',project_case('e'),'):italic(d[xy])~(sd)'),
-                     str_c('bold(',project_case('e'),'):Delta~italic(pi)'))) %>%
+                     str_c('bold(',project_case('e'),'):\u0394~italic(\u03C0)'))) %>%
   gather(key = 'window', value = 'value',2:4) %>%
-  filter(window == str_c('bold(',project_case('e'),'):Delta~italic(d[xy])'))
+  filter(window == str_c('bold(',project_case('e'),'):\u0394~italic(d[xy])'))
 
 # import G x P data
 traits <- c("Bars.lm.50k.5k.txt.gz", "Peduncle.lm.50k.5k.txt.gz", "Snout.lm.50k.5k.txt.gz")
@@ -151,12 +151,12 @@ pi_data_select <- dxy_data %>%
             max_pi = max(pi),
             sd_pi = sd(pi)) %>%
   filter(pop %in% select_pi_pops) %>%
-  mutate(window = str_c('bold(',project_case('c'),'): pi'))
+  mutate(window = str_c('bold(',project_case('c'),'):~\u03C0'))
 
 # import recombination data
 recombination_data <- vroom::vroom(recombination_file,delim = '\t') %>%
   add_gpos() %>%
-  mutate(window = str_c('bold(',project_case('d'),'): rho'))
+  mutate(window = str_c('bold(',project_case('d'),'):~\u03C1'))
 
 # import topology weighting data
 twisst_data <- tibble(loc = c('bel','hon'),
@@ -165,8 +165,8 @@ twisst_data <- tibble(loc = c('bel','hon'),
   bind_rows() %>%
   select(GPOS, topo3,topo_rel,window,weight)
 
-twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~weighting[bel]'),
-                                 str_c('bold(',project_case('g'),'):~weighting[hon]')),
+twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~italic(w)[bel]'),
+                                 str_c('bold(',project_case('g'),'):~italic(w)[hon]')),
                       weight = c(1/15, 1/105))
 
 # combine data types --------
@@ -188,16 +188,16 @@ outlier_label <- outliers %>%
 outlier_y <- .45
 outlier_yend <- .475
 
-trait_tibble <- tibble(window = c("bold(h):italic(p)~(GxP[Bars])",
-                                  "bold(i):italic(p)~(GxP[Peduncle])",
-                                  "bold(j):italic(p)~(GxP[Snout])"),
+trait_tibble <- tibble(window = c("bold(h):italic(p)[Bars]",
+                                  "bold(i):italic(p)[Peduncle]",
+                                  "bold(j):italic(p)[Snout]"),
                        grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
 
 
 # trait_tibble$grob[[2]] <- trait_tibble$grob[[2]] %>% hypo_recolor_svg("white",layer = 4)
 # trait_tibble$grob[[1]] <- trait_tibble$grob[[1]] %>% reduce(.init = .,.f = hypo_recolor_svg, .x = c(4,5,6,7),color = "gray")
 
-(p_done <- ggplot()+
+p_done <- ggplot()+
   geom_hypo_LG()+
   geom_vline(data = outliers, aes(xintercept = gpos), color = outlr_clr)+
   geom_segment(data = outlier_label,
@@ -223,11 +223,11 @@ trait_tibble <- tibble(window = c("bold(h):italic(p)~(GxP[Bars])",
   facet_grid(window~.,scales = 'free',switch = 'y', labeller = label_parsed)+
   theme_hypo()+
   theme(legend.position = 'bottom',
-    axis.title = element_blank(),
+    axis.title = element_blank(),strip.text = element_text(size = 11),
     strip.background = element_blank(),
-    strip.placement = 'outside'))
+    strip.placement = 'outside')
 
-scl <- .85
+scl <- .8
 hypo_save(p_done, filename = 'figures/SF4.png',
           width = 297*scl, height = 275*scl,
           units = 'mm',
