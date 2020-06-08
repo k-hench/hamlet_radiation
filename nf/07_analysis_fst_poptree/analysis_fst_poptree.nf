@@ -14,6 +14,7 @@ Channel
 	.set{ crosses_ch }
 
 // git 7.3
+// open the focal Fst outlier regions
 Channel
 	.fromPath("../../ressources/plugin/poptrees/outlier.bed")
 	.splitCsv(header:true, sep:"\t")
@@ -23,6 +24,7 @@ Channel
 	.set{ crosses_vcf }
 
 // git 7.4
+// compute the average Fst for all possible pair within the outlier region
 process outlier_fst {
 		label "L_loc_collect_fst"
 		publishDir "../../2_analysis/fst/poptree/single", mode: 'copy'
@@ -61,6 +63,7 @@ process outlier_fst {
 	}
 
 // git 7.5
+// collect all population pairs within each region and compile Fst table
 process outlier_fst_collect {
 		label "L_20g2h_outlier_fst"
 		publishDir "../../2_analysis/fst/poptree/summary", mode: 'copy'
@@ -77,3 +80,6 @@ process outlier_fst_collect {
 		cat *.fst.tsv >> ${gid}.fst.all.tsv
 		"""
 	}
+
+// git 7.6
+// neighbour joining happens within the R script R/fig/plot_F4.R
