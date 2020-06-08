@@ -433,7 +433,7 @@ locations_ch_1
 // comute pairwise fsts
 process fst_run {
 	label 'L_20g4h_fst_run'
-	publishDir "logs/", mode: 'copy' , pattern: "*.log"
+	publishDir "../../2_analysis/fst/adapt/", mode: 'copy' , pattern: "*.log"
 
 	input:
 	set val( loc1 ), val( loc2 ), val( spec ), val(vcf_indx), file( vcf ) from vcf_location_combo_adapt
