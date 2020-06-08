@@ -1,3 +1,4 @@
+// git 10.1
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_ch }

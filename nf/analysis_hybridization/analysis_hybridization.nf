@@ -1,5 +1,5 @@
 #!/usr/bin/env nextflow
-
+// git 9.1
 // open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
