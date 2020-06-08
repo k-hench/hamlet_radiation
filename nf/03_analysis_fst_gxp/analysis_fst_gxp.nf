@@ -430,7 +430,7 @@ locations_ch_1
 	.set{ vcf_location_combo_adapt }
 
 // git 3.24
-// comute pairwise fsts
+// compute pairwise fsts
 process fst_run {
 	label 'L_20g4h_fst_run'
 	publishDir "../../2_analysis/fst/adapt/", mode: 'copy' , pattern: "*.log"
