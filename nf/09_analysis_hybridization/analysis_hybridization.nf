@@ -43,7 +43,7 @@ pan_pairs_ch = Channel.from( "pan" )
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 // git 9.5
-// comute pairwise fsts
+// comute pairwise fsts for SNP filtering
 process fst_run {
 	label 'L_20g45m_fst_run'
 	tag "${spec1}${loc}-${spec2}${loc}"
@@ -67,6 +67,7 @@ process fst_run {
 }
 
 // git 9.6
+// select the 800 most differentiated SNPs for each population pair
 process filter_fst {
 	label 'L_8g15m_filter_fst'
 	tag "${spec1}${loc}-${spec2}${loc}"
@@ -85,6 +86,8 @@ process filter_fst {
 }
 
 // git 9.7
+// filter the SNP set by min distance (5kb), than randomly pick 80 SNPs
+// then reformat newhybrid input
 process prep_nh_input {
 	label 'L_8g15m_prep_nh'
 	tag "${spec1}${loc}-${spec2}${loc}"
@@ -128,7 +131,8 @@ process prep_nh_input {
 }
 
 // git 9.8
-// copy of nh_input is needed because nh can't read links...
+// Run new hybrids
+// (copy of nh_input is needed because nh can't read links)
 process run_nh {
 	label 'L_20g15h4x_run_nh'
 	tag "${spec1}${loc}-${spec2}${loc}"
