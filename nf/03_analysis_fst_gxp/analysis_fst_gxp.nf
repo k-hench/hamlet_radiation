@@ -3,7 +3,7 @@
 // open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.into{ vcf_locations; vcf_filter; vcf_gxp }
+	.into{ vcf_locations; vcf_filter; vcf_gxp; vcf_adapt }
 
 // git 3.2
 // initialize location channel
@@ -405,5 +405,50 @@ process gemma_smooth {
 	"""
 	\$BASE_DIR/sh/gxp_slider ${lm} ${win} ${step}
 	\$BASE_DIR/sh/gxp_slider ${lmm} ${win} ${step}
+	"""
+}
+
+// Fst within species ---------------------------------------------------------
+// git 3.21
+// define species set
+Channel
+	.from( "nig", "pue", "uni")
+	.set{ species_ch }
+
+// git 3.22
+// define location set
+Channel.from( [[1, "bel"], [2, "hon"], [3, "pan"]]).into{ locations_ch_1;locations_ch_2 }
+
+// git 3.23
+// create location pairs
+locations_ch_1
+	.combine(locations_ch_2)
+	.filter{ it[0] < it[2] }
+	.map{ it[1,3]}
+	.combine( species_ch )
+	.combine( vcf_adapt )
+	.set{ vcf_location_combo_adapt }
+
+// git 3.24
+// comute pairwise fsts
+process fst_run {
+	label 'L_20g4h_fst_run'
+	publishDir "logs/", mode: 'copy' , pattern: "*.log"
+
+	input:
+	set val( loc1 ), val( loc2 ), val( spec ), val(vcf_indx), file( vcf ) from vcf_location_combo_adapt
+
+	output:
+	file( "adapt_${spec}${loc1}-${spec}${loc2}.log" ) into fst_logs
+
+	script:
+	"""
+	vcfsamplenames ${vcf[0]} | grep ${spec}${loc1} > pop1.txt
+	vcfsamplenames ${vcf[0]} | grep ${spec}${loc2} > pop2.txt
+
+	vcftools --gzvcf ${vcf[0]} \
+		--weir-fst-pop pop1.txt \
+		--weir-fst-pop pop2.txt \
+		--out adapt_${spec}${loc1}-${spec}${loc2} 2> adapt_${spec}${loc1}-${spec}${loc2}.log
 	"""
 }

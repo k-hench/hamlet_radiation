@@ -1,9 +1,12 @@
+#!/usr/bin/env nextflow
 // git 7.1
+// open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_fst }
 
 // git 7.2
+// load all possible population pairs
 Channel
 	.fromPath("../../ressources/plugin/poptrees/all_crosses.tsv")
 	.splitCsv(header:true, sep:"\t")
