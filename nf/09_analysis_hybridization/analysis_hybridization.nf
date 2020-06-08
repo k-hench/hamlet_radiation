@@ -5,16 +5,19 @@ Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_loc1; vcf_loc2; vcf_loc3 }
 
+// git 9.2
 // initialize location channel
 Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
+// git 9.3
 // define location specific sepcies set
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
+// git 9.4
 // prepare pairwise new_hybrids
 // ------------------------------
 /* (create all possible species pairs depending on location
@@ -39,6 +42,7 @@ pan_pairs_ch = Channel.from( "pan" )
     .map{ it[0,1,2,4,6]}
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
+// git 9.5
 // comute pairwise fsts
 process fst_run {
 	label 'L_20g45m_fst_run'
@@ -62,6 +66,7 @@ process fst_run {
 	"""
 }
 
+// git 9.6
 process filter_fst {
 	label 'L_8g15m_filter_fst'
 	tag "${spec1}${loc}-${spec2}${loc}"
@@ -79,6 +84,7 @@ process filter_fst {
 	"""
 }
 
+// git 9.7
 process prep_nh_input {
 	label 'L_8g15m_prep_nh'
 	tag "${spec1}${loc}-${spec2}${loc}"
@@ -121,6 +127,7 @@ process prep_nh_input {
 	"""
 }
 
+// git 9.8
 // copy of nh_input is needed because nh can't read links...
 process run_nh {
 	label 'L_20g15h4x_run_nh'

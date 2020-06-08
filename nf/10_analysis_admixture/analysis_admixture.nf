@@ -3,10 +3,12 @@ Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_ch }
 
+// git 10.2
 Channel
 	.from( 2..15 )
 	.set{ k_ch }
 
+// git 10.3
 Channel
 	.fromPath("../../ressources/plugin/poptrees/outlier.bed")
 	.splitCsv(header:true, sep:"\t")
@@ -14,6 +16,7 @@ Channel
 	.combine( vcf_ch )
 	.set{ vcf_admx }
 
+// git 10.4
 process plink12 {
 	label 'L_20g2h_plink12'
 	tag "${grouping.gid}"
@@ -48,8 +51,10 @@ process plink12 {
 	"""
 }
 
+// git 10.5
 admx_prep  = k_ch.combine( admx_plink )
 
+// git 10.6
 process admixture_all {
 	label 'L_20g4h_admixture_all'
 	publishDir "../../2_analysis/admixture/", mode: 'copy'

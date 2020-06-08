@@ -3,12 +3,14 @@ Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_fst }
 
+// git 7.2
 Channel
 	.fromPath("../../ressources/plugin/poptrees/all_crosses.tsv")
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ pop1:row.pop1, pop2:row.pop2 ] }
 	.set{ crosses_ch }
 
+// git 7.3
 Channel
 	.fromPath("../../ressources/plugin/poptrees/outlier.bed")
 	.splitCsv(header:true, sep:"\t")
@@ -17,7 +19,7 @@ Channel
 	.combine( crosses_ch )
 	.set{ crosses_vcf }
 
-
+// git 7.4
 process outlier_fst {
 		label "L_loc_collect_fst"
 		publishDir "../../2_analysis/fst/poptree/single", mode: 'copy'
@@ -55,6 +57,7 @@ process outlier_fst {
 		"""
 	}
 
+// git 7.5
 process outlier_fst_collect {
 		label "L_20g2h_outlier_fst"
 		publishDir "../../2_analysis/fst/poptree/summary", mode: 'copy'
