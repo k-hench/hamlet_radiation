@@ -432,7 +432,7 @@ locations_ch_1
 // git 3.24
 // compute pairwise fsts
 process fst_run {
-	label 'L_20g4h_fst_run'
+	label 'L_20g4h_fst_run_adapt'
 	publishDir "../../2_analysis/fst/adapt/", mode: 'copy' , pattern: "*.log"
 
 	input:
