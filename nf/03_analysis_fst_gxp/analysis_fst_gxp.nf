@@ -54,7 +54,7 @@ process subset_vcf_by_location {
 process subset_vcf_hamlets_only {
 	label "L_20g15h_filter_hamlets_only"
 	publishDir "../../1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
-	module "R3.5.2"
+	//module "R3.5.2"
 
 	input:
 	set vcfId, file( vcf ) from vcf_filter
@@ -90,8 +90,8 @@ process fst_multi {
 	publishDir "../../2_analysis/fst/10k/", mode: 'copy' , pattern: "*.10k.tsv.gz"
 	publishDir "../../2_analysis/fst/logs/", mode: 'copy' , pattern: "*.log"
 	publishDir "../../2_analysis/summaries", mode: 'copy' , pattern: "fst_outliers_998.tsv"
-	conda "$HOME/miniconda2/envs/py3"
-	module "R3.5.2"
+	//conda "$HOME/miniconda2/envs/py3"
+	//module "R3.5.2"
 
 	input:
 	set file( vcf ), file( pop ) from vcf_multi_fst
@@ -226,7 +226,7 @@ process fst_run {
 process fst_globals {
 	label 'L_loc_fst_globals'
 	publishDir "../../2_analysis/summaries", mode: 'copy' , pattern: "fst_globals.txt"
-	module "R3.5.2"
+	//module "R3.5.2"
 
 	input:
 	file( log ) from fst_logs.collect()
@@ -312,7 +312,7 @@ Channel
 process phenotye_pca {
 	label "L_loc_phenotype_pca"
 	publishDir "../../2_analysis/phenotype", mode: 'copy' , pattern: "*.txt"
-	module "R3.5.2"
+	//module "R3.5.2"
 
 	input:
 	file( sc ) from phenotypes_raw
@@ -342,7 +342,7 @@ traits_ch.combine( plink_binary ).combine( phenotype_file ).set{ trait_plink_com
 process gemma_run {
  label 'L_32g4h_GxP_run'
  publishDir "../../2_analysis/GxP/bySNP/", mode: 'copy'
- module "R3.5.2"
+ //module "R3.5.2"
 
  input:
  set  val( pheno ), file( bed ), file( bim ), file( fam ), file( pheno_file ) from trait_plink_combo
