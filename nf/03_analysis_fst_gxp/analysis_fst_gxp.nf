@@ -439,7 +439,7 @@ process fst_run_adapt {
 	set val( loc1 ), val( loc2 ), val( spec ), val(vcf_indx), file( vcf ) from vcf_location_combo_adapt
 
 	output:
-	file( "adapt_${spec}${loc1}-${spec}${loc2}.log" ) into fst_logs
+	file( "adapt_${spec}${loc1}-${spec}${loc2}.log" ) into fst_adapt_logs
 
 	script:
 	"""
