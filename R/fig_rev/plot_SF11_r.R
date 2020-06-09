@@ -12,6 +12,7 @@ library(GenomicOriginsScripts)
 library(prismatic)
 library(paletteer)
 library(patchwork)
+library(ggtext)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -48,7 +49,7 @@ theme_hyb <-  function(legend.position = "none",...){
         legend.background = element_rect(fill = "white",colour = rgb(1,1,1,0)),
         legend.direction = "horizontal",
         legend.justification = c(1,1),
-        strip.text.y = element_text(angle = 0), 
+        strip.text.y = element_markdown(angle = 0,hjust = 0), 
         ...))
 }
 
