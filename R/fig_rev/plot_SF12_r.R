@@ -47,4 +47,6 @@ ggsave(filename = "figures/SF12.png",
        plot = p,
        width = 11,
        height = 7,
-       dpi = 200)
+       dpi = 600
+       )
+
