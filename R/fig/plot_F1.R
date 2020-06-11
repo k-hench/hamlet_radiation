@@ -1,12 +1,14 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_F1.R \
+#    2_analysis/dxy/50k/ 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 1 of the study "The genomic onset of a marine radiation"
-# by Hench, McMillan and Puebla
-#   ---------------------------------------------------------------
+# This script produces Figure 1 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
+# ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
+# script_name <- "plot_F1.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -14,10 +16,10 @@ library(hypoimg)
 
 cat('\n')
 script_name <- args[5] %>%
-  str_remove(.,'--file=')
+  str_remove(., '--file=')
 
 plot_comment <- script_name %>%
-  str_c('mother-script = ',getwd(),'/',.)
+  str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
 
@@ -38,42 +40,54 @@ fst_data <- str_c(fst_dir,fst_files) %>%
   purrr::map(summarize_fst) %>%
   bind_rows()
 
-# import dxy
+# lookup dxy files
 dxy_files <- dir(dxy_dir)
 
+# import dxy
 dxy_data <-  str_c(dxy_dir,dxy_files) %>%
   purrr::map(summarize_dxy) %>%
   bind_rows()
 
+# determine fst ranking
 fst_order <- fst_data %>%
   select(run, `mean_weighted-fst`) %>%
-  mutate(run = fct_reorder(run,`mean_weighted-fst`))
+  mutate(run = fct_reorder(run, `mean_weighted-fst`))
 
+# merge fst and dxy cc_data
+# (large parts of this code are now unnecessary after the separation of dxy and
+#  fst plots into separate panels b & c)
 data <- left_join(fst_data, dxy_data) %>%
   select(c(8,1:7,9:15)) %>%
-  gather(key = 'stat', value = 'val',2:15) %>%
-  separate(stat, into = c('sumstat','popstat'),sep = '_') %>%
+  # reformat table to enable parallel plotting (with secondary axis)
+  gather(key = 'stat', value = 'val', 2:15) %>%
+  # sumstat contains the values needed to plot the boxplots (quartiles, etc)
+  separate(stat, into = c('sumstat', 'popstat'), sep = '_') %>%
+  # duplicate dxy values scaled to fst range
   mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
   unite(temp, val, val_scaled) %>%
+  # separate th eoriginal values from the scales ons (scaled = secondary axis)
   spread(.,key = 'sumstat',value = 'temp') %>%
   separate(mean, into = c('mean','mean_scaled'),sep = '_', convert = TRUE) %>%
-  separate(median, into = c('median','median_scaled'),sep = '_', convert = TRUE) %>%
+  separate(median, into = c('median','median_scaled'), sep = '_', convert = TRUE) %>%
   separate(sd, into = c('sd','sd_scaled'),sep = '_', convert = TRUE) %>%
-  separate(lower, into = c('lower','lower_scaled'),sep = '_', convert = TRUE) %>%
-  separate(upper, into = c('upper','upper_scaled'),sep = '_', convert = TRUE) %>%
-  separate(lowpoint, into = c('lowpoint','lowpoint_scaled'),sep = '_', convert = TRUE) %>%
-  separate(highpoint, into = c('highpoint','highpoint_scaled'),sep = '_', convert = TRUE) %>%
+  separate(lower, into = c('lower','lower_scaled'), sep = '_', convert = TRUE) %>%
+  separate(upper, into = c('upper','upper_scaled'), sep = '_', convert = TRUE) %>%
+  separate(lowpoint, into = c('lowpoint','lowpoint_scaled'), sep = '_', convert = TRUE) %>%
+  separate(highpoint, into = c('highpoint','highpoint_scaled'), sep = '_', convert = TRUE) %>%
+  # include "dodge"-positions for side-by-side plotting (secondary axis)
   mutate(loc = str_sub(run,4,6),
          run = factor(run, levels = levels(fst_order$run)),
          x = as.numeric(run) ,
-         x_dodge = ifelse(popstat == 'dxy',x + .25,x - .25),
+         x_dodge = ifelse(popstat == 'dxy', x + .25, x - .25),
          x_start_dodge = x_dodge - wdh/2,
          x_end_dodge = x_dodge + wdh/2,
          popstat_loc = str_c(popstat,'[',loc,']'))
 
+# sort run by average genome wide Fst
 run_ord <- tibble(run = levels(data$run),
                   run_ord = 1:length(levels(data$run)))
 
+# onderlying structure for the network plots
 networx <- tibble( loc = c('bel','hon', 'pan'),
                    n = c(5,6,3),
                    label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
@@ -83,9 +97,11 @@ networx <- tibble( loc = c('bel','hon', 'pan'),
   purrr::pmap(network_layout) %>%
   bind_rows()
 
+# plot the individual networks by location
 plot_list <- networx %>%
   purrr::pmap(plot_network, node_lab_shift = .2)
 
+# assemble panel a
 p1 <- cowplot::plot_grid(
   grid::textGrob('Belize'),
   grid::textGrob('Honduras'),
@@ -93,6 +109,7 @@ p1 <- cowplot::plot_grid(
   plot_list[[1]], plot_list[[2]], plot_list[[3]],
   ncol = 3, rel_heights = c(.1,1))
 
+# assemble panel b
 p2 <- data %>%
   filter(popstat == "weighted-fst") %>%
   ggplot(aes(color = loc)) +
@@ -100,7 +117,7 @@ p2 <- data %>%
                    y = lowpoint, yend = highpoint))+
   geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
                 ymin = lower, ymax = upper),
-             fill='white')+
+             fill = 'white')+
   geom_segment(aes(x = x - wdh,
                    xend = x + wdh,
                    y = median,
@@ -125,6 +142,7 @@ p2 <- data %>%
         axis.text.y.right = element_text(color = clr_sec),
         axis.title.y.right = element_text(color = clr_sec))
 
+# assemble panel c
 p3 <- data %>%
   filter(popstat == "dxy") %>%
   ggplot(aes(color = loc)) +
@@ -132,7 +150,7 @@ p3 <- data %>%
                    y = lowpoint, yend = highpoint))+
   geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
                 ymin = lower, ymax = upper),
-            fill='white')+
+            fill = 'white')+
   geom_segment(aes(x = x - wdh,
                    xend = x + wdh,
                    y = median,
@@ -158,22 +176,26 @@ p3 <- data %>%
         axis.text.y.right = element_text(color = clr_sec),
         axis.title.y.right = element_text(color = clr_sec))
 
+# merge panel b & c
 p23 <- cowplot::plot_grid(p2,p3,
                           ncol = 2,
                           labels = letters[2:3] %>%
                             project_case())
 
+# merge all panels
 p_done <- cowplot::plot_grid(p1, p23,
                              ncol = 1,
                              rel_heights = c(.9,1),
                              labels = c(letters[1], NULL) %>% project_case())
 
+# export figure 1
 hypo_save(p_done, filename = 'figures/F1r.pdf',
           width = 11, height = 6.5,
           comment = plot_comment)
 
-  table_all <- dxy_data %>%
-  select(run,mean_dxy) %>%
+# compile fst and dxy table (table 1) for the manuscript
+table_all <- dxy_data %>%
+  select(run, mean_dxy) %>%
   left_join( vroom::vroom(fst_globals, delim = '\t',
                           col_names = c('loc','run','mean','weighted_fst')) %>%
                mutate(run = str_c(loc,'-',run) %>%
@@ -202,8 +224,10 @@ hypo_save(p_done, filename = 'figures/F1r.pdf',
   arrange(srt1,srt2) %>%
   select(-srt1,-srt2)
 
+# replace "NA" by dashes "-"
 table_all[is.na(table_all)] <- '-'
 
+# export sub-tables 1 a - c
 table_all[1:5,c(1,2:6)] %>% export_2_latex(name = 'tables/suppl_tab3a.tex')
 table_all[6:11,c(1,7:12)] %>% export_2_latex(name = 'tables/suppl_tab3b.tex')
 table_all[12:14, c(1,13:15)] %>% export_2_latex(name = 'tables/suppl_tab3c.tex')

@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF4.R 2_analysis/dxy/50k/ \
+# Rscript --vanilla R/fig/plot_F4.R 2_analysis/dxy/50k/ \
 #    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
 #    2_analysis/summaries/fst_outliers_998.tsv \
 #    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
@@ -8,8 +8,8 @@
 #    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
 #    2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Suppl. Figure 4 of the study "The genomic origins of a marine radiation"
-# by Hench, McMillan and Puebla
+# This script produces Figure 4 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/','2_analysis/fst/50k/multi_fst.50k.tsv.gz',
@@ -17,7 +17,7 @@
 # 'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
 # '2_analysis/twisst/weights/', 'ressources/plugin/trees/',
 # '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
-# script_name <- "plot_SF4.R"
+# script_name <- "plot_F4.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -211,8 +211,8 @@ p_done <- ggplot()+
   geom_point(data = dxy_select,aes(x= GPOS, y = dxy),size = plot_size, color = plot_clr)+
   geom_point(data = pi_data_select, aes(x = GPOS, y = mean_pi),size = plot_size, color = plot_clr) +
   geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
-  # geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
-  #              color = 'red', se = FALSE, size = .7) +
+  geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
+                color = 'red', se = FALSE, size = .7) +
   geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel), size = .4) +
   geom_hline(data = twisst_null, aes(yintercept = weight), color = rgb(1, 1, 1, .5), size = .4) +
   geom_hypo_grob(data = trait_tibble,
@@ -229,9 +229,8 @@ p_done <- ggplot()+
     strip.placement = 'outside')
 
 scl <- .8
-hypo_save(p_done, filename = 'figures/SF4.png',
+hypo_save(p_done, filename = 'figures/F4.png',
           width = 297*scl, height = 275*scl,
           units = 'mm',
-          #type = "cairo-png",
           type = "cairo",
           comment = plot_comment)

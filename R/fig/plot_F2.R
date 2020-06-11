@@ -1,17 +1,18 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F3.R \
-#   2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
-#   2_analysis/msmc/setup/msmc_grouping.txt 2_analysis/msmc/setup/msmc_cc_grouping.txt \
-#   2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_F2.R \
+#    2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
+#    2_analysis/msmc/setup/msmc_grouping.txt 2_analysis/msmc/setup/msmc_cc_grouping.txt \
+#    2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 3 of the study "The genomic onset of a marine radiation"
-# by Hench, McMillan and Puebla
+# This script produces Figure 2 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
 # '2_analysis/msmc/setup/msmc_grouping.txt', '2_analysis/msmc/setup/msmc_cc_grouping.txt',
 # '2_analysis/summaries/fst_globals.txt')
+# script_name <- "plot_F2.R"
 # ----------------------------------------
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
@@ -43,16 +44,20 @@ fst_globals <- vroom::vroom(fst_globals_file,delim = '\t',
   mutate(run = str_c(pop1,loc,'-',pop2,loc),
          run = fct_reorder(run,weighted_fst))
 
+# locate cross-coalescence results
 msmc_files <- dir(msmc_path, pattern = '.final.txt.gz')
 cc_files <- dir(cc_path, pattern = '.final.txt.gz')
 
+# import effective population size data
 msmc_data <- msmc_files %>%
   map_dfr(.f = get_msmc, msmc_path = msmc_path)
 
+# import cross-coalescence data
 cc_data <- cc_files %>%
   map_dfr(get_cc, cc_groups = cc_groups, cc_path = cc_path) %>%
   mutate( run = factor(run, levels = levels(fst_globals$run)))
 
+# color adjustments for line plots (replace white by gray)
 clr_alt <- clr
 clr_alt['uni'] <- rgb(.8,.8,.8)
 clr_ticks <- 'lightgray'
@@ -139,11 +144,11 @@ p_cc <- cc_data %>%
         axis.title = element_text(face = 'plain'),
         legend.title = element_text(face = 'plain'))
 
-
+# combine panels a and b
 p_done <- p_msmc / p_cc + plot_annotation(tag_levels = c('a'))
 
-
-hypo_save(plot = p_done, filename = 'figures/F3.pdf',
+# export figure 2
+hypo_save(plot = p_done, filename = 'figures/F2.pdf',
           width = 10, height = 7,
           comment = 'Rscript srews this one up',
           device = cairo_pdf)

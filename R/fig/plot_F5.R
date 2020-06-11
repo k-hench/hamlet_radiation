@@ -1,14 +1,14 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F4.R \
+# Rscript --vanilla R/fig/plot_F5.R \
 #   2_analysis/twisst/weights/ ressources/plugin/trees/ \
 #   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
 #   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
 #   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
 #   2_analysis/GxP/50000/ 200 5
 # ===============================================================
-# This script produces Figure 4 of the study "The genomic onset of a marine radiation"
-# by Hench, McMillan and Puebla
+# This script produces Figure 5 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
@@ -18,7 +18,7 @@
 #           '2_analysis/summaries/fst_globals.txt',
 #           '2_analysis/GxP/50000/', 200, 5,
 #           "2_analysis/fst/poptree/summary/")
-# script_name <- "plot_F4.R"
+# script_name <- "plot_F5.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -137,7 +137,7 @@ neighbour_tibbles <- tibble(outlier_id = outlier_pick,
                             #loc = c(rep('bel',3)),
                             label = c('A','B','C'))
 
-trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_trait_img$trait %in% gxp_traits], 
+trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_trait_img$trait %in% gxp_traits],
                      layer = c(4,3,7),
                      color = gxp_clr[gxp_traits %>% sort()])%>%
   pmap(.f = hypo_recolor_svg) %>%
@@ -146,7 +146,7 @@ trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_tra
 trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7,color = gxp_clr[["Bars"]])
 
 
-tree_list <- outlier_pick %>% 
+tree_list <- outlier_pick %>%
   purrr::map_dfr(get_fst_summary_data)
 
 poptree_plot_list <-  tree_list %>%
@@ -181,14 +181,14 @@ p_leg2 <- tibble(spec1 = c('indigo', 'indigo','unicolor'),
   cowplot::plot_grid(plotlist = .,
                      nrow = 1)
 
-p_leg_3 <- cowplot::plot_grid(p_leg1, 
+p_leg_3 <- cowplot::plot_grid(p_leg1,
                             p_leg2,
                             nrow = 1, rel_widths = c(.6, 1))
 
 p_leg <- cowplot::plot_grid(
   p_leg_poptree,
   p_leg_3,
-  ncol = 1, 
+  ncol = 1,
   rel_heights = c(.2, 1))
 
 p_done <- cowplot::plot_grid(p_single, p_leg,
@@ -196,7 +196,7 @@ p_done <- cowplot::plot_grid(p_single, p_leg,
                              rel_heights = c(1, .17))
 
 scl <- .9
-hypo_save(plot = p_done, filename = 'figures/F4.pdf',
+hypo_save(plot = p_done, filename = 'figures/F5.pdf',
           width = 14*scl, height = 13*scl,
           comment = script_name,
           device = cairo_pdf)
