@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF4 2_analysis/dxy/50k/ \
+# Rscript --vanilla R/fig/plot_SF4.R 2_analysis/dxy/50k/ \
 #    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
 #    2_analysis/summaries/fst_outliers_998.tsv \
 #    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
@@ -17,6 +17,7 @@
 # 'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
 # '2_analysis/twisst/weights/', 'ressources/plugin/trees/',
 # '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
+# script_name <- "plot_SF4.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -70,11 +71,11 @@ dxy_summary <- dxy_data %>%
             delt_pi = max(c(max(PI_POP1),max(PI_POP2))) - min(c(min(PI_POP1),min(PI_POP2)))) %>%
   ungroup() %>%
   setNames(., nm = c('GPOS',
-                     str_c('bold(',project_case('e'),'):Delta~italic(d[xy])'),
+                     str_c('bold(',project_case('e'),'):\u0394~italic(d[xy])'),
                      str_c('bold(',project_case('e'),'):italic(d[xy])~(sd)'),
-                     str_c('bold(',project_case('e'),'):Delta~italic(pi)'))) %>%
+                     str_c('bold(',project_case('e'),'):\u0394~italic(\u03C0)'))) %>%
   gather(key = 'window', value = 'value',2:4) %>%
-  filter(window == str_c('bold(',project_case('e'),'):Delta~italic(d[xy])'))
+  filter(window == str_c('bold(',project_case('e'),'):\u0394~italic(d[xy])'))
 
 # import G x P data
 traits <- c("Bars.lm.50k.5k.txt.gz", "Peduncle.lm.50k.5k.txt.gz", "Snout.lm.50k.5k.txt.gz")
@@ -151,12 +152,12 @@ pi_data_select <- dxy_data %>%
             max_pi = max(pi),
             sd_pi = sd(pi)) %>%
   filter(pop %in% select_pi_pops) %>%
-  mutate(window = str_c('bold(',project_case('c'),'): italic(pi)'))
+  mutate(window = str_c('bold(',project_case('c'),'):~\u03C0'))
 
 # import recombination data
 recombination_data <- vroom::vroom(recombination_file,delim = '\t') %>%
   add_gpos() %>%
-  mutate(window = str_c('bold(',project_case('d'),'): rho'))
+  mutate(window = str_c('bold(',project_case('d'),'):~\u03C1'))
 
 # import topology weighting data
 twisst_data <- tibble(loc = c('bel','hon'),
@@ -165,8 +166,8 @@ twisst_data <- tibble(loc = c('bel','hon'),
   bind_rows() %>%
   select(GPOS, topo3,topo_rel,window,weight)
 
-twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~weighting[bel]'),
-                                 str_c('bold(',project_case('g'),'):~weighting[hon]')),
+twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~italic(w)[bel]'),
+                                 str_c('bold(',project_case('g'),'):~italic(w)[hon]')),
                       weight = c(1/15, 1/105))
 
 # combine data types --------
@@ -175,7 +176,7 @@ data <- bind_rows(dxy_summary, fst_data, gxp_data)
 # import fst outliers
 outliers <-  vroom::vroom(outlier_table, delim = '\t')
 
-outlier_pick <- c('LG04_1', 'LG12_2', 'LG12_3')
+outlier_pick <- c('LG04_1', 'LG12_3', 'LG12_4')
 
 outlier_label <- outliers %>%
   filter(gid %in% outlier_pick) %>%
@@ -188,10 +189,14 @@ outlier_label <- outliers %>%
 outlier_y <- .45
 outlier_yend <- .475
 
-trait_tibble <- tibble(window = c("bold(h):italic(p)~(GxP[Bars])",
-                                  "bold(i):italic(p)~(GxP[Peduncle])",
-                                  "bold(j):italic(p)~(GxP[Snout])"),
+trait_tibble <- tibble(window = c("bold(h):italic(p)[Bars]",
+                                  "bold(i):italic(p)[Peduncle]",
+                                  "bold(j):italic(p)[Snout]"),
                        grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
+
+
+# trait_tibble$grob[[2]] <- trait_tibble$grob[[2]] %>% hypo_recolor_svg("white",layer = 4)
+# trait_tibble$grob[[1]] <- trait_tibble$grob[[1]] %>% reduce(.init = .,.f = hypo_recolor_svg, .x = c(4,5,6,7),color = "gray")
 
 p_done <- ggplot()+
   geom_hypo_LG()+
@@ -206,8 +211,8 @@ p_done <- ggplot()+
   geom_point(data = dxy_select,aes(x= GPOS, y = dxy),size = plot_size, color = plot_clr)+
   geom_point(data = pi_data_select, aes(x = GPOS, y = mean_pi),size = plot_size, color = plot_clr) +
   geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
-  geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
-               color = 'red', se = FALSE, size = .7) +
+  # geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
+  #              color = 'red', se = FALSE, size = .7) +
   geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel), size = .4) +
   geom_hline(data = twisst_null, aes(yintercept = weight), color = rgb(1, 1, 1, .5), size = .4) +
   geom_hypo_grob(data = trait_tibble,
@@ -219,11 +224,14 @@ p_done <- ggplot()+
   facet_grid(window~.,scales = 'free',switch = 'y', labeller = label_parsed)+
   theme_hypo()+
   theme(legend.position = 'bottom',
-    axis.title = element_blank(),
+    axis.title = element_blank(),strip.text = element_text(size = 11),
     strip.background = element_blank(),
     strip.placement = 'outside')
 
+scl <- .8
 hypo_save(p_done, filename = 'figures/SF4.png',
-          width = 297*.95, height = 275*.95,
+          width = 297*scl, height = 275*scl,
           units = 'mm',
+          #type = "cairo-png",
+          type = "cairo",
           comment = plot_comment)

@@ -7,6 +7,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
+# script_name <- "plot_F2.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -38,7 +39,7 @@ globals <- vroom::vroom(globals_file, delim = '\t',
 
 # fixed fst -----------
 import_table <- list(file = str_c(data_dir,files),
-                     fst_threshold = c(.6,.4,.3,.2,.1,.05,.02,.01)) %>%
+                     fst_threshold = c(.5,.4,.3,.2,.1,.05,.02,.01)) %>%
   #                   fst_threshold = c(.75,.7,.65,.6,.55,.5,.45,.4,.35,.3,.25,.2)) %>%
   cross_df() %>%
   mutate( run =  file %>%
@@ -66,7 +67,7 @@ data2 <- data %>%
 
 fnt_sz <- 10
 p <-  data2 %>%
- filter(!(threshold_value %in% (c(0.02,.1,0.3, .6) %>%
+ filter(!(threshold_value %in% (c(0.02,.1,0.3, .4) %>%
         str_c("italic(F[ST])~threshold:~",.)))) %>%
   ggplot(aes(x = weighted, y = Value, fill = weighted))+
   geom_hline(data = tibble(variable = factor(c('Cummulative~Region~Length~(Mb)',
@@ -97,9 +98,10 @@ p <-  data2 %>%
                                 barheight = unit(5,"pt")))+
   theme(axis.title.y = element_blank(),
         axis.text.x = element_text(vjust = .5, angle = 0),
-        legend.position = c(1,1),
-        legend.background = element_rect(color = plot_clr,fill = rgb(1,1,1,.3), size = .2),
-        legend.justification = c(1,1),
+        axis.title.x = element_text(vjust = -2),
+        legend.position = "bottom",
+       # legend.background = element_rect(color = plot_clr,fill = rgb(1,1,1,.3), size = .2),
+        #legend.justification = c(1,1),
         strip.text = element_text(size = fnt_sz),
         legend.direction = "horizontal",
         strip.placement = 'outside',
@@ -112,7 +114,7 @@ scl <- .675
 hypo_save(filename = 'figures/F2.pdf',
           plot = p,
           width = 16*scl,
-          height = 11*scl,
+          height = 12*scl,
           device = cairo_pdf,
           comment = plot_comment)
 

@@ -18,6 +18,7 @@
 #           '2_analysis/summaries/fst_globals.txt',
 #           '2_analysis/GxP/50000/', 200, 5,
 #           "2_analysis/fst/poptree/summary/")
+# script_name <- "plot_F4.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -25,6 +26,7 @@ library(hypoimg)
 library(furrr)
 library(ggraph)
 library(tidygraph)
+library(ggtext)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -135,9 +137,6 @@ neighbour_tibbles <- tibble(outlier_id = outlier_pick,
                             #loc = c(rep('bel',3)),
                             label = c('A','B','C'))
 
-
-
-
 trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_trait_img$trait %in% gxp_traits], 
                      layer = c(4,3,7),
                      color = gxp_clr[gxp_traits %>% sort()])%>%
@@ -196,11 +195,8 @@ p_done <- cowplot::plot_grid(p_single, p_leg,
                              ncol = 1,
                              rel_heights = c(1, .17))
 
+scl <- .9
 hypo_save(plot = p_done, filename = 'figures/F4.pdf',
-          width = 14, height = 12,
+          width = 14*scl, height = 13*scl,
           comment = script_name,
           device = cairo_pdf)
-
-# ggsave(plot = p_done, filename = '~/Desktop/F4.pdf',
-#        width = 14, height = 12,
-#        device = cairo_pdf)

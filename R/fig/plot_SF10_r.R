@@ -6,6 +6,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
+# script_name <- "plot_SF10.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(paletteer)
@@ -57,6 +58,10 @@ gid_labels <-  c(LG04_1 = "LG04 (A)",
 gid_traits <-  c(LG04_1 = "Snout",
                  LG12_3 = "Bars", 
                  LG12_4 = "Peduncle")
+
+trait_icons <- c(LG04_1 = "<img src='ressources/img/snout_c.png' width='60' />   ",
+               LG12_3 = "<img src='ressources/img/bars_c.png' width='60' />    ", 
+               LG12_4 = "<img src='ressources/img/peduncle_c.png' width='60' />    ")
 
 pheno_plot_data <- data %>%
   filter(!duplicated(id)) %>%
@@ -118,7 +123,7 @@ p_spec <- pheno_plot_data %>%
   theme_minimal()+
   theme(#axis.text.y = element_text(size = 4),
     plot.title = element_text(size = 9),
-    legend.position = "bottom",
+    legend.position = "bottom",legend.text.align = 0,
     axis.title = element_blank(),
     axis.ticks = element_blank(),
     axis.text.x = element_blank()#element_text(angle = 90, size = 6)
@@ -151,11 +156,15 @@ p_done <- p_ad[[1]] +
   p_ad[[3]]+ 
   p_spec + p_loc + p_l + 
   plot_layout(ncol = 1, heights = c(.4,.4,.4,.08,.02,.1)) & 
-  theme(legend.position = "none")
+  theme(legend.position = "none", 
+        axis.text = element_text(size = 12)
+        )
+
+p_done2 <- ggdraw(p_done,xlim = c(.023,1))
 
 scl <- .9
 ggsave("figures/SF10.pdf",
-       plot = p_done,
+       plot = p_done2,
        width = 16*scl,
        height = 10*scl,
        device = cairo_pdf)
