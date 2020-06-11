@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF5.R 2_analysis/dxy/50k/
+# Rscript --vanilla R/fig/plot_SF4.R 2_analysis/dxy/50k/
 # ===============================================================
-# This script
+# This script produces Suppl. Figure 4 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/')
@@ -89,7 +90,7 @@ p <- ggplot()+
         axis.title.x = element_text(),
         axis.text.x.bottom = element_text(colour = 'darkgray'))
 
-hypo_save(filename = 'figures/SF5.png',
+hypo_save(filename = 'figures/SF4.png',
           plot = p,
           width = 8,
           height = 12,

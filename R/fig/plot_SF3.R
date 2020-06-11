@@ -5,7 +5,8 @@
 #   2_analysis/fst/50k/ \
 #   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
-# This script
+# This script produces Suppl. Figure 3 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( '2_analysis/summaries/fst_globals.txt',
@@ -60,7 +61,6 @@ model_data <- combined_data %>%
   group_by(run) %>%
   nest() %>%
   left_join(., fst_globals) %>%
-#  mutate(mod =  map(data, ~ lm(.$WEIGHTED_FST ~ .$RHO))) %>%
   mutate(mod =  map(data, function(data){lm(WEIGHTED_FST ~ RHO, data = data)})) %>%
   bind_cols(., summarise_model(.))
 
@@ -78,9 +78,9 @@ p1 <- combined_data %>%
                    aes(grob = grob, rel_x = .75,rel_y = .75),
                    angle = 0, height = .5,width = .5)+
   geom_hex(bins = 30, color = rgb(0,0,0,.3),
-           aes(fill=log10(..count..), 
+           aes(fill=log10(..count..),
                x = RHO, y = WEIGHTED_FST))+
-  geom_abline(data = model_data, 
+  geom_abline(data = model_data,
               color = rgb(1,1,1,.8),
               linetype = 2,
               aes(intercept = intercept, slope = slope)) +
@@ -101,8 +101,8 @@ p1 <- combined_data %>%
   theme(legend.position = c(.8,.08),
         strip.text = element_blank())
 
-slope_mod <- lm(model_data$slope ~ model_data$weighted_fst) 
-r_mod <- lm(model_data$r.squared ~ model_data$weighted_fst) 
+slope_mod <- lm(model_data$slope ~ model_data$weighted_fst)
+r_mod <- lm(model_data$r.squared ~ model_data$weighted_fst)
 
 p2 <- model_data %>%
   ggplot()+
@@ -110,9 +110,9 @@ p2 <- model_data %>%
               slope = slope_mod$coefficients[[2]],
               linetype = 2,
               color = "darkgray")+
-  geom_text(data = tibble(lab = slope_mod %>% broom::glance() %>% 
+  geom_text(data = tibble(lab = slope_mod %>% broom::glance() %>%
                             .$r.squared %>% round(digits = 2) %>%
-                            str_c('italic(R)^2:~',.)), 
+                            str_c('italic(R)^2:~',.)),
             parse = TRUE,
             aes(x = .092, y = -.00003, label = lab))+
   geom_point(color = plot_clr,
@@ -128,9 +128,9 @@ p3 <- model_data %>%
               slope = r_mod$coefficients[[2]],
               linetype = 2,
               color = "darkgray")+
-  geom_text(data = tibble(lab = r_mod %>% broom::glance() %>% 
+  geom_text(data = tibble(lab = r_mod %>% broom::glance() %>%
                             .$r.squared %>% round(digits = 2) %>%
-                            str_c('italic(R)^2:~',.)), 
+                            str_c('italic(R)^2:~',.)),
             parse = TRUE,
             aes(x = .01, y = .1125, label = lab))+
   geom_point(color = plot_clr,
@@ -142,7 +142,7 @@ p3 <- model_data %>%
 p <- plot_grid(p1,
                plot_grid(p2,p3,
                          nrow = 1,
-                         labels = letters[2:3] %>% 
+                         labels = letters[2:3] %>%
                            project_case()),
           ncol = 1,
           rel_heights = c(1,.3),labels = project_case(c("a")))
@@ -152,8 +152,3 @@ hypo_save(filename = 'figures/SF3.pdf',
           width = 10,
           height = 16,
           comment = plot_comment)
-
-# ggsave(filename = '~/Desktop/SF3.pdf',
-#           plot = p,
-#           width = 10,
-#           height = 16)

@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF7.R 2_analysis/fasttree/ no_outgroups.all.whg.SNP.tree
+# Rscript --vanilla R/fig/plot_SF6.R 2_analysis/fasttree/ no_outgroups.all.whg.SNP.tree
 # ===============================================================
-# This script
+# This script produces Suppl. Figure 6 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fasttree/', 'no_outgroups.all.whg.SNP.tree')
@@ -116,7 +117,7 @@ p <- ggtree(tree_df, layout = lyout,
                               label.hjust = 0))+
   theme_void()
 
-hypo_save(filename = 'figures/SF7.pdf',
+hypo_save(filename = 'figures/SF6.pdf',
           plot = p,
           width = 9,
           height = 6,

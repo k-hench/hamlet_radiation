@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF10.R 2_analysis/admixture/ metadata/phenotypes.sc
+# Rscript --vanilla R/fig/plot_SF7.R 2_analysis/admixture/ metadata/phenotypes.sc
 # ===============================================================
-# This script
+# This script produces Suppl. Figure 7 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
@@ -33,18 +34,18 @@ admx_path <- as.character(args[1])
 pheno_file <- as.character(args[2])
 
 gids <- dir(admx_path,
-            pattern = "pop.*15.txt") %>% 
-  str_remove("pop.") %>% 
-  str_remove(".15.txt") 
+            pattern = "pop.*15.txt") %>%
+  str_remove("pop.") %>%
+  str_remove(".15.txt")
 
 pheno_data <- read_sc(pheno_file) %>%
   select(id, Bars, Peduncle, Snout ) %>%
-  filter(!is.na(Bars)) 
+  filter(!is.na(Bars))
 
 
 data <- gids %>%
   map_dfr(data_amdx,admx_path = admx_path,
-          k = 2) 
+          k = 2)
 
 pheno_facet <- tibble( trait = c("Snout","Bars",  "Peduncle"),
                        gid = c("LG04_1", "LG12_3", "LG12_4")) %>%
@@ -52,15 +53,15 @@ pheno_facet <- tibble( trait = c("Snout","Bars",  "Peduncle"),
 
 
 gid_labels <-  c(LG04_1 = "LG04 (A)",
-                 LG12_3 = "LG12 (B)", 
+                 LG12_3 = "LG12 (B)",
                  LG12_4 = "LG12 (C)")
 
 gid_traits <-  c(LG04_1 = "Snout",
-                 LG12_3 = "Bars", 
+                 LG12_3 = "Bars",
                  LG12_4 = "Peduncle")
 
 trait_icons <- c(LG04_1 = "<img src='ressources/img/snout_c.png' width='60' />   ",
-               LG12_3 = "<img src='ressources/img/bars_c.png' width='60' />    ", 
+               LG12_3 = "<img src='ressources/img/bars_c.png' width='60' />    ",
                LG12_4 = "<img src='ressources/img/peduncle_c.png' width='60' />    ")
 
 pheno_plot_data <- data %>%
@@ -68,7 +69,7 @@ pheno_plot_data <- data %>%
   select(id:id_order) %>%
   left_join(pheno_data,by = c( id_nr = "id")) %>%
   arrange(spec, Bars, Peduncle, Snout, id) %>%
-  mutate(ord_nr = row_number()) %>% 
+  mutate(ord_nr = row_number()) %>%
   pivot_longer(names_to = "trait",
                values_to = "phenotype",
                cols = Bars:Snout) %>%
@@ -104,14 +105,14 @@ p_phno <- pheno_plot_data %>%
 tib_drawing <- pheno_plot_data %>%
   group_by(spec) %>%
   summarise(pos = (min(ord_nr)+max(ord_nr))*.5) %>%
-  ungroup() 
+  ungroup()
 
 p_spec <- pheno_plot_data %>%
   group_by(spec) %>%
   summarise(start = min(ord_nr)-1,
             end = max(ord_nr)) %>%
   ggplot(aes(xmin = start, xmax = end,
-             ymin = -Inf, 
+             ymin = -Inf,
              ymax = Inf))+
   geom_rect(aes(fill = spec), color = "black")+
   (tib_drawing %>% pmap(add_spec_drawing))+
@@ -151,21 +152,20 @@ p_l <- (get_legend(p_phno) %>% ggdraw()) +
   (get_legend(p_loc) %>% ggdraw()) +
   plot_layout(nrow = 1)
 
-p_done <- p_ad[[1]] + 
+p_done <- p_ad[[1]] +
   p_ad[[2]] +
-  p_ad[[3]]+ 
-  p_spec + p_loc + p_l + 
-  plot_layout(ncol = 1, heights = c(.4,.4,.4,.08,.02,.1)) & 
-  theme(legend.position = "none", 
+  p_ad[[3]]+
+  p_spec + p_loc + p_l +
+  plot_layout(ncol = 1, heights = c(.4,.4,.4,.08,.02,.1)) &
+  theme(legend.position = "none",
         axis.text = element_text(size = 12)
         )
 
 p_done2 <- ggdraw(p_done,xlim = c(.023,1))
 
 scl <- .9
-ggsave("figures/SF10.pdf",
+ggsave("figures/SF7.pdf",
        plot = p_done2,
        width = 16*scl,
        height = 10*scl,
        device = cairo_pdf)
-

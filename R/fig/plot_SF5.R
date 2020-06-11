@@ -1,9 +1,10 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF6.R 2_analysis/pi/50k/ \
+# Rscript --vanilla R/fig/plot_SF5.R 2_analysis/pi/50k/ \
 #   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
-# This script
+# This script produces Suppl. Figure 5 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/pi/50k/',
@@ -97,13 +98,8 @@ p <- combined_data %>%
   theme(legend.position = c(.84,.01),
         strip.text = element_blank())
 
-hypo_save(filename = 'figures/SF6.pdf',
+hypo_save(filename = 'figures/SF5.pdf',
           plot = p,
           width = 8,
           height = 10,
           comment = plot_comment)
-
-ggsave(filename = '~/Desktop/SF6.pdf',
-          plot = p,
-          width = 8,
-          height = 10)

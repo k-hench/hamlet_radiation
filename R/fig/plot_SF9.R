@@ -1,9 +1,9 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig_rev/plot_SF12_r.R 2_analysis/GxP/50000/
+# Rscript --vanilla R/fig_rev/plot_SF9.R 2_analysis/GxP/50000/
 # ===============================================================
-# This script produces Figure 1 of the study "The genomic onset of a marine radiation"
-# by Hench, McMillan and Puebla
+# This script produces Suppl. Figure 9 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/GxP/50000/')
@@ -43,10 +43,9 @@ p <- data %>%
   theme_hypo()
 
 #scl <- 1
-ggsave(filename = "figures/SF12.png",
+ggsave(filename = "figures/SF9.png",
        plot = p,
        width = 11,
        height = 7,
        dpi = 600
        )
-
