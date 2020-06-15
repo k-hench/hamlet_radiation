@@ -2,8 +2,9 @@
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/
 # ===============================================================
-# This script produces Suppl. Figure 8 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# This script produces Suppl. Figure 8 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/pi/50k/')

@@ -8,7 +8,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
-# script_name <- "plot_F1.R"
+# script_name <- "R/fig/plot_F1.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

@@ -7,7 +7,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("2_analysis/newhyb/nh_input/NH.Results/")
-# script_name <- "plot_SF1.R"
+# script_name <- "R/fig/plot_SF1.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

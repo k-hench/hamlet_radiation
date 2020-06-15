@@ -12,7 +12,7 @@
 # args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
 # '2_analysis/msmc/setup/msmc_grouping.txt', '2_analysis/msmc/setup/msmc_cc_grouping.txt',
 # '2_analysis/summaries/fst_globals.txt')
-# script_name <- "plot_F2.R"
+# script_name <- "R/fig/plot_F2.R"
 # ----------------------------------------
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------

@@ -18,7 +18,7 @@
 #           '2_analysis/summaries/fst_globals.txt',
 #           '2_analysis/GxP/50000/', 200, 5,
 #           "2_analysis/fst/poptree/summary/")
-# script_name <- "plot_F5.R"
+# script_name <- "R/fig/plot_F5.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

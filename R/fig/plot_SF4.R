@@ -2,8 +2,9 @@
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF4.R 2_analysis/dxy/50k/
 # ===============================================================
-# This script produces Suppl. Figure 4 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# This script produces Suppl. Figure 4 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/')

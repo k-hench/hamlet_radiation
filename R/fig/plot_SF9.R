@@ -2,8 +2,9 @@
 # run from terminal:
 # Rscript --vanilla R/fig_rev/plot_SF9.R 2_analysis/GxP/50000/
 # ===============================================================
-# This script produces Suppl. Figure 9 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# This script produces Suppl. Figure 9 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/GxP/50000/')

@@ -5,19 +5,22 @@
 #   2_analysis/fst/50k/ \
 #   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
-# This script produces Suppl. Figure 3 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# This script produces Suppl. Figure 4 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( '2_analysis/summaries/fst_globals.txt',
 #            '2_analysis/fst/50k/',
 #            '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
+# script_name <- "R/fig/plot_SF3.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(vroom)
 library(furrr)
+library(ggtext)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -55,28 +58,28 @@ rho_data <- vroom::vroom(rho_dir, delim = '\t') %>%
 
 combined_data <- fst_data %>%
   filter(BIN_START %% 50000 == 1 ) %>%
-  left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START'))
+  left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START')) %>%
+  left_join(.,fst_globals %>% select(run, weighted_fst)) %>%
+  mutate(pop1 = str_sub(run,1,3),
+         pop2 = str_sub(run,8,10),
+         loc = str_sub(run,4,6),
+         run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ),
+         run_label = fct_reorder(run_label,weighted_fst))
 
 model_data <- combined_data %>%
   group_by(run) %>%
   nest() %>%
   left_join(., fst_globals) %>%
-  mutate(mod =  map(data, function(data){lm(WEIGHTED_FST ~ RHO, data = data)})) %>%
-  bind_cols(., summarise_model(.))
-
-grob_tibble <- model_data %>%
-  ungroup() %>%
-  select(pop1, pop2, loc) %>%
-  set_names(c('left', 'right', 'loc')) %>%
-  future_pmap_dfr(plot_fishes_location) %>%
-  mutate(run = factor(run, levels = levels(fst_globals$run)))
-
+  mutate(mod =  map(data, function(data){lm(WEIGHTED_FST ~ RHO, data = data)}),
+         pop1 = str_sub(run,1,3),
+         pop2 = str_sub(run,8,10),
+         loc = str_sub(run,4,6),
+         run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" )) %>%
+  bind_cols(., summarise_model(.)) %>%
+  mutate(run_label = factor(run_label, levels = levels(combined_data$run_label)))
 
 p1 <- combined_data %>%
   ggplot()+
-   geom_hypo_grob2(data = grob_tibble,
-                   aes(grob = grob, rel_x = .75,rel_y = .75),
-                   angle = 0, height = .5,width = .5)+
   geom_hex(bins = 30, color = rgb(0,0,0,.3),
            aes(fill=log10(..count..),
                x = RHO, y = WEIGHTED_FST))+
@@ -84,12 +87,10 @@ p1 <- combined_data %>%
               color = rgb(1,1,1,.8),
               linetype = 2,
               aes(intercept = intercept, slope = slope)) +
-  geom_text(data = model_data, x = 0, y = .875,
+  geom_text(data = model_data, x = 0, y = .975,
             parse = TRUE, hjust = 0, vjust = 1,
             aes(label = str_c('italic(R)^2:~',round(r.squared,2)))) +
-  geom_text(data = model_data, x = 0, y = .95,hjust = 0,
-              aes(label = run)) +
-  facet_wrap(run ~., ncol = 5)+
+  facet_wrap(run_label ~., ncol = 5)+
   scale_x_continuous(name = expression(rho))+
   scale_y_continuous(name = expression(italic(F[ST])),limits = c(-.05,1))+
   scico::scale_fill_scico(palette = 'berlin') +
@@ -99,22 +100,10 @@ p1 <- combined_data %>%
                                barwidth = unit(130,'pt')))+
   theme_minimal()+
   theme(legend.position = c(.8,.08),
-        strip.text = element_blank())
-
-slope_mod <- lm(model_data$slope ~ model_data$weighted_fst)
-r_mod <- lm(model_data$r.squared ~ model_data$weighted_fst)
+        strip.text = element_markdown())
 
 p2 <- model_data %>%
   ggplot()+
-  geom_abline(intercept = slope_mod$coefficients[[1]],
-              slope = slope_mod$coefficients[[2]],
-              linetype = 2,
-              color = "darkgray")+
-  geom_text(data = tibble(lab = slope_mod %>% broom::glance() %>%
-                            .$r.squared %>% round(digits = 2) %>%
-                            str_c('italic(R)^2:~',.)),
-            parse = TRUE,
-            aes(x = .092, y = -.00003, label = lab))+
   geom_point(color = plot_clr,
              aes(x = weighted_fst, y = slope))+
   labs(x = expression(genome~wide~weighted~mean~italic(F[ST])),
@@ -124,15 +113,6 @@ p2 <- model_data %>%
 
 p3 <- model_data %>%
   ggplot()+
-  geom_abline(intercept = r_mod$coefficients[[1]],
-              slope = r_mod$coefficients[[2]],
-              linetype = 2,
-              color = "darkgray")+
-  geom_text(data = tibble(lab = r_mod %>% broom::glance() %>%
-                            .$r.squared %>% round(digits = 2) %>%
-                            str_c('italic(R)^2:~',.)),
-            parse = TRUE,
-            aes(x = .01, y = .1125, label = lab))+
   geom_point(color = plot_clr,
              aes(x = weighted_fst, y = r.squared))+
   labs(x = expression(genome~wide~weighted~mean~italic(F[ST])),
