@@ -13,6 +13,7 @@ args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(ggtext)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -61,17 +62,14 @@ grob_tibble <-  global_bar %>%
 sc_ax <- scales::cbreaks(c(0,max(global_bar$genome_wide_dxy)),
                          scales::pretty_breaks(4))
 
-labels <-  c("0",
-             substitute(a%.%10^-3, list(a = sprintf("%.0f", sc_ax$breaks[2]*1000))),
-             substitute(a%.%10^-3, list(a = sprintf("%.0f", sc_ax$breaks[3]*1000))),
-             substitute(a%.%10^-3, list(a = sprintf("%.0f", sc_ax$breaks[4]*1000))),
-             substitute(a%.%10^-3, list(a = sprintf("%.0f", sc_ax$breaks[5]*1000))))
+labels <- str_c(c("", sc_ax$breaks[2:5]*1000),
+                c("0", rep("\u00B710^-3",4)))
 
 data <- data %>%
   mutate(run = factor(run, levels = levels(global_bar$run)))
 
 p <- ggplot()+
-  facet_wrap( .~run, as.table = TRUE, ncol = 1,dir = 'v')+
+  facet_wrap( .~run, as.table = TRUE, ncol = 1, dir = 'v')+
   geom_rect(data = global_bar %>% mutate(xmax = scaled_dxy * hypo_karyotype$GEND[24]),
             aes(xmin = 0, xmax = xmax, ymin = -Inf, ymax = Inf), color = rgb(1,1,1,0),fill = clr_below)+
   geom_vline(data = hypogen::hypo_karyotype,aes(xintercept = GEND),color = hypo_clr_lg)+
@@ -90,10 +88,11 @@ p <- ggplot()+
   theme(strip.text = element_blank(),
         legend.position = 'none',
         axis.title.x = element_text(),
-        axis.text.x.bottom = element_text(colour = 'darkgray'))
+        axis.text.x.bottom = element_markdown(colour = 'darkgray'))
 
 hypo_save(filename = 'figures/SF4.png',
           plot = p,
           width = 8,
           height = 12,
+          type = "cairo",
           comment = plot_comment)

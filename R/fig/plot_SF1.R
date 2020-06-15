@@ -34,17 +34,21 @@ cli::rule(right = getwd())
 # config -----------------------
 base_dir <- as.character(args[1])
 
+# locate hybridization data files
 folders <- dir(base_dir)
 
+# load data and create plots by location
 p_loc <- c("bel", "hon", "pan") %>%
   map(plot_loc)
 
+# compose figure from the individual panels
 p <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) +
   (p_loc[[2]] + theme_hyb() ) +
   (p_loc[[3]] + theme_hyb() )  +
   plot_layout(ncol = 1, heights = c(10,15,3) %>% label_spacer())+
   plot_annotation(tag_levels = 'a')
 
+# export the final figure
 hypo_save(filename = "figures/SF1.pdf",
        plot = p,
        height = 16,

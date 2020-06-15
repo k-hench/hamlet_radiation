@@ -189,7 +189,7 @@ p_done <- cowplot::plot_grid(p1, p23,
                              labels = c(letters[1], NULL) %>% project_case())
 
 # export figure 1
-hypo_save(p_done, filename = 'figures/F1r.pdf',
+hypo_save(p_done, filename = 'figures/F1.pdf',
           width = 11, height = 6.5,
           comment = plot_comment)
 

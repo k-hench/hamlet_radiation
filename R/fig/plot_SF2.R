@@ -33,17 +33,22 @@ data_path <- as.character(args[1])
 outlier_file <- as.character(args[2])
 globals_file <- as.character(args[3])
 # load data -------------------
+# locate fst data files
 files <- dir(data_path,pattern = '.50k.windowed.weir.fst.gz')
+
+# extract run names from data file names
 run_files <- files %>%
   str_sub(.,1,11) %>%
   str_replace(.,pattern = '([a-z]{3})-([a-z]{3})-([a-z]{3})', '\\2\\1-\\3\\1')
 
+# load genome wide average fst values for each run
 globals <- vroom::vroom(globals_file, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
   separate(run, into = c('pop1','pop2')) %>%
   mutate(run = str_c(pop1,loc,'-',pop2,loc),
          run = fct_reorder(run,weighted))
 
+# load all windowed fst data and collapse in to a single data frame
 data <- purrr::pmap(tibble(file = str_c(data_path,files),
                            run = run_files),
                     hypo_import_windows) %>%
@@ -55,7 +60,8 @@ data <- purrr::pmap(tibble(file = str_c(data_path,files),
          loc = str_sub(run,4,6),
          run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ))
 
-# global bars ------------------------
+# create table for the indication of genome wide average fst in the plot background
+# (rescale covered fst range to the extent of the genome)
 global_bar <- globals %>%
   select(weighted,run) %>%
   mutate(run = as.character(run)) %>%
@@ -68,24 +74,32 @@ global_bar <- globals %>%
          run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ),
          run_label = fct_reorder(run_label,xmax_org))
 
-# plotting ---------------
+# pre-calculate secondary x-axis breaks
 sc_ax <- scales::cbreaks(c(0,max(globals$weighted)),
                          scales::pretty_breaks(4))
 
+# compose final figure
 p <- ggplot()+
+  # general plot structure separated by run
   facet_grid( run_label ~ ., as.table = TRUE) +
+  # add genome wide average fst in the background
   geom_rect(data = global_bar %>%
               mutate(xmax = xmax * hypo_karyotype$GEND[24]),
             aes(xmin = 0, xmax = xmax,
                 ymin = -Inf, ymax = Inf),
             color = rgb(1,1,1,0),
             fill = clr_below) +
+  # add outlier window indication
   geom_vline(data = hypogen::hypo_karyotype,
              aes(xintercept = GEND),
              color = hypo_clr_lg) +
-  geom_point(data = data  %>% mutate(run_label = factor(run_label, levels = levels(global_bar$run_label))),
+  # add fst data points
+  geom_point(data = data  %>%
+                      mutate(run_label = factor(run_label,
+                                                levels = levels(global_bar$run_label))),
               aes(x = GPOS, y = WEIGHTED_FST),
               size=.2,color = plot_clr) +
+  # axis layout
   scale_x_hypo_LG(sec.axis =  sec_axis(~ ./hypo_karyotype$GEND[24],
                                        breaks = (sc_ax$breaks/max(globals$weighted)),
                                        labels = sprintf("%.2f", sc_ax$breaks),
@@ -93,6 +107,7 @@ p <- ggplot()+
   scale_y_continuous(name = expression(italic('F'[ST])),
                      limits = c(-.1,1),
                      breaks = c(0,.5,1)) +
+  # general plot layout
   theme_hypo() +
   theme(strip.text.y = element_markdown(angle = 0),
         strip.background = element_blank(),
@@ -100,8 +115,10 @@ p <- ggplot()+
         axis.title.x = element_text(),
         axis.text.x.bottom = element_text(colour = 'darkgray'))
 
+# export final figure
 hypo_save(filename = 'figures/SF2.png',
           plot = p,
           width = 8,
           height = 12,
+          type = "cairo",
           comment = plot_comment)
