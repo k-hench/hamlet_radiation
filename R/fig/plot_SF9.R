@@ -8,6 +8,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/GxP/50000/')
+# script_name <- "R/fig/plot_SF9.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

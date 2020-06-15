@@ -10,6 +10,7 @@
 # ===============================================================
 # args <- c('2_analysis/pi/50k/',
 #           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
+# script_name <- "R/fig/plot_SF5.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

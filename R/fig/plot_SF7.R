@@ -8,7 +8,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
-# script_name <- "plot_SF10.R"
+# script_name <- "R/fig/plot_SF7.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(paletteer)

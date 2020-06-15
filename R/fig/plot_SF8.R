@@ -8,6 +8,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/pi/50k/')
+# script_name <- "R/fig/plot_SF8.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)

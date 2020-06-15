@@ -8,6 +8,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fasttree/', 'no_outgroups.all.whg.SNP.tree')
+# script_name <- "R/fig/plot_SF6.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(ggtree)
