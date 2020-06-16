@@ -223,7 +223,7 @@ trait_tibble <- tibble(window = c("bold(h):italic(p)[Bars]",
 
 # finally, the figure is being put together
 p_done <- ggplot()+
-  # the gray/white backgrounds of the LGs are added
+  # add gray/white LGs background
   geom_hypo_LG()+
   # the red highlights for the outlier regions are added
   geom_vline(data = outliers, aes(xintercept = gpos), color = outlr_clr)+

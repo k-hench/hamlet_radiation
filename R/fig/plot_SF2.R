@@ -89,7 +89,7 @@ p <- ggplot()+
                 ymin = -Inf, ymax = Inf),
             color = rgb(1,1,1,0),
             fill = clr_below) +
-  # add outlier window indication
+  # add LG borders
   geom_vline(data = hypogen::hypo_karyotype,
              aes(xintercept = GEND),
              color = hypo_clr_lg) +

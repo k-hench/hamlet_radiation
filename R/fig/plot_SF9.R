@@ -24,7 +24,8 @@ plot_comment <- script_name %>%
 args <- process_input(script_name, args)
 # config -----------------------
 gxp_path <- as.character(args[1])
-# load data -------------------
+
+# configure which gxp data to load
 trait_tib  <- tibble(file = dir(gxp_path) %>% .[str_detect(.,"Bars|Peduncle|Snout")]) %>%
   mutate(prep = file) %>%
   separate(prep , into = c("trait", "model_type", "win", "step", "filetype", "zip"),
@@ -32,22 +33,31 @@ trait_tib  <- tibble(file = dir(gxp_path) %>% .[str_detect(.,"Bars|Peduncle|Snou
   select(file, trait, model_type) %>%
   mutate(path = gxp_path)
 
+# load gxp data
 data <- pmap_dfr(trait_tib,get_gxp_both_models)
 
+# compose final figure
 p <- data %>%
   ggplot(aes(x = gpos, y = AVG_p_wald))+
+  # add gray/white LGs background
   geom_hypo_LG()+
+  # add gxp data points
   geom_point(color = plot_clr, size = .3)+
+  # set axis layout
   scale_x_hypo_LG()+
   scale_fill_hypo_LG_bg()+
+  # set axis titles
   labs(y = expression(G~x~P~(average~italic(p)[wald])))+
+  # general plot structure separated by model type and trait
   facet_grid(trait+model_type ~ ., scales = "free_y")+
+  # general plot layout
   theme_hypo()
 
-#scl <- 1
-ggsave(filename = "figures/SF9.png",
+# export final figure
+hypo_save(filename = "figures/SF9.png",
        plot = p,
        width = 11,
        height = 7,
-       dpi = 600
-       )
+       dpi = 600,
+       type = "cairo",
+       comment = plot_comment)
