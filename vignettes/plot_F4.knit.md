@@ -1,0 +1,308 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+# Figure 4
+
+
+
+## Summary
+
+This is the accessory documentation of Figure 4.
+The Figure can be recreated by running the **R** script `plot_F4.R`:
+```sh
+cd $BASE_DIR
+
+Rscript --vanilla R/fig/plot_F4.R \
+  2_analysis/twisst/weights/ ressources/plugin/trees/ \
+  https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+  2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
+  2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
+  2_analysis/GxP/50000/ 200 5
+
+```
+
+## Details of `plot_F4.R`
+
+In the following, the individual steps of the R script are documented.
+It is an executable R script that depends on the accessory R package **GenomicOriginsScripts**.
+
+### Config
+
+The scripts start with a header that contains copy & paste templates to execute or debug the script:
+
+
+```r
+#!/usr/bin/env Rscript
+# run from terminal:
+# Rscript --vanilla R/fig/plot_F4.R \
+#   2_analysis/twisst/weights/ ressources/plugin/trees/ \
+#   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+#   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
+#   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
+#   2_analysis/GxP/50000/ 200 5
+# ===============================================================
+# This script produces Figure 4 of the study "The genomic onset of a marine radiation"
+# by Hench, McMillan and Puebla
+# ---------------------------------------------------------------
+# ===============================================================
+# args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
+#           'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
+#           '2_analysis/summaries/fst_outliers_998.tsv',
+#           '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
+#           '2_analysis/summaries/fst_globals.txt',
+#           '2_analysis/GxP/50000/', 200, 5)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The R package **GenomicOriginsScripts** is loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+
+```r
+args <- commandArgs(trailingOnly=FALSE)
+# setup -----------------------
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(furrr)
+cat('\n')
+script_name <- args[5] %>%
+  str_remove(.,'--file=')
+
+plot_comment <- script_name %>%
+  str_c('mother-script = ',getwd(),'/',.)
+
+args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_F4.R ────────────────────────────────────────────
+#> Parameters read:
+#>  ★ 1: figures/data/twisst_weights/
+#>  ★ 2: figures/data/twisst_positions/
+#>  ★ 3: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
+#>  ★ 4: figures/data/summaries/all_multi_fst_outliers_998.tsv
+#>  ★ 5: figures/data/dxy/
+#>  ★ 6: figures/data/fst/
+#>  ★ 7: figures/data/summaries/fst_globals.txt
+#>  ★ 8: figures/data/GxP/
+#>  ★ 9: 200
+#> ─────────────────────────────────────────── /current/working/directory ──
+```
+
+The directories for the different data types are received and stored in respective variables.
+Also, we source an external r script from the [original twisst github repository](https://github.com/simonhmartin/twisst) that we need to import the twisst data:
+
+
+```r
+# config -----------------------
+w_path <- as.character(args[1])
+d_path <- as.character(args[2])
+twisst_functions <- as.character(args[3])
+out_table <- as.character(args[4])
+dxy_dir <- as.character(args[5])
+fst_dir <- as.character(args[6])
+fst_globals <- as.character(args[7])
+gxp_dir <- as.character(args[8])
+twisst_size <- as.numeric(args[9])
+source(twisst_functions, local = TRUE)
+
+plan(multiprocess)
+```
+
+The we define a buffer width.
+This is the extent left and right of the $F_{ST}$  outlier windows that is included in the plots.
+We also load the R packages **ape** and **igraph** that will help us working with phylogenetic objects (the twisst topologies).
+
+
+```r
+window_buffer <- 2.5*10^5
+#-------------------
+library(ape)
+library(igraph)
+```
+
+### Data import
+
+Then, we start with the data import.
+For the figure we are going to need:
+
+- $d_{XY}$ data
+- genotype $\times$ phenotype data
+- $F_{ST}$ data
+- topology weighing data
+- the positions of the genome annotations
+- the positions of the $F_{ST}$ outlier windows
+
+We start by importing $d_{XY}$ by first listing all $d_{XY}$ data files and then iterating the $d_{XY}$ import function over the files.
+
+
+
+```r
+# actual script =========================================================
+
+dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.50kb-5kb.tsv.gz'))
+
+dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
+  purrr::pmap(get_dxy) %>%
+  bind_rows()
+```
+
+Next we iterate the genotype $\times$ phenotype import function over the trait names *Bars*, *Snout* and *Peduncle*.
+
+
+
+```r
+gxp_traits <- c('Bars', 'Snout', 'Peduncle')
+
+gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.50k.5k.txt.gz') %>%
+  future_map(get_gxp_long) %>%
+  bind_rows()
+```
+
+Then, we define two sets of colors - one for the topology highlighting schemes and one for the traits of the genotype $\times$ phenotype association.
+
+
+```r
+twisst_clr <- c(Blue = "#0140E5", Bars = "#E32210", Butter = "#E4E42E")
+gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
+  darken(factor = .95) %>%
+  set_names(., nm = gxp_traits)
+```
+
+Next, we compute the average genome wide $d_{XY}$ and load the average genome wide $F_{ST}$ values for all 28 pair wise species comparisons.
+
+
+
+```r
+dxy_globals <- dxy_data %>%
+  filter(BIN_START %% 50000 == 1 ) %>%
+  group_by( run ) %>%
+  summarise(mean_global_dxy = sum(dxy*N_SITES)/sum(N_SITES)) %>%
+  mutate(run = fct_reorder(run,mean_global_dxy))
+
+fst_globals <- vroom::vroom(fst_globals,delim = '\t',
+                        col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
+  separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
+  mutate(run = str_c(pop1,loc,'-',pop2,loc),
+         run = fct_reorder(run,weighted_fst))
+```
+
+After this, we import $F_{ST}$ by first listing all $F_{ST}$ data files and then iterating the $F_{ST}$ import function over the files.
+
+
+
+```r
+fst_files <- dir(fst_dir ,pattern = '.50k.windowed.weir.fst.gz')
+fst_data <- str_c(fst_dir,fst_files) %>%
+  future_map(get_fst) %>%
+  bind_rows()%>%
+  left_join(dxy_globals) %>%
+  left_join(fst_globals) %>%
+  mutate(run = refactor(., fst_globals),
+         BIN_MID = (BIN_START+BIN_END)/2)
+```
+
+We then add the genome wide averages of $F_{ST}$ and $d_{XY}$ as new columns to the $d_{XY}$ data.
+This will be used later for coloring the $d_{XY}$ panel.
+
+
+```r
+dxy_data <- dxy_data %>%
+  left_join(dxy_globals) %>%
+  left_join(fst_globals) %>%
+  mutate(run = refactor(dxy_data, fst_globals),
+         window = 'bold(italic(d[xy]))')
+```
+
+Then, we summarize the $d_{XY}$ data to compute $\Delta d_{XY}$.
+
+
+```r
+data_dxy_summary <- dxy_data %>%
+  group_by(GPOS) %>%
+  summarise(scaffold = CHROM[1],
+            start = BIN_START[1],
+            end = BIN_END[1],
+            mid = BIN_MID[1],
+            min_dxy = min(dxy),
+            max_dxy = max(dxy),
+            mean_dxy = mean(dxy),
+            median_dxy = median(dxy),
+            sd_dxy = sd(dxy),
+            delta_dxy = max(dxy)-min(dxy))
+```
+
+To only load the relevant twisst data, we first load the positions of the $F_{ST}$ outlier regions.
+We also define a set of outliers of interest.
+
+
+```r
+# twisst part ------------------
+outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
+  setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
+
+outlier_pick = c('LG04_1', 'LG12_3', 'LG12_4')
+```
+
+
+Then we define a set of genes of interest.
+These are the ones, that later will be labeled in the annotation panel.
+
+
+```r
+cool_genes <-  c('arl3','kif16b','cdx1','hmcn2',
+                 'sox10','smarca4',
+                 'rorb',
+                 'alox12b','egr1',
+                 'ube4b','casz1',
+                 'hoxc8a','hoxc9','hoxc10a',#'hoxc6a',
+                 #'hoxc8a',
+                 'hoxc13a','rarga','rarg',
+                 'snai1','fam83d','mafb','sws2abeta','sws2aalpha','sws2b','lws','grm8')
+```
+
+Next, we load the twisst data for both locations and list all species from Belize (This will be needed to calculate their pair wise distances for the topology highlighting).
+
+
+```r
+data_tables <- list(bel = prep_data(loc = 'bel'),
+                    hon = prep_data(loc = 'hon'))
+
+pops_bel <- c('ind','may','nig','pue','uni')
+```
+
+
+### Plotting
+
+As a last step before the actual plotting, we are defining a list of outliers to be included within the final plots.
+
+
+```r
+neighbour_tibbles <- tibble(outlier_id = outlier_pick,
+                            loc = c(rep('bel',3)),
+                            label = c('A','B','C'))
+```
+
+Then, we iterate the main plotting function over all selected $F_{ST}$ outlier windows and combine the resulting plots into a multi panel plot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

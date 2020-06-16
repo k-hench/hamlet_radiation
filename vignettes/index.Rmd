@@ -8,7 +8,7 @@ bibliography: [book.bib]
 biblio-style: apalike
 link-citations: yes
 github-repo: k-hench/bookdown
-description: "Scripts used to produce Figures and Supplementary Figures of 'The genomic origins of a marine radiation' by Hench, McMillan an Puebla"
+description: "Scripts used to produce Figures and Supplementary Figures of 'Ancestral variation, hybridization and modularity fuel a marine radiation' by Hench, McMillan an Puebla"
 ---
 
 # Intro
@@ -18,17 +18,15 @@ knitr::opts_chunk$set(echo = TRUE)
 source('../R/overall_flow.R')
 ```
 
-This repository contains the complete workflow used in the paper "*The genomic origins of a marine radiation*".
+This repository contains the complete workflow used in the paper "*Ancestral variation, hybridization and modularity fuel a marine radiation*".
 The individual chapters of this documentation follow the separate main steps of the workflow, which each refer to an individual prefix in the _git x.x_ references of the papers method section.
-The individual steps partly depend on each other and were executed in the order depicted below.
+The individual steps partly depend on each other - especially git 1 - git 3 should be executed in order and before the other steps.
 
-<div style="max-width:800px; margin:auto;">
+<!--<div style="max-width:800px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 7}
 p_overall
 ```
-</div>
-
-The re-analysis of the data from Stankowski *et al.* (2019) is not related to the other scripts and can be executed as a standalone script.
+</div> --->
 
 ## Analysis
 
@@ -44,9 +42,18 @@ A documentation of the data preparation and the data analysis (git 1.x - 9.x) ca
 - git 8.x: [Analysis (demographic history)](analysis-vi-demographic-history.html)
 - git 10.x: [Analysis (Stankowski *et al.* 2019)](analysis-vii-monkeyflowers.html)
 
+## Prerequesites
+
+All scripts assume two variables to be set within the bash environment:
+
+  - `$BASE_DIR` is assumed to point to the base folder of this repository
+  - `$SFTWR` is a folder that contains all the software dependencies that are used within the scripts
+
+Furthermore, external dependencies need to be downloaded and deployed at the expected places (s. README.md at the `ressources` folder).
+
 ## Figures
 
-The creation of the figures is bundled in a single script (git 9) which can be executed once all `nextflow` scripts have successfully run.
+The creation of the figures is bundled in a single script (git 11) which can be executed once all `nextflow` scripts have successfully run.
 
 ```sh
 cd $BASE_DIR
@@ -65,11 +72,3 @@ as well as for all the supplementary figures:
 
 [SF1](), [SF2](), [SF3](), [SF4](), [SF5](), [SF6](), [SF7](), [SF8]() and [SF9]().
 
-## Prerequesites
-
-All scripts assume two variables to be set within the bash environment:
-
-  - `$BASE_DIR` is assumed to point to the base folder of this repository
-  - `$SFTWR` is a folder that contains all the software dependencies that are used within the scripts
-
-Furthermore, external dependencies need to be downloaded and deployed at the expected places (s. README.md at the `ressources` folder).
