@@ -49,4 +49,4 @@ Rscript --vanilla R/fig/plot_SF7.R 2_analysis/admixture/ metadata/phenotypes.sc
 
 Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/
 
-Rscript --vanilla R/fig_rev/plot_SF9.R 2_analysis/GxP/50000/
+Rscript --vanilla R/fig/plot_SF9.R 2_analysis/GxP/50000/
