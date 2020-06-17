@@ -32,11 +32,11 @@ source('R/draw_workflow.R')
 prod_dxy <- tibbler(c('pi_50k', 'dxy_random_output_ch', 'random_fst_out', 'dxy_output_ch'))
 ```
 
-# Analysis II (<i>d<sub>XY</sub></i> & pi)
+# (git 4) Analysis II (<i>d<sub>XY</sub></i> & pi)
 
 ## Summary
 
-The genetic divergence, as well diversity, are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dxy.nf` (located under `$BASE_DIR/nf/analysis_dxy/`).
+The genetic divergence, as well diversity, are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dxy.nf` (located under `$BASE_DIR/nf/04_analysis_dxy/`).
 It takes the _all BP_ data set and computes _d<sub>XY</sub>_ and $\pi$.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
@@ -66,21 +66,13 @@ The nextflow script starts by opening the genotype data and feeding it into thre
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
 	.into{ vcf_ch; vcf_pi_ch }
-```
 
-The computation of _d<sub>XY</sub>_ is split by linkage group, so we need to initialize a channel for the LGs.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.2
 // initialize LGs
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.set{ lg_ch }
-```
 
-Now, we can subset the data set and convert it to a custom genotype format.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.3
 // split by LG and reformat the genotypes
 process split_allBP {
@@ -106,44 +98,26 @@ process split_allBP {
 		-i allBP.LG${lg}.vcf.gz  | gzip > allBP.LG${lg}.geno.gz
 	"""
 }
-```
 
-Since the species composition differs between locations, we need to initialize three separate sets of species.
-These are going to be used to create the divergence species pairs.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.4
 // define location specific sepcies set
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
-```
 
-For the diversity, we also initialize the full set of populations of the study.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.5
 // init all sampled populations (for pi)
 Channel
 	.from('indbel', 'maybel', 'nigbel', 'puebel', 'unibel', 'abehon', 'gumhon', 'nighon', 'puehon', 'ranhon', 'unihon', 'nigpan', 'puepan', 'unipan')
 	.set{spec_dxy}
-```
 
-We want to run a sliding window at different resolutions, so we set up a channel for these.
 
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.6
 // init slining window resolutions
 Channel
 	.from( 1, 5 )
 	.into{ kb_ch; kb_ch2; kb_ch3 }
-```
 
-### <i>d<sub>XY</sub></i>
-
-To prepare all species comparisons used to estimate divergence, we combine each species witch all other species within a location.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.7
 // prepare pair wise dxy
 // ------------------------------
@@ -168,11 +142,7 @@ pan_pairs_ch = Channel.from( "pan" )
 	.combine(pan_spec2_ch)
 	.filter{ it[1] < it[3] }
 	.map{ it[0,2,4]}
-```
 
-Now we attach the genotypes and the resolution level to the species pairs.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.8
 // combine species pair with genotypes (and window size)
 bel_pairs_ch
@@ -180,11 +150,7 @@ bel_pairs_ch
 	.combine( geno_ch )
 	.combine( kb_ch )
 	.into { all_dxy_pairs_ch; random_dxy_pairs_ch }
-```
 
-At this point, we can calculate <i>d<sub>XY</sub></i>.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.9
 // compute the dxy values
 process dxy_lg {
@@ -220,21 +186,13 @@ process dxy_lg {
 		-T 1
     """
 }
-```
 
-Since the calculation was split across LGs, we now need to collect all LGs of a particular species pair...
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.10
 // collect all LGs for each species pair
 dxy_lg_ch
   .groupTuple()
   .set{ tubbled_dxy }
-```
 
-... and merge the results.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.11
 // concatenate all LGs for each species pair
 process receive_tuple {
@@ -262,22 +220,13 @@ process receive_tuple {
 	gzip dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv
 	"""
 }
-```
 
-For control, we also create a "random" <i>d<sub>XY</sub></i> run, where we take the most diverged species pair and randomize the population assignment of the samples.
-Therefore, we first pick the most diverged species pair.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.12
 // collect a species pair to randomize
 Channel
 	.from( [['bel', 'ind', 'may']] )
 	.set{ random_run_ch }
-```
 
-Then we set the sliding window resolution.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.13
 // setup channel content for random channel
 Channel
@@ -286,11 +235,7 @@ Channel
 	.combine( kb_ch2 )
 	.filter{ it[4] == 5 }
 	.set{ random_sets_ch }
-```
 
-Now, we randomize the population assignment of the samples and calculate differentiation.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.14
 // permute the population assignment (the randomization)
 process randomize_samples {
@@ -326,22 +271,14 @@ process randomize_samples {
 
 	"""
 }
-```
 
-We set up another channel to prepare the random <i>d<sub>XY</sub></i>...
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.15
 // pick random pair of interest
 random_dxy_pairs_ch
 	.filter{ it[0] == 'bel' && it[1] == 'ind' && it[2] == 'may'  && it[6] == 5 }
 	.combine( random_pops_ch )
 	.set{ random_assigned_ch }
-```
 
-.. and compute the divergence.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.16
 // compute the dxy values
 process dxy_lg_random {
@@ -372,21 +309,13 @@ process dxy_lg_random {
 		-T 1
 	 """
 }
-```
 
-Again, we collect the output of the individual LGs....
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.17
 // collect all LGs of random run
 dxy_random_lg_ch
 .groupTuple()
 .set{ tubbled_random_dxy }
-```
 
-... and we merge them
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 4.18
 // concatinate all LGs of random run
 process receive_random_tuple {
@@ -413,14 +342,7 @@ process receive_random_tuple {
 	gzip dxy.${pop1[0]}-${pop2[0]}.${kb[0]}0kb-${kb[0]}kb.tsv
 	"""
 }
-```
 
-### $\pi$
-
-Estimating the diversity is quite straight forward:
-We take the prepared, population identifier, the data set and the window resolutions and run `VCFtools` on each combination.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // ---------------------------------------------------------------
 // The pi part need to be run AFTER the global fst outlier
 // windows were selected (REMEMBER TO CHECK FST OUTLIER DIRECTORY)
@@ -453,7 +375,7 @@ process pi_per_spec {
 		--out ${spec}.${kb}0k 2> ${spec}.pi.log
 	gzip ${spec}.${kb}0k.windowed.pi
 
-	tail -n +2 \$BASE_DIR/2_analysis/fst/outliers/all_multi_fst_outliers_998.tsv | \
+	tail -n +2 \$BASE_DIR/2_analysis/summaries/fst_outliers_998.tsv | \
 		cut -f 2,3,4 > outlier.bed
 
 	vcftools --gzvcf ${vcf[0]} \
