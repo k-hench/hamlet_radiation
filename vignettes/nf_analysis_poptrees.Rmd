@@ -36,7 +36,7 @@ knitr::opts_knit$set(root.dir = '../')
 
 ## Summary
 
-The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_XX.nf` (located under `$BASE_DIR/nf/0x_analysis_xx/`), which runs on the XX data set.
+The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_poptree.nf` (located under `$BASE_DIR/nf/07_analysis_fst_poptree/`), which runs on the XX data set.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
@@ -47,7 +47,7 @@ Below is an overview of the steps involved in the analysis.
 ```
 </div>
 
-## Details of `analysis_xx.nf`
+## Details of `analysis_fst_poptree.nf`
 
 ### Data preparation
 
@@ -61,7 +61,10 @@ The nextflow script starts by opening the genotype data.
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_fst }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 7.2
 // load all possible population pairs
 Channel
@@ -69,7 +72,10 @@ Channel
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ pop1:row.pop1, pop2:row.pop2 ] }
 	.set{ crosses_ch }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 7.3
 // open the focal Fst outlier regions
 Channel
@@ -79,7 +85,10 @@ Channel
 	.combine( vcf_fst )
 	.combine( crosses_ch )
 	.set{ crosses_vcf }
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 7.4
 // compute the average Fst for all possible pair within the outlier region
 process outlier_fst {
@@ -118,7 +127,10 @@ process outlier_fst {
 		echo -e "${cross_pop.pop1}-${cross_pop.pop2}\\t\$mFST\\t\$wFST" > ${cross_pop.pop1}-${cross_pop.pop2}.${grouping.gid}.fst.tsv
 		"""
 	}
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 7.5
 // collect all population pairs within each region and compile Fst table
 process outlier_fst_collect {
@@ -137,7 +149,10 @@ process outlier_fst_collect {
 		cat *.fst.tsv >> ${gid}.fst.all.tsv
 		"""
 	}
+```
 
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 7.6
 // neighbour joining happens within the R script R/fig/plot_F4.R
 ```

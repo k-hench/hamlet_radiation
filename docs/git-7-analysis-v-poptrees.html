@@ -137,7 +137,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="../">Script repository</a></li>
+<li><a href="https://github.com/k-hench/chapter2">github repository</a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Intro</a><ul>
@@ -186,7 +186,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html"><i class="fa fa-check"></i><b>8</b> (git 7) Analysis V (poptrees)</a><ul>
 <li class="chapter" data-level="8.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#summary-6"><i class="fa fa-check"></i><b>8.1</b> Summary</a></li>
-<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_xx.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_xx.nf</code></a><ul>
+<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_fst_poptree.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_fst_poptree.nf</code></a><ul>
 <li class="chapter" data-level="8.2.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#data-preparation-4"><i class="fa fa-check"></i><b>8.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
@@ -198,13 +198,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html"><i class="fa fa-check"></i><b>10</b> (git 9) Analysis VII (hybridization)</a><ul>
 <li class="chapter" data-level="10.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#summary-8"><i class="fa fa-check"></i><b>10.1</b> Summary</a></li>
-<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_xx.nf-1"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_xx.nf</code></a><ul>
+<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_hybridization.nf"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_hybridization.nf</code></a><ul>
 <li class="chapter" data-level="10.2.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#data-preparation-6"><i class="fa fa-check"></i><b>10.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="11" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html"><i class="fa fa-check"></i><b>11</b> (git 10) Analysis VIII (admixture)</a><ul>
 <li class="chapter" data-level="11.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#summary-9"><i class="fa fa-check"></i><b>11.1</b> Summary</a></li>
-<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_xx.nf-2"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_xx.nf</code></a><ul>
+<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_admixture.nf"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_admixture.nf</code></a><ul>
 <li class="chapter" data-level="11.2.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#data-preparation-7"><i class="fa fa-check"></i><b>11.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
@@ -237,15 +237,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">8</span> (git 7) Analysis V (poptrees)</h1>
 <div id="summary-6" class="section level2">
 <h2><span class="header-section-number">8.1</span> Summary</h2>
-<p>The population recombination rate is estimated within the <a href="https://www.nextflow.io/"><strong>nextflow</strong></a> script <code>analysis_XX.nf</code> (located under <code>$BASE_DIR/nf/0x_analysis_xx/</code>), which runs on the XX data set.
+<p>The population recombination rate is estimated within the <a href="https://www.nextflow.io/"><strong>nextflow</strong></a> script <code>analysis_fst_poptree.nf</code> (located under <code>$BASE_DIR/nf/07_analysis_fst_poptree/</code>), which runs on the XX data set.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)</p>
 <div style="max-width:500px; margin:auto;">
 
 </div>
 </div>
-<div id="details-of-analysis_xx.nf" class="section level2">
-<h2><span class="header-section-number">8.2</span> Details of <code>analysis_xx.nf</code></h2>
+<div id="details-of-analysis_fst_poptree.nf" class="section level2">
+<h2><span class="header-section-number">8.2</span> Details of <code>analysis_fst_poptree.nf</code></h2>
 <div id="data-preparation-4" class="section level3">
 <h3><span class="header-section-number">8.2.1</span> Data preparation</h3>
 <p>The nextflow script starts by opening the genotype data.</p>
@@ -258,16 +258,24 @@ Below is an overview of the steps involved in the analysis.
 <span class="hl kwa">Channel</span>
     .fromFilePairs<span class="hl opt">(</span><span class="hl str">&quot;../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}&quot;</span><span class="hl opt">)</span>
     .set<span class="hl opt">{</span> vcf_fst <span class="hl opt">}</span>
-
-<span class="hl slc">// git 7.2</span>
+</code>
+</pre>
+</div>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 7.2</span>
 <span class="hl slc">// load all possible population pairs</span>
 <span class="hl kwa">Channel</span>
     .fromPath<span class="hl opt">(</span><span class="hl str">&quot;../../ressources/plugin/poptrees/all_crosses.tsv&quot;</span><span class="hl opt">)</span>
     .splitCsv<span class="hl opt">(</span>header<span class="hl opt">:</span>true<span class="hl opt">,</span> sep<span class="hl opt">:</span><span class="hl str">&quot;</span><span class="hl esc">\t</span><span class="hl str">&quot;</span><span class="hl opt">)</span>
     .map<span class="hl opt">{</span> row <span class="hl opt">-&gt; [</span> pop1<span class="hl opt">:</span>row.pop1<span class="hl opt">,</span> pop2<span class="hl opt">:</span>row.pop2 <span class="hl opt">] }</span>
     .set<span class="hl opt">{</span> crosses_ch <span class="hl opt">}</span>
-
-<span class="hl slc">// git 7.3</span>
+</code>
+</pre>
+</div>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 7.3</span>
 <span class="hl slc">// open the focal Fst outlier regions</span>
 <span class="hl kwa">Channel</span>
     .fromPath<span class="hl opt">(</span><span class="hl str">&quot;../../ressources/plugin/poptrees/outlier.bed&quot;</span><span class="hl opt">)</span>
@@ -276,8 +284,12 @@ Below is an overview of the steps involved in the analysis.
     .combine<span class="hl opt">(</span> vcf_fst <span class="hl opt">)</span>
     .combine<span class="hl opt">(</span> crosses_ch <span class="hl opt">)</span>
     .set<span class="hl opt">{</span> crosses_vcf <span class="hl opt">}</span>
-
-<span class="hl slc">// git 7.4</span>
+</code>
+</pre>
+</div>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 7.4</span>
 <span class="hl slc">// compute the average Fst for all possible pair within the outlier region</span>
 <span class="hl kwa">process</span> outlier_fst <span class="hl opt">{</span>
         <span class="hl kwb">label</span> <span class="hl str">&quot;L_loc_collect_fst&quot;</span>
@@ -294,13 +306,13 @@ Below is an overview of the steps involved in the analysis.
 <span class="hl str">       echo -e &quot;CHROM</span><span class="hl esc">\\</span><span class="hl str">tSTART</span><span class="hl esc">\\</span><span class="hl str">tEND&quot; &gt; outl.bed</span>
 <span class="hl str">       echo -e &quot;</span><span class="hl ipl">${grouping.chrom}</span><span class="hl str"></span><span class="hl esc">\\</span><span class="hl str">t</span><span class="hl ipl">${grouping.start}</span><span class="hl str"></span><span class="hl esc">\\</span><span class="hl str">t</span><span class="hl ipl">${grouping.end}</span><span class="hl str">&quot; &gt;&gt; outl.bed</span>
 <span class="hl str"></span>
-<span class="hl str">       vcfsamplenames ${vcf[0]} | \</span>
+<span class="hl str">       vcfsamplenames</span> <span class="hl ipl">${vcf[0]}</span> <span class="hl str">| \</span>
 <span class="hl str">           grep &quot;</span><span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">&quot; &gt; pop1.pop</span>
 <span class="hl str"></span>
-<span class="hl str">           vcfsamplenames ${vcf[0]} | \</span>
+<span class="hl str">           vcfsamplenames</span> <span class="hl ipl">${vcf[0]}</span> <span class="hl str">| \</span>
 <span class="hl str">               grep &quot;</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str">&quot; &gt; pop2.pop</span>
 <span class="hl str"></span>
-<span class="hl str">       vcftools --gzvcf ${vcf[0]} \</span>
+<span class="hl str">       vcftools --gzvcf</span> <span class="hl ipl">${vcf[0]}</span> <span class="hl str">\</span>
 <span class="hl str">           --bed outl.bed \</span>
 <span class="hl str">           --keep pop1.pop \</span>
 <span class="hl str">           --keep pop2.pop \</span>
@@ -315,8 +327,12 @@ Below is an overview of the steps involved in the analysis.
 <span class="hl str">       echo -e &quot;</span><span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">-</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str"></span><span class="hl esc">\\</span><span class="hl str">t\$mFST</span><span class="hl esc">\\</span><span class="hl str">t\$wFST&quot; &gt;</span> <span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">-</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str">.</span><span class="hl ipl">${grouping.gid}</span><span class="hl str">.fst.tsv</span>
 <span class="hl str">       &quot;&quot;&quot;</span>
     <span class="hl opt">}</span>
-
-<span class="hl slc">// git 7.5</span>
+</code>
+</pre>
+</div>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 7.5</span>
 <span class="hl slc">// collect all population pairs within each region and compile Fst table</span>
 <span class="hl kwa">process</span> outlier_fst_collect <span class="hl opt">{</span>
         <span class="hl kwb">label</span> <span class="hl str">&quot;L_20g2h_outlier_fst&quot;</span>
@@ -334,8 +350,12 @@ Below is an overview of the steps involved in the analysis.
 <span class="hl str">       cat *.fst.tsv &gt;&gt;</span> <span class="hl ipl">${gid}</span><span class="hl str">.fst.all.tsv</span>
 <span class="hl str">       &quot;&quot;&quot;</span>
     <span class="hl opt">}</span>
-
-<span class="hl slc">// git 7.6</span>
+</code>
+</pre>
+</div>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 7.6</span>
 <span class="hl slc">// neighbour joining happens within the R script R/fig/plot_F4.R</span>
 </code>
 </pre>

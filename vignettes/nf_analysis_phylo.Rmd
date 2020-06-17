@@ -62,28 +62,49 @@ The nextflow script starts by opening the genotype data and feeding it into two 
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_fasttree_whg; vcf_locations }
+```
 
+### Whole genome phylogeny
+
+During data exploration, various subsets of the data set were investigated, including the different sampling locations, _whole genome_ vs. _non-outlier regions_ and all samples vs. _hamlets only_.
+(Now, most of the options have been muted by commenting these options out.)
+
+Here, we set up a channel managing the subset by location.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.2
 // setting the sampling location
 // (the script is set up to run on diffferent subsets of samples)
 Channel
 	.from( "all" ) //, "bel", "hon", "pan" )
 	.set{ locations4_ch }
+```
 
+This channel toggles the inclusion of <i>F<sub>ST</sub></i> outlier regions.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.3
 // setting loci restrictions
 // (keep vs remove outlier regions)
 Channel
 	.from( "whg" ) //, "no_musks" )
 	.set{ whg_modes }
+```
 
+This channel toggles the inclusion of the non-hamlet outgroup.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.4
 // setting the sampling mode
 // (the script is set up to run on diffferent subsets of samples)
 Channel
 	.from( "no_outgroups" ) //, "all" )
 	.into{ sample_modes }
+```
 
+We combine the different selector channels to create all possible combinations of the settings.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.5
 // compile the config settings and add data file
 locations4_ch
@@ -91,7 +112,11 @@ locations4_ch
 	.combine( whg_modes )
 	.combine( sample_modes )
 	.set{ vcf_fasttree_whg_location_combo }
+```
 
+To prepare the input for the phylogeny, the fine tuned selection is applied to subset the genotypes.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.6
 // apply sample filter, subset and convert genotypes
 process subset_vcf_by_location_whg {
@@ -140,7 +165,11 @@ process subset_vcf_by_location_whg {
 		-i  ${loc}.${mode}.${sample_mode}.vcf.gz | gzip > ${loc}.${mode}.${sample_mode}.whg.geno.gz
 	"""
 }
+```
 
+The subset is converted to `fasta` format, creating two whole genome pseudo haplotypes per sample.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.7
 // convert genotypes to fasta
 process fasttree_whg_prep {
@@ -161,7 +190,11 @@ process fasttree_whg_prep {
 		--splitPhased
 	"""
 }
+```
 
+Then, the phylogeny is reconstructed based on the converted geneotypes.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.8
 // create phylogeny
 process fasttree_whg_run {
@@ -180,25 +213,46 @@ process fasttree_whg_run {
 	fasttree -nt ${fa} > ${sample_mode}.${loc}.${mode}.SNP.tree
 	"""
 }
+```
 
+### Topology weighting
+
+The complexity of topology weighting increases non-linearely with the number of included populations as the number of possible unrooted topologies skyrockets.
+The maximum number of possible populations allowed within `twisst` is eight, so we are running the topology weighting for Belize and Honduras independently (for the three species at Panama only one unrooted topology is possible, so we don't run `twisst` here).
+
+We start by setting up a channel for the sampling location.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.9
 // initialize the locations for topology weighting
 Channel
 	.from( "bel", "hon" )
 	.set{ locations_ch }
+```
 
+Then, we attach the genotypes to the location.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.10
 locations_ch
 	.combine( vcf_locations )
 	.set{ vcf_location_combo }
+```
 
+The analysis is split by linkage group, so we need to initialize the LGs.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.11
 // initialize LGs
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
 	.set{ lg_twisst }
+```
 
+The data is subset to include only the samples of the respective location.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.12
 // subset the genotypes by location
 process subset_vcf_by_location {
@@ -224,7 +278,20 @@ process subset_vcf_by_location {
 		--stdout | gzip > ${loc}.vcf.gz
 	"""
 }
+```
 
+> While running `twisst`, we ran into an issues regarding incompatibilities of the used scheduling system used on our computing cluster and the threading within the python scripts used in the preparation of `twisst`.
+Unfortunately, this prevented us running the preparation _in place_ (as part of the `nextflow` script).
+Instead, we rand the preparation separately on a local computer and clumsily plugged the results into the `nextflow` process.
+
+> Below we include the originally intended workflow which we muted so that the script is runnable using the plug-in approach.
+Still, the the original workflow describes the steps executed locally and conveys the intermediate steps more clearly.
+Also, on a different computer cluster, the original script should work alright.
+
+The next step is to attach the LGs to the genotype subsets.
+
+
+```{r , eval = FALSE, hilang = 'nf'}
 // ---------------------------------------------------------------
 // Unfortunately the twisst preparation did not work on the cluster
 // ('in place'), so I had to setup the files locally and then plug
@@ -240,7 +307,11 @@ vcf_loc_twisst
 	.combine( lg_twisst )
 	.set{ vcf_loc_lg_twisst }
 */
+```
 
+Based on the LGs the genotypes are split.
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 // git 5.14
 // subset genotypes by LG
@@ -268,15 +339,30 @@ process vcf2geno_loc {
 }
 */
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
+```
+
+We initialize the window size size (as SNPs) used for the topology weighting...
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.15
 // initialize SNP window size
 Channel.from( 50, 200 ).set{ twisst_window_types }
 */
+```
+
+...and attach them to the genotypes.
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 // git 5.16
 // add the SNP window size to the genotype subset
 snp_geno_twisst.combine( twisst_window_types ).set{ twisst_input_ch }
 */
+```
+
+To conduct topology weighting, we need some underlying phylogenies, so we run `PhyML` along the sliding window.
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 // git 5.17
 // create the phylogenies along the sliding window
@@ -306,6 +392,11 @@ process twisst_prep {
 	 """
 }
 */
+```
+
+The last step then is to run `twisst` prepared phylogenies.
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin
 // git 5.18
 // run the topology weighting on the  phylogenies
@@ -341,15 +432,27 @@ process twisst_run {
 	"""
 }
 */
+```
+
+> Here, the plug in approach picks up.
+At this point we have run `PhyML` locally and deposited the results under `$BASE_DIR/ressources/plugin/trees`.
+
+To restart, we need to emulate the settings needed for the `twisst` process.
+
+```{r , eval = FALSE, hilang = 'nf'}
 
 // git 5.19
-// emmulate setting
+// emulate setting
 Channel
 	.from(50, 200)
 	.combine( vcf_loc_twisst )
 	.combine( lg_twisst )
 	.set{ twisst_modes }
+```
 
+Then, we feed the phylogenies from an external directory into `twisst`.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 5.20
 // run the topology weighting on the  phylogenies
 process twisst_plugin {

@@ -285,7 +285,7 @@ process twisst_run {
 */
 
 // git 5.19
-// emmulate setting
+// emulate setting
 Channel
 	.from(50, 200)
 	.combine( vcf_loc_twisst )
