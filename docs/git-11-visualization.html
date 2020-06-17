@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Script repository</title>
+  <title>12 (git 11) Visualization | Script repository</title>
   <meta name="description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, McMillan an Puebla" />
   <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Script repository" />
+  <meta property="og:title" content="12 (git 11) Visualization | Script repository" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="k-hench/bookdown" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Script repository" />
+  <meta name="twitter:title" content="12 (git 11) Visualization | Script repository" />
   
   <meta name="twitter:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, McMillan an Puebla" />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
+<link rel="prev" href="git-10-analysis-viii-admixture.html"/>
 
-<link rel="next" href="git-1-genotyping-i-snps-only.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -230,56 +230,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Script repository</h1>
-<h2 class="subtitle"><em>(Hench <em>et al.</em> supplement)</em></h2>
-<p class="author"><em>Kosmas Hench</em></p>
-<p class="date"><em>2020-06-17</em></p>
+<div id="git-11-visualization" class="section level1">
+<h1><span class="header-section-number">12</span> (git 11) Visualization</h1>
+<div id="all-at-once" class="section level2">
+<h2><span class="header-section-number">12.1</span> All at once</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="git-11-visualization.html#cb2-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb2-2"><a href="git-11-visualization.html#cb2-2"></a><span class="fu">bash</span> sh/create_figures.sh</span></code></pre></div>
 </div>
-<div id="intro" class="section level1">
-<h1><span class="header-section-number">1</span> Intro</h1>
-<p>This repository contains the complete workflow used in the paper “<em>Ancestral variation, hybridization and modularity fuel a marine radiation</em>”.
-The individual chapters of this documentation follow the separate main steps of the workflow, which each refer to an individual prefix in the <em>git x.x</em> references of the papers method section.
-The individual steps partly depend on each other - especially git 1 - git 3 should be executed in order and before the other steps.</p>
-<!--<div style="max-width:800px; margin:auto;">
-<img src="index_files/figure-html/unnamed-chunk-1-1.png" width="864" />
-</div> --->
-<div id="analysis" class="section level2">
-<h2><span class="header-section-number">1.1</span> Analysis</h2>
-<p>A documentation of the data preparation and the data analysis (git 1.x - 9.x) can be found at:</p>
-<ul>
-<li>git 1.x: <a href="genotyping-i-snps-only.html">Genotyping</a></li>
-<li>git 2.x: <a href="genotyping-ii-all-callable-sites.html">Genotyping all base pairs</a></li>
-<li>git 3.x: <a href="analysis-i-fst-gxp.html">Analysis (<i>F<sub>ST</sub></i> &amp; GxP)</a></li>
-<li>git 4.x: <a href="analysis-ii-dxy-pi.html">Analysis (<i>d<sub>XY</sub></i> &amp; <span class="math inline">\(\pi\)</span>)</a></li>
-<li>git 5.x: <a href="analysis-iii-phylogeny-topology-weighting.html">Analysis (phylogeny &amp; topolgy weighting)</a></li>
-<li>git 6.x: <a href="analysis-iv-rho.html">Analysis (<span class="math inline">\(\rho\)</span>)</a></li>
-<li>git 7.x: <a href="analysis-v-ho.html">Analysis (<i>H<sub>O</sub></i> )</a></li>
-<li>git 8.x: <a href="analysis-vi-demographic-history.html">Analysis (demographic history)</a></li>
-<li>git 10.x: <a href="analysis-vii-monkeyflowers.html">Analysis (Stankowski <em>et al.</em> 2019)</a></li>
-</ul>
+<div id="one-by-one" class="section level2">
+<h2><span class="header-section-number">12.2</span> One by one</h2>
 </div>
-<div id="prerequesites" class="section level2">
-<h2><span class="header-section-number">1.2</span> Prerequesites</h2>
-<p>All scripts assume two variables to be set within the bash environment:</p>
-<ul>
-<li><code>$BASE_DIR</code> is assumed to point to the base folder of this repository</li>
-<li><code>$SFTWR</code> is a folder that contains all the software dependencies that are used within the scripts</li>
-</ul>
-<p>Furthermore, external dependencies need to be downloaded and deployed at the expected places (s. README.md at the <code>ressources</code> folder).</p>
-</div>
-<div id="figures" class="section level2">
-<h2><span class="header-section-number">1.3</span> Figures</h2>
-<p>The creation of the figures is bundled in a single script (git 11) which can be executed once all <code>nextflow</code> scripts have successfully run.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="index.html#cb1-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb1-2"><a href="index.html#cb1-2"></a><span class="fu">bash</span> sh/create_figures.sh</span></code></pre></div>
-<p>This is basically just a collection that will run all scripts located under <code>$BASE_DIR/R/fig</code>.
-Under this location, you will find one <code>R</code> script per figure (and suppl. figure).
-So if you are only interested in a single figure - that is the place to start looking.</p>
-<p>Furthermore, a more detailed documentation exists for all the figure scripts used for the manuscript:</p>
-<p><a href="figure-1.html">F1</a>, <a href="figure-2.html">F2</a>, <a href="figure-3.html">F3</a> &amp; <a href="figure-4.html">F4</a></p>
-<p>as well as for all the supplementary figures:</p>
-<p><a href="">SF1</a>, <a href="">SF2</a>, <a href="">SF3</a>, <a href="">SF4</a>, <a href="">SF5</a>, <a href="">SF6</a>, <a href="">SF7</a>, <a href="">SF8</a> and <a href="">SF9</a>.</p>
+<div id="in-the-remaining-documentation-the-individual-visualization-scripts-are-going-to-discussed-in-detail." class="section level2">
+<h2><span class="header-section-number">12.3</span> In the remaining documentation, the individual Visualization scripts are going to discussed in detail.</h2>
 
 </div>
 </div>
@@ -288,8 +250,8 @@ So if you are only interested in a single figure - that is the place to start lo
           </div>
         </div>
       </div>
+<a href="git-10-analysis-viii-admixture.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
-<a href="git-1-genotyping-i-snps-only.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

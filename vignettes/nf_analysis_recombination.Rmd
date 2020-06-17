@@ -32,11 +32,11 @@ source('R/draw_workflow.R')
 prod_recombination <- tibbler(c('step3_ch'))
 ```
 
-# Analysis IV (rho)
+# (git 6) Analysis IV (rho)
 
 ## Summary
 
-The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_recombination.nf` (located under `$BASE_DIR/nf/analysis_recombination/`), which runs on the _SNPs only_ data set.
+The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_recombination.nf` (located under `$BASE_DIR/nf/06_analysis_recombination/`), which runs on the _SNPs only_ data set.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
@@ -57,29 +57,20 @@ The nextflow script starts by opening the genotype data.
 <div class="kclass">
 ```{r , eval = FALSE, hilang = 'nf'}
 #!/usr/bin/env nextflow
-// This pipelie includes the recombination anlysis
+// This pipeline includes the recombination anlysis
 // git 6.1
 // load genotypes
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_ch }
-```
 
-The estimation of the population recombination rate using `FastEPRR` happens in three steps.
-The first step is run independently for all linkage groups, so we set up a channel for the LGs.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.2
 // initialize LGs
 Channel
 	.from( 1..24 )
 	.map{ it.toString().padLeft(2, "0") }
 	.set{ lg_ch }
-```
 
-To prepare the input, the genotypes are split by LG.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.3
 // split genotypes by LG
 process split_allBP {
@@ -102,11 +93,7 @@ process split_allBP {
 		--stdout | bgzip  > phased_mac2.LG${lg}.vcf.gz
 	"""
 }
-```
 
-The prepared data is then fed to the first step of `FastEPRR`.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.4
 // run fasteprr step 1
 process fasteprr_s1 {
@@ -126,11 +113,7 @@ process fasteprr_s1 {
 	Rscript --vanilla \$BASE_DIR/R/fasteprr_step1.R ./${vcf} step1_LG${lg} LG${lg} 50
 	"""
 }
-```
 
-Since `nextflow` manages the results of its processes in a complex file structure, we need to collect all results of step 1 and bundle them before proceeding.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.5
 // collect step 1 output
 process fasteprr_s1_summary {
@@ -148,12 +131,7 @@ process fasteprr_s1_summary {
 	cp step1_LG*/* step1/
 	"""
 }
-```
 
-The second step of `FastEPRR` is parallelized over an arbitrary number of sub-processes.
-Here, we initialize 250 parallel processes and combine the parallelization index with the results from step 1.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.6
 // initialize fasteperr subprocesses and attach them to step 1 output
 Channel
@@ -161,11 +139,7 @@ Channel
 	.map{ it.toString().padLeft(3, "0") }
 	.combine( step1_ch1 )
 	.set{ step_2_run_ch }
-```
 
-Taking this prepared bundle, we now can start the second step of `FastEPRR`.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.7
 // run fasteprr step 2
 process fasteprr_s2 {
@@ -185,19 +159,11 @@ process fasteprr_s2 {
 	Rscript --vanilla \$BASE_DIR/R/fasteprr_step2.R ${step1} step2_run${idx} ${idx}
 	"""
 }
-```
 
-The file management of `nextflow` can be a bit complicated at times, so here duplicate the output of step 2 to later easily access the parallelization indices and the actual output.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.8
 // clone step 2 output
 step_2_out_ch.into{ step_2_indxs; step_2_files }
-```
 
-We collect both clones of the step 2 results and bundle the results in a single directory.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.9
 // collect step 2 output
 process fasteprr_s2_summary {
@@ -219,11 +185,7 @@ process fasteprr_s2_summary {
 	done
 	"""
 }
-```
 
-Then we feed the bundled results into the third step of `FastEPRR`.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.10
 // run fasteprr step 3
 process fasteprr_s3 {
@@ -242,11 +204,7 @@ process fasteprr_s3 {
 	Rscript --vanilla \$BASE_DIR/R/fasteprr_step3.R ${step1} ${step2} step3
 	"""
 }
-```
 
-To ease the usage of the `FastEPRR` results downstream, we reformat them and compile a tidy table.
-
-```{r , eval = FALSE, hilang = 'nf'}
 // git 6.11
 // reformat overall fasteprr output
 process fasteprr_s3_summary {

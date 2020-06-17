@@ -1,0 +1,144 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include=FALSE}
+# source('R/draw_workflow.R')
+# prod_het <- tibbler(c('inds_out', 'win_out'))
+```
+
+# (git 10) Analysis VIII (admixture)
+
+## Summary
+
+The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_XX.nf` (located under `$BASE_DIR/nf/10_analysis_admixture/`), which runs on the XX data set.
+Below is an overview of the steps involved in the analysis.
+(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+
+<div style="max-width:500px; margin:auto;">
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# girafe( ggobj = dot_plot(file = 'docs/analysis_het.dot', git = 7, point_types = prod_het),
+#        width_svg = 6, height_svg = 6)
+```
+</div>
+
+## Details of `analysis_xx.nf`
+
+### Data preparation
+
+The nextflow script starts by opening the genotype data.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+#!/usr/bin/env nextflow
+// git 10.1
+// open genotype data
+Channel
+	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
+	.set{ vcf_ch }
+
+// git 10.2
+// Set different k values for the admixture analysis
+Channel
+	.from( 2..15 )
+	.set{ k_ch }
+
+// git 10.3
+// load Fst outlier regions
+Channel
+	.fromPath("../../ressources/plugin/poptrees/outlier.bed")
+	.splitCsv(header:true, sep:"\t")
+	.map{ row -> [ chrom:row.chrom, start:row.start, end:row.end, gid:row.gid ] }
+	.combine( vcf_ch )
+	.set{ vcf_admx }
+
+// git 10.4
+// subset genotypes to the outlier region and reformat
+process plink12 {
+	label 'L_20g2h_plink12'
+	tag "${grouping.gid}"
+
+	input:
+	set val( grouping ),  val( vcfidx ), file( vcf ) from vcf_admx
+
+	output:
+	set val( grouping ), file( "hapmap.*.ped" ), file( "hapmap.*.map" ), file( "hapmap.*.nosex" ), file( "pop.txt" ) into admx_plink
+
+	script:
+	"""
+	echo -e "CHROM\\tSTART\\tEND" > outl.bed
+	echo -e "${grouping.chrom}\\t${grouping.start}\\t${grouping.end}" >> outl.bed
+
+	vcfsamplenames ${vcf[0]} | \
+		grep -v "tor\\|tab\\|flo" | \
+		awk '{print \$1"\\t"\$1}' | \
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > pop.txt
+
+	vcftools \
+		--gzvcf ${vcf[0]} \
+		--keep pop.txt \
+		--bed outl.bed \
+		--plink \
+		--out admx_plink
+
+	plink \
+		--file admx_plink \
+		--recode12 \
+		--out hapmap.${grouping.gid}
+	"""
+}
+
+// git 10.5
+// combine genoutype subsets with k values
+admx_prep  = k_ch.combine( admx_plink )
+
+// git 10.6
+// run admixture
+process admixture_all {
+	label 'L_20g4h_admixture_all'
+	publishDir "../../2_analysis/admixture/", mode: 'copy'
+	tag "${grouping.gid}.${k}"
+
+	input:
+	set  val( k ), val( grouping ), file( ped ), file( map ), file( nosex ), file( pop ) from admx_prep
+
+	output:
+	set val( "dummy" ), file( "*.out" ), file( "*.Q" ), file( "*.txt" ) into admx_log
+
+	script:
+	"""
+	mv ${pop} pop.${grouping.gid}.${k}.txt
+	admixture --cv ${ped} ${k} | tee log.${grouping.gid}.${k}.out
+	"""
+}
+```
+</div>
+
+Finally, we are done with XX.
+
+---

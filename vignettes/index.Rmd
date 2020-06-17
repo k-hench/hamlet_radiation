@@ -32,15 +32,16 @@ p_overall
 
 A documentation of the data preparation and the data analysis (git 1.x - 9.x) can be found at:
 
-- git 1.x: [Genotyping](genotyping-i-snps-only.html)
-- git 2.x: [Genotyping all base pairs](genotyping-ii-all-callable-sites.html)
-- git 3.x: [Analysis (<i>F<sub>ST</sub></i> & GxP)](analysis-i-fst-gxp.html)
-- git 4.x: [Analysis (<i>d<sub>XY</sub></i> & $\pi$)](analysis-ii-dxy-pi.html)
-- git 5.x: [Analysis (phylogeny & topolgy weighting)](analysis-iii-phylogeny-topology-weighting.html)
-- git 6.x: [Analysis ($\rho$)](analysis-iv-rho.html)
-- git 7.x: [Analysis (<i>H<sub>O</sub></i> )](analysis-v-ho.html)
-- git 8.x: [Analysis (demographic history)](analysis-vi-demographic-history.html)
-- git 10.x: [Analysis (Stankowski *et al.* 2019)](analysis-vii-monkeyflowers.html)
+- git 1.x: [Genotyping](git-1-genotyping-i-snps-only.html)
+- git 2.x: [Genotyping all base pairs](git-2-genotyping-ii-all-callable-sites.html)
+- git 3.x: [Analysis (<i>F<sub>ST</sub></i> & GxP)](git-3-analysis-i-fst-gxp.html)
+- git 4.x: [Analysis (<i>d<sub>XY</sub></i> & $\pi$)](git-4-analysis-ii-dxy-pi.html)
+- git 5.x: [Analysis (phylogeny & topolgy weighting)](git-5-analysis-iii-phylogeny-topology-weighting.html)
+- git 6.x: [Analysis ($\rho$)](git-6-analysis-iv-rho.html)
+- git 7.x: [Analysis (population trees)](git-7-analysis-v-poptrees.html)
+- git 8.x: [Analysis (demographic history)](git-8-analysis-vi-demographic-history.html)
+- git 9.x: [Analysis (hybridization)](git-9-analysis-vii-hybridization.html)
+- git 10.x: [Analysis (admixture)](git-10-analysis-viii-admixture.html)
 
 ## Prerequesites
 
@@ -71,4 +72,3 @@ Furthermore, a more detailed documentation exists for all the figure scripts use
 as well as for all the supplementary figures:
 
 [SF1](), [SF2](), [SF3](), [SF4](), [SF5](), [SF6](), [SF7](), [SF8]() and [SF9]().
-
