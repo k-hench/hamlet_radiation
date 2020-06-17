@@ -22,4 +22,5 @@ bash sh/create_figures.sh
 ## One by one
 
 In the remaining documentation, the individual Visualization scripts are going to discussed in detail.
+
 ---

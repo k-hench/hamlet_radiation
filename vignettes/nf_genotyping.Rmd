@@ -674,6 +674,7 @@ process split_indel_mask {
 	"""
 }
 ```
+</div>
 
 All indel masks are exported to the resources folder within the root directory.
 

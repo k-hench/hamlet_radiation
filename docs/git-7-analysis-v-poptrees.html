@@ -207,7 +207,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="12" data-path="git-11-visualization.html"><a href="git-11-visualization.html"><i class="fa fa-check"></i><b>12</b> (git 11) Visualization</a><ul>
 <li class="chapter" data-level="12.1" data-path="git-11-visualization.html"><a href="git-11-visualization.html#all-at-once"><i class="fa fa-check"></i><b>12.1</b> All at once</a></li>
 <li class="chapter" data-level="12.2" data-path="git-11-visualization.html"><a href="git-11-visualization.html#one-by-one"><i class="fa fa-check"></i><b>12.2</b> One by one</a></li>
-<li class="chapter" data-level="12.3" data-path="git-11-visualization.html"><a href="git-11-visualization.html#in-the-remaining-documentation-the-individual-visualization-scripts-are-going-to-discussed-in-detail."><i class="fa fa-check"></i><b>12.3</b> In the remaining documentation, the individual Visualization scripts are going to discussed in detail.</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -249,7 +248,91 @@ Below is an overview of the steps involved in the analysis.
 <div class="kclass">
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode">
+<code class="sourceCode">#<span class="hl opt">!/</span>usr<span class="hl opt">/</span>bin<span class="hl opt">/</span>env nextflow
+<span class="hl slc">// git 7.1</span>
+<span class="hl slc">// open genotype data</span>
+<span class="hl kwa">Channel</span>
+    .fromFilePairs<span class="hl opt">(</span><span class="hl str">&quot;../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}&quot;</span><span class="hl opt">)</span>
+    .set<span class="hl opt">{</span> vcf_fst <span class="hl opt">}</span>
+
+<span class="hl slc">// git 7.2</span>
+<span class="hl slc">// load all possible population pairs</span>
+<span class="hl kwa">Channel</span>
+    .fromPath<span class="hl opt">(</span><span class="hl str">&quot;../../ressources/plugin/poptrees/all_crosses.tsv&quot;</span><span class="hl opt">)</span>
+    .splitCsv<span class="hl opt">(</span>header<span class="hl opt">:</span>true<span class="hl opt">,</span> sep<span class="hl opt">:</span><span class="hl str">&quot;</span><span class="hl esc">\t</span><span class="hl str">&quot;</span><span class="hl opt">)</span>
+    .map<span class="hl opt">{</span> row <span class="hl opt">-&gt; [</span> pop1<span class="hl opt">:</span>row.pop1<span class="hl opt">,</span> pop2<span class="hl opt">:</span>row.pop2 <span class="hl opt">] }</span>
+    .set<span class="hl opt">{</span> crosses_ch <span class="hl opt">}</span>
+
+<span class="hl slc">// git 7.3</span>
+<span class="hl slc">// open the focal Fst outlier regions</span>
+<span class="hl kwa">Channel</span>
+    .fromPath<span class="hl opt">(</span><span class="hl str">&quot;../../ressources/plugin/poptrees/outlier.bed&quot;</span><span class="hl opt">)</span>
+    .splitCsv<span class="hl opt">(</span>header<span class="hl opt">:</span>true<span class="hl opt">,</span> sep<span class="hl opt">:</span><span class="hl str">&quot;</span><span class="hl esc">\t</span><span class="hl str">&quot;</span><span class="hl opt">)</span>
+    .map<span class="hl opt">{</span> row <span class="hl opt">-&gt; [</span> chrom<span class="hl opt">:</span>row.chrom<span class="hl opt">,</span> start<span class="hl opt">:</span>row.start<span class="hl opt">,</span> end<span class="hl opt">:</span>row.end<span class="hl opt">,</span> gid<span class="hl opt">:</span>row.gid <span class="hl opt">] }</span>
+    .combine<span class="hl opt">(</span> vcf_fst <span class="hl opt">)</span>
+    .combine<span class="hl opt">(</span> crosses_ch <span class="hl opt">)</span>
+    .set<span class="hl opt">{</span> crosses_vcf <span class="hl opt">}</span>
+
+<span class="hl slc">// git 7.4</span>
+<span class="hl slc">// compute the average Fst for all possible pair within the outlier region</span>
+<span class="hl kwa">process</span> outlier_fst <span class="hl opt">{</span>
+        <span class="hl kwb">label</span> <span class="hl str">&quot;L_loc_collect_fst&quot;</span>
+        <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/fst/poptree/single&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span>
+
+        <span class="hl kwb">input</span><span class="hl opt">:</span>
+        <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> grouping <span class="hl opt">),</span>  <span class="hl kwb">val</span><span class="hl opt">(</span> vcfidx <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> cross_pop <span class="hl opt">)</span> <span class="hl kwa">from</span> crosses_vcf
+
+        <span class="hl kwb">output</span><span class="hl opt">:</span>
+        <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> grouping.gid <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> cross_pop <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.fst.tsv&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> outlier_fst_gid_ch
+
+        <span class="hl kwb">script</span><span class="hl opt">:</span>
+        <span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
+<span class="hl str">       echo -e &quot;</span>CHROM<span class="hl esc">\\</span>tSTART<span class="hl esc">\\</span>tEND<span class="hl str">&quot; &gt; outl.bed</span>
+<span class="hl str">       echo -e &quot;</span>$<span class="hl opt">{</span>grouping.chrom<span class="hl opt">}</span><span class="hl esc">\\</span>t$<span class="hl opt">{</span>grouping.start<span class="hl opt">}</span><span class="hl esc">\\</span>t$<span class="hl opt">{</span>grouping.end<span class="hl opt">}</span><span class="hl str">&quot; &gt;&gt; outl.bed</span>
+<span class="hl str"></span>
+<span class="hl str">       vcfsamplenames ${vcf[0]} | \</span>
+<span class="hl str">           grep &quot;</span>$<span class="hl opt">{</span>cross_pop.pop1<span class="hl opt">}</span><span class="hl str">&quot; &gt; pop1.pop</span>
+<span class="hl str"></span>
+<span class="hl str">           vcfsamplenames ${vcf[0]} | \</span>
+<span class="hl str">               grep &quot;</span>$<span class="hl opt">{</span>cross_pop.pop2<span class="hl opt">}</span><span class="hl str">&quot; &gt; pop2.pop</span>
+<span class="hl str"></span>
+<span class="hl str">       vcftools --gzvcf ${vcf[0]} \</span>
+<span class="hl str">           --bed outl.bed \</span>
+<span class="hl str">           --keep pop1.pop \</span>
+<span class="hl str">           --keep pop2.pop \</span>
+<span class="hl str">           --weir-fst-pop pop1.pop \</span>
+<span class="hl str">           --weir-fst-pop pop2.pop \</span>
+<span class="hl str">           --stdout 2&gt; ${cross_pop.pop1}-${cross_pop.pop2}.50k.log | \</span>
+<span class="hl str">           gzip &gt; ${cross_pop.pop1}-${cross_pop.pop2}.fst.tsv.gz</span>
+<span class="hl str"></span>
+<span class="hl str">       mFST=\$(grep &quot;</span>Weir and Cockerham mean Fst estimate<span class="hl opt">:</span><span class="hl str">&quot; ${cross_pop.pop1}-${cross_pop.pop2}.50k.log | sed &#39;s/Weir and Cockerham mean Fst estimate: //&#39;)</span>
+<span class="hl str">       wFST=\$(grep &quot;</span>Weir and Cockerham weighted Fst estimate<span class="hl opt">:</span><span class="hl str">&quot; ${cross_pop.pop1}-${cross_pop.pop2}.50k.log | sed &#39;s/Weir and Cockerham weighted Fst estimate: //&#39;)</span>
+<span class="hl str"></span>
+<span class="hl str">       echo -e &quot;</span>$<span class="hl opt">{</span>cross_pop.pop1<span class="hl opt">}-</span>$<span class="hl opt">{</span>cross_pop.pop2<span class="hl opt">}</span><span class="hl esc">\\</span>t\$mFST<span class="hl esc">\\</span>t\$wFST<span class="hl str">&quot; &gt; ${cross_pop.pop1}-${cross_pop.pop2}.${grouping.gid}.fst.tsv</span>
+<span class="hl str">       &quot;</span><span class="hl str">&quot;&quot;</span>
+    <span class="hl opt">}</span>
+
+<span class="hl slc">// git 7.5</span>
+<span class="hl slc">// collect all population pairs within each region and compile Fst table</span>
+<span class="hl kwa">process</span> outlier_fst_collect <span class="hl opt">{</span>
+        <span class="hl kwb">label</span> <span class="hl str">&quot;L_20g2h_outlier_fst&quot;</span>
+        <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/fst/poptree/summary&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span>
+
+        <span class="hl kwb">input</span><span class="hl opt">:</span>
+        <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> gid <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> cross_pop <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> fst <span class="hl opt">)</span> <span class="hl kwa">from</span> outlier_fst_gid_ch.groupTuple<span class="hl opt">()</span>
+
+        <span class="hl kwb">output</span><span class="hl opt">:</span>
+        <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;${gid}.fst.all.tsv&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> outlier_fst_collect_ch
+
+        <span class="hl kwb">script</span><span class="hl opt">:</span>
+        <span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
+<span class="hl str">       echo -e &quot;</span>run<span class="hl esc">\\</span>tmean_fst<span class="hl esc">\\</span>tweighted_fst<span class="hl str">&quot; &gt; ${gid}.fst.all.tsv</span>
+<span class="hl str">       cat *.fst.tsv &gt;&gt; ${gid}.fst.all.tsv</span>
+<span class="hl str">       &quot;</span><span class="hl str">&quot;&quot;</span>
+    <span class="hl opt">}</span>
+
+<span class="hl slc">// git 7.6</span>
+<span class="hl slc">// neighbour joining happens within the R script R/fig/plot_F4.R</span>
 </code>
 </pre>
 </div>

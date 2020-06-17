@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 source('../R/overall_flow.R')
 ```
 
-This repository contains the complete workflow used in the paper "*Ancestral variation, hybridization and modularity fuel a marine radiation*".
+[This repository](https://github.com/k-hench/chapter2) contains the complete workflow used in the paper "*Ancestral variation, hybridization and modularity fuel a marine radiation*".
 The individual chapters of this documentation follow the separate main steps of the workflow, which each refer to an individual prefix in the _git x.x_ references of the papers method section.
 The individual steps partly depend on each other - especially git 1 - git 3 should be executed in order and before the other steps.
 
@@ -30,7 +30,7 @@ p_overall
 
 ## Analysis
 
-A documentation of the data preparation and the data analysis (git 1.x - 9.x) can be found at:
+A documentation of the data preparation and the data analysis (git 1.x - 10.x) can be found at:
 
 - git 1.x: [Genotyping](git-1-genotyping-i-snps-only.html)
 - git 2.x: [Genotyping all base pairs](git-2-genotyping-ii-all-callable-sites.html)
@@ -49,6 +49,8 @@ All scripts assume two variables to be set within the bash environment:
 
   - `$BASE_DIR` is assumed to point to the base folder of this repository
   - `$SFTWR` is a folder that contains all the software dependencies that are used within the scripts
+
+The analysis is controlled using the workflow manager [`nextflow`](https://www.nextflow.io/) and uses slightly different configurations across the individual pipelines. The exact commands used to execute the analysis during the development of the publication are stored within the aliases set within `sh/nextflow_alias.sh`.
 
 Furthermore, external dependencies need to be downloaded and deployed at the expected places (s. README.md at the `ressources` folder).
 

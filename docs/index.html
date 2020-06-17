@@ -207,7 +207,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="12" data-path="git-11-visualization.html"><a href="git-11-visualization.html"><i class="fa fa-check"></i><b>12</b> (git 11) Visualization</a><ul>
 <li class="chapter" data-level="12.1" data-path="git-11-visualization.html"><a href="git-11-visualization.html#all-at-once"><i class="fa fa-check"></i><b>12.1</b> All at once</a></li>
 <li class="chapter" data-level="12.2" data-path="git-11-visualization.html"><a href="git-11-visualization.html#one-by-one"><i class="fa fa-check"></i><b>12.2</b> One by one</a></li>
-<li class="chapter" data-level="12.3" data-path="git-11-visualization.html"><a href="git-11-visualization.html#in-the-remaining-documentation-the-individual-visualization-scripts-are-going-to-discussed-in-detail."><i class="fa fa-check"></i><b>12.3</b> In the remaining documentation, the individual Visualization scripts are going to discussed in detail.</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -238,7 +237,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="intro" class="section level1">
 <h1><span class="header-section-number">1</span> Intro</h1>
-<p>This repository contains the complete workflow used in the paper “<em>Ancestral variation, hybridization and modularity fuel a marine radiation</em>”.
+<p><a href="https://github.com/k-hench/chapter2">This repository</a> contains the complete workflow used in the paper “<em>Ancestral variation, hybridization and modularity fuel a marine radiation</em>”.
 The individual chapters of this documentation follow the separate main steps of the workflow, which each refer to an individual prefix in the <em>git x.x</em> references of the papers method section.
 The individual steps partly depend on each other - especially git 1 - git 3 should be executed in order and before the other steps.</p>
 <!--<div style="max-width:800px; margin:auto;">
@@ -246,17 +245,18 @@ The individual steps partly depend on each other - especially git 1 - git 3 shou
 </div> --->
 <div id="analysis" class="section level2">
 <h2><span class="header-section-number">1.1</span> Analysis</h2>
-<p>A documentation of the data preparation and the data analysis (git 1.x - 9.x) can be found at:</p>
+<p>A documentation of the data preparation and the data analysis (git 1.x - 10.x) can be found at:</p>
 <ul>
-<li>git 1.x: <a href="genotyping-i-snps-only.html">Genotyping</a></li>
-<li>git 2.x: <a href="genotyping-ii-all-callable-sites.html">Genotyping all base pairs</a></li>
-<li>git 3.x: <a href="analysis-i-fst-gxp.html">Analysis (<i>F<sub>ST</sub></i> &amp; GxP)</a></li>
-<li>git 4.x: <a href="analysis-ii-dxy-pi.html">Analysis (<i>d<sub>XY</sub></i> &amp; <span class="math inline">\(\pi\)</span>)</a></li>
-<li>git 5.x: <a href="analysis-iii-phylogeny-topology-weighting.html">Analysis (phylogeny &amp; topolgy weighting)</a></li>
-<li>git 6.x: <a href="analysis-iv-rho.html">Analysis (<span class="math inline">\(\rho\)</span>)</a></li>
-<li>git 7.x: <a href="analysis-v-ho.html">Analysis (<i>H<sub>O</sub></i> )</a></li>
-<li>git 8.x: <a href="analysis-vi-demographic-history.html">Analysis (demographic history)</a></li>
-<li>git 10.x: <a href="analysis-vii-monkeyflowers.html">Analysis (Stankowski <em>et al.</em> 2019)</a></li>
+<li>git 1.x: <a href="git-1-genotyping-i-snps-only.html">Genotyping</a></li>
+<li>git 2.x: <a href="git-2-genotyping-ii-all-callable-sites.html">Genotyping all base pairs</a></li>
+<li>git 3.x: <a href="git-3-analysis-i-fst-gxp.html">Analysis (<i>F<sub>ST</sub></i> &amp; GxP)</a></li>
+<li>git 4.x: <a href="git-4-analysis-ii-dxy-pi.html">Analysis (<i>d<sub>XY</sub></i> &amp; <span class="math inline">\(\pi\)</span>)</a></li>
+<li>git 5.x: <a href="git-5-analysis-iii-phylogeny-topology-weighting.html">Analysis (phylogeny &amp; topolgy weighting)</a></li>
+<li>git 6.x: <a href="git-6-analysis-iv-rho.html">Analysis (<span class="math inline">\(\rho\)</span>)</a></li>
+<li>git 7.x: <a href="git-7-analysis-v-poptrees.html">Analysis (population trees)</a></li>
+<li>git 8.x: <a href="git-8-analysis-vi-demographic-history.html">Analysis (demographic history)</a></li>
+<li>git 9.x: <a href="git-9-analysis-vii-hybridization.html">Analysis (hybridization)</a></li>
+<li>git 10.x: <a href="git-10-analysis-viii-admixture.html">Analysis (admixture)</a></li>
 </ul>
 </div>
 <div id="prerequesites" class="section level2">
@@ -266,6 +266,7 @@ The individual steps partly depend on each other - especially git 1 - git 3 shou
 <li><code>$BASE_DIR</code> is assumed to point to the base folder of this repository</li>
 <li><code>$SFTWR</code> is a folder that contains all the software dependencies that are used within the scripts</li>
 </ul>
+<p>The analysis is controlled using the workflow manager <a href="https://www.nextflow.io/"><code>nextflow</code></a> and uses slightly different configurations across the individual pipelines. The exact commands used to execute the analysis during the development of the publication are stored within the aliases set within <code>sh/nextflow_alias.sh</code>.</p>
 <p>Furthermore, external dependencies need to be downloaded and deployed at the expected places (s. README.md at the <code>ressources</code> folder).</p>
 </div>
 <div id="figures" class="section level2">
