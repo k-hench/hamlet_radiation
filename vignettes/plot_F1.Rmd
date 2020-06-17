@@ -305,6 +305,6 @@ hypo_show_metadata('figures/F1.pdf')
 ```
 
 ```r
-#> [1] "mother-script = /path/to/scripts/plot_F1.R"
+#> [1] "mother-script = /path/to/R/fig/plot_F1.R"
 ```
 ---

@@ -58,22 +58,22 @@ The nextflow script starts by opening the genotype data.
 <span class="hl slc">// subset genotypes to the outlier region and reformat</span>
 <span class="hl kwa">process</span> plink12 <span class="hl opt">{</span>
 	<span class="hl kwb">label</span> <span class="hl str">&#39;L_20g2h_plink12&#39;</span>
-	<span class="hl kwb">tag</span> <span class="hl str">&quot;${grouping.gid}&quot;</span>
+	<span class="hl kwb">tag</span> <span class="hl str">&quot;</span><span class="hl ipl">${grouping.gid}</span><span class="hl str">&quot;</span>
 
 	<span class="hl kwb">input</span><span class="hl opt">:</span>
-	<span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> grouping <span class="hl opt">),</span>  <span class="hl kwb">val</span><span class="hl opt">(</span> vcfidx <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> vcf <span class="hl opt">)</span> <span class="hl kwa">from</span> vcf_admx
+	<span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> grouping <span class="hl opt">),</span>  <span class="hl kwc">val</span><span class="hl opt">(</span> vcfidx <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">)</span> <span class="hl kwa">from</span> vcf_admx
 
 	<span class="hl kwb">output</span><span class="hl opt">:</span>
-	<span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> grouping <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hapmap.*.ped&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hapmap.*.map&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hapmap.*.nosex&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;pop.txt&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> admx_plink
+	<span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> grouping <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hapmap.*.ped&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hapmap.*.map&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hapmap.*.nosex&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;pop.txt&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> admx_plink
 
 	<span class="hl kwb">script</span><span class="hl opt">:</span>
-	<span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
-<span class="hl str">	echo -e &quot;</span>CHROM<span class="hl esc">\\</span>tSTART<span class="hl esc">\\</span>tEND<span class="hl str">&quot; &gt; outl.bed</span>
-<span class="hl str">	echo -e &quot;</span>$<span class="hl opt">{</span>grouping.chrom<span class="hl opt">}</span><span class="hl esc">\\</span>t$<span class="hl opt">{</span>grouping.start<span class="hl opt">}</span><span class="hl esc">\\</span>t$<span class="hl opt">{</span>grouping.end<span class="hl opt">}</span><span class="hl str">&quot; &gt;&gt; outl.bed</span>
+	<span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">	echo -e &quot;CHROM</span><span class="hl esc">\\</span><span class="hl str">tSTART</span><span class="hl esc">\\</span><span class="hl str">tEND&quot; &gt; outl.bed</span>
+<span class="hl str">	echo -e &quot;</span><span class="hl ipl">${grouping.chrom}</span><span class="hl str"></span><span class="hl esc">\\</span><span class="hl str">t</span><span class="hl ipl">${grouping.start}</span><span class="hl str"></span><span class="hl esc">\\</span><span class="hl str">t</span><span class="hl ipl">${grouping.end}</span><span class="hl str">&quot; &gt;&gt; outl.bed</span>
 <span class="hl str"></span>
 <span class="hl str">	vcfsamplenames ${vcf[0]} | \</span>
-<span class="hl str">		grep -v &quot;</span>tor<span class="hl esc">\\</span><span class="hl opt">|</span>tab<span class="hl esc">\\</span><span class="hl opt">|</span>flo<span class="hl str">&quot; | \</span>
-<span class="hl str">		awk &#39;{print \$1&quot;</span><span class="hl esc">\\</span>t<span class="hl str">&quot;\$1}&#39; | \</span>
+<span class="hl str">		grep -v &quot;tor</span><span class="hl esc">\\</span><span class="hl str">|tab</span><span class="hl esc">\\</span><span class="hl str">|flo&quot; | \</span>
+<span class="hl str">		awk &#39;{print \$1&quot;</span><span class="hl esc">\\</span><span class="hl str">t&quot;\$1}&#39; | \</span>
 <span class="hl str">		sed &#39;s/</span><span class="hl esc">\\</span><span class="hl str">t.*</span><span class="hl esc">\\</span><span class="hl str">(...</span><span class="hl esc">\\</span><span class="hl str">)</span><span class="hl esc">\\</span><span class="hl str">(...</span><span class="hl esc">\\</span><span class="hl str">)\$/</span><span class="hl esc">\\</span><span class="hl str">t</span><span class="hl esc">\\</span><span class="hl str">1</span><span class="hl esc">\\</span><span class="hl str">t</span><span class="hl esc">\\</span><span class="hl str">2/g&#39; &gt; pop.txt</span>
 <span class="hl str"></span>
 <span class="hl str">	vcftools \</span>
@@ -86,8 +86,8 @@ The nextflow script starts by opening the genotype data.
 <span class="hl str">	plink \</span>
 <span class="hl str">		--file admx_plink \</span>
 <span class="hl str">		--recode12 \</span>
-<span class="hl str">		--out hapmap.${grouping.gid}</span>
-<span class="hl str">	&quot;</span><span class="hl str">&quot;&quot;</span>
+<span class="hl str">		--out hapmap.</span><span class="hl ipl">${grouping.gid}</span>
+<span class="hl str">	&quot;&quot;&quot;</span>
 <span class="hl opt">}</span>
 
 <span class="hl slc">// git 10.5</span>
@@ -99,19 +99,19 @@ admx_prep  <span class="hl opt">=</span> k_ch.combine<span class="hl opt">(</spa
 <span class="hl kwa">process</span> admixture_all <span class="hl opt">{</span>
 	<span class="hl kwb">label</span> <span class="hl str">&#39;L_20g4h_admixture_all&#39;</span>
 	<span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/admixture/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span>
-	<span class="hl kwb">tag</span> <span class="hl str">&quot;${grouping.gid}.${k}&quot;</span>
+	<span class="hl kwb">tag</span> <span class="hl str">&quot;</span><span class="hl ipl">${grouping.gid}</span><span class="hl str">.</span><span class="hl ipl">${k}</span><span class="hl str">&quot;</span>
 
 	<span class="hl kwb">input</span><span class="hl opt">:</span>
-	<span class="hl kwa">set</span>  <span class="hl kwb">val</span><span class="hl opt">(</span> k <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> grouping <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> ped <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> map <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> nosex <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> pop <span class="hl opt">)</span> <span class="hl kwa">from</span> admx_prep
+	<span class="hl kwa">set</span>  <span class="hl kwc">val</span><span class="hl opt">(</span> k <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> grouping <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> ped <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> map <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> nosex <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> pop <span class="hl opt">)</span> <span class="hl kwa">from</span> admx_prep
 
 	<span class="hl kwb">output</span><span class="hl opt">:</span>
-	<span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> <span class="hl str">&quot;dummy&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.out&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.Q&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.txt&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> admx_log
+	<span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> <span class="hl str">&quot;dummy&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.out&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.Q&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.txt&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> admx_log
 
 	<span class="hl kwb">script</span><span class="hl opt">:</span>
-	<span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
-<span class="hl str">	mv ${pop} pop.${grouping.gid}.${k}.txt</span>
-<span class="hl str">	admixture --cv ${ped} ${k} | tee log.${grouping.gid}.${k}.out</span>
-<span class="hl str">	&quot;</span><span class="hl str">&quot;&quot;</span>
+	<span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">	mv</span> <span class="hl ipl">${pop}</span> <span class="hl str">pop.</span><span class="hl ipl">${grouping.gid}</span><span class="hl str">.</span><span class="hl ipl">${k}</span><span class="hl str">.txt</span>
+<span class="hl str">	admixture --cv</span> <span class="hl ipl">${ped} ${k}</span> <span class="hl str">| tee log.</span><span class="hl ipl">${grouping.gid}</span><span class="hl str">.</span><span class="hl ipl">${k}</span><span class="hl str">.out</span>
+<span class="hl str">	&quot;&quot;&quot;</span>
 <span class="hl opt">}</span>
 </code>
 </pre>

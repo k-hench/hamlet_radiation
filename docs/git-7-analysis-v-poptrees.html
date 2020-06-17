@@ -56,6 +56,7 @@
 <link href="libs/ggiraphjs-0.2.0/styles.css" rel="stylesheet" />
 <script src="libs/ggiraphjs-0.2.0/ggiraphjs.min.js"></script>
 <script src="libs/girafe-binding-0.7.0/girafe.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
 
 
 <style type="text/css">
@@ -148,6 +149,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#summary"><i class="fa fa-check"></i><b>2.1</b> Summary</a></li>
 <li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a><ul>
 <li class="chapter" data-level="2.2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#data-preparation"><i class="fa fa-check"></i><b>2.2.1</b> Data preparation</a></li>
+<li class="chapter" data-level="2.2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#genotying"><i class="fa fa-check"></i><b>2.2.2</b> Genotying</a></li>
+<li class="chapter" data-level="2.2.3" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#phasing"><i class="fa fa-check"></i><b>2.2.3</b> Phasing</a></li>
+<li class="chapter" data-level="2.2.4" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#indel-masks"><i class="fa fa-check"></i><b>2.2.4</b> Indel masks</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a><ul>
@@ -280,21 +284,21 @@ Below is an overview of the steps involved in the analysis.
         <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/fst/poptree/single&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span>
 
         <span class="hl kwb">input</span><span class="hl opt">:</span>
-        <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> grouping <span class="hl opt">),</span>  <span class="hl kwb">val</span><span class="hl opt">(</span> vcfidx <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> cross_pop <span class="hl opt">)</span> <span class="hl kwa">from</span> crosses_vcf
+        <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> grouping <span class="hl opt">),</span>  <span class="hl kwc">val</span><span class="hl opt">(</span> vcfidx <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> cross_pop <span class="hl opt">)</span> <span class="hl kwa">from</span> crosses_vcf
 
         <span class="hl kwb">output</span><span class="hl opt">:</span>
-        <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> grouping.gid <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> cross_pop <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.fst.tsv&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> outlier_fst_gid_ch
+        <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> grouping.gid <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> cross_pop <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.fst.tsv&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> outlier_fst_gid_ch
 
         <span class="hl kwb">script</span><span class="hl opt">:</span>
-        <span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
-<span class="hl str">       echo -e &quot;</span>CHROM<span class="hl esc">\\</span>tSTART<span class="hl esc">\\</span>tEND<span class="hl str">&quot; &gt; outl.bed</span>
-<span class="hl str">       echo -e &quot;</span>$<span class="hl opt">{</span>grouping.chrom<span class="hl opt">}</span><span class="hl esc">\\</span>t$<span class="hl opt">{</span>grouping.start<span class="hl opt">}</span><span class="hl esc">\\</span>t$<span class="hl opt">{</span>grouping.end<span class="hl opt">}</span><span class="hl str">&quot; &gt;&gt; outl.bed</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">       echo -e &quot;CHROM</span><span class="hl esc">\\</span><span class="hl str">tSTART</span><span class="hl esc">\\</span><span class="hl str">tEND&quot; &gt; outl.bed</span>
+<span class="hl str">       echo -e &quot;</span><span class="hl ipl">${grouping.chrom}</span><span class="hl str"></span><span class="hl esc">\\</span><span class="hl str">t</span><span class="hl ipl">${grouping.start}</span><span class="hl str"></span><span class="hl esc">\\</span><span class="hl str">t</span><span class="hl ipl">${grouping.end}</span><span class="hl str">&quot; &gt;&gt; outl.bed</span>
 <span class="hl str"></span>
 <span class="hl str">       vcfsamplenames ${vcf[0]} | \</span>
-<span class="hl str">           grep &quot;</span>$<span class="hl opt">{</span>cross_pop.pop1<span class="hl opt">}</span><span class="hl str">&quot; &gt; pop1.pop</span>
+<span class="hl str">           grep &quot;</span><span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">&quot; &gt; pop1.pop</span>
 <span class="hl str"></span>
 <span class="hl str">           vcfsamplenames ${vcf[0]} | \</span>
-<span class="hl str">               grep &quot;</span>$<span class="hl opt">{</span>cross_pop.pop2<span class="hl opt">}</span><span class="hl str">&quot; &gt; pop2.pop</span>
+<span class="hl str">               grep &quot;</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str">&quot; &gt; pop2.pop</span>
 <span class="hl str"></span>
 <span class="hl str">       vcftools --gzvcf ${vcf[0]} \</span>
 <span class="hl str">           --bed outl.bed \</span>
@@ -302,14 +306,14 @@ Below is an overview of the steps involved in the analysis.
 <span class="hl str">           --keep pop2.pop \</span>
 <span class="hl str">           --weir-fst-pop pop1.pop \</span>
 <span class="hl str">           --weir-fst-pop pop2.pop \</span>
-<span class="hl str">           --stdout 2&gt; ${cross_pop.pop1}-${cross_pop.pop2}.50k.log | \</span>
-<span class="hl str">           gzip &gt; ${cross_pop.pop1}-${cross_pop.pop2}.fst.tsv.gz</span>
+<span class="hl str">           --stdout 2&gt;</span> <span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">-</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str">.50k.log | \</span>
+<span class="hl str">           gzip &gt;</span> <span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">-</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str">.fst.tsv.gz</span>
 <span class="hl str"></span>
-<span class="hl str">       mFST=\$(grep &quot;</span>Weir and Cockerham mean Fst estimate<span class="hl opt">:</span><span class="hl str">&quot; ${cross_pop.pop1}-${cross_pop.pop2}.50k.log | sed &#39;s/Weir and Cockerham mean Fst estimate: //&#39;)</span>
-<span class="hl str">       wFST=\$(grep &quot;</span>Weir and Cockerham weighted Fst estimate<span class="hl opt">:</span><span class="hl str">&quot; ${cross_pop.pop1}-${cross_pop.pop2}.50k.log | sed &#39;s/Weir and Cockerham weighted Fst estimate: //&#39;)</span>
+<span class="hl str">       mFST=\$(grep &quot;Weir and Cockerham mean Fst estimate:&quot;</span> <span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">-</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str">.50k.log | sed &#39;s/Weir and Cockerham mean Fst estimate: //&#39;)</span>
+<span class="hl str">       wFST=\$(grep &quot;Weir and Cockerham weighted Fst estimate:&quot;</span> <span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">-</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str">.50k.log | sed &#39;s/Weir and Cockerham weighted Fst estimate: //&#39;)</span>
 <span class="hl str"></span>
-<span class="hl str">       echo -e &quot;</span>$<span class="hl opt">{</span>cross_pop.pop1<span class="hl opt">}-</span>$<span class="hl opt">{</span>cross_pop.pop2<span class="hl opt">}</span><span class="hl esc">\\</span>t\$mFST<span class="hl esc">\\</span>t\$wFST<span class="hl str">&quot; &gt; ${cross_pop.pop1}-${cross_pop.pop2}.${grouping.gid}.fst.tsv</span>
-<span class="hl str">       &quot;</span><span class="hl str">&quot;&quot;</span>
+<span class="hl str">       echo -e &quot;</span><span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">-</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str"></span><span class="hl esc">\\</span><span class="hl str">t\$mFST</span><span class="hl esc">\\</span><span class="hl str">t\$wFST&quot; &gt;</span> <span class="hl ipl">${cross_pop.pop1}</span><span class="hl str">-</span><span class="hl ipl">${cross_pop.pop2}</span><span class="hl str">.</span><span class="hl ipl">${grouping.gid}</span><span class="hl str">.fst.tsv</span>
+<span class="hl str">       &quot;&quot;&quot;</span>
     <span class="hl opt">}</span>
 
 <span class="hl slc">// git 7.5</span>
@@ -319,16 +323,16 @@ Below is an overview of the steps involved in the analysis.
         <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/fst/poptree/summary&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span>
 
         <span class="hl kwb">input</span><span class="hl opt">:</span>
-        <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> gid <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> cross_pop <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> fst <span class="hl opt">)</span> <span class="hl kwa">from</span> outlier_fst_gid_ch.groupTuple<span class="hl opt">()</span>
+        <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> gid <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> cross_pop <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> fst <span class="hl opt">)</span> <span class="hl kwa">from</span> outlier_fst_gid_ch.groupTuple<span class="hl opt">()</span>
 
         <span class="hl kwb">output</span><span class="hl opt">:</span>
-        <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;${gid}.fst.all.tsv&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> outlier_fst_collect_ch
+        <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;</span><span class="hl ipl">${gid}</span><span class="hl str">.fst.all.tsv&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> outlier_fst_collect_ch
 
         <span class="hl kwb">script</span><span class="hl opt">:</span>
-        <span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
-<span class="hl str">       echo -e &quot;</span>run<span class="hl esc">\\</span>tmean_fst<span class="hl esc">\\</span>tweighted_fst<span class="hl str">&quot; &gt; ${gid}.fst.all.tsv</span>
-<span class="hl str">       cat *.fst.tsv &gt;&gt; ${gid}.fst.all.tsv</span>
-<span class="hl str">       &quot;</span><span class="hl str">&quot;&quot;</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">       echo -e &quot;run</span><span class="hl esc">\\</span><span class="hl str">tmean_fst</span><span class="hl esc">\\</span><span class="hl str">tweighted_fst&quot; &gt;</span> <span class="hl ipl">${gid}</span><span class="hl str">.fst.all.tsv</span>
+<span class="hl str">       cat *.fst.tsv &gt;&gt;</span> <span class="hl ipl">${gid}</span><span class="hl str">.fst.all.tsv</span>
+<span class="hl str">       &quot;&quot;&quot;</span>
     <span class="hl opt">}</span>
 
 <span class="hl slc">// git 7.6</span>

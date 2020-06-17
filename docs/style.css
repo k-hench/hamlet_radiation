@@ -85,11 +85,11 @@ pre.hl	{ color:#000000; background-color:#e0eaee; font-size:10pt; font-family:'C
 .hl.com { color:#838183; font-style:italic; }
 .hl.ppc { color:#008200; }
 .hl.opt { color:#000000; }
-.hl.ipl { color:#0057ae; }
+.hl.ipl { color:#77272A; } /* variavle in string */
 .hl.lin { color:#555555; }
-.hl.kwa { color:#ee0000; font-weight:bold; }
-.hl.kwb { color:#ff9900; font-weight:bold; }
-.hl.kwc { color:#0066cc; }
-.hl.kwd { color:#333333; }
+.hl.kwa { color:#ee0000; } /*ID1*/
+.hl.kwb { color:#ff9900; font-weight:bold; } /*ID2*/
+.hl.kwc { color:#0066cc; } /*ID3...*/
+.hl.kwd { color:#77272A; }
 .hl.kwe { color:#ff9900; font-weight:bold;}
 .hl.kwf { color:#ff9900; }

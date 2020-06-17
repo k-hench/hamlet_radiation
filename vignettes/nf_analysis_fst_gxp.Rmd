@@ -66,25 +66,41 @@ The nextflow script starts by opening the genotype data and feeding it into thre
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_locations; vcf_filter; vcf_gxp; vcf_adapt }
+```
 
+Since we are going to work on the three sampling locations independently, we create channel for the locations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.2
 // initialize location channel
 Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
+```
 
+Then we attach the genotypes to the locations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.3
 // attach genotypes to location
 locations_ch
 	.combine( vcf_locations )
 	.set{ vcf_location_combo }
+```
 
+Next, we define the species sets sampled at the individual locations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.4
 // define location specific sepcies set
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
+```
 
+For each location, the data is subset to include only local hamlets.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.5
 // subset data to local hamlets
 process subset_vcf_by_location {
@@ -110,7 +126,11 @@ process subset_vcf_by_location {
 		--stdout | gzip > ${loc}.vcf.gz
 	"""
 }
+```
 
+As we also want to compute global statistics, we create another subset including all sampled hamlets but excluding the outgroups.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.6
 // subset the global data set to hamlets only
 process subset_vcf_hamlets_only {
@@ -142,7 +162,13 @@ process subset_vcf_hamlets_only {
 		--stdout | gzip > hamlets_only.vcf.gz
 	"""
 }
+```
 
+### <i>F<sub>ST</sub></i>
+
+Using this subset, we compute the global differentiation among all hamlet populations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // ----------- Fst section -----------
 // git 3.7
 // compute global fst
@@ -213,7 +239,11 @@ process fst_multi {
 	Rscript --vanilla \$BASE_DIR/R/table_fst_outliers.R multi_fst.50k.tsv.gz
 	"""
 }
+```
 
+Then, we set up the pair wise species comparisons...
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.8
 // prepare pairwise fsts
 // ------------------------------
@@ -242,9 +272,13 @@ pan_pairs_ch = Channel.from( "pan" )
 	.filter{ it[3] < it[5] }
 	.map{ it[0,1,2,4,6]}
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
+```
 
+... and run them.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.9
-// comute pairwise fsts
+// compute pairwise fsts
 process fst_run {
 	label 'L_32g4h_fst_run'
 	publishDir "../../2_analysis/fst/50k/", mode: 'copy' , pattern: "*.50k.windowed.weir.fst.gz"
@@ -281,7 +315,11 @@ process fst_run {
 	gzip *.windowed.weir.fst
 	"""
 }
+```
 
+The _genome wide_ summaries are compiled from the log files of `VCFtools`.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.10
 /* collect the VCFtools logs to crate a table with the
    genome wide fst values */
@@ -308,7 +346,13 @@ process fst_globals {
 	sed 's/^\\(...\\)-/\\1\\t/g' > fst_globals.txt
 	"""
 }
+```
 
+### GxP
+
+The software use for the GxP association uses genotypes in `plink` file format, so the first step was to convert the input.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // ----------- G x P section -----------
 
 // git 3.11
@@ -362,14 +406,22 @@ process GxP_run {
 		--out GxP_plink_binary
 	"""
 }
+```
 
+Additionally to the genotypes, the phenotypes of the samples are needed.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.13
 // import phenotypes
 Channel
 	.fromPath("../../metadata/phenotypes.sc")
 	.set{ phenotypes_raw }
+```
 
-// git 3.13
+For historic reasons, we perform a PCA on the phenotypes and report the extended phenotype data including the scoring on PC1 & PC2.
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 3.14
 // run PCA on phenotypes
 process phenotye_pca {
 	label "L_loc_phenotype_pca"
@@ -388,17 +440,29 @@ process phenotye_pca {
 	Rscript --vanilla \$BASE_DIR/R/phenotypes_pca.R ${sc}
 	"""
 }
+```
 
+We set up all the traits for which we want to perform a GxP association.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.15
 // setup GxP traits
 Channel
 	.from("Bars", "Snout", "Peduncle") //,  "Lines", "Blue", "Yellow", "Orange", "Tail_transparent","PC1", "PC2", "PC_d1", "abe", "gum", "ind", "may", "nig", "pue", "ran", "uni", "blue2" )
 	.set{ traits_ch }
+```
 
+Then, we combine the reformatted genotypes with the phenotyes and the traits of interest.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.16
 // bundle GxP input
 traits_ch.combine( plink_binary ).combine( phenotype_file ).set{ trait_plink_combo }
+```
 
+Having collected all the input, we can now run the GxP.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.17
 // actually run the GxP
 process gemma_run {
@@ -439,17 +503,29 @@ process gemma_run {
 		cut -f 2,3,8-10,13-15 | body sort -k1,1 -k2,2n | gzip > ${pheno}.lmm.GxP.txt.gz
 	"""
 }
+```
 
+To smooth the GxP results, we initialize two resolutions (50 kb windows with 5 kb increments and 10 kb windows with 1 kb increments).
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.18
 // setup smoothing levels
 Channel
 	.from([[50000, 5000], [10000, 1000]])
 	.set{ gxp_smoothing_levels }
+```
 
+The we apply all smoothing levels to the raw GxP output...
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.19
 // apply all smoothing levels
 gemma_results.combine( gxp_smoothing_levels ).set{ gxp_smoothing_input }
+```
 
+.. and run the smoothing.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.20
 // actually run the smoothing
 process gemma_smooth {
@@ -469,18 +545,36 @@ process gemma_smooth {
 	\$BASE_DIR/sh/gxp_slider ${lmm} ${win} ${step}
 	"""
 }
+```
 
+At this step we are done with differentiation and GxP.
+
+### <i>F<sub>ST</sub></i> within species (adaptation scenario)
+
+To judge the independence of the individual populations of the hamlets species sampled at several locations,
+we also compute the <i>F<sub>ST</sub></i> among those populations.
+We start by defining the species-set for which we sampled multiple populations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // Fst within species ---------------------------------------------------------
 // git 3.21
 // define species set
 Channel
 	.from( "nig", "pue", "uni")
 	.set{ species_ch }
+```
 
+Then, we define the sampling locations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.22
 // define location set
 Channel.from( [[1, "bel"], [2, "hon"], [3, "pan"]]).into{ locations_ch_1;locations_ch_2 }
+```
 
+Next, we create all population-pairs and bind it to the genotype file.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.23
 // create location pairs
 locations_ch_1
@@ -490,7 +584,11 @@ locations_ch_1
 	.combine( species_ch )
 	.combine( vcf_adapt )
 	.set{ vcf_location_combo_adapt }
+```
 
+Last, we compute the pair wise <i>F<sub>ST</sub></i> among all populations.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 3.24
 // compute pairwise fsts
 process fst_run_adapt {
@@ -517,7 +615,5 @@ process fst_run_adapt {
 
 ```
 </div>
-
-At this step we are done with differentiation and GxP.
 
 ---

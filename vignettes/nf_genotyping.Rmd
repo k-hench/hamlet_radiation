@@ -76,7 +76,36 @@ Channel
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ id:row.id, label:row.label, file_fwd:row.file_fwd, file_rev:row.file_rev, flowcell_id_fwd:row.flowcell_id_fwd, lane_fwd:row.lane_fwd, company:row.company] }
 	.set { samples_ch }
+```
+</div>
 
+Below is a little preview of the table containing the sample meta data:
+
+```{r,echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(kableExtra)
+read_tsv('metadata/file_info.txt') %>%
+  mutate(coord_N = as.character(round(coord_N, 3)),
+         coord_W = as.character(round(coord_W, 3))) %>%
+  select(1:8) %>%
+  mutate(`..` = '...') %>%
+  head() %>%
+  bind_rows(., tibble(id = '...', label = '...',
+                      spec = '...', geo = '...',
+                      date = '...', coord_N = '...',
+                      coord_W = '...',company='...',
+                      `..` = '')) %>%
+  mutate_all(~cell_spec(.x, color = ifelse(is.na(.x), "lightgray",
+                                           ifelse(.x == "...", rgb(.7,.7,.7), "black")))) %>%
+  kable(escape = F) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),font_size = 12)%>%
+  row_spec(0, bold = T, color = "#FFFFFF", background = "#333333")
+```
+
+The first step to prepare the data for the [GATK best practices](https://gatkforums.broadinstitute.org/gatk/discussion/6483/how-to-map-and-clean-up-short-read-sequence-data-efficiently), is to convert the sample sequences from `*.fq` to `*.bam` format to assign read groups:
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.2
 /* for every sequencing file, convert into ubam format and assign read groups */
 process split_samples {
@@ -111,7 +140,13 @@ process split_samples {
 		--TMP_DIR=\$BASE_DIR/temp_files;
 	"""
 }
+```
+</div>
 
+The second step is marking the *Illumina* adapters.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.3
 /* for every ubam file, mark Illumina adapters */
 process mark_adapters {
@@ -135,12 +170,24 @@ process mark_adapters {
 		-TMP_DIR=\$BASE_DIR/temp_files;
 	"""
 }
+```
+</div>
 
+We need to pass on the unaligned `.bam` file and the file containing the adapter information together, so the output of the first two processes are matched by the combined sample and sequencing lane information.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.4
 adapter_bams
 	.combine(ubams_merge, by:0)
 	.set {merge_input}
+```
+</div>
 
+For the actual mapping, the sequences are transformed back into `.fq` format, aligned using `bwa` and merged back with their original read group information.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.5
 /* this step includes a 3 step pipeline:
 *  - re-transformatikon into fq format
@@ -192,7 +239,13 @@ process map_and_merge {
 		-TMP_DIR=\$BASE_DIR/temp_files
 	"""
 }
+```
+</div>
 
+Next, the duplicates are being marked.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.6
 /* for every mapped sample,sort and mark duplicates
 * (intermediate step is required to create .bai file) */
@@ -240,7 +293,13 @@ process mark_duplicates {
 	rm intermediate*
 	"""
 }
+```
+</div>
 
+As a preparation for the actual genotyping, the `.bam` files are being indexed.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.7
 /* index al bam files */
 process index_bam {
@@ -260,13 +319,30 @@ process index_bam {
 		-INPUT=${input}
 	"""
 }
+```
+</div>
 
+At this point the preparation of the sequencing is done and we can start with the genotyping.
+(The output of the data preparation is split and one copy is later also used to prepare the read aware phasing in the process called [extractPirs](#phasing_start).)
+
+### Genotying
+
+Since some of our samples were split over several lanes, we now need to collect all `.bam` files for each sample.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.8
 /* collect all bam files for each sample */
 indexed_bams
 	.groupTuple()
 	.set {tubbled}
+```
+</div>
 
+Now, we can create the genotype likelihoods for each individual sample.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.9
 /* create one *.g.vcf file per sample */
 process receive_tuple {
@@ -292,7 +368,13 @@ process receive_tuple {
 	  -ERC GVCF
 	"""
 }
+```
+</div>
 
+The individual genotype likelihoods are collected and combined for the entire data set.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.10
 /* collect and combine all *.g.vcf files */
 process gather_gvcfs {
@@ -318,7 +400,13 @@ process gather_gvcfs {
 		-O cohort.g.vcf.gz
 	"""
 }
+```
+</div>
 
+All samples are jointly genotyped.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.11
 /* actual genotyping step (varinat sites only) */
 process joint_genotype_snps {
@@ -349,13 +437,28 @@ process joint_genotype_snps {
 	rm intermediate.*
 	"""
 }
+```
+</div>
 
+The output of this process is split and used to collect the genotype metrics to inform the [hard filtering of SNPs](https://gatkforums.broadinstitute.org/gatk/discussion/2806/howto-apply-hard-filters-to-a-call-set) and to pass on the genotypes to the process called [filterSNPs](#filterSNPS).
+
+At this point we create a channel containing all 24 hamlet linkage groups (LGs).
+This is used later (in the process called [extractPirs](#phasing_start)) since all LGs are phased separately and only located at this part of the script for historical reasons (sorry :/).
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.12
 /* generate a LG channel */
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.into{ LG_ids1; LG_ids2 }
+```
+</div>
 
+The metrics of the raw genotypes are collected.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.13
 /* produce metrics table to determine filtering thresholds - ups forgot to extract SNPS first*/
 process joint_genotype_metrics {
@@ -379,7 +482,16 @@ process joint_genotype_metrics {
 		--show-filtered
 	"""
 }
+```
+</div>
 
+Based on the thresholds derived from the genotype metrics, the genotypes are first tagged and then filtered.
+After this, the data is filtered for missingness and only bi-allelic SNPs are selected.
+
+<a name="filterSNPS"></a>
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.14
 /* filter snps basaed on locus annotations, missingness
    and type (bi-allelic only) */
@@ -431,7 +543,22 @@ process filterSNPs {
 	rm intermediate.*
 	"""
 }
+```
+</div>
 
+At this point, the genotying is done.
+
+### Phasing
+
+To get from genotypes to haplotypes, we apply read-aware phasing using [**Shapeit**](https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html).
+This takes the original sequencing reads into account, so in the first step the reads are screened for *Phase Informative Reads* (i.e. reads containing more than a single SNP).
+
+This needs to be done for each LG independently, so we first need to split the genotypes before running `extractPIRs`.
+
+<a name="phasing_start"></a>
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.15
 // extract phase informative reads from
 // alignments and SNPs
@@ -468,7 +595,14 @@ process extractPirs {
 		--read-quality 15
 	"""
 }
+```
+</div>
 
+Using those PIRs, we can then proceed with the actual phasing.
+The resulting haplotypes are converted back into `.vcf` format.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.16
 // run the actual phasing
 process run_shapeit {
@@ -499,7 +633,14 @@ process run_shapeit {
 	bgzip phased-LG${lg}.vcf
 	"""
 }
+```
+</div>
 
+After the phasing, we merge the LGs back together to get a single data set.
+We export a comple data set as well as one that was filtered for a minor allele count of at least two.
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.17
 // merge the phased LGs back together.
 // the resulting vcf file represents
@@ -530,8 +671,21 @@ process merge_phased {
 	tabix -p vcf phased_mac2.vcf.gz
 	"""
 }
+```
+</div>
 
+Finally, we are done with the entire genotyping procedure for the _SNPs olny_ data set.
 
+---
+
+### Indel masks
+
+The `genotyping.nf` workflow contains an appendix that makes use of the genotyping likelihoods created in step git 1.10 to create an indel mask that is later used in the inference of the hamlet demographic history ([git 8.x](analysis-vi-demographic-history.html)).
+(This part is excluded from the initial visualization of this script)
+
+We restart by reopening the joint-sample genotype likelyhoods file and calling the indels from it.
+
+```{r , eval = FALSE, hilang = 'nf'}
 /* ========================================= */
 /* appendix: generate indel masks for msmc: */
 
@@ -565,7 +719,11 @@ process joint_genotype_indel {
 	rm intermediate.*
 	"""
 }
+```
 
+We export the the indel genotype metrics to determine cutoff values for the hard filtering step.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.19
 // export indel metrics for filtering
 process indel_metrics {
@@ -589,7 +747,11 @@ process indel_metrics {
 		--show-filtered
 	"""
 }
+```
 
+Based on the exported metrics the genotypes are being filtered.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.20
 // hard filter indels and create mask
 process filterIndels {
@@ -642,18 +804,30 @@ process filterIndels {
 	rm intermediate.*
 	"""
 }
+```
 
+Since we need one indel mask per linkage group, we create a channel of LGs.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.21
 /* create channel of linkage groups */
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.map{ "LG" + it }
 	.into{ lg_ch }
+```
 
+The linkage group channel is combined with the filtered indels.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.22
 // attach linkage groups to indel masks
 lg_ch.combine( filtered_indel ).set{ filtered_indel_lg }
+```
 
+Finally, one mask per linkage group is created from the indel positions.
+
+```{r , eval = FALSE, hilang = 'nf'}
 // git 1.23
 // split indel mask by linkage group
 process split_indel_mask {

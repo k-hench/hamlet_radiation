@@ -7,7 +7,6 @@ editor_options:
 
 
 
-
 ## Summary
 
 This is the accessory documentation of Figure 1.
@@ -34,8 +33,8 @@ The scripts start with a header that contains copy & paste templates to execute 
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
 # ===============================================================
-# This script produces Figure 1 of the study "The genomic origins of a marine radiation"
-# by Hench, McMillan an Puebla
+# This script produces Figure 1 of the study "The genomic onset of a marine radiation"
+# by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/')
@@ -56,17 +55,17 @@ library(GenomicOriginsScripts)
 library(hypoimg)
 
 cat('\n')
-script_name <- args[5] %>% 
+script_name <- args[5] %>%
   str_remove(.,'--file=')
 
-plot_comment <- script_name %>% 
-  str_c('mother-script = ',getwd(),'/',.) 
+plot_comment <- script_name %>%
+  str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_F1.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_F1.R ────────────────────────────────────────────
 #> Parameters read:
 #>  ★ 1: 2_analysis/dxy/50k/
 #>  ★ 2: 2_analysis/fst/50k/
@@ -94,14 +93,14 @@ This is done for both *F<sub>ST</sub>* and *d<sub>XY</sub>*.
 ```r
 # start script -------------------
 
-# import Fst 
+# import Fst
 fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
 
 fst_data <- str_c(fst_dir,fst_files) %>%
   purrr::map(summarize_fst) %>%
   bind_rows()
 
-# import dxy 
+# import dxy
 dxy_files <- dir(dxy_dir)
 
 dxy_data <-  str_c(dxy_dir,dxy_files) %>%
@@ -114,7 +113,7 @@ We use the genome wide average *F<sub>ST</sub>* to rank the individual pair wise
 
 
 ```r
-fst_order <- fst_data %>% 
+fst_order <- fst_data %>%
   select(run, `mean_weighted-fst`) %>%
   mutate(run = fct_reorder(run,`mean_weighted-fst`))
 ```
@@ -125,13 +124,13 @@ Then, we merge the *F<sub>ST</sub>* and *d<sub>XY</sub>* data sets and do quite 
 ```r
 data <- left_join(fst_data, dxy_data) %>%
   select(c(8,1:7,9:15)) %>%
-  # transfrom table from short to long format 
+  # transfrom table from short to long format
   gather(key = 'stat', value = 'val',2:15) %>%
   # separating the boxplot element from the population genetic parameter
   separate(stat, into = c('sumstat','popstat'),sep = '_') %>%
   # rescaleing the dxy values to fall in the range of Fst
-  mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>% 
-  # combining original and rescaled values 
+  mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
+  # combining original and rescaled values
   unite(temp, val, val_scaled) %>%
   # back transforming to short format
   spread(.,key = 'sumstat',value = 'temp') %>%
@@ -150,15 +149,15 @@ data <- left_join(fst_data, dxy_data) %>%
          x_dodge = ifelse(popstat == 'dxy',x + .25,x - .25), # shift dxy to the right, fst left
          x_start_dodge = x_dodge - wdh/2,                    # boxplot left border
          x_end_dodge = x_dodge + wdh/2,                      # boxplot right border
-         popstat_loc = str_c(popstat,'[',loc,']'))           # parameter X location (for color) 
+         popstat_loc = str_c(popstat,'[',loc,']'))           # parameter X location (for color)
 ```
 
 At this point, the data is ready for the boxplots.
 But first we are going to prepare the networks of pairwise comparisons.
 
 For this we create a tibble of the runs with their respective rank.
-Then, we prepare a config table with one row per location, storing the parameters neede for the layout function for the networks.
-We need to define the location, the number of species at the location, the short three letter ID of those species and a wheight parameter that is shifting the comparison label on the link within the networks.
+Then, we prepare a config table with one row per location, storing the parameters needed for the layout function for the networks.
+We need to define the location, the number of species at the location, the short three letter ID of those species and a weight parameter that is shifting the comparison label on the link within the networks.
 
 Finally, we create one network plot per location.
 
@@ -169,12 +168,12 @@ run_ord <- tibble(run = levels(data$run),
        run_ord = 1:length(levels(data$run)))
 
 # network config and layout
-networx <- tibble( loc = c('bel','hon', 'pan'), 
+networx <- tibble( loc = c('bel','hon', 'pan'),
                    n = c(5,6,3),
                    label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
                                 str_c(c('abe','gum','nig','pue','ran','uni'),'hon'),
                                 str_c(c('nig','pue','uni'),'pan')),
-                   weight = c(1,1.45,1)) %>% 
+                   weight = c(1,1.45,1)) %>%
   purrr::pmap(network_layout) %>%
   bind_rows()
 
@@ -192,28 +191,133 @@ p1 <- cowplot::plot_grid(
   grid::textGrob('Belize'),
   grid::textGrob('Honduras'),
   grid::textGrob('Panama'),
-  plot_list[[1]], plot_list[[2]], plot_list[[3]], 
+  plot_list[[1]], plot_list[[2]], plot_list[[3]],
   ncol = 3, rel_heights = c(.1,1))
 ```
 
 <center>
+
+```
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+```
+
 <img src="plot_F1_files/figure-html/unnamed-chunk-10-1.png" width="864" />
 </center>
 
 Now, we can create the second panel of Figure 1, by plotting our prepared data tibble.
 We are going to plot each boxplot element as a single layer.
-(This, might seem a little cumbersome given `geom_boxplot()`, but this approach was choosen for specific fine tuning of the postioning, dropping of outliers and reducing runtime during the plotting phase - otherwise the entire genome wide data set would have been carried though whole script.)
+(This, might seem a little cumbersome given `geom_boxplot()`, but this approach was chosen for specific fine tuning of the positioning, dropping of outliers and reducing runtime during the plotting phase - otherwise the entire genome wide data set would have been carried though whole script.)
 
 
 ```r
 p2 <- data %>%
   ggplot(aes(color = popstat_loc)) +
   # adding whiskers
-  geom_segment(aes(x = x_dodge, xend = x_dodge, 
+  geom_segment(aes(x = x_dodge, xend = x_dodge,
                    y = lowpoint_scaled,yend = highpoint_scaled)) +
   # adding box (inter quartile range)
   geom_rect(aes(xmin = x_start_dodge, xmax = x_end_dodge,
-                ymin = lower_scaled, ymax = upper_scaled), 
+                ymin = lower_scaled, ymax = upper_scaled),
              fill='white')+
   # adding bar (median)
   geom_segment(aes(x = x_start_dodge,
@@ -229,7 +333,7 @@ p2 <- data %>%
                      name = expression(italic(F[ST])),
                      # layout secondary y axis (dxy)
                      sec.axis = sec_axis(~ . /scaler,
-                                         name = expression(italic(d[XY])), 
+                                         name = expression(italic(d[XY])),
                                          breaks = c(0,.005,.01)))+
   # define color scheme
   scale_color_manual(values = c(make_faint_clr('bel'),
@@ -254,7 +358,7 @@ p2 <- data %>%
 <img src="plot_F1_files/figure-html/unnamed-chunk-12-1.png" width="864" />
 </center>
 
-To create the final figure, we combine the two sub panels unsing the **cowplot** package.
+To create the final figure, we combine the two sub panels using the **cowplot** package.
 Here, we add the panel labels and define the space each panel is going to take.
 
 
@@ -266,6 +370,111 @@ p_done <- cowplot::plot_grid(p1,p2,
 ```
 
 <center>
+
+```
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+
+## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device
+```
+
 <img src="plot_F1_files/figure-html/unnamed-chunk-14-1.png" width="864" />
 </center>
 
@@ -280,7 +489,7 @@ hypo_save(p_done, filename = 'figures/F1.pdf',
 
 
 The function `hypo_save()` is simply a wrapper around `ggsave()`, that will write the name of the currently running script into the meta data of the plot (after the plot has been exported).
-The benfit of this is that you can read this information later to remember how a specifc plot was created using `hypo_show_metadata()`.
+The benefit of this is that you can read this information later to remember how a specific plot was created using `hypo_show_metadata()`.
 This is done using [exiftool](https://www.sno.phy.queensu.ca/~phil/exiftool/) and has currently only been tested on my linux system.
 If this does not work for you, simple replace `hypo_save()` with `ggsave()` and drop the `comment` parameter.
 
@@ -289,6 +498,6 @@ hypo_show_metadata('figures/F1.pdf')
 ```
 
 ```r
-#> [1] "mother-script = /path/to/scripts/plot_F1.R"
+#> [1] "mother-script = /path/to/R/fig/plot_F1.R"
 ```
 ---

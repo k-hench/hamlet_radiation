@@ -182,7 +182,7 @@ pan_pairs_ch = Channel.from( "pan" )
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 // git 3.9
-// comute pairwise fsts
+// compute pairwise fsts
 process fst_run {
 	label 'L_32g4h_fst_run'
 	publishDir "../../2_analysis/fst/50k/", mode: 'copy' , pattern: "*.50k.windowed.weir.fst.gz"
@@ -307,7 +307,7 @@ Channel
 	.fromPath("../../metadata/phenotypes.sc")
 	.set{ phenotypes_raw }
 
-// git 3.13
+// git 3.14
 // run PCA on phenotypes
 process phenotye_pca {
 	label "L_loc_phenotype_pca"

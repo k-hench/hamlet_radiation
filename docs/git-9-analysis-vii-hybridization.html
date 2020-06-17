@@ -56,6 +56,7 @@
 <link href="libs/ggiraphjs-0.2.0/styles.css" rel="stylesheet" />
 <script src="libs/ggiraphjs-0.2.0/ggiraphjs.min.js"></script>
 <script src="libs/girafe-binding-0.7.0/girafe.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
 
 
 <style type="text/css">
@@ -148,6 +149,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#summary"><i class="fa fa-check"></i><b>2.1</b> Summary</a></li>
 <li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a><ul>
 <li class="chapter" data-level="2.2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#data-preparation"><i class="fa fa-check"></i><b>2.2.1</b> Data preparation</a></li>
+<li class="chapter" data-level="2.2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#genotying"><i class="fa fa-check"></i><b>2.2.2</b> Genotying</a></li>
+<li class="chapter" data-level="2.2.3" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#phasing"><i class="fa fa-check"></i><b>2.2.3</b> Phasing</a></li>
+<li class="chapter" data-level="2.2.4" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#indel-masks"><i class="fa fa-check"></i><b>2.2.4</b> Indel masks</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a><ul>
@@ -296,43 +300,43 @@ bel_pairs_ch.concat<span class="hl opt">(</span> hon_pairs_ch<span class="hl opt
 <span class="hl slc">// comute pairwise fsts for SNP filtering</span>
 <span class="hl kwa">process</span> fst_run <span class="hl opt">{</span>
     <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g45m_fst_run&#39;</span>
-    <span class="hl kwb">tag</span> <span class="hl str">&quot;${spec1}${loc}-${spec2}${loc}&quot;</span>
+    <span class="hl kwb">tag</span> <span class="hl str">&quot;</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">&quot;</span>
 
     <span class="hl kwb">input</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> vcfidx <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">)</span> <span class="hl kwa">from</span> all_fst_pairs_ch
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> vcfidx <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">)</span> <span class="hl kwa">from</span> all_fst_pairs_ch
 
     <span class="hl kwb">output</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;${vcf[0]}&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.fst.tsv.gz&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;${spec1}${loc}.pop&quot;</span><span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;${spec2}${loc}.pop&quot;</span><span class="hl opt">)</span> <span class="hl kwa">into</span> fst_SNPS
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;${vcf[0]}&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.fst.tsv.gz&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">.pop&quot;</span><span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.pop&quot;</span><span class="hl opt">)</span> <span class="hl kwa">into</span> fst_SNPS
 
     <span class="hl kwb">script</span><span class="hl opt">:</span>
-    <span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
-<span class="hl str">   vcfsamplenames ${vcf[0]} | grep ${spec1}${loc} &gt; ${spec1}${loc}.pop</span>
-<span class="hl str">   vcfsamplenames ${vcf[0]} | grep ${spec2}${loc} &gt; ${spec2}${loc}.pop</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   vcfsamplenames ${vcf[0]} | grep</span> <span class="hl ipl">${spec1}${loc}</span> <span class="hl str">&gt;</span> <span class="hl ipl">${spec1}${loc}</span><span class="hl str">.pop</span>
+<span class="hl str">   vcfsamplenames ${vcf[0]} | grep</span> <span class="hl ipl">${spec2}${loc}</span> <span class="hl str">&gt;</span> <span class="hl ipl">${spec2}${loc}</span><span class="hl str">.pop</span>
 <span class="hl str"></span>
 <span class="hl str">   vcftools --gzvcf ${vcf[0]} \</span>
-<span class="hl str">        --weir-fst-pop ${spec1}${loc}.pop \</span>
-<span class="hl str">        --weir-fst-pop ${spec2}${loc}.pop \</span>
-<span class="hl str">        --stdout | gzip &gt; ${spec1}${loc}-${spec2}${loc}.fst.tsv.gz</span>
-<span class="hl str">   &quot;</span><span class="hl str">&quot;&quot;</span>
+<span class="hl str">        --weir-fst-pop</span> <span class="hl ipl">${spec1}${loc}</span><span class="hl str">.pop \</span>
+<span class="hl str">        --weir-fst-pop</span> <span class="hl ipl">${spec2}${loc}</span><span class="hl str">.pop \</span>
+<span class="hl str">        --stdout | gzip &gt;</span> <span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.fst.tsv.gz</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
 <span class="hl opt">}</span>
 
 <span class="hl slc">// git 9.6</span>
 <span class="hl slc">// select the 800 most differentiated SNPs for each population pair</span>
 <span class="hl kwa">process</span> filter_fst <span class="hl opt">{</span>
     <span class="hl kwb">label</span> <span class="hl str">&#39;L_8g15m_filter_fst&#39;</span>
-    <span class="hl kwb">tag</span> <span class="hl str">&quot;${spec1}${loc}-${spec2}${loc}&quot;</span>
+    <span class="hl kwb">tag</span> <span class="hl str">&quot;</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">&quot;</span>
 
     <span class="hl kwb">input</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> fst <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> pop1 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> pop2 <span class="hl opt">)</span> <span class="hl kwa">from</span> fst_SNPS
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> fst <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> pop1 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> pop2 <span class="hl opt">)</span> <span class="hl kwa">from</span> fst_SNPS
 
     <span class="hl kwb">output</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> pop1 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> pop2 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*SNPs.snps&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> filter_SNPs
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> pop1 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> pop2 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*SNPs.snps&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> filter_SNPs
 
 
     <span class="hl kwb">script</span><span class="hl opt">:</span>
-    <span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
-<span class="hl str">   Rscript --vanilla \$BASE_DIR/R/filter_snps.R ${fst} 800 ${spec1}${loc}-${spec2}${loc}</span>
-<span class="hl str">   &quot;</span><span class="hl str">&quot;&quot;</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   Rscript --vanilla \$BASE_DIR/R/filter_snps.R</span> <span class="hl ipl">${fst}</span> <span class="hl str">800</span> <span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
 <span class="hl opt">}</span>
 
 <span class="hl slc">// git 9.7</span>
@@ -340,44 +344,44 @@ bel_pairs_ch.concat<span class="hl opt">(</span> hon_pairs_ch<span class="hl opt
 <span class="hl slc">// then reformat newhybrid input</span>
 <span class="hl kwa">process</span> prep_nh_input <span class="hl opt">{</span>
     <span class="hl kwb">label</span> <span class="hl str">&#39;L_8g15m_prep_nh&#39;</span>
-    <span class="hl kwb">tag</span> <span class="hl str">&quot;${spec1}${loc}-${spec2}${loc}&quot;</span>
+    <span class="hl kwb">tag</span> <span class="hl str">&quot;</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">&quot;</span>
 
     <span class="hl kwb">input</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> pop1 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> pop2 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> snps <span class="hl opt">)</span> <span class="hl kwa">from</span> filter_SNPs
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> pop1 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> pop2 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> snps <span class="hl opt">)</span> <span class="hl kwa">from</span> filter_SNPs
 
 
     <span class="hl kwb">output</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*_individuals.txt&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.80SNPs.txt&quot;</span><span class="hl opt">)</span>  <span class="hl kwa">into</span> newhybrids_input
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*_individuals.txt&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.80SNPs.txt&quot;</span><span class="hl opt">)</span>  <span class="hl kwa">into</span> newhybrids_input
 
 
     <span class="hl kwb">script</span><span class="hl opt">:</span>
-    <span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
 <span class="hl str">   vcftools \</span>
-<span class="hl str">  --gzvcf ${vcf} \</span>
-<span class="hl str">   --keep ${pop1} \</span>
-<span class="hl str">   --keep ${pop2} \</span>
+<span class="hl str">  --gzvcf</span> <span class="hl ipl">${vcf}</span> <span class="hl str">\</span>
+<span class="hl str">   --keep</span> <span class="hl ipl">${pop1}</span> <span class="hl str">\</span>
+<span class="hl str">   --keep</span> <span class="hl ipl">${pop2}</span> <span class="hl str">\</span>
 <span class="hl str">   --thin 5000 \</span>
-<span class="hl str">   --out newHyb.${spec1}${loc}-${spec2}${loc} \</span>
-<span class="hl str">   --positions ${snps} \</span>
+<span class="hl str">   --out newHyb.</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span> <span class="hl str">\</span>
+<span class="hl str">   --positions</span> <span class="hl ipl">${snps}</span> <span class="hl str">\</span>
 <span class="hl str">   --recode</span>
 <span class="hl str"></span>
-<span class="hl str">   grep &#39;#&#39; newHyb.${spec1}${loc}-${spec2}${loc}.recode.vcf &gt; newHyb.${spec1}${loc}-${spec2}${loc}.80SNPs.vcf</span>
-<span class="hl str">   grep -v &#39;#&#39; newHyb.${spec1}${loc}-${spec2}${loc}.recode.vcf | \</span>
+<span class="hl str">   grep &#39;#&#39; newHyb.</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.recode.vcf &gt; newHyb.</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.80SNPs.vcf</span>
+<span class="hl str">   grep -v &#39;#&#39; newHyb.</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.recode.vcf | \</span>
 <span class="hl str">       shuf -n 80 | \</span>
-<span class="hl str">       sort -k 1 -k2 &gt;&gt; newHyb.${spec1}${loc}-${spec2}${loc}.80SNPs.vcf</span>
+<span class="hl str">       sort -k 1 -k2 &gt;&gt; newHyb.</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.80SNPs.vcf</span>
 <span class="hl str"></span>
-<span class="hl str">   grep &#39;#CHROM&#39; newHyb.${spec1}${loc}-${spec2}${loc}.80SNPs.vcf | \</span>
+<span class="hl str">   grep &#39;#CHROM&#39; newHyb.</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.80SNPs.vcf | \</span>
 <span class="hl str">       cut -f 10- | \</span>
-<span class="hl str">       sed &#39;s/</span><span class="hl esc">\\</span><span class="hl str">t/</span><span class="hl esc">\\</span><span class="hl str">n/g&#39; &gt; newHyb.${spec1}${loc}-${spec2}${loc}.80SNPs_individuals.txt</span>
+<span class="hl str">       sed &#39;s/</span><span class="hl esc">\\</span><span class="hl str">t/</span><span class="hl esc">\\</span><span class="hl str">n/g&#39; &gt; newHyb.</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.80SNPs_individuals.txt</span>
 <span class="hl str"></span>
 <span class="hl str">   /usr/bin/java -Xmx1024m -Xms512M \</span>
 <span class="hl str">       -jar \$SFTWR/PGDSpider/PGDSpider2-cli.jar \</span>
-<span class="hl str">       -inputfile newHyb.${spec1}${loc}-${spec2}${loc}.80SNPs.vcf \</span>
+<span class="hl str">       -inputfile newHyb.</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.80SNPs.vcf \</span>
 <span class="hl str">       -inputformat VCF \</span>
-<span class="hl str">       -outputfile newHyb.${spec1}${loc}-${spec2}${loc}.80SNPs.txt \</span>
+<span class="hl str">       -outputfile newHyb.</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">.80SNPs.txt \</span>
 <span class="hl str">       -outputformat NEWHYBRIDS \</span>
 <span class="hl str">       -spid \$BASE_DIR/ressources/vcf2nh.spid</span>
-<span class="hl str">   &quot;</span><span class="hl str">&quot;&quot;</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
 <span class="hl opt">}</span>
 
 <span class="hl slc">// git 9.8</span>
@@ -385,23 +389,23 @@ bel_pairs_ch.concat<span class="hl opt">(</span> hon_pairs_ch<span class="hl opt
 <span class="hl slc">// (copy of nh_input is needed because nh can&#39;t read links)</span>
 <span class="hl kwa">process</span> run_nh <span class="hl opt">{</span>
     <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g15h4x_run_nh&#39;</span>
-    <span class="hl kwb">tag</span> <span class="hl str">&quot;${spec1}${loc}-${spec2}${loc}&quot;</span>
+    <span class="hl kwb">tag</span> <span class="hl str">&quot;</span><span class="hl ipl">${spec1}${loc}</span><span class="hl str">-</span><span class="hl ipl">${spec2}${loc}</span><span class="hl str">&quot;</span>
     <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/newhyb/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span>
 
     <span class="hl kwb">input</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> <span class="hl kwb">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwb">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> inds <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> snps <span class="hl opt">)</span> <span class="hl kwa">from</span> newhybrids_input
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> loc <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec1 <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> spec2 <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> inds <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> snps <span class="hl opt">)</span> <span class="hl kwa">from</span> newhybrids_input
 
     <span class="hl kwb">output</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;nh_input/NH.Results/newHyb.*/*_individuals.txt&quot;</span> <span class="hl opt">),</span> <span class="hl kwb">file</span><span class="hl opt">(</span> <span class="hl str">&quot;nh_input/NH.Results/newHyb.*/*_PofZ.txt&quot;</span> <span class="hl opt">)</span>  <span class="hl kwa">into</span> newhybrids_output
+    <span class="hl kwa">set</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;nh_input/NH.Results/newHyb.*/*_individuals.txt&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;nh_input/NH.Results/newHyb.*/*_PofZ.txt&quot;</span> <span class="hl opt">)</span>  <span class="hl kwa">into</span> newhybrids_output
 
     <span class="hl kwb">script</span><span class="hl opt">:</span>
-    <span class="hl str">&quot;&quot;</span><span class="hl str">&quot;</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
 <span class="hl str">   mkdir -p nh_input</span>
-<span class="hl str">   cp ${snps} nh_input/${snps}</span>
-<span class="hl str">   cp ${inds} nh_input/${inds}</span>
+<span class="hl str">   cp</span> <span class="hl ipl">${snps}</span> <span class="hl str">nh_input/</span><span class="hl ipl">${snps}</span>
+<span class="hl str">   cp</span> <span class="hl ipl">${inds}</span> <span class="hl str">nh_input/</span><span class="hl ipl">${inds}</span>
 <span class="hl str"></span>
 <span class="hl str">   Rscript --vanilla \$BASE_DIR/R/run_newhybrids.R</span>
-<span class="hl str">   &quot;</span><span class="hl str">&quot;&quot;</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
 <span class="hl opt">}</span>
 </code>
 </pre>
