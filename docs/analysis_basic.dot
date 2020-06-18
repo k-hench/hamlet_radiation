@@ -4,239 +4,279 @@ p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
 p0 -> p1;
 
 p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p1 -> p4 [label="vcf_locations"];
+p41 [label="plink12"];
+p1 -> p41 [label="vcf_gxp"];
 
 p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p12 [label="subset_vcf_hamlets_only"];
-p1 -> p12 [label="vcf_filter"];
+p62 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p62 [label="vcf_adapt"];
 
 p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p42 [label="plink12"];
-p1 -> p42 [label="vcf_gxp"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p3 [label="vcf_locations"];
 
 p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p2 [shape=point];
-p1 -> p2 [label="vcf_geno"];
+p11 [label="subset_vcf_hamlets_only"];
+p1 -> p11 [label="vcf_filter"];
 
-p3 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
-p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p3 -> p4 [label="locations_ch"];
+p2 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p2 -> p3 [label="locations_ch"];
 
-p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p11 [label="subset_vcf_by_location"];
-p4 -> p11 [label="vcf_location_combo"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p10 [label="subset_vcf_by_location"];
+p3 -> p10 [label="vcf_location_combo"];
 
-p5 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
-p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p5 -> p6;
+p4 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p4 -> p5;
 
-p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
 p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p6 -> p19 [label="bel_spec1_ch"];
+p5 -> p19 [label="bel_spec2_ch"];
 
-p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p6 -> p20 [label="bel_spec2_ch"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p5 -> p18 [label="bel_spec1_ch"];
 
-p7 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
-p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p7 -> p8;
+p6 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p6 -> p7;
 
-p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 -> p24 [label="hon_spec1_ch"];
+
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
 p25 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p8 -> p25 [label="hon_spec1_ch"];
+p7 -> p25 [label="hon_spec2_ch"];
 
-p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p8 -> p26 [label="hon_spec2_ch"];
+p8 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p8 -> p9;
 
-p9 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
-p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p9 -> p10;
-
-p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
 p31 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p10 -> p31 [label="pan_spec1_ch"];
+p9 -> p31 [label="pan_spec2_ch"];
 
-p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
-p32 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p10 -> p32 [label="pan_spec2_ch"];
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p30 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p9 -> p30 [label="pan_spec1_ch"];
 
-p11 [label="subset_vcf_by_location"];
-p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
-p11 -> p18 [label="vcf_loc_pair1"];
+p10 [label="subset_vcf_by_location"];
+p17 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p10 -> p17 [label="vcf_loc_pair1"];
 
-p11 [label="subset_vcf_by_location"];
-p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
-p11 -> p24 [label="vcf_loc_pair2"];
+p10 [label="subset_vcf_by_location"];
+p23 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p10 -> p23 [label="vcf_loc_pair2"];
 
-p11 [label="subset_vcf_by_location"];
-p30 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
-p11 -> p30 [label="vcf_loc_pair3"];
+p10 [label="subset_vcf_by_location"];
+p29 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p10 -> p29 [label="vcf_loc_pair3"];
 
-p12 [label="subset_vcf_hamlets_only"];
-p13 [shape=point];
-p12 -> p13 [label="vcf_hamlets_only"];
+p11 [label="subset_vcf_hamlets_only"];
+p12 [shape=point];
+p11 -> p12 [label="vcf_hamlets_only"];
 
-p12 [label="subset_vcf_hamlets_only"];
-p14 [label="fst_multi"];
-p12 -> p14 [label="vcf_multi_fst"];
+p11 [label="subset_vcf_hamlets_only"];
+p13 [label="fst_multi"];
+p11 -> p13 [label="vcf_multi_fst"];
 
-p14 [label="fst_multi"];
-p16 [shape=point];
-p14 -> p16 [label="multi_fst_output"];
-
-p14 [label="fst_multi"];
+p13 [label="fst_multi"];
 p15 [shape=point];
-p14 -> p15 [label="fst_outlier_output"];
+p13 -> p15 [label="multi_fst_output"];
 
-p17 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
-p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p13 [label="fst_multi"];
+p14 [shape=point];
+p13 -> p14 [label="fst_outlier_output"];
+
+p16 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p17 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p16 -> p17;
+
+p17 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p17 -> p18;
 
-p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p18 -> p19;
 
 p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
 p19 -> p20;
 
-p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
 p20 -> p21;
 
-p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
-p22 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
-p21 -> p22;
+p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p34 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p21 -> p34 [label="bel_pairs_ch"];
 
-p22 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
-p35 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
-p22 -> p35 [label="bel_pairs_ch"];
+p22 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p23 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p22 -> p23;
 
-p23 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
-p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p23 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p23 -> p24;
 
-p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p25 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p24 -> p25;
 
 p25 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
 p25 -> p26;
 
-p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
 p26 -> p27;
 
-p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
-p28 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
-p27 -> p28;
+p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p34 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p27 -> p34 [label="hon_pairs_ch"];
 
-p28 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
-p35 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
-p28 -> p35 [label="hon_pairs_ch"];
+p28 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p29 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p28 -> p29;
 
-p29 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
-p30 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p29 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p30 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p29 -> p30;
 
-p30 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="join"];
+p30 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p31 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p30 -> p31;
 
 p31 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p32 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p32 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
 p31 -> p32;
 
-p32 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p33 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p32 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p33 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
 p32 -> p33;
 
-p33 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
-p34 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
-p33 -> p34;
+p33 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p34 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p33 -> p34 [label="pan_pairs_ch"];
 
-p34 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
-p35 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
-p34 -> p35 [label="pan_pairs_ch"];
+p34 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p35 [label="fst_run"];
+p34 -> p35 [label="all_fst_pairs_ch"];
 
-p35 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
-p36 [label="fst_run"];
-p35 -> p36 [label="all_fst_pairs_ch"];
-
-p36 [label="fst_run"];
-p38 [shape=point];
-p36 -> p38 [label="fst_50k"];
-
-p36 [label="fst_run"];
+p35 [label="fst_run"];
 p37 [shape=point];
-p36 -> p37 [label="fst_10k_output"];
+p35 -> p37 [label="fst_50k"];
 
-p36 [label="fst_run"];
-p39 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
-p36 -> p39 [label="fst_logs"];
+p35 [label="fst_run"];
+p36 [shape=point];
+p35 -> p36 [label="fst_10k_output"];
 
-p39 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
-p40 [label="fst_globals"];
-p39 -> p40;
+p35 [label="fst_run"];
+p38 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p35 -> p38 [label="fst_logs"];
 
-p40 [label="fst_globals"];
-p41 [shape=point];
-p40 -> p41 [label="fst_glob"];
+p38 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p39 [label="fst_globals"];
+p38 -> p39;
 
-p42 [label="plink12"];
-p43 [label="GxP_run"];
-p42 -> p43 [label="plink_GxP"];
+p39 [label="fst_globals"];
+p40 [shape=point];
+p39 -> p40 [label="fst_glob"];
 
-p43 [label="GxP_run"];
+p41 [label="plink12"];
+p42 [label="GxP_run"];
+p41 -> p42 [label="plink_GxP"];
+
+p42 [label="GxP_run"];
+p47 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p42 -> p47 [label="plink_binary"];
+
+p43 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
+p44 [label="phenotye_pca"];
+p43 -> p44 [label="phenotypes_raw"];
+
+p44 [label="phenotye_pca"];
 p48 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p43 -> p48 [label="plink_binary"];
+p44 -> p48 [label="phenotype_file"];
 
-p44 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
-p45 [label="phenotye_pca"];
-p44 -> p45 [label="phenotypes_raw"];
+p44 [label="phenotye_pca"];
+p45 [shape=point];
+p44 -> p45 [label="phenotype_pca"];
 
-p45 [label="phenotye_pca"];
-p49 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p45 -> p49 [label="phenotype_file"];
+p46 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p47 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p46 -> p47 [label="traits_ch"];
 
-p45 [label="phenotye_pca"];
-p46 [shape=point];
-p45 -> p46 [label="phenotype_pca"];
-
-p47 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p47 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p48 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p47 -> p48 [label="traits_ch"];
+p47 -> p48;
 
 p48 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p49 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p48 -> p49;
+p49 [label="gemma_run"];
+p48 -> p49 [label="trait_plink_combo"];
 
-p49 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p50 [label="gemma_run"];
-p49 -> p50 [label="trait_plink_combo"];
+p49 [label="gemma_run"];
+p51 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p49 -> p51 [label="gemma_results"];
 
-p50 [label="gemma_run"];
-p52 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p50 -> p52 [label="gemma_results"];
+p50 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p51 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p50 -> p51 [label="gxp_smoothing_levels"];
 
-p51 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
-p52 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p51 -> p52 [label="gxp_smoothing_levels"];
+p51 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p52 [label="gemma_smooth"];
+p51 -> p52 [label="gxp_smoothing_input"];
 
-p52 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
-p53 [label="gemma_smooth"];
-p52 -> p53 [label="gxp_smoothing_input"];
-
-p53 [label="gemma_smooth"];
-p55 [shape=point];
-p53 -> p55 [label="gxp_lm_smoothing_output"];
-
-p53 [label="gemma_smooth"];
+p52 [label="gemma_smooth"];
 p54 [shape=point];
-p53 -> p54 [label="gxp_lmm_smoothing_output"];
+p52 -> p54 [label="gxp_lm_smoothing_output"];
+
+p52 [label="gemma_smooth"];
+p53 [shape=point];
+p52 -> p53 [label="gxp_lmm_smoothing_output"];
+
+p55 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p61 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p55 -> p61 [label="species_ch"];
+
+p56 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p57 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p56 -> p57;
+
+p57 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p58 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p57 -> p58 [label="locations_ch_1"];
+
+p57 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p58 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p57 -> p58 [label="locations_ch_2"];
+
+p58 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p59 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p58 -> p59;
+
+p59 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p60 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p59 -> p60;
+
+p60 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p61 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p60 -> p61;
+
+p61 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p62 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p61 -> p62;
+
+p62 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p63 [label="fst_run_adapt"];
+p62 -> p63 [label="vcf_location_combo_adapt"];
+
+p63 [label="fst_run_adapt"];
+p64 [shape=point];
+p63 -> p64 [label="fst_adapt_logs"];
 
 }

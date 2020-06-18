@@ -1,0 +1,38 @@
+digraph "analysis_admixture" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p0 -> p5 [label="vcf_ch"];
+
+p1 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p7 [label="k_ch"];
+
+p2 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p2 -> p3;
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p3 -> p4;
+
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p4 -> p5;
+
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p6 [label="plink12"];
+p5 -> p6 [label="vcf_admx"];
+
+p6 [label="plink12"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p6 -> p7 [label="admx_plink"];
+
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p8 [label="admixture_all"];
+p7 -> p8 [label="admx_prep"];
+
+p8 [label="admixture_all"];
+p9 [shape=point];
+p8 -> p9 [label="admx_log"];
+
+}

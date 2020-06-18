@@ -28,8 +28,8 @@ knitr::opts_knit$set(root.dir = '../')
 
 
 ```{r, include=FALSE}
-# source('R/draw_workflow.R')
-# prod_het <- tibbler(c('inds_out', 'win_out'))
+source('R/draw_workflow.R')
+prod_hyb <- tibbler(c('newhybrids_output'))
 ```
 
 # (git 9) Analysis VII (hybridization)
@@ -42,8 +42,8 @@ Below is an overview of the steps involved in the analysis.
 
 <div style="max-width:500px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-# girafe( ggobj = dot_plot(file = 'docs/analysis_het.dot', git = 7, point_types = prod_het),
-#        width_svg = 6, height_svg = 6)
+girafe( ggobj = dot_plot(file = "docs/analysis_hybrid.dot", git = 9, point_types = prod_hyb),
+        width_svg = 14, height_svg = 10)
 ```
 </div>
 

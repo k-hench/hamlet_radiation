@@ -1,0 +1,50 @@
+digraph "analysis_twisst_crossloc" {
+p0 [label="twisst_sample_grouping"];
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p0 -> p1 [label="twisst_table_ch"];
+
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p1 -> p2;
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p2 -> p7 [label="twisst_grouping_ch"];
+
+p3 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p3 -> p9 [label="vcf_ch"];
+
+p4 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p4 -> p5;
+
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p5 -> p8 [label="lg_ch"];
+
+p6 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p6 -> p7;
+
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 -> p8;
+
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p8 -> p9;
+
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p10 [label="subset_vcf_by_location_whg"];
+p9 -> p10 [label="twisst_runs_ch"];
+
+p10 [label="subset_vcf_by_location_whg"];
+p11 [label="run_twisst"];
+p10 -> p11 [label="twisst_phylos_ch"];
+
+p11 [label="run_twisst"];
+p12 [shape=point];
+p11 -> p12 [label="final_result"];
+
+}

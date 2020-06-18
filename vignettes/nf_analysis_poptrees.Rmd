@@ -28,8 +28,8 @@ knitr::opts_knit$set(root.dir = '../')
 
 
 ```{r, include=FALSE}
-# source('R/draw_workflow.R')
-# prod_het <- tibbler(c('inds_out', 'win_out'))
+source('R/draw_workflow.R')
+prod_poptree <- tibbler(c('outlier_fst_gid_ch', 'outlier_fst_collect_ch'))
 ```
 
 # (git 7) Analysis V (poptrees)
@@ -42,8 +42,8 @@ Below is an overview of the steps involved in the analysis.
 
 <div style="max-width:500px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-# girafe( ggobj = dot_plot(file = 'docs/analysis_het.dot', git = 7, point_types = prod_het),
-#        width_svg = 6, height_svg = 6)
+girafe( ggobj = dot_plot(file = "docs/analysis_poptree.dot", git = 7, point_types = prod_poptree),
+        width_svg = 12, height_svg = 9)
 ```
 </div>
 
@@ -63,6 +63,7 @@ Channel
 	.set{ vcf_fst }
 ```
 
+Next, all possible population pairs are loaded.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.2
@@ -74,6 +75,7 @@ Channel
 	.set{ crosses_ch }
 ```
 
+Then the <i>F<sub>ST</sub></i> outlier regions are loaded and combined with the population pairs and the genotypes.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.3
@@ -87,6 +89,7 @@ Channel
 	.set{ crosses_vcf }
 ```
 
+Now we have all the information needed to compute the average <i>F<sub>ST</sub></i> within each outlier region for all population pairs.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.4
@@ -129,6 +132,7 @@ process outlier_fst {
 	}
 ```
 
+The <i>F<sub>ST</sub></i> results for all population pairs are bundled for each outlier region compiled into a single table each.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.5
@@ -151,13 +155,13 @@ process outlier_fst_collect {
 	}
 ```
 
+At this point the preparation for the population pairs is completed.
+The actual neighbor joining happens later within the plotting script of Figure 4 (`R/fig/plot_F4.R`).
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.6
 // neighbour joining happens within the R script R/fig/plot_F4.R
 ```
 </div>
-
-Finally, we are done with XX.
 
 ---

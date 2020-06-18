@@ -1,0 +1,150 @@
+digraph "analysis_hybrid" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p0 -> p1;
+
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p17 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p17 [label="vcf_loc2"];
+
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p23 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p23 [label="vcf_loc3"];
+
+p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p11 [label="vcf_loc1"];
+
+p2 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p3 [shape=point];
+p2 -> p3 [label="locations_ch"];
+
+p4 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p4 -> p5;
+
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p5 -> p13 [label="bel_spec2_ch"];
+
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p12 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p5 -> p12 [label="bel_spec1_ch"];
+
+p6 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p6 -> p7;
+
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 -> p18 [label="hon_spec1_ch"];
+
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 -> p19 [label="hon_spec2_ch"];
+
+p8 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p8 -> p9;
+
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p25 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p9 -> p25 [label="pan_spec2_ch"];
+
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p9 -> p24 [label="pan_spec1_ch"];
+
+p10 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p10 -> p11;
+
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p12 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p11 -> p12;
+
+p12 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p12 -> p13;
+
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p14 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p13 -> p14;
+
+p14 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p15 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p14 -> p15;
+
+p15 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p28 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p15 -> p28 [label="bel_pairs_ch"];
+
+p16 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p17 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p16 -> p17;
+
+p17 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p17 -> p18;
+
+p18 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p18 -> p19;
+
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p19 -> p20;
+
+p20 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p20 -> p21;
+
+p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p28 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p21 -> p28 [label="hon_pairs_ch"];
+
+p22 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p23 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p22 -> p23;
+
+p23 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p23 -> p24;
+
+p24 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p25 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p24 -> p25;
+
+p25 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p25 -> p26;
+
+p26 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="filter"];
+p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p26 -> p27;
+
+p27 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p28 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p27 -> p28 [label="pan_pairs_ch"];
+
+p28 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p29 [label="fst_run"];
+p28 -> p29 [label="all_fst_pairs_ch"];
+
+p29 [label="fst_run"];
+p30 [label="filter_fst"];
+p29 -> p30 [label="fst_SNPS"];
+
+p30 [label="filter_fst"];
+p31 [label="prep_nh_input"];
+p30 -> p31 [label="filter_SNPs"];
+
+p31 [label="prep_nh_input"];
+p32 [label="run_nh"];
+p31 -> p32 [label="newhybrids_input"];
+
+p32 [label="run_nh"];
+p33 [shape=point];
+p32 -> p33 [label="newhybrids_output"];
+
+}

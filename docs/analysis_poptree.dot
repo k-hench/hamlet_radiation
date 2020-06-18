@@ -1,0 +1,50 @@
+digraph "analysis_poptree" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p0 -> p7 [label="vcf_fst"];
+
+p1 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p1 -> p2;
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p2 -> p3;
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p3 -> p8 [label="crosses_ch"];
+
+p4 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p4 -> p5;
+
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="splitCsv"];
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p5 -> p6;
+
+p6 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p6 -> p7;
+
+p7 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 -> p8;
+
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p9 [label="outlier_fst"];
+p8 -> p9 [label="crosses_vcf"];
+
+p9 [label="outlier_fst"];
+p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="groupTuple"];
+p9 -> p10 [label="outlier_fst_gid_ch"];
+
+p10 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="groupTuple"];
+p11 [label="outlier_fst_collect"];
+p10 -> p11;
+
+p11 [label="outlier_fst_collect"];
+p12 [shape=point];
+p11 -> p12 [label="outlier_fst_collect_ch"];
+
+}
