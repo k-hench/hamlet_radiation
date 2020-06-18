@@ -8,9 +8,10 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
+
 library(GenomicOriginsScripts)
 library(hypoimg)
-args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/')
+args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
 ```
 
 ## Summary
@@ -36,13 +37,15 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r , eval = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
+# Rscript --vanilla R/fig/plot_F1.R \
+#    2_analysis/dxy/50k/ 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 1 of the study "The genomic onset of a marine radiation"
-# by Hench, McMillan and Puebla
+# This script produces Figure 1 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/')
+# args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
+# script_name <- "R/fig/plot_F1.R"
 ```
 
 The next section processes the input from the command line.
@@ -53,26 +56,27 @@ This information will later be written into the meta data of the figure to help 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 ```{r, eval = FALSE}
-args = commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
 
 cat('\n')
 script_name <- args[5] %>%
-  str_remove(.,'--file=')
+  str_remove(., '--file=')
 
 plot_comment <- script_name %>%
-  str_c('mother-script = ',getwd(),'/',.)
+  str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: R/fig/plot_F1.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_F1.R ──────────────────────────────────────────────
 #> Parameters read:
 #>  ★ 1: 2_analysis/dxy/50k/
 #>  ★ 2: 2_analysis/fst/50k/
+#>  ★ 3: 2_analysis/summaries/fst_globals.txt
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 The directories for the different data types are received and stored in respective variables.
@@ -82,6 +86,7 @@ Also, we set a few parameters for the plot layout:
 # config -----------------------
 dxy_dir <- as.character(args[1])
 fst_dir <- as.character(args[2])
+fst_globals <- as.character(args[3])
 wdh <- .3          # The width of the boxplots
 scaler <- 20       # the ratio of the Fst and the dxy axis
 clr_sec <- 'gray'  # the color of the secondary axis (dxy)
@@ -92,7 +97,7 @@ clr_sec <- 'gray'  # the color of the secondary axis (dxy)
 We begin with the data import by first collecting the paths to all files containing either *F<sub>ST</sub>* or *d<sub>XY</sub>* data (`dir()`), then iterating the import function over all files (`map(summarize_fst)`) and finally combining the outputs into a single tibble (`bind_rows()`).
 This is done for both *F<sub>ST</sub>* and *d<sub>XY</sub>*.
 
-```{r, eval = FALSE}
+```{r, message = FALSE, warning = FALSE}
 # start script -------------------
 
 # import Fst
@@ -102,26 +107,10 @@ fst_data <- str_c(fst_dir,fst_files) %>%
   purrr::map(summarize_fst) %>%
   bind_rows()
 
-# import dxy
+# lookup dxy files
 dxy_files <- dir(dxy_dir)
 
-dxy_data <-  str_c(dxy_dir,dxy_files) %>%
-  purrr::map(summarize_dxy) %>%
-  bind_rows()
-```
-```{r, include = FALSE}
-# start script -------------------
-
-# import Fst
-fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
-
-fst_data <- str_c(fst_dir,fst_files) %>%
-  purrr::map(summarize_fst) %>%
-  bind_rows()
-
 # import dxy
-dxy_files <- dir(dxy_dir)
-
 dxy_data <-  str_c(dxy_dir,dxy_files) %>%
   purrr::map(summarize_dxy) %>%
   bind_rows()
@@ -130,42 +119,44 @@ dxy_data <-  str_c(dxy_dir,dxy_files) %>%
 We use the genome wide average *F<sub>ST</sub>* to rank the individual pair wise comparisons.
 
 ```{r, message = FALSE, warning = FALSE}
+# determine fst ranking
 fst_order <- fst_data %>%
   select(run, `mean_weighted-fst`) %>%
-  mutate(run = fct_reorder(run,`mean_weighted-fst`))
+  mutate(run = fct_reorder(run, `mean_weighted-fst`))
 ```
 
 Then, we merge the *F<sub>ST</sub>* and *d<sub>XY</sub>* data sets and do quite a bit of data wrangling to create a rescaled *d<sub>XY</sub>* value and to prepare the placement of the boxplots.
 
 ```{r, message = FALSE, warning = FALSE}
+# merge fst and dxy cc_data
+# (large parts of this code are now unnecessary after the separation of dxy and
+#  fst plots into separate panels b & c)
 data <- left_join(fst_data, dxy_data) %>%
   select(c(8,1:7,9:15)) %>%
-  # transfrom table from short to long format
-  gather(key = 'stat', value = 'val',2:15) %>%
-  # separating the boxplot element from the population genetic parameter
-  separate(stat, into = c('sumstat','popstat'),sep = '_') %>%
-  # rescaleing the dxy values to fall in the range of Fst
+  # reformat table to enable parallel plotting (with secondary axis)
+  gather(key = 'stat', value = 'val', 2:15) %>%
+  # sumstat contains the values needed to plot the boxplots (quartiles, etc)
+  separate(stat, into = c('sumstat', 'popstat'), sep = '_') %>%
+  # duplicate dxy values scaled to fst range
   mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
-  # combining original and rescaled values
   unite(temp, val, val_scaled) %>%
-  # back transforming to short format
+  # separate th eoriginal values from the scales ons (scaled = secondary axis)
   spread(.,key = 'sumstat',value = 'temp') %>%
-  # separating original and rescaled values for all boxplot elements
   separate(mean, into = c('mean','mean_scaled'),sep = '_', convert = TRUE) %>%
-  separate(median, into = c('median','median_scaled'),sep = '_', convert = TRUE) %>%
+  separate(median, into = c('median','median_scaled'), sep = '_', convert = TRUE) %>%
   separate(sd, into = c('sd','sd_scaled'),sep = '_', convert = TRUE) %>%
-  separate(lower, into = c('lower','lower_scaled'),sep = '_', convert = TRUE) %>%
-  separate(upper, into = c('upper','upper_scaled'),sep = '_', convert = TRUE) %>%
-  separate(lowpoint, into = c('lowpoint','lowpoint_scaled'),sep = '_', convert = TRUE) %>%
-  separate(highpoint, into = c('highpoint','highpoint_scaled'),sep = '_', convert = TRUE) %>%
-  # adding preparations for plotting
-  mutate(loc = str_sub(run,4,6),                             # extract location from run
-         run = factor(run, levels = levels(fst_order$run)),  # introduce the run ranking
-         x = as.numeric(run) ,                               # extract rank of runs (base x)
-         x_dodge = ifelse(popstat == 'dxy',x + .25,x - .25), # shift dxy to the right, fst left
-         x_start_dodge = x_dodge - wdh/2,                    # boxplot left border
-         x_end_dodge = x_dodge + wdh/2,                      # boxplot right border
-         popstat_loc = str_c(popstat,'[',loc,']'))           # parameter X location (for color)
+  separate(lower, into = c('lower','lower_scaled'), sep = '_', convert = TRUE) %>%
+  separate(upper, into = c('upper','upper_scaled'), sep = '_', convert = TRUE) %>%
+  separate(lowpoint, into = c('lowpoint','lowpoint_scaled'), sep = '_', convert = TRUE) %>%
+  separate(highpoint, into = c('highpoint','highpoint_scaled'), sep = '_', convert = TRUE) %>%
+  # include "dodge"-positions for side-by-side plotting (secondary axis)
+  mutate(loc = str_sub(run,4,6),
+         run = factor(run, levels = levels(fst_order$run)),
+         x = as.numeric(run) ,
+         x_dodge = ifelse(popstat == 'dxy', x + .25, x - .25),
+         x_start_dodge = x_dodge - wdh/2,
+         x_end_dodge = x_dodge + wdh/2,
+         popstat_loc = str_c(popstat,'[',loc,']'))
 ```
 
 At this point, the data is ready for the boxplots.
@@ -178,11 +169,11 @@ We need to define the location, the number of species at the location, the short
 Finally, we create one network plot per location.
 
 ```{r, message = FALSE, warning = FALSE}
-# preparing a run/rnk lookup table
+# sort run by average genome wide Fst
 run_ord <- tibble(run = levels(data$run),
-       run_ord = 1:length(levels(data$run)))
+                  run_ord = 1:length(levels(data$run)))
 
-# network config and layout
+# onderlying structure for the network plots
 networx <- tibble( loc = c('bel','hon', 'pan'),
                    n = c(5,6,3),
                    label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
@@ -192,6 +183,7 @@ networx <- tibble( loc = c('bel','hon', 'pan'),
   purrr::pmap(network_layout) %>%
   bind_rows()
 
+# plot the individual networks by location
 plot_list <- networx %>%
   purrr::pmap(plot_network, node_lab_shift = .2)
 ```
@@ -201,6 +193,7 @@ plot_list <- networx %>%
 To create the first panel of Figure 1, we combine the three networks and label the locations.
 
 ```{r}
+# assemble panel a
 p1 <- cowplot::plot_grid(
   grid::textGrob('Belize'),
   grid::textGrob('Honduras'),
@@ -210,49 +203,42 @@ p1 <- cowplot::plot_grid(
 ```
 
 <center>
-```{r, echo = FALSE, fig.width = 9, fig.height = 2.9}
+```{r, echo = FALSE, fig.width = 9, fig.height = 2.9, dev.args = list(type = "cairo")}
 p1
 ```
 </center>
 
 Now, we can create the second panel of Figure 1, by plotting our prepared data tibble.
 We are going to plot each boxplot element as a single layer.
-(This, might seem a little cumbersome given `geom_boxplot()`, but this approach was chosen for specific fine tuning of the positioning, dropping of outliers and reducing runtime during the plotting phase - otherwise the entire genome wide data set would have been carried though whole script.)
+
+> (This, might seem a little cumbersome given `geom_boxplot()`, but this approach was chosen for specific fine tuning of the positioning, dropping of outliers and reducing runtime during the plotting phase - otherwise the entire genome wide data set would have been carried though whole script. By now, this indirect approach is also somewhat obsolete since the <i>F<sub>ST</sub></i> and <i>d<sub>XY</sub></i> boxplots are now separated into several panels)
+
+The <i>F<sub>ST</sub></i> boxplots are created for panel __b__...
 
 ```{r}
+# assemble panel b
 p2 <- data %>%
-  ggplot(aes(color = popstat_loc)) +
-  # adding whiskers
-  geom_segment(aes(x = x_dodge, xend = x_dodge,
-                   y = lowpoint_scaled,yend = highpoint_scaled)) +
-  # adding box (inter quartile range)
-  geom_rect(aes(xmin = x_start_dodge, xmax = x_end_dodge,
-                ymin = lower_scaled, ymax = upper_scaled),
-             fill='white')+
-  # adding bar (median)
-  geom_segment(aes(x = x_start_dodge,
-                   xend = x_end_dodge,
-                   y = median_scaled,
-                   yend = median_scaled),lwd = .9)+
-  # adding point (mean)
-  geom_point(aes(x = x_dodge, y = mean_scaled),shape = 21, size = .7, fill = 'white')+
-  # layout x ayis
+  filter(popstat == "weighted-fst") %>%
+  ggplot(aes(color = loc)) +
+  geom_segment(aes(x = x, xend = x,
+                   y = lowpoint, yend = highpoint))+
+  geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
+                ymin = lower, ymax = upper),
+             fill = 'white')+
+  geom_segment(aes(x = x - wdh,
+                   xend = x + wdh,
+                   y = median,
+                   yend = median), lwd = .9)+
+  geom_point(aes(x = x, y = mean),
+             shape = 21, size = .7, fill = 'white')+
   scale_x_continuous(breaks = 1:28) +
-  # layout primary y axis (Fst)
-  scale_y_continuous(breaks = c(0,.05,.1,.15),
-                     name = expression(italic(F[ST])),
-                     # layout secondary y axis (dxy)
-                     sec.axis = sec_axis(~ . /scaler,
-                                         name = expression(italic(d[XY])),
-                                         breaks = c(0,.005,.01)))+
-  # define color scheme
+  scale_y_continuous(#breaks = c(0,.05,.1,.15),
+                     name = expression(italic(F[ST])))+
   scale_color_manual(values = c(make_faint_clr('bel'),
                                 make_faint_clr('hon'),
-                                make_faint_clr('pan'))[c(1,3,5,2,4,6)])+
-  # set plot range
-  coord_cartesian(xlim = c(-1,29),
+                                make_faint_clr('pan'))[c(2,4,6)])+
+  coord_cartesian(xlim = c(0,29),
                   expand = c(0,0))+
-  # tune plot appreance
   theme_minimal()+
   theme(axis.title.x = element_blank(),
         legend.position = 'none',
@@ -265,23 +251,73 @@ p2 <- data %>%
 ```
 
 <center>
-```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 9, fig.height = 4.1}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 4.5, fig.height = 4.1, dev.args = list(type = "cairo")}
 p2
 ```
 </center>
 
-To create the final figure, we combine the two sub panels using the **cowplot** package.
-Here, we add the panel labels and define the space each panel is going to take.
+... and the <i>d<sub>XY</sub></i> boxplotsfor panel __c__:
 
-```{r, message = FALSE, warning = FALSE}
-p_done <- cowplot::plot_grid(p1,p2,
-                             ncol = 1,
-                             rel_heights = c(.7,1),
-                             labels = letters[1:2] %>% project_case())
+```{r}
+# assemble panel c
+p3 <- data %>%
+  filter(popstat == "dxy") %>%
+  ggplot(aes(color = loc)) +
+  geom_segment(aes(x = x, xend = x,
+                   y = lowpoint, yend = highpoint))+
+  geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
+                ymin = lower, ymax = upper),
+            fill = 'white')+
+  geom_segment(aes(x = x - wdh,
+                   xend = x + wdh,
+                   y = median,
+                   yend = median),lwd = .9)+
+  geom_point(aes(x = x, y = mean),
+             shape = 21, size = .7, fill = 'white')+
+  scale_x_continuous(breaks = 1:28) +
+  scale_y_continuous( expression(italic(d[XY])),
+                      breaks = c(0,.0025,.005,.0075,.01),
+                      limits = c(0,.01))+
+  scale_color_manual(values = c(make_faint_clr('bel'),
+                                make_faint_clr('hon'),
+                                make_faint_clr('pan'))[c(2,4,6)])+
+  coord_cartesian(xlim = c(0,29),
+                  expand = c(0,0))+
+  theme_minimal()+
+  theme(axis.title.x = element_blank(),
+        legend.position = 'none',
+        strip.placement = 'outside',
+        strip.text = element_text(size = 12),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.y.right = element_text(color = clr_sec),
+        axis.title.y.right = element_text(color = clr_sec))
 ```
 
 <center>
-```{r, echo = FALSE, fig.width = 9, fig.height = 7}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 4.5, fig.height = 4.1, dev.args = list(type = "cairo")}
+p3
+```
+</center>
+
+The panels __b__ and __c__ are merged to crate the lower half of the figure and then the entire figure is being brought together.
+
+```{r,  message = FALSE, warning = FALSE}
+# merge panel b & c
+p23 <- cowplot::plot_grid(p2,p3,
+                          ncol = 2,
+                          labels = letters[2:3] %>%
+                            project_case())
+# merge all panels
+p_done <- cowplot::plot_grid(p1, p23,
+                             ncol = 1,
+                             rel_heights = c(.9,1),
+                             labels = c(letters[1], NULL) %>% project_case())
+```
+
+
+<center>
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 11, fig.height = 6.5, dev.args = list(type = "cairo")}
 p_done
 ```
 </center>
@@ -290,12 +326,11 @@ Finally, we can export Figure 1.
 
 ```{r, eval = FALSE}
 hypo_save(p_done, filename = 'figures/F1.pdf',
-          width = 9, height = 7,
+          width = 11, height = 6.5,
           comment = plot_comment)
 ```
 
-
-The function `hypo_save()` is simply a wrapper around `ggsave()`, that will write the name of the currently running script into the meta data of the plot (after the plot has been exported).
+> The function `hypo_save()` is simply a wrapper around `ggsave()`, that will write the name of the currently running script into the meta data of the plot (after the plot has been exported).
 The benefit of this is that you can read this information later to remember how a specific plot was created using `hypo_show_metadata()`.
 This is done using [exiftool](https://www.sno.phy.queensu.ca/~phil/exiftool/) and has currently only been tested on my linux system.
 If this does not work for you, simple replace `hypo_save()` with `ggsave()` and drop the `comment` parameter.
@@ -305,6 +340,64 @@ hypo_show_metadata('figures/F1.pdf')
 ```
 
 ```r
-#> [1] "mother-script = /path/to/R/fig/plot_F1.R"
+#> [1] "mother-script = /current/working/directory/R/fig/plot_F1.R"
 ```
+
+### Table export
+
+This script is also used to compile the sub-tables Suppl. Table 3 __a__ - __c__.
+The table is compiled from the weighted average <i>F<sub>ST</sub></i> values which are imported from the `nextflow` results and the average <i>d<sub>XY</sub></i> values which are computed within this `R` script.
+
+First, a proto-version of Suppl. Table 3 is created.
+
+```{r, eval = FALSE}
+# compile fst and dxy table (table 1) for the manuscript
+table_all <- dxy_data %>%
+  select(run, mean_dxy) %>%
+  left_join( vroom::vroom(fst_globals, delim = '\t',
+                          col_names = c('loc','run','mean','weighted_fst')) %>%
+               mutate(run = str_c(loc,'-',run) %>%
+                        reformat_run_name())  %>%
+               select(run, weighted_fst)) %>%
+  pivot_longer(names_to = 'stat',2:3) %>%
+  separate(run, into = c('pop1', 'pop2'), sep = '-') %>%
+  mutate(prep1 = ifelse(stat == "weighted_fst", pop2,pop1),
+         prep2 = ifelse(stat == "weighted_fst", pop1,pop2),
+         pop1 = factor(prep1, levels = pop_levels),
+         pop2 = factor(prep2, levels = pop_levels),
+         value = sprintf('%7.5f', value) ) %>%
+  select(pop1,pop2,value) %>%
+  arrange(pop2,pop1) %>%
+  mutate(pop2 = as.character(pop2) %>%
+           str_replace(pattern = '([a-z]{3})([a-z]{3})',
+                       replacement = '\\1|\\2'),
+         pop1 = as.character(pop1) %>%
+           str_replace(pattern = '([a-z]{3})([a-z]{3})',
+                       replacement = '\\1|\\2')) %>%
+  pivot_wider(values_from = value,
+              names_from = pop2) %>%
+  rename( Population = 'pop1') %>%
+  mutate(srt1 = str_sub(Population,-3, -1),
+         srt2 = str_sub(Population,1, 3))  %>%
+  arrange(srt1,srt2) %>%
+  select(-srt1,-srt2)
+```
+
+Then, missing data is formated to be displayed as dashes.
+
+```{r, eval = FALSE}
+# replace "NA" by dashes "-"
+table_all[is.na(table_all)] <- '-'
+```
+
+Finally, the table is subset for each location and exported as a `.tex` file to be easily integrated within the `latex` document of the manuscript.
+
+```{r, eval = FALSE}
+# export sub-tables 1 a - c
+table_all[1:5,c(1,2:6)] %>% export_2_latex(name = 'tables/suppl_tab3a.tex')
+table_all[6:11,c(1,7:12)] %>% export_2_latex(name = 'tables/suppl_tab3b.tex')
+table_all[12:14, c(1,13:15)] %>% export_2_latex(name = 'tables/suppl_tab3c.tex')
+
+```
+
 ---

@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench" />
 
 
-<meta name="date" content="2020-06-17" />
+<meta name="date" content="2020-06-18" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -137,7 +137,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="../">Script repository</a></li>
+<li><a href="https://github.com/k-hench/chapter2">github repository</a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Intro</a><ul>
@@ -149,6 +149,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#summary"><i class="fa fa-check"></i><b>2.1</b> Summary</a></li>
 <li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a><ul>
 <li class="chapter" data-level="2.2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#data-preparation"><i class="fa fa-check"></i><b>2.2.1</b> Data preparation</a></li>
+<li class="chapter" data-level="2.2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#genotying"><i class="fa fa-check"></i><b>2.2.2</b> Genotying</a></li>
+<li class="chapter" data-level="2.2.3" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#phasing"><i class="fa fa-check"></i><b>2.2.3</b> Phasing</a></li>
+<li class="chapter" data-level="2.2.4" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#indel-masks"><i class="fa fa-check"></i><b>2.2.4</b> Indel masks</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a><ul>
@@ -183,7 +186,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html"><i class="fa fa-check"></i><b>8</b> (git 7) Analysis V (poptrees)</a><ul>
 <li class="chapter" data-level="8.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#summary-6"><i class="fa fa-check"></i><b>8.1</b> Summary</a></li>
-<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_xx.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_xx.nf</code></a><ul>
+<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_fst_poptree.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_fst_poptree.nf</code></a><ul>
 <li class="chapter" data-level="8.2.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#data-preparation-4"><i class="fa fa-check"></i><b>8.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
@@ -195,26 +198,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html"><i class="fa fa-check"></i><b>10</b> (git 9) Analysis VII (hybridization)</a><ul>
 <li class="chapter" data-level="10.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#summary-8"><i class="fa fa-check"></i><b>10.1</b> Summary</a></li>
-<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_xx.nf-1"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_xx.nf</code></a><ul>
+<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_hybridization.nf"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_hybridization.nf</code></a><ul>
 <li class="chapter" data-level="10.2.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#data-preparation-6"><i class="fa fa-check"></i><b>10.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="11" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html"><i class="fa fa-check"></i><b>11</b> (git 10) Analysis VIII (admixture)</a><ul>
 <li class="chapter" data-level="11.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#summary-9"><i class="fa fa-check"></i><b>11.1</b> Summary</a></li>
-<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_xx.nf-2"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_xx.nf</code></a><ul>
+<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_admixture.nf"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_admixture.nf</code></a><ul>
 <li class="chapter" data-level="11.2.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#data-preparation-7"><i class="fa fa-check"></i><b>11.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="git-11-visualization.html"><a href="git-11-visualization.html"><i class="fa fa-check"></i><b>12</b> (git 11) Visualization</a><ul>
-<li class="chapter" data-level="12.1" data-path="git-11-visualization.html"><a href="git-11-visualization.html#all-at-once"><i class="fa fa-check"></i><b>12.1</b> All at once</a></li>
-<li class="chapter" data-level="12.2" data-path="git-11-visualization.html"><a href="git-11-visualization.html#one-by-one"><i class="fa fa-check"></i><b>12.2</b> One by one</a></li>
-</ul></li>
+<li class="chapter" data-level="12" data-path="git-11-visualization.html"><a href="git-11-visualization.html"><i class="fa fa-check"></i><b>12</b> (git 11) Visualization</a></li>
 <li class="chapter" data-level="13" data-path="figure-1.html"><a href="figure-1.html"><i class="fa fa-check"></i><b>13</b> Figure 1</a><ul>
 <li class="chapter" data-level="13.1" data-path="figure-1.html"><a href="figure-1.html#summary-10"><i class="fa fa-check"></i><b>13.1</b> Summary</a></li>
 <li class="chapter" data-level="13.2" data-path="figure-1.html"><a href="figure-1.html#details-of-plot_f1.r"><i class="fa fa-check"></i><b>13.2</b> Details of <code>plot_F1.R</code></a><ul>
 <li class="chapter" data-level="13.2.1" data-path="figure-1.html"><a href="figure-1.html#config"><i class="fa fa-check"></i><b>13.2.1</b> Config</a></li>
 <li class="chapter" data-level="13.2.2" data-path="figure-1.html"><a href="figure-1.html#data-import"><i class="fa fa-check"></i><b>13.2.2</b> Data import</a></li>
 <li class="chapter" data-level="13.2.3" data-path="figure-1.html"><a href="figure-1.html#plotting"><i class="fa fa-check"></i><b>13.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="13.2.4" data-path="figure-1.html"><a href="figure-1.html#table-export"><i class="fa fa-check"></i><b>13.2.4</b> Table export</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -244,9 +245,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">13.1</span> Summary</h2>
 <p>This is the accessory documentation of Figure 1.
 The Figure can be recreated by running the <strong>R</strong> script <code>plot_F1.R</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="figure-1.html#cb3-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb3-2"><a href="figure-1.html#cb3-2"></a></span>
-<span id="cb3-3"><a href="figure-1.html#cb3-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb14-1"><a href="figure-1.html#cb14-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb14-2"><a href="figure-1.html#cb14-2"></a></span>
+<span id="cb14-3"><a href="figure-1.html#cb14-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/</span></code></pre></div>
 </div>
 <div id="details-of-plot_f1.r" class="section level2">
 <h2><span class="header-section-number">13.2</span> Details of <code>plot_F1.R</code></h2>
@@ -255,403 +256,291 @@ It is an executable R script that depends on the accessory R package <strong>Gen
 <div id="config" class="section level3">
 <h3><span class="header-section-number">13.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="figure-1.html#cb4-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
-<span id="cb4-2"><a href="figure-1.html#cb4-2"></a><span class="co"># run from terminal:</span></span>
-<span id="cb4-3"><a href="figure-1.html#cb4-3"></a><span class="co"># Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/</span></span>
-<span id="cb4-4"><a href="figure-1.html#cb4-4"></a><span class="co"># ===============================================================</span></span>
-<span id="cb4-5"><a href="figure-1.html#cb4-5"></a><span class="co"># This script produces Figure 1 of the study &quot;The genomic onset of a marine radiation&quot;</span></span>
-<span id="cb4-6"><a href="figure-1.html#cb4-6"></a><span class="co"># by Hench, McMillan and Puebla</span></span>
-<span id="cb4-7"><a href="figure-1.html#cb4-7"></a><span class="co"># ---------------------------------------------------------------</span></span>
-<span id="cb4-8"><a href="figure-1.html#cb4-8"></a><span class="co"># ===============================================================</span></span>
-<span id="cb4-9"><a href="figure-1.html#cb4-9"></a><span class="co"># args &lt;- c(&#39;2_analysis/dxy/50k/&#39;, &#39;2_analysis/fst/50k/&#39;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="figure-1.html#cb15-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb15-2"><a href="figure-1.html#cb15-2"></a><span class="co"># run from terminal:</span></span>
+<span id="cb15-3"><a href="figure-1.html#cb15-3"></a><span class="co"># Rscript --vanilla R/fig/plot_F1.R \</span></span>
+<span id="cb15-4"><a href="figure-1.html#cb15-4"></a><span class="co">#    2_analysis/dxy/50k/ 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb15-5"><a href="figure-1.html#cb15-5"></a><span class="co"># ===============================================================</span></span>
+<span id="cb15-6"><a href="figure-1.html#cb15-6"></a><span class="co"># This script produces Figure 1 of the study &quot;Ancestral variation, hybridization and modularity</span></span>
+<span id="cb15-7"><a href="figure-1.html#cb15-7"></a><span class="co"># fuel a marine radiation&quot; by Hench, McMillan and Puebla</span></span>
+<span id="cb15-8"><a href="figure-1.html#cb15-8"></a><span class="co"># ---------------------------------------------------------------</span></span>
+<span id="cb15-9"><a href="figure-1.html#cb15-9"></a><span class="co"># ===============================================================</span></span>
+<span id="cb15-10"><a href="figure-1.html#cb15-10"></a><span class="co"># args &lt;- c(&#39;2_analysis/dxy/50k/&#39;, &#39;2_analysis/fst/50k/&#39;, &#39;2_analysis/summaries/fst_globals.txt&#39;)</span></span>
+<span id="cb15-11"><a href="figure-1.html#cb15-11"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_F1.R&quot;</span></span></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
 The R package <strong>GenomicOriginsScripts</strong> is loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="figure-1.html#cb5-1"></a>args =<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly=</span><span class="ot">FALSE</span>)</span>
-<span id="cb5-2"><a href="figure-1.html#cb5-2"></a><span class="co"># setup -----------------------</span></span>
-<span id="cb5-3"><a href="figure-1.html#cb5-3"></a><span class="kw">library</span>(GenomicOriginsScripts)</span>
-<span id="cb5-4"><a href="figure-1.html#cb5-4"></a><span class="kw">library</span>(hypoimg)</span>
-<span id="cb5-5"><a href="figure-1.html#cb5-5"></a></span>
-<span id="cb5-6"><a href="figure-1.html#cb5-6"></a><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
-<span id="cb5-7"><a href="figure-1.html#cb5-7"></a>script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span></span>
-<span id="cb5-8"><a href="figure-1.html#cb5-8"></a><span class="st">  </span><span class="kw">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</span>
-<span id="cb5-9"><a href="figure-1.html#cb5-9"></a></span>
-<span id="cb5-10"><a href="figure-1.html#cb5-10"></a>plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span></span>
-<span id="cb5-11"><a href="figure-1.html#cb5-11"></a><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="kw">getwd</span>(),<span class="st">&#39;/&#39;</span>,.)</span>
-<span id="cb5-12"><a href="figure-1.html#cb5-12"></a></span>
-<span id="cb5-13"><a href="figure-1.html#cb5-13"></a>args &lt;-<span class="st"> </span><span class="kw">process_input</span>(script_name, args)</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="figure-1.html#cb6-1"></a><span class="co">#&gt; ── Script: R/fig/plot_F1.R ────────────────────────────────────────────</span></span>
-<span id="cb6-2"><a href="figure-1.html#cb6-2"></a><span class="co">#&gt; Parameters read:</span></span>
-<span id="cb6-3"><a href="figure-1.html#cb6-3"></a><span class="co">#&gt;  ★ 1: 2_analysis/dxy/50k/</span></span>
-<span id="cb6-4"><a href="figure-1.html#cb6-4"></a><span class="co">#&gt;  ★ 2: 2_analysis/fst/50k/</span></span>
-<span id="cb6-5"><a href="figure-1.html#cb6-5"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="figure-1.html#cb16-1"></a>args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly=</span><span class="ot">FALSE</span>)</span>
+<span id="cb16-2"><a href="figure-1.html#cb16-2"></a><span class="co"># setup -----------------------</span></span>
+<span id="cb16-3"><a href="figure-1.html#cb16-3"></a><span class="kw">library</span>(GenomicOriginsScripts)</span>
+<span id="cb16-4"><a href="figure-1.html#cb16-4"></a><span class="kw">library</span>(hypoimg)</span>
+<span id="cb16-5"><a href="figure-1.html#cb16-5"></a></span>
+<span id="cb16-6"><a href="figure-1.html#cb16-6"></a><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb16-7"><a href="figure-1.html#cb16-7"></a>script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span></span>
+<span id="cb16-8"><a href="figure-1.html#cb16-8"></a><span class="st">  </span><span class="kw">str_remove</span>(., <span class="st">&#39;--file=&#39;</span>)</span>
+<span id="cb16-9"><a href="figure-1.html#cb16-9"></a></span>
+<span id="cb16-10"><a href="figure-1.html#cb16-10"></a>plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span></span>
+<span id="cb16-11"><a href="figure-1.html#cb16-11"></a><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>, <span class="kw">getwd</span>(), <span class="st">&#39;/&#39;</span>, .)</span>
+<span id="cb16-12"><a href="figure-1.html#cb16-12"></a></span>
+<span id="cb16-13"><a href="figure-1.html#cb16-13"></a>args &lt;-<span class="st"> </span><span class="kw">process_input</span>(script_name, args)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="figure-1.html#cb17-1"></a><span class="co">#&gt; ── Script: R/fig/plot_F1.R ──────────────────────────────────────────────</span></span>
+<span id="cb17-2"><a href="figure-1.html#cb17-2"></a><span class="co">#&gt; Parameters read:</span></span>
+<span id="cb17-3"><a href="figure-1.html#cb17-3"></a><span class="co">#&gt;  ★ 1: 2_analysis/dxy/50k/</span></span>
+<span id="cb17-4"><a href="figure-1.html#cb17-4"></a><span class="co">#&gt;  ★ 2: 2_analysis/fst/50k/</span></span>
+<span id="cb17-5"><a href="figure-1.html#cb17-5"></a><span class="co">#&gt;  ★ 3: 2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb17-6"><a href="figure-1.html#cb17-6"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
 <p>The directories for the different data types are received and stored in respective variables.
 Also, we set a few parameters for the plot layout:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="figure-1.html#cb7-1"></a><span class="co"># config -----------------------</span></span>
-<span id="cb7-2"><a href="figure-1.html#cb7-2"></a>dxy_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</span>
-<span id="cb7-3"><a href="figure-1.html#cb7-3"></a>fst_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">2</span>])</span>
-<span id="cb7-4"><a href="figure-1.html#cb7-4"></a>wdh &lt;-<span class="st"> </span><span class="fl">.3</span>          <span class="co"># The width of the boxplots</span></span>
-<span id="cb7-5"><a href="figure-1.html#cb7-5"></a>scaler &lt;-<span class="st"> </span><span class="dv">20</span>       <span class="co"># the ratio of the Fst and the dxy axis</span></span>
-<span id="cb7-6"><a href="figure-1.html#cb7-6"></a>clr_sec &lt;-<span class="st"> &#39;gray&#39;</span>  <span class="co"># the color of the secondary axis (dxy)</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="figure-1.html#cb18-1"></a><span class="co"># config -----------------------</span></span>
+<span id="cb18-2"><a href="figure-1.html#cb18-2"></a>dxy_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</span>
+<span id="cb18-3"><a href="figure-1.html#cb18-3"></a>fst_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">2</span>])</span>
+<span id="cb18-4"><a href="figure-1.html#cb18-4"></a>fst_globals &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">3</span>])</span>
+<span id="cb18-5"><a href="figure-1.html#cb18-5"></a>wdh &lt;-<span class="st"> </span><span class="fl">.3</span>          <span class="co"># The width of the boxplots</span></span>
+<span id="cb18-6"><a href="figure-1.html#cb18-6"></a>scaler &lt;-<span class="st"> </span><span class="dv">20</span>       <span class="co"># the ratio of the Fst and the dxy axis</span></span>
+<span id="cb18-7"><a href="figure-1.html#cb18-7"></a>clr_sec &lt;-<span class="st"> &#39;gray&#39;</span>  <span class="co"># the color of the secondary axis (dxy)</span></span></code></pre></div>
 </div>
 <div id="data-import" class="section level3">
 <h3><span class="header-section-number">13.2.2</span> Data import</h3>
 <p>We begin with the data import by first collecting the paths to all files containing either <em>F<sub>ST</sub></em> or <em>d<sub>XY</sub></em> data (<code>dir()</code>), then iterating the import function over all files (<code>map(summarize_fst)</code>) and finally combining the outputs into a single tibble (<code>bind_rows()</code>).
 This is done for both <em>F<sub>ST</sub></em> and <em>d<sub>XY</sub></em>.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="figure-1.html#cb8-1"></a><span class="co"># start script -------------------</span></span>
-<span id="cb8-2"><a href="figure-1.html#cb8-2"></a></span>
-<span id="cb8-3"><a href="figure-1.html#cb8-3"></a><span class="co"># import Fst</span></span>
-<span id="cb8-4"><a href="figure-1.html#cb8-4"></a>fst_files &lt;-<span class="st"> </span><span class="kw">dir</span>(fst_dir, <span class="dt">pattern =</span> <span class="st">&#39;.50k.windowed.weir.fst.gz&#39;</span>)</span>
-<span id="cb8-5"><a href="figure-1.html#cb8-5"></a></span>
-<span id="cb8-6"><a href="figure-1.html#cb8-6"></a>fst_data &lt;-<span class="st"> </span><span class="kw">str_c</span>(fst_dir,fst_files) <span class="op">%&gt;%</span></span>
-<span id="cb8-7"><a href="figure-1.html#cb8-7"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(summarize_fst) <span class="op">%&gt;%</span></span>
-<span id="cb8-8"><a href="figure-1.html#cb8-8"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span>
-<span id="cb8-9"><a href="figure-1.html#cb8-9"></a></span>
-<span id="cb8-10"><a href="figure-1.html#cb8-10"></a><span class="co"># import dxy</span></span>
-<span id="cb8-11"><a href="figure-1.html#cb8-11"></a>dxy_files &lt;-<span class="st"> </span><span class="kw">dir</span>(dxy_dir)</span>
-<span id="cb8-12"><a href="figure-1.html#cb8-12"></a></span>
-<span id="cb8-13"><a href="figure-1.html#cb8-13"></a>dxy_data &lt;-<span class="st">  </span><span class="kw">str_c</span>(dxy_dir,dxy_files) <span class="op">%&gt;%</span></span>
-<span id="cb8-14"><a href="figure-1.html#cb8-14"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(summarize_dxy) <span class="op">%&gt;%</span></span>
-<span id="cb8-15"><a href="figure-1.html#cb8-15"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="figure-1.html#cb19-1"></a><span class="co"># start script -------------------</span></span>
+<span id="cb19-2"><a href="figure-1.html#cb19-2"></a></span>
+<span id="cb19-3"><a href="figure-1.html#cb19-3"></a><span class="co"># import Fst</span></span>
+<span id="cb19-4"><a href="figure-1.html#cb19-4"></a>fst_files &lt;-<span class="st"> </span><span class="kw">dir</span>(fst_dir, <span class="dt">pattern =</span> <span class="st">&#39;.50k.windowed.weir.fst.gz&#39;</span>)</span>
+<span id="cb19-5"><a href="figure-1.html#cb19-5"></a></span>
+<span id="cb19-6"><a href="figure-1.html#cb19-6"></a>fst_data &lt;-<span class="st"> </span><span class="kw">str_c</span>(fst_dir,fst_files) <span class="op">%&gt;%</span></span>
+<span id="cb19-7"><a href="figure-1.html#cb19-7"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(summarize_fst) <span class="op">%&gt;%</span></span>
+<span id="cb19-8"><a href="figure-1.html#cb19-8"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span>
+<span id="cb19-9"><a href="figure-1.html#cb19-9"></a></span>
+<span id="cb19-10"><a href="figure-1.html#cb19-10"></a><span class="co"># lookup dxy files</span></span>
+<span id="cb19-11"><a href="figure-1.html#cb19-11"></a>dxy_files &lt;-<span class="st"> </span><span class="kw">dir</span>(dxy_dir)</span>
+<span id="cb19-12"><a href="figure-1.html#cb19-12"></a></span>
+<span id="cb19-13"><a href="figure-1.html#cb19-13"></a><span class="co"># import dxy</span></span>
+<span id="cb19-14"><a href="figure-1.html#cb19-14"></a>dxy_data &lt;-<span class="st">  </span><span class="kw">str_c</span>(dxy_dir,dxy_files) <span class="op">%&gt;%</span></span>
+<span id="cb19-15"><a href="figure-1.html#cb19-15"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(summarize_dxy) <span class="op">%&gt;%</span></span>
+<span id="cb19-16"><a href="figure-1.html#cb19-16"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span></code></pre></div>
 <p>We use the genome wide average <em>F<sub>ST</sub></em> to rank the individual pair wise comparisons.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="figure-1.html#cb9-1"></a>fst_order &lt;-<span class="st"> </span>fst_data <span class="op">%&gt;%</span></span>
-<span id="cb9-2"><a href="figure-1.html#cb9-2"></a><span class="st">  </span><span class="kw">select</span>(run, <span class="st">`</span><span class="dt">mean_weighted-fst</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
-<span id="cb9-3"><a href="figure-1.html#cb9-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">fct_reorder</span>(run,<span class="st">`</span><span class="dt">mean_weighted-fst</span><span class="st">`</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="figure-1.html#cb20-1"></a><span class="co"># determine fst ranking</span></span>
+<span id="cb20-2"><a href="figure-1.html#cb20-2"></a>fst_order &lt;-<span class="st"> </span>fst_data <span class="op">%&gt;%</span></span>
+<span id="cb20-3"><a href="figure-1.html#cb20-3"></a><span class="st">  </span><span class="kw">select</span>(run, <span class="st">`</span><span class="dt">mean_weighted-fst</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
+<span id="cb20-4"><a href="figure-1.html#cb20-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">fct_reorder</span>(run, <span class="st">`</span><span class="dt">mean_weighted-fst</span><span class="st">`</span>))</span></code></pre></div>
 <p>Then, we merge the <em>F<sub>ST</sub></em> and <em>d<sub>XY</sub></em> data sets and do quite a bit of data wrangling to create a rescaled <em>d<sub>XY</sub></em> value and to prepare the placement of the boxplots.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="figure-1.html#cb10-1"></a>data &lt;-<span class="st"> </span><span class="kw">left_join</span>(fst_data, dxy_data) <span class="op">%&gt;%</span></span>
-<span id="cb10-2"><a href="figure-1.html#cb10-2"></a><span class="st">  </span><span class="kw">select</span>(<span class="kw">c</span>(<span class="dv">8</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">15</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb10-3"><a href="figure-1.html#cb10-3"></a><span class="st">  </span><span class="co"># transfrom table from short to long format</span></span>
-<span id="cb10-4"><a href="figure-1.html#cb10-4"></a><span class="st">  </span><span class="kw">gather</span>(<span class="dt">key =</span> <span class="st">&#39;stat&#39;</span>, <span class="dt">value =</span> <span class="st">&#39;val&#39;</span>,<span class="dv">2</span><span class="op">:</span><span class="dv">15</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-5"><a href="figure-1.html#cb10-5"></a><span class="st">  </span><span class="co"># separating the boxplot element from the population genetic parameter</span></span>
-<span id="cb10-6"><a href="figure-1.html#cb10-6"></a><span class="st">  </span><span class="kw">separate</span>(stat, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;sumstat&#39;</span>,<span class="st">&#39;popstat&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-7"><a href="figure-1.html#cb10-7"></a><span class="st">  </span><span class="co"># rescaleing the dxy values to fall in the range of Fst</span></span>
-<span id="cb10-8"><a href="figure-1.html#cb10-8"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">val_scaled =</span> <span class="kw">ifelse</span>(popstat <span class="op">==</span><span class="st"> &#39;dxy&#39;</span>, val <span class="op">*</span><span class="st"> </span>scaler , val)) <span class="op">%&gt;%</span></span>
-<span id="cb10-9"><a href="figure-1.html#cb10-9"></a><span class="st">  </span><span class="co"># combining original and rescaled values</span></span>
-<span id="cb10-10"><a href="figure-1.html#cb10-10"></a><span class="st">  </span><span class="kw">unite</span>(temp, val, val_scaled) <span class="op">%&gt;%</span></span>
-<span id="cb10-11"><a href="figure-1.html#cb10-11"></a><span class="st">  </span><span class="co"># back transforming to short format</span></span>
-<span id="cb10-12"><a href="figure-1.html#cb10-12"></a><span class="st">  </span><span class="kw">spread</span>(.,<span class="dt">key =</span> <span class="st">&#39;sumstat&#39;</span>,<span class="dt">value =</span> <span class="st">&#39;temp&#39;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-13"><a href="figure-1.html#cb10-13"></a><span class="st">  </span><span class="co"># separating original and rescaled values for all boxplot elements</span></span>
-<span id="cb10-14"><a href="figure-1.html#cb10-14"></a><span class="st">  </span><span class="kw">separate</span>(mean, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;mean_scaled&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-15"><a href="figure-1.html#cb10-15"></a><span class="st">  </span><span class="kw">separate</span>(median, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;median&#39;</span>,<span class="st">&#39;median_scaled&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-16"><a href="figure-1.html#cb10-16"></a><span class="st">  </span><span class="kw">separate</span>(sd, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;sd&#39;</span>,<span class="st">&#39;sd_scaled&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-17"><a href="figure-1.html#cb10-17"></a><span class="st">  </span><span class="kw">separate</span>(lower, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;lower&#39;</span>,<span class="st">&#39;lower_scaled&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-18"><a href="figure-1.html#cb10-18"></a><span class="st">  </span><span class="kw">separate</span>(upper, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;upper&#39;</span>,<span class="st">&#39;upper_scaled&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-19"><a href="figure-1.html#cb10-19"></a><span class="st">  </span><span class="kw">separate</span>(lowpoint, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;lowpoint&#39;</span>,<span class="st">&#39;lowpoint_scaled&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-20"><a href="figure-1.html#cb10-20"></a><span class="st">  </span><span class="kw">separate</span>(highpoint, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;highpoint&#39;</span>,<span class="st">&#39;highpoint_scaled&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
-<span id="cb10-21"><a href="figure-1.html#cb10-21"></a><span class="st">  </span><span class="co"># adding preparations for plotting</span></span>
-<span id="cb10-22"><a href="figure-1.html#cb10-22"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">loc =</span> <span class="kw">str_sub</span>(run,<span class="dv">4</span>,<span class="dv">6</span>),                             <span class="co"># extract location from run</span></span>
-<span id="cb10-23"><a href="figure-1.html#cb10-23"></a>         <span class="dt">run =</span> <span class="kw">factor</span>(run, <span class="dt">levels =</span> <span class="kw">levels</span>(fst_order<span class="op">$</span>run)),  <span class="co"># introduce the run ranking</span></span>
-<span id="cb10-24"><a href="figure-1.html#cb10-24"></a>         <span class="dt">x =</span> <span class="kw">as.numeric</span>(run) ,                               <span class="co"># extract rank of runs (base x)</span></span>
-<span id="cb10-25"><a href="figure-1.html#cb10-25"></a>         <span class="dt">x_dodge =</span> <span class="kw">ifelse</span>(popstat <span class="op">==</span><span class="st"> &#39;dxy&#39;</span>,x <span class="op">+</span><span class="st"> </span><span class="fl">.25</span>,x <span class="op">-</span><span class="st"> </span><span class="fl">.25</span>), <span class="co"># shift dxy to the right, fst left</span></span>
-<span id="cb10-26"><a href="figure-1.html#cb10-26"></a>         <span class="dt">x_start_dodge =</span> x_dodge <span class="op">-</span><span class="st"> </span>wdh<span class="op">/</span><span class="dv">2</span>,                    <span class="co"># boxplot left border</span></span>
-<span id="cb10-27"><a href="figure-1.html#cb10-27"></a>         <span class="dt">x_end_dodge =</span> x_dodge <span class="op">+</span><span class="st"> </span>wdh<span class="op">/</span><span class="dv">2</span>,                      <span class="co"># boxplot right border</span></span>
-<span id="cb10-28"><a href="figure-1.html#cb10-28"></a>         <span class="dt">popstat_loc =</span> <span class="kw">str_c</span>(popstat,<span class="st">&#39;[&#39;</span>,loc,<span class="st">&#39;]&#39;</span>))           <span class="co"># parameter X location (for color)</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="figure-1.html#cb21-1"></a><span class="co"># merge fst and dxy cc_data</span></span>
+<span id="cb21-2"><a href="figure-1.html#cb21-2"></a><span class="co"># (large parts of this code are now unnecessary after the separation of dxy and</span></span>
+<span id="cb21-3"><a href="figure-1.html#cb21-3"></a><span class="co">#  fst plots into separate panels b &amp; c)</span></span>
+<span id="cb21-4"><a href="figure-1.html#cb21-4"></a>data &lt;-<span class="st"> </span><span class="kw">left_join</span>(fst_data, dxy_data) <span class="op">%&gt;%</span></span>
+<span id="cb21-5"><a href="figure-1.html#cb21-5"></a><span class="st">  </span><span class="kw">select</span>(<span class="kw">c</span>(<span class="dv">8</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">15</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb21-6"><a href="figure-1.html#cb21-6"></a><span class="st">  </span><span class="co"># reformat table to enable parallel plotting (with secondary axis)</span></span>
+<span id="cb21-7"><a href="figure-1.html#cb21-7"></a><span class="st">  </span><span class="kw">gather</span>(<span class="dt">key =</span> <span class="st">&#39;stat&#39;</span>, <span class="dt">value =</span> <span class="st">&#39;val&#39;</span>, <span class="dv">2</span><span class="op">:</span><span class="dv">15</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-8"><a href="figure-1.html#cb21-8"></a><span class="st">  </span><span class="co"># sumstat contains the values needed to plot the boxplots (quartiles, etc)</span></span>
+<span id="cb21-9"><a href="figure-1.html#cb21-9"></a><span class="st">  </span><span class="kw">separate</span>(stat, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;sumstat&#39;</span>, <span class="st">&#39;popstat&#39;</span>), <span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-10"><a href="figure-1.html#cb21-10"></a><span class="st">  </span><span class="co"># duplicate dxy values scaled to fst range</span></span>
+<span id="cb21-11"><a href="figure-1.html#cb21-11"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">val_scaled =</span> <span class="kw">ifelse</span>(popstat <span class="op">==</span><span class="st"> &#39;dxy&#39;</span>, val <span class="op">*</span><span class="st"> </span>scaler , val)) <span class="op">%&gt;%</span></span>
+<span id="cb21-12"><a href="figure-1.html#cb21-12"></a><span class="st">  </span><span class="kw">unite</span>(temp, val, val_scaled) <span class="op">%&gt;%</span></span>
+<span id="cb21-13"><a href="figure-1.html#cb21-13"></a><span class="st">  </span><span class="co"># separate th eoriginal values from the scales ons (scaled = secondary axis)</span></span>
+<span id="cb21-14"><a href="figure-1.html#cb21-14"></a><span class="st">  </span><span class="kw">spread</span>(.,<span class="dt">key =</span> <span class="st">&#39;sumstat&#39;</span>,<span class="dt">value =</span> <span class="st">&#39;temp&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-15"><a href="figure-1.html#cb21-15"></a><span class="st">  </span><span class="kw">separate</span>(mean, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;mean_scaled&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-16"><a href="figure-1.html#cb21-16"></a><span class="st">  </span><span class="kw">separate</span>(median, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;median&#39;</span>,<span class="st">&#39;median_scaled&#39;</span>), <span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-17"><a href="figure-1.html#cb21-17"></a><span class="st">  </span><span class="kw">separate</span>(sd, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;sd&#39;</span>,<span class="st">&#39;sd_scaled&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-18"><a href="figure-1.html#cb21-18"></a><span class="st">  </span><span class="kw">separate</span>(lower, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;lower&#39;</span>,<span class="st">&#39;lower_scaled&#39;</span>), <span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-19"><a href="figure-1.html#cb21-19"></a><span class="st">  </span><span class="kw">separate</span>(upper, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;upper&#39;</span>,<span class="st">&#39;upper_scaled&#39;</span>), <span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-20"><a href="figure-1.html#cb21-20"></a><span class="st">  </span><span class="kw">separate</span>(lowpoint, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;lowpoint&#39;</span>,<span class="st">&#39;lowpoint_scaled&#39;</span>), <span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-21"><a href="figure-1.html#cb21-21"></a><span class="st">  </span><span class="kw">separate</span>(highpoint, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;highpoint&#39;</span>,<span class="st">&#39;highpoint_scaled&#39;</span>), <span class="dt">sep =</span> <span class="st">&#39;_&#39;</span>, <span class="dt">convert =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-22"><a href="figure-1.html#cb21-22"></a><span class="st">  </span><span class="co"># include &quot;dodge&quot;-positions for side-by-side plotting (secondary axis)</span></span>
+<span id="cb21-23"><a href="figure-1.html#cb21-23"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">loc =</span> <span class="kw">str_sub</span>(run,<span class="dv">4</span>,<span class="dv">6</span>),</span>
+<span id="cb21-24"><a href="figure-1.html#cb21-24"></a>         <span class="dt">run =</span> <span class="kw">factor</span>(run, <span class="dt">levels =</span> <span class="kw">levels</span>(fst_order<span class="op">$</span>run)),</span>
+<span id="cb21-25"><a href="figure-1.html#cb21-25"></a>         <span class="dt">x =</span> <span class="kw">as.numeric</span>(run) ,</span>
+<span id="cb21-26"><a href="figure-1.html#cb21-26"></a>         <span class="dt">x_dodge =</span> <span class="kw">ifelse</span>(popstat <span class="op">==</span><span class="st"> &#39;dxy&#39;</span>, x <span class="op">+</span><span class="st"> </span><span class="fl">.25</span>, x <span class="op">-</span><span class="st"> </span><span class="fl">.25</span>),</span>
+<span id="cb21-27"><a href="figure-1.html#cb21-27"></a>         <span class="dt">x_start_dodge =</span> x_dodge <span class="op">-</span><span class="st"> </span>wdh<span class="op">/</span><span class="dv">2</span>,</span>
+<span id="cb21-28"><a href="figure-1.html#cb21-28"></a>         <span class="dt">x_end_dodge =</span> x_dodge <span class="op">+</span><span class="st"> </span>wdh<span class="op">/</span><span class="dv">2</span>,</span>
+<span id="cb21-29"><a href="figure-1.html#cb21-29"></a>         <span class="dt">popstat_loc =</span> <span class="kw">str_c</span>(popstat,<span class="st">&#39;[&#39;</span>,loc,<span class="st">&#39;]&#39;</span>))</span></code></pre></div>
 <p>At this point, the data is ready for the boxplots.
 But first we are going to prepare the networks of pairwise comparisons.</p>
 <p>For this we create a tibble of the runs with their respective rank.
 Then, we prepare a config table with one row per location, storing the parameters needed for the layout function for the networks.
 We need to define the location, the number of species at the location, the short three letter ID of those species and a weight parameter that is shifting the comparison label on the link within the networks.</p>
 <p>Finally, we create one network plot per location.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="figure-1.html#cb11-1"></a><span class="co"># preparing a run/rnk lookup table</span></span>
-<span id="cb11-2"><a href="figure-1.html#cb11-2"></a>run_ord &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">run =</span> <span class="kw">levels</span>(data<span class="op">$</span>run),</span>
-<span id="cb11-3"><a href="figure-1.html#cb11-3"></a>       <span class="dt">run_ord =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(<span class="kw">levels</span>(data<span class="op">$</span>run)))</span>
-<span id="cb11-4"><a href="figure-1.html#cb11-4"></a></span>
-<span id="cb11-5"><a href="figure-1.html#cb11-5"></a><span class="co"># network config and layout</span></span>
-<span id="cb11-6"><a href="figure-1.html#cb11-6"></a>networx &lt;-<span class="st"> </span><span class="kw">tibble</span>( <span class="dt">loc =</span> <span class="kw">c</span>(<span class="st">&#39;bel&#39;</span>,<span class="st">&#39;hon&#39;</span>, <span class="st">&#39;pan&#39;</span>),</span>
-<span id="cb11-7"><a href="figure-1.html#cb11-7"></a>                   <span class="dt">n =</span> <span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">3</span>),</span>
-<span id="cb11-8"><a href="figure-1.html#cb11-8"></a>                   <span class="dt">label =</span> <span class="kw">list</span>(<span class="kw">str_c</span>(<span class="kw">c</span>(<span class="st">&#39;ind&#39;</span>,<span class="st">&#39;may&#39;</span>,<span class="st">&#39;nig&#39;</span>,<span class="st">&#39;pue&#39;</span>,<span class="st">&#39;uni&#39;</span>),<span class="st">&#39;bel&#39;</span>),</span>
-<span id="cb11-9"><a href="figure-1.html#cb11-9"></a>                                <span class="kw">str_c</span>(<span class="kw">c</span>(<span class="st">&#39;abe&#39;</span>,<span class="st">&#39;gum&#39;</span>,<span class="st">&#39;nig&#39;</span>,<span class="st">&#39;pue&#39;</span>,<span class="st">&#39;ran&#39;</span>,<span class="st">&#39;uni&#39;</span>),<span class="st">&#39;hon&#39;</span>),</span>
-<span id="cb11-10"><a href="figure-1.html#cb11-10"></a>                                <span class="kw">str_c</span>(<span class="kw">c</span>(<span class="st">&#39;nig&#39;</span>,<span class="st">&#39;pue&#39;</span>,<span class="st">&#39;uni&#39;</span>),<span class="st">&#39;pan&#39;</span>)),</span>
-<span id="cb11-11"><a href="figure-1.html#cb11-11"></a>                   <span class="dt">weight =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="fl">1.45</span>,<span class="dv">1</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb11-12"><a href="figure-1.html#cb11-12"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">pmap</span>(network_layout) <span class="op">%&gt;%</span></span>
-<span id="cb11-13"><a href="figure-1.html#cb11-13"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span>
-<span id="cb11-14"><a href="figure-1.html#cb11-14"></a></span>
-<span id="cb11-15"><a href="figure-1.html#cb11-15"></a>plot_list &lt;-<span class="st"> </span>networx <span class="op">%&gt;%</span></span>
-<span id="cb11-16"><a href="figure-1.html#cb11-16"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">pmap</span>(plot_network, <span class="dt">node_lab_shift =</span> <span class="fl">.2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="figure-1.html#cb22-1"></a><span class="co"># sort run by average genome wide Fst</span></span>
+<span id="cb22-2"><a href="figure-1.html#cb22-2"></a>run_ord &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">run =</span> <span class="kw">levels</span>(data<span class="op">$</span>run),</span>
+<span id="cb22-3"><a href="figure-1.html#cb22-3"></a>                  <span class="dt">run_ord =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(<span class="kw">levels</span>(data<span class="op">$</span>run)))</span>
+<span id="cb22-4"><a href="figure-1.html#cb22-4"></a></span>
+<span id="cb22-5"><a href="figure-1.html#cb22-5"></a><span class="co"># onderlying structure for the network plots</span></span>
+<span id="cb22-6"><a href="figure-1.html#cb22-6"></a>networx &lt;-<span class="st"> </span><span class="kw">tibble</span>( <span class="dt">loc =</span> <span class="kw">c</span>(<span class="st">&#39;bel&#39;</span>,<span class="st">&#39;hon&#39;</span>, <span class="st">&#39;pan&#39;</span>),</span>
+<span id="cb22-7"><a href="figure-1.html#cb22-7"></a>                   <span class="dt">n =</span> <span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">3</span>),</span>
+<span id="cb22-8"><a href="figure-1.html#cb22-8"></a>                   <span class="dt">label =</span> <span class="kw">list</span>(<span class="kw">str_c</span>(<span class="kw">c</span>(<span class="st">&#39;ind&#39;</span>,<span class="st">&#39;may&#39;</span>,<span class="st">&#39;nig&#39;</span>,<span class="st">&#39;pue&#39;</span>,<span class="st">&#39;uni&#39;</span>),<span class="st">&#39;bel&#39;</span>),</span>
+<span id="cb22-9"><a href="figure-1.html#cb22-9"></a>                                <span class="kw">str_c</span>(<span class="kw">c</span>(<span class="st">&#39;abe&#39;</span>,<span class="st">&#39;gum&#39;</span>,<span class="st">&#39;nig&#39;</span>,<span class="st">&#39;pue&#39;</span>,<span class="st">&#39;ran&#39;</span>,<span class="st">&#39;uni&#39;</span>),<span class="st">&#39;hon&#39;</span>),</span>
+<span id="cb22-10"><a href="figure-1.html#cb22-10"></a>                                <span class="kw">str_c</span>(<span class="kw">c</span>(<span class="st">&#39;nig&#39;</span>,<span class="st">&#39;pue&#39;</span>,<span class="st">&#39;uni&#39;</span>),<span class="st">&#39;pan&#39;</span>)),</span>
+<span id="cb22-11"><a href="figure-1.html#cb22-11"></a>                   <span class="dt">weight =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="fl">1.45</span>,<span class="dv">1</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb22-12"><a href="figure-1.html#cb22-12"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">pmap</span>(network_layout) <span class="op">%&gt;%</span></span>
+<span id="cb22-13"><a href="figure-1.html#cb22-13"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span>
+<span id="cb22-14"><a href="figure-1.html#cb22-14"></a></span>
+<span id="cb22-15"><a href="figure-1.html#cb22-15"></a><span class="co"># plot the individual networks by location</span></span>
+<span id="cb22-16"><a href="figure-1.html#cb22-16"></a>plot_list &lt;-<span class="st"> </span>networx <span class="op">%&gt;%</span></span>
+<span id="cb22-17"><a href="figure-1.html#cb22-17"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">pmap</span>(plot_network, <span class="dt">node_lab_shift =</span> <span class="fl">.2</span>)</span></code></pre></div>
 </div>
 <div id="plotting" class="section level3">
 <h3><span class="header-section-number">13.2.3</span> Plotting</h3>
 <p>To create the first panel of Figure 1, we combine the three networks and label the locations.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="figure-1.html#cb12-1"></a>p1 &lt;-<span class="st"> </span>cowplot<span class="op">::</span><span class="kw">plot_grid</span>(</span>
-<span id="cb12-2"><a href="figure-1.html#cb12-2"></a>  grid<span class="op">::</span><span class="kw">textGrob</span>(<span class="st">&#39;Belize&#39;</span>),</span>
-<span id="cb12-3"><a href="figure-1.html#cb12-3"></a>  grid<span class="op">::</span><span class="kw">textGrob</span>(<span class="st">&#39;Honduras&#39;</span>),</span>
-<span id="cb12-4"><a href="figure-1.html#cb12-4"></a>  grid<span class="op">::</span><span class="kw">textGrob</span>(<span class="st">&#39;Panama&#39;</span>),</span>
-<span id="cb12-5"><a href="figure-1.html#cb12-5"></a>  plot_list[[<span class="dv">1</span>]], plot_list[[<span class="dv">2</span>]], plot_list[[<span class="dv">3</span>]],</span>
-<span id="cb12-6"><a href="figure-1.html#cb12-6"></a>  <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">rel_heights =</span> <span class="kw">c</span>(.<span class="dv">1</span>,<span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="figure-1.html#cb23-1"></a><span class="co"># assemble panel a</span></span>
+<span id="cb23-2"><a href="figure-1.html#cb23-2"></a>p1 &lt;-<span class="st"> </span>cowplot<span class="op">::</span><span class="kw">plot_grid</span>(</span>
+<span id="cb23-3"><a href="figure-1.html#cb23-3"></a>  grid<span class="op">::</span><span class="kw">textGrob</span>(<span class="st">&#39;Belize&#39;</span>),</span>
+<span id="cb23-4"><a href="figure-1.html#cb23-4"></a>  grid<span class="op">::</span><span class="kw">textGrob</span>(<span class="st">&#39;Honduras&#39;</span>),</span>
+<span id="cb23-5"><a href="figure-1.html#cb23-5"></a>  grid<span class="op">::</span><span class="kw">textGrob</span>(<span class="st">&#39;Panama&#39;</span>),</span>
+<span id="cb23-6"><a href="figure-1.html#cb23-6"></a>  plot_list[[<span class="dv">1</span>]], plot_list[[<span class="dv">2</span>]], plot_list[[<span class="dv">3</span>]],</span>
+<span id="cb23-7"><a href="figure-1.html#cb23-7"></a>  <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">rel_heights =</span> <span class="kw">c</span>(.<span class="dv">1</span>,<span class="dv">1</span>))</span></code></pre></div>
 <center>
-<pre><code>## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device</code></pre>
-<img src="plot_F1_files/figure-html/unnamed-chunk-10-1.png" width="864" />
+<img src="plot_F1_files/figure-html/unnamed-chunk-9-1.png" width="864" />
 </center>
 <p>Now, we can create the second panel of Figure 1, by plotting our prepared data tibble.
-We are going to plot each boxplot element as a single layer.
-(This, might seem a little cumbersome given <code>geom_boxplot()</code>, but this approach was chosen for specific fine tuning of the positioning, dropping of outliers and reducing runtime during the plotting phase - otherwise the entire genome wide data set would have been carried though whole script.)</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="figure-1.html#cb14-1"></a>p2 &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
-<span id="cb14-2"><a href="figure-1.html#cb14-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">color =</span> popstat_loc)) <span class="op">+</span></span>
-<span id="cb14-3"><a href="figure-1.html#cb14-3"></a><span class="st">  </span><span class="co"># adding whiskers</span></span>
-<span id="cb14-4"><a href="figure-1.html#cb14-4"></a><span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x_dodge, <span class="dt">xend =</span> x_dodge,</span>
-<span id="cb14-5"><a href="figure-1.html#cb14-5"></a>                   <span class="dt">y =</span> lowpoint_scaled,<span class="dt">yend =</span> highpoint_scaled)) <span class="op">+</span></span>
-<span id="cb14-6"><a href="figure-1.html#cb14-6"></a><span class="st">  </span><span class="co"># adding box (inter quartile range)</span></span>
-<span id="cb14-7"><a href="figure-1.html#cb14-7"></a><span class="st">  </span><span class="kw">geom_rect</span>(<span class="kw">aes</span>(<span class="dt">xmin =</span> x_start_dodge, <span class="dt">xmax =</span> x_end_dodge,</span>
-<span id="cb14-8"><a href="figure-1.html#cb14-8"></a>                <span class="dt">ymin =</span> lower_scaled, <span class="dt">ymax =</span> upper_scaled),</span>
-<span id="cb14-9"><a href="figure-1.html#cb14-9"></a>             <span class="dt">fill=</span><span class="st">&#39;white&#39;</span>)<span class="op">+</span></span>
-<span id="cb14-10"><a href="figure-1.html#cb14-10"></a><span class="st">  </span><span class="co"># adding bar (median)</span></span>
-<span id="cb14-11"><a href="figure-1.html#cb14-11"></a><span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x_start_dodge,</span>
-<span id="cb14-12"><a href="figure-1.html#cb14-12"></a>                   <span class="dt">xend =</span> x_end_dodge,</span>
-<span id="cb14-13"><a href="figure-1.html#cb14-13"></a>                   <span class="dt">y =</span> median_scaled,</span>
-<span id="cb14-14"><a href="figure-1.html#cb14-14"></a>                   <span class="dt">yend =</span> median_scaled),<span class="dt">lwd =</span> <span class="fl">.9</span>)<span class="op">+</span></span>
-<span id="cb14-15"><a href="figure-1.html#cb14-15"></a><span class="st">  </span><span class="co"># adding point (mean)</span></span>
-<span id="cb14-16"><a href="figure-1.html#cb14-16"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x_dodge, <span class="dt">y =</span> mean_scaled),<span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="fl">.7</span>, <span class="dt">fill =</span> <span class="st">&#39;white&#39;</span>)<span class="op">+</span></span>
-<span id="cb14-17"><a href="figure-1.html#cb14-17"></a><span class="st">  </span><span class="co"># layout x ayis</span></span>
-<span id="cb14-18"><a href="figure-1.html#cb14-18"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">28</span>) <span class="op">+</span></span>
-<span id="cb14-19"><a href="figure-1.html#cb14-19"></a><span class="st">  </span><span class="co"># layout primary y axis (Fst)</span></span>
-<span id="cb14-20"><a href="figure-1.html#cb14-20"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">05</span>,.<span class="dv">1</span>,.<span class="dv">15</span>),</span>
-<span id="cb14-21"><a href="figure-1.html#cb14-21"></a>                     <span class="dt">name =</span> <span class="kw">expression</span>(<span class="kw">italic</span>(F[ST])),</span>
-<span id="cb14-22"><a href="figure-1.html#cb14-22"></a>                     <span class="co"># layout secondary y axis (dxy)</span></span>
-<span id="cb14-23"><a href="figure-1.html#cb14-23"></a>                     <span class="dt">sec.axis =</span> <span class="kw">sec_axis</span>(<span class="op">~</span><span class="st"> </span>. <span class="op">/</span>scaler,</span>
-<span id="cb14-24"><a href="figure-1.html#cb14-24"></a>                                         <span class="dt">name =</span> <span class="kw">expression</span>(<span class="kw">italic</span>(d[XY])),</span>
-<span id="cb14-25"><a href="figure-1.html#cb14-25"></a>                                         <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">005</span>,.<span class="dv">01</span>)))<span class="op">+</span></span>
-<span id="cb14-26"><a href="figure-1.html#cb14-26"></a><span class="st">  </span><span class="co"># define color scheme</span></span>
-<span id="cb14-27"><a href="figure-1.html#cb14-27"></a><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw">make_faint_clr</span>(<span class="st">&#39;bel&#39;</span>),</span>
-<span id="cb14-28"><a href="figure-1.html#cb14-28"></a>                                <span class="kw">make_faint_clr</span>(<span class="st">&#39;hon&#39;</span>),</span>
-<span id="cb14-29"><a href="figure-1.html#cb14-29"></a>                                <span class="kw">make_faint_clr</span>(<span class="st">&#39;pan&#39;</span>))[<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>)])<span class="op">+</span></span>
-<span id="cb14-30"><a href="figure-1.html#cb14-30"></a><span class="st">  </span><span class="co"># set plot range</span></span>
-<span id="cb14-31"><a href="figure-1.html#cb14-31"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="dv">29</span>),</span>
-<span id="cb14-32"><a href="figure-1.html#cb14-32"></a>                  <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))<span class="op">+</span></span>
-<span id="cb14-33"><a href="figure-1.html#cb14-33"></a><span class="st">  </span><span class="co"># tune plot appreance</span></span>
-<span id="cb14-34"><a href="figure-1.html#cb14-34"></a><span class="st">  </span><span class="kw">theme_minimal</span>()<span class="op">+</span></span>
-<span id="cb14-35"><a href="figure-1.html#cb14-35"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb14-36"><a href="figure-1.html#cb14-36"></a>        <span class="dt">legend.position =</span> <span class="st">&#39;none&#39;</span>,</span>
-<span id="cb14-37"><a href="figure-1.html#cb14-37"></a>        <span class="dt">strip.placement =</span> <span class="st">&#39;outside&#39;</span>,</span>
-<span id="cb14-38"><a href="figure-1.html#cb14-38"></a>        <span class="dt">strip.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>),</span>
-<span id="cb14-39"><a href="figure-1.html#cb14-39"></a>        <span class="dt">panel.grid.major.x =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb14-40"><a href="figure-1.html#cb14-40"></a>        <span class="dt">panel.grid.minor.y =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb14-41"><a href="figure-1.html#cb14-41"></a>        <span class="dt">axis.text.y.right =</span> <span class="kw">element_text</span>(<span class="dt">color =</span> clr_sec),</span>
-<span id="cb14-42"><a href="figure-1.html#cb14-42"></a>        <span class="dt">axis.title.y.right =</span> <span class="kw">element_text</span>(<span class="dt">color =</span> clr_sec))</span></code></pre></div>
+We are going to plot each boxplot element as a single layer.</p>
+<blockquote>
+<p>(This, might seem a little cumbersome given <code>geom_boxplot()</code>, but this approach was chosen for specific fine tuning of the positioning, dropping of outliers and reducing runtime during the plotting phase - otherwise the entire genome wide data set would have been carried though whole script. By now, this indirect approach is also somewhat obsolete since the <i>F<sub>ST</sub></i> and <i>d<sub>XY</sub></i> boxplots are now separated into several panels)</p>
+</blockquote>
+<p>The <i>F<sub>ST</sub></i> boxplots are created for panel <strong>b</strong>…</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="figure-1.html#cb24-1"></a><span class="co"># assemble panel b</span></span>
+<span id="cb24-2"><a href="figure-1.html#cb24-2"></a>p2 &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
+<span id="cb24-3"><a href="figure-1.html#cb24-3"></a><span class="st">  </span><span class="kw">filter</span>(popstat <span class="op">==</span><span class="st"> &quot;weighted-fst&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb24-4"><a href="figure-1.html#cb24-4"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">color =</span> loc)) <span class="op">+</span></span>
+<span id="cb24-5"><a href="figure-1.html#cb24-5"></a><span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">xend =</span> x,</span>
+<span id="cb24-6"><a href="figure-1.html#cb24-6"></a>                   <span class="dt">y =</span> lowpoint, <span class="dt">yend =</span> highpoint))<span class="op">+</span></span>
+<span id="cb24-7"><a href="figure-1.html#cb24-7"></a><span class="st">  </span><span class="kw">geom_rect</span>(<span class="kw">aes</span>(<span class="dt">xmin =</span> x <span class="op">-</span><span class="st"> </span>wdh, <span class="dt">xmax =</span> x <span class="op">+</span><span class="st"> </span>wdh,</span>
+<span id="cb24-8"><a href="figure-1.html#cb24-8"></a>                <span class="dt">ymin =</span> lower, <span class="dt">ymax =</span> upper),</span>
+<span id="cb24-9"><a href="figure-1.html#cb24-9"></a>             <span class="dt">fill =</span> <span class="st">&#39;white&#39;</span>)<span class="op">+</span></span>
+<span id="cb24-10"><a href="figure-1.html#cb24-10"></a><span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x <span class="op">-</span><span class="st"> </span>wdh,</span>
+<span id="cb24-11"><a href="figure-1.html#cb24-11"></a>                   <span class="dt">xend =</span> x <span class="op">+</span><span class="st"> </span>wdh,</span>
+<span id="cb24-12"><a href="figure-1.html#cb24-12"></a>                   <span class="dt">y =</span> median,</span>
+<span id="cb24-13"><a href="figure-1.html#cb24-13"></a>                   <span class="dt">yend =</span> median), <span class="dt">lwd =</span> <span class="fl">.9</span>)<span class="op">+</span></span>
+<span id="cb24-14"><a href="figure-1.html#cb24-14"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> mean),</span>
+<span id="cb24-15"><a href="figure-1.html#cb24-15"></a>             <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="fl">.7</span>, <span class="dt">fill =</span> <span class="st">&#39;white&#39;</span>)<span class="op">+</span></span>
+<span id="cb24-16"><a href="figure-1.html#cb24-16"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">28</span>) <span class="op">+</span></span>
+<span id="cb24-17"><a href="figure-1.html#cb24-17"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="co">#breaks = c(0,.05,.1,.15),</span></span>
+<span id="cb24-18"><a href="figure-1.html#cb24-18"></a>                     <span class="dt">name =</span> <span class="kw">expression</span>(<span class="kw">italic</span>(F[ST])))<span class="op">+</span></span>
+<span id="cb24-19"><a href="figure-1.html#cb24-19"></a><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw">make_faint_clr</span>(<span class="st">&#39;bel&#39;</span>),</span>
+<span id="cb24-20"><a href="figure-1.html#cb24-20"></a>                                <span class="kw">make_faint_clr</span>(<span class="st">&#39;hon&#39;</span>),</span>
+<span id="cb24-21"><a href="figure-1.html#cb24-21"></a>                                <span class="kw">make_faint_clr</span>(<span class="st">&#39;pan&#39;</span>))[<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>)])<span class="op">+</span></span>
+<span id="cb24-22"><a href="figure-1.html#cb24-22"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">29</span>),</span>
+<span id="cb24-23"><a href="figure-1.html#cb24-23"></a>                  <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))<span class="op">+</span></span>
+<span id="cb24-24"><a href="figure-1.html#cb24-24"></a><span class="st">  </span><span class="kw">theme_minimal</span>()<span class="op">+</span></span>
+<span id="cb24-25"><a href="figure-1.html#cb24-25"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb24-26"><a href="figure-1.html#cb24-26"></a>        <span class="dt">legend.position =</span> <span class="st">&#39;none&#39;</span>,</span>
+<span id="cb24-27"><a href="figure-1.html#cb24-27"></a>        <span class="dt">strip.placement =</span> <span class="st">&#39;outside&#39;</span>,</span>
+<span id="cb24-28"><a href="figure-1.html#cb24-28"></a>        <span class="dt">strip.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>),</span>
+<span id="cb24-29"><a href="figure-1.html#cb24-29"></a>        <span class="dt">panel.grid.major.x =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb24-30"><a href="figure-1.html#cb24-30"></a>        <span class="dt">panel.grid.minor.y =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb24-31"><a href="figure-1.html#cb24-31"></a>        <span class="dt">axis.text.y.right =</span> <span class="kw">element_text</span>(<span class="dt">color =</span> clr_sec),</span>
+<span id="cb24-32"><a href="figure-1.html#cb24-32"></a>        <span class="dt">axis.title.y.right =</span> <span class="kw">element_text</span>(<span class="dt">color =</span> clr_sec))</span></code></pre></div>
 <center>
-<img src="plot_F1_files/figure-html/unnamed-chunk-12-1.png" width="864" />
+<img src="plot_F1_files/figure-html/unnamed-chunk-11-1.png" width="432" />
 </center>
-<p>To create the final figure, we combine the two sub panels using the <strong>cowplot</strong> package.
-Here, we add the panel labels and define the space each panel is going to take.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="figure-1.html#cb15-1"></a>p_done &lt;-<span class="st"> </span>cowplot<span class="op">::</span><span class="kw">plot_grid</span>(p1,p2,</span>
-<span id="cb15-2"><a href="figure-1.html#cb15-2"></a>                             <span class="dt">ncol =</span> <span class="dv">1</span>,</span>
-<span id="cb15-3"><a href="figure-1.html#cb15-3"></a>                             <span class="dt">rel_heights =</span> <span class="kw">c</span>(.<span class="dv">7</span>,<span class="dv">1</span>),</span>
-<span id="cb15-4"><a href="figure-1.html#cb15-4"></a>                             <span class="dt">labels =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">project_case</span>())</span></code></pre></div>
+<p>… and the <i>d<sub>XY</sub></i> boxplotsfor panel <strong>c</strong>:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="figure-1.html#cb25-1"></a><span class="co"># assemble panel c</span></span>
+<span id="cb25-2"><a href="figure-1.html#cb25-2"></a>p3 &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
+<span id="cb25-3"><a href="figure-1.html#cb25-3"></a><span class="st">  </span><span class="kw">filter</span>(popstat <span class="op">==</span><span class="st"> &quot;dxy&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb25-4"><a href="figure-1.html#cb25-4"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">color =</span> loc)) <span class="op">+</span></span>
+<span id="cb25-5"><a href="figure-1.html#cb25-5"></a><span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">xend =</span> x,</span>
+<span id="cb25-6"><a href="figure-1.html#cb25-6"></a>                   <span class="dt">y =</span> lowpoint, <span class="dt">yend =</span> highpoint))<span class="op">+</span></span>
+<span id="cb25-7"><a href="figure-1.html#cb25-7"></a><span class="st">  </span><span class="kw">geom_rect</span>(<span class="kw">aes</span>(<span class="dt">xmin =</span> x <span class="op">-</span><span class="st"> </span>wdh, <span class="dt">xmax =</span> x <span class="op">+</span><span class="st"> </span>wdh,</span>
+<span id="cb25-8"><a href="figure-1.html#cb25-8"></a>                <span class="dt">ymin =</span> lower, <span class="dt">ymax =</span> upper),</span>
+<span id="cb25-9"><a href="figure-1.html#cb25-9"></a>            <span class="dt">fill =</span> <span class="st">&#39;white&#39;</span>)<span class="op">+</span></span>
+<span id="cb25-10"><a href="figure-1.html#cb25-10"></a><span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x <span class="op">-</span><span class="st"> </span>wdh,</span>
+<span id="cb25-11"><a href="figure-1.html#cb25-11"></a>                   <span class="dt">xend =</span> x <span class="op">+</span><span class="st"> </span>wdh,</span>
+<span id="cb25-12"><a href="figure-1.html#cb25-12"></a>                   <span class="dt">y =</span> median,</span>
+<span id="cb25-13"><a href="figure-1.html#cb25-13"></a>                   <span class="dt">yend =</span> median),<span class="dt">lwd =</span> <span class="fl">.9</span>)<span class="op">+</span></span>
+<span id="cb25-14"><a href="figure-1.html#cb25-14"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> mean),</span>
+<span id="cb25-15"><a href="figure-1.html#cb25-15"></a>             <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="fl">.7</span>, <span class="dt">fill =</span> <span class="st">&#39;white&#39;</span>)<span class="op">+</span></span>
+<span id="cb25-16"><a href="figure-1.html#cb25-16"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">28</span>) <span class="op">+</span></span>
+<span id="cb25-17"><a href="figure-1.html#cb25-17"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>( <span class="kw">expression</span>(<span class="kw">italic</span>(d[XY])),</span>
+<span id="cb25-18"><a href="figure-1.html#cb25-18"></a>                      <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">0025</span>,.<span class="dv">005</span>,.<span class="dv">0075</span>,.<span class="dv">01</span>),</span>
+<span id="cb25-19"><a href="figure-1.html#cb25-19"></a>                      <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">01</span>))<span class="op">+</span></span>
+<span id="cb25-20"><a href="figure-1.html#cb25-20"></a><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw">make_faint_clr</span>(<span class="st">&#39;bel&#39;</span>),</span>
+<span id="cb25-21"><a href="figure-1.html#cb25-21"></a>                                <span class="kw">make_faint_clr</span>(<span class="st">&#39;hon&#39;</span>),</span>
+<span id="cb25-22"><a href="figure-1.html#cb25-22"></a>                                <span class="kw">make_faint_clr</span>(<span class="st">&#39;pan&#39;</span>))[<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>)])<span class="op">+</span></span>
+<span id="cb25-23"><a href="figure-1.html#cb25-23"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">29</span>),</span>
+<span id="cb25-24"><a href="figure-1.html#cb25-24"></a>                  <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))<span class="op">+</span></span>
+<span id="cb25-25"><a href="figure-1.html#cb25-25"></a><span class="st">  </span><span class="kw">theme_minimal</span>()<span class="op">+</span></span>
+<span id="cb25-26"><a href="figure-1.html#cb25-26"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb25-27"><a href="figure-1.html#cb25-27"></a>        <span class="dt">legend.position =</span> <span class="st">&#39;none&#39;</span>,</span>
+<span id="cb25-28"><a href="figure-1.html#cb25-28"></a>        <span class="dt">strip.placement =</span> <span class="st">&#39;outside&#39;</span>,</span>
+<span id="cb25-29"><a href="figure-1.html#cb25-29"></a>        <span class="dt">strip.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>),</span>
+<span id="cb25-30"><a href="figure-1.html#cb25-30"></a>        <span class="dt">panel.grid.major.x =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb25-31"><a href="figure-1.html#cb25-31"></a>        <span class="dt">panel.grid.minor.y =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb25-32"><a href="figure-1.html#cb25-32"></a>        <span class="dt">axis.text.y.right =</span> <span class="kw">element_text</span>(<span class="dt">color =</span> clr_sec),</span>
+<span id="cb25-33"><a href="figure-1.html#cb25-33"></a>        <span class="dt">axis.title.y.right =</span> <span class="kw">element_text</span>(<span class="dt">color =</span> clr_sec))</span></code></pre></div>
 <center>
-<pre><code>## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device
-
-## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
-## 1L, : Path drawing not available for this device</code></pre>
-<img src="plot_F1_files/figure-html/unnamed-chunk-14-1.png" width="864" />
+<img src="plot_F1_files/figure-html/unnamed-chunk-13-1.png" width="432" />
+</center>
+<p>The panels <strong>b</strong> and <strong>c</strong> are merged to crate the lower half of the figure and then the entire figure is being brought together.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="figure-1.html#cb26-1"></a><span class="co"># merge panel b &amp; c</span></span>
+<span id="cb26-2"><a href="figure-1.html#cb26-2"></a>p23 &lt;-<span class="st"> </span>cowplot<span class="op">::</span><span class="kw">plot_grid</span>(p2,p3,</span>
+<span id="cb26-3"><a href="figure-1.html#cb26-3"></a>                          <span class="dt">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb26-4"><a href="figure-1.html#cb26-4"></a>                          <span class="dt">labels =</span> letters[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>] <span class="op">%&gt;%</span></span>
+<span id="cb26-5"><a href="figure-1.html#cb26-5"></a><span class="st">                            </span><span class="kw">project_case</span>())</span>
+<span id="cb26-6"><a href="figure-1.html#cb26-6"></a><span class="co"># merge all panels</span></span>
+<span id="cb26-7"><a href="figure-1.html#cb26-7"></a>p_done &lt;-<span class="st"> </span>cowplot<span class="op">::</span><span class="kw">plot_grid</span>(p1, p23,</span>
+<span id="cb26-8"><a href="figure-1.html#cb26-8"></a>                             <span class="dt">ncol =</span> <span class="dv">1</span>,</span>
+<span id="cb26-9"><a href="figure-1.html#cb26-9"></a>                             <span class="dt">rel_heights =</span> <span class="kw">c</span>(.<span class="dv">9</span>,<span class="dv">1</span>),</span>
+<span id="cb26-10"><a href="figure-1.html#cb26-10"></a>                             <span class="dt">labels =</span> <span class="kw">c</span>(letters[<span class="dv">1</span>], <span class="ot">NULL</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">project_case</span>())</span></code></pre></div>
+<center>
+<img src="plot_F1_files/figure-html/unnamed-chunk-15-1.png" width="1056" />
 </center>
 <p>Finally, we can export Figure 1.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="figure-1.html#cb17-1"></a><span class="kw">hypo_save</span>(p_done, <span class="dt">filename =</span> <span class="st">&#39;figures/F1.pdf&#39;</span>,</span>
-<span id="cb17-2"><a href="figure-1.html#cb17-2"></a>          <span class="dt">width =</span> <span class="dv">9</span>, <span class="dt">height =</span> <span class="dv">7</span>,</span>
-<span id="cb17-3"><a href="figure-1.html#cb17-3"></a>          <span class="dt">comment =</span> plot_comment)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="figure-1.html#cb27-1"></a><span class="kw">hypo_save</span>(p_done, <span class="dt">filename =</span> <span class="st">&#39;figures/F1.pdf&#39;</span>,</span>
+<span id="cb27-2"><a href="figure-1.html#cb27-2"></a>          <span class="dt">width =</span> <span class="dv">11</span>, <span class="dt">height =</span> <span class="fl">6.5</span>,</span>
+<span id="cb27-3"><a href="figure-1.html#cb27-3"></a>          <span class="dt">comment =</span> plot_comment)</span></code></pre></div>
+<blockquote>
 <p>The function <code>hypo_save()</code> is simply a wrapper around <code>ggsave()</code>, that will write the name of the currently running script into the meta data of the plot (after the plot has been exported).
 The benefit of this is that you can read this information later to remember how a specific plot was created using <code>hypo_show_metadata()</code>.
 This is done using <a href="https://www.sno.phy.queensu.ca/~phil/exiftool/">exiftool</a> and has currently only been tested on my linux system.
 If this does not work for you, simple replace <code>hypo_save()</code> with <code>ggsave()</code> and drop the <code>comment</code> parameter.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="figure-1.html#cb18-1"></a><span class="kw">hypo_show_metadata</span>(<span class="st">&#39;figures/F1.pdf&#39;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="figure-1.html#cb19-1"></a><span class="co">#&gt; [1] &quot;mother-script = /path/to/R/fig/plot_F1.R&quot;</span></span></code></pre></div>
+</blockquote>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="figure-1.html#cb28-1"></a><span class="kw">hypo_show_metadata</span>(<span class="st">&#39;figures/F1.pdf&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="figure-1.html#cb29-1"></a><span class="co">#&gt; [1] &quot;mother-script = /current/working/directory/R/fig/plot_F1.R&quot;</span></span></code></pre></div>
+</div>
+<div id="table-export" class="section level3">
+<h3><span class="header-section-number">13.2.4</span> Table export</h3>
+<p>This script is also used to compile the sub-tables Suppl. Table 3 <strong>a</strong> - <strong>c</strong>.
+The table is compiled from the weighted average <i>F<sub>ST</sub></i> values which are imported from the <code>nextflow</code> results and the average <i>d<sub>XY</sub></i> values which are computed within this <code>R</code> script.</p>
+<p>First, a proto-version of Suppl. Table 3 is created.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="figure-1.html#cb30-1"></a><span class="co"># compile fst and dxy table (table 1) for the manuscript</span></span>
+<span id="cb30-2"><a href="figure-1.html#cb30-2"></a>table_all &lt;-<span class="st"> </span>dxy_data <span class="op">%&gt;%</span></span>
+<span id="cb30-3"><a href="figure-1.html#cb30-3"></a><span class="st">  </span><span class="kw">select</span>(run, mean_dxy) <span class="op">%&gt;%</span></span>
+<span id="cb30-4"><a href="figure-1.html#cb30-4"></a><span class="st">  </span><span class="kw">left_join</span>( vroom<span class="op">::</span><span class="kw">vroom</span>(fst_globals, <span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>,</span>
+<span id="cb30-5"><a href="figure-1.html#cb30-5"></a>                          <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&#39;loc&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;weighted_fst&#39;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb30-6"><a href="figure-1.html#cb30-6"></a><span class="st">               </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">str_c</span>(loc,<span class="st">&#39;-&#39;</span>,run) <span class="op">%&gt;%</span></span>
+<span id="cb30-7"><a href="figure-1.html#cb30-7"></a><span class="st">                        </span><span class="kw">reformat_run_name</span>())  <span class="op">%&gt;%</span></span>
+<span id="cb30-8"><a href="figure-1.html#cb30-8"></a><span class="st">               </span><span class="kw">select</span>(run, weighted_fst)) <span class="op">%&gt;%</span></span>
+<span id="cb30-9"><a href="figure-1.html#cb30-9"></a><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="dt">names_to =</span> <span class="st">&#39;stat&#39;</span>,<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>) <span class="op">%&gt;%</span></span>
+<span id="cb30-10"><a href="figure-1.html#cb30-10"></a><span class="st">  </span><span class="kw">separate</span>(run, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;pop1&#39;</span>, <span class="st">&#39;pop2&#39;</span>), <span class="dt">sep =</span> <span class="st">&#39;-&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb30-11"><a href="figure-1.html#cb30-11"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prep1 =</span> <span class="kw">ifelse</span>(stat <span class="op">==</span><span class="st"> &quot;weighted_fst&quot;</span>, pop2,pop1),</span>
+<span id="cb30-12"><a href="figure-1.html#cb30-12"></a>         <span class="dt">prep2 =</span> <span class="kw">ifelse</span>(stat <span class="op">==</span><span class="st"> &quot;weighted_fst&quot;</span>, pop1,pop2),</span>
+<span id="cb30-13"><a href="figure-1.html#cb30-13"></a>         <span class="dt">pop1 =</span> <span class="kw">factor</span>(prep1, <span class="dt">levels =</span> pop_levels),</span>
+<span id="cb30-14"><a href="figure-1.html#cb30-14"></a>         <span class="dt">pop2 =</span> <span class="kw">factor</span>(prep2, <span class="dt">levels =</span> pop_levels),</span>
+<span id="cb30-15"><a href="figure-1.html#cb30-15"></a>         <span class="dt">value =</span> <span class="kw">sprintf</span>(<span class="st">&#39;%7.5f&#39;</span>, value) ) <span class="op">%&gt;%</span></span>
+<span id="cb30-16"><a href="figure-1.html#cb30-16"></a><span class="st">  </span><span class="kw">select</span>(pop1,pop2,value) <span class="op">%&gt;%</span></span>
+<span id="cb30-17"><a href="figure-1.html#cb30-17"></a><span class="st">  </span><span class="kw">arrange</span>(pop2,pop1) <span class="op">%&gt;%</span></span>
+<span id="cb30-18"><a href="figure-1.html#cb30-18"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pop2 =</span> <span class="kw">as.character</span>(pop2) <span class="op">%&gt;%</span></span>
+<span id="cb30-19"><a href="figure-1.html#cb30-19"></a><span class="st">           </span><span class="kw">str_replace</span>(<span class="dt">pattern =</span> <span class="st">&#39;([a-z]{3})([a-z]{3})&#39;</span>,</span>
+<span id="cb30-20"><a href="figure-1.html#cb30-20"></a>                       <span class="dt">replacement =</span> <span class="st">&#39;</span><span class="ch">\\</span><span class="st">1|</span><span class="ch">\\</span><span class="st">2&#39;</span>),</span>
+<span id="cb30-21"><a href="figure-1.html#cb30-21"></a>         <span class="dt">pop1 =</span> <span class="kw">as.character</span>(pop1) <span class="op">%&gt;%</span></span>
+<span id="cb30-22"><a href="figure-1.html#cb30-22"></a><span class="st">           </span><span class="kw">str_replace</span>(<span class="dt">pattern =</span> <span class="st">&#39;([a-z]{3})([a-z]{3})&#39;</span>,</span>
+<span id="cb30-23"><a href="figure-1.html#cb30-23"></a>                       <span class="dt">replacement =</span> <span class="st">&#39;</span><span class="ch">\\</span><span class="st">1|</span><span class="ch">\\</span><span class="st">2&#39;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb30-24"><a href="figure-1.html#cb30-24"></a><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">values_from =</span> value,</span>
+<span id="cb30-25"><a href="figure-1.html#cb30-25"></a>              <span class="dt">names_from =</span> pop2) <span class="op">%&gt;%</span></span>
+<span id="cb30-26"><a href="figure-1.html#cb30-26"></a><span class="st">  </span><span class="kw">rename</span>( <span class="dt">Population =</span> <span class="st">&#39;pop1&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb30-27"><a href="figure-1.html#cb30-27"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">srt1 =</span> <span class="kw">str_sub</span>(Population,<span class="op">-</span><span class="dv">3</span>, <span class="dv">-1</span>),</span>
+<span id="cb30-28"><a href="figure-1.html#cb30-28"></a>         <span class="dt">srt2 =</span> <span class="kw">str_sub</span>(Population,<span class="dv">1</span>, <span class="dv">3</span>))  <span class="op">%&gt;%</span></span>
+<span id="cb30-29"><a href="figure-1.html#cb30-29"></a><span class="st">  </span><span class="kw">arrange</span>(srt1,srt2) <span class="op">%&gt;%</span></span>
+<span id="cb30-30"><a href="figure-1.html#cb30-30"></a><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>srt1,<span class="op">-</span>srt2)</span></code></pre></div>
+<p>Then, missing data is formated to be displayed as dashes.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="figure-1.html#cb31-1"></a><span class="co"># replace &quot;NA&quot; by dashes &quot;-&quot;</span></span>
+<span id="cb31-2"><a href="figure-1.html#cb31-2"></a>table_all[<span class="kw">is.na</span>(table_all)] &lt;-<span class="st"> &#39;-&#39;</span></span></code></pre></div>
+<p>Finally, the table is subset for each location and exported as a <code>.tex</code> file to be easily integrated within the <code>latex</code> document of the manuscript.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="figure-1.html#cb32-1"></a><span class="co"># export sub-tables 1 a - c</span></span>
+<span id="cb32-2"><a href="figure-1.html#cb32-2"></a>table_all[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span><span class="op">:</span><span class="dv">6</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">export_2_latex</span>(<span class="dt">name =</span> <span class="st">&#39;tables/suppl_tab3a.tex&#39;</span>)</span>
+<span id="cb32-3"><a href="figure-1.html#cb32-3"></a>table_all[<span class="dv">6</span><span class="op">:</span><span class="dv">11</span>,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">7</span><span class="op">:</span><span class="dv">12</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">export_2_latex</span>(<span class="dt">name =</span> <span class="st">&#39;tables/suppl_tab3b.tex&#39;</span>)</span>
+<span id="cb32-4"><a href="figure-1.html#cb32-4"></a>table_all[<span class="dv">12</span><span class="op">:</span><span class="dv">14</span>, <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">13</span><span class="op">:</span><span class="dv">15</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">export_2_latex</span>(<span class="dt">name =</span> <span class="st">&#39;tables/suppl_tab3c.tex&#39;</span>)</span></code></pre></div>
 <hr />
 
 </div>
