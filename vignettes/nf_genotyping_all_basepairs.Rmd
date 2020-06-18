@@ -34,6 +34,13 @@ prod_geno_all <- tibbler(c('filtered_snps'))
 
 # (git 2) Genotyping II (all callable sites)
 
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/02_genotyping_all_basepairs
+source ../sh/nextflow_alias.sh
+nf_run_allbp
+```
 
 ## Summary
 

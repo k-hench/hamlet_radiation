@@ -34,6 +34,14 @@ prod_msmc <- tibbler(c('coverage_by_sample_lg', 'msmc_grouping', 'segsites_by_sa
 
 # (git 8) Analysis VI (Demographic History)
 
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/08_analysis_msmc
+source ../sh/nextflow_alias.sh
+nf_run_msmc
+```
+
 ## Summary
 
 The demographic history rate is inferred within the [**nextflow**](https://www.nextflow.io/) script `analysis_msmc.nf` (located under `$BASE_DIR/nf/08_analysis_msmc/`), which runs on the _SNPs only_ data set.

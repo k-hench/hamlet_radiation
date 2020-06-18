@@ -34,9 +34,17 @@ prod_hyb <- tibbler(c('newhybrids_output'))
 
 # (git 9) Analysis VII (hybridization)
 
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/09_analysis_hybridization
+source ../sh/nextflow_alias.sh
+nf_run_hybrid
+```
+
 ## Summary
 
-The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_hybridization.nf` (located under `$BASE_DIR/nf/09_analysis_hybridization/`), which runs on the XX data set.
+The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_hybridization.nf` (located under `$BASE_DIR/nf/09_analysis_hybridization/`), which runs on the _SNPs only_ data set.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 

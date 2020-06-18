@@ -34,6 +34,14 @@ prod_geno <- tibbler(c('phased_vcf', 'phased_mac2_vcf', 'filtered_snps', 'raw_me
 
 # (git 1) Genotyping I (SNPs only)
 
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/01_genotyping
+source ../sh/nextflow_alias.sh
+nf_run_gatk
+```
+
 ## Summary
 
 The genotyping procedure is controlled by the [**nextflow**](https://www.nextflow.io/) script `genotyping.nf` (located under `$BASE_DIR/nf/01_genotyping/`).

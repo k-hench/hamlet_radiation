@@ -36,6 +36,14 @@ prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'ge
 
 # (git 3) Analysis I (<i>F<sub>ST</sub></i> & GxP)
 
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/03_analysis_fst_gxp
+source ../sh/nextflow_alias.sh
+nf_run_basic
+```
+
 ## Summary
 
 The genetic differentiation, as well as the genotype x phenotype association, are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_gxp.nf` (located under `$BASE_DIR/nf/03_analysis_fst_gxp/`).

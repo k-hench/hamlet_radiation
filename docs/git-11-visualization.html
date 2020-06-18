@@ -208,10 +208,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="11.2.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#data-preparation-7"><i class="fa fa-check"></i><b>11.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="git-11-visualization.html"><a href="git-11-visualization.html"><i class="fa fa-check"></i><b>12</b> (git 11) Visualization</a><ul>
-<li class="chapter" data-level="12.1" data-path="git-11-visualization.html"><a href="git-11-visualization.html#all-at-once"><i class="fa fa-check"></i><b>12.1</b> All at once</a></li>
-<li class="chapter" data-level="12.2" data-path="git-11-visualization.html"><a href="git-11-visualization.html#one-by-one"><i class="fa fa-check"></i><b>12.2</b> One by one</a></li>
-</ul></li>
+<li class="chapter" data-level="12" data-path="git-11-visualization.html"><a href="git-11-visualization.html"><i class="fa fa-check"></i><b>12</b> (git 11) Visualization</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 <li> <image src="logo.svg" alt="Smiley face" style="width:100%; height:100px;"> </li>
@@ -235,17 +232,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="git-11-visualization" class="section level1">
 <h1><span class="header-section-number">12</span> (git 11) Visualization</h1>
-<div id="all-at-once" class="section level2">
-<h2><span class="header-section-number">12.1</span> All at once</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="git-11-visualization.html#cb2-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb2-2"><a href="git-11-visualization.html#cb2-2"></a><span class="fu">bash</span> sh/create_figures.sh</span></code></pre></div>
-</div>
-<div id="one-by-one" class="section level2">
-<h2><span class="header-section-number">12.2</span> One by one</h2>
+<p>After all <code>nextflow</code> pipelines are successfully run to completion, each Figure (and Suppl. Figure) of the manuscript can be re-created with its respective <code>R</code> script located under <code>R/fig</code>.
+These are executable <code>R</code> scripts that can be launched from the base directory;</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb12-1"><a href="git-11-visualization.html#cb12-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_Fxyz.R input1 input2 ...</span></code></pre></div>
+<p>For convenience, there also exists a <code>bash</code> script that can be used to re-create all Figures in one go (git 11):</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb13-1"><a href="git-11-visualization.html#cb13-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb13-2"><a href="git-11-visualization.html#cb13-2"></a><span class="fu">bash</span> sh/create_figures.sh</span></code></pre></div>
+<p>After running <code>create_figures.sh</code>, Figures 1 - 5 and Suppl. Figures 1 - 9 should be created withing the folder <code>figures/</code>.</p>
 <p>In the remaining documentation, the individual Visualization scripts are going to discussed in detail.</p>
 <hr />
 
-</div>
 </div>
             </section>
 

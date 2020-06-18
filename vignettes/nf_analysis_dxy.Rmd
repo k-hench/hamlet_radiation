@@ -34,6 +34,14 @@ prod_dxy <- tibbler(c('pi_50k', 'dxy_random_output_ch', 'random_fst_out', 'dxy_o
 
 # (git 4) Analysis II (<i>d<sub>XY</sub></i> & pi)
 
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/04_analysis_dxy
+source ../sh/nextflow_alias.sh
+nf_run_dxy
+```
+
 ## Summary
 
 The genetic divergence, as well diversity, are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dxy.nf` (located under `$BASE_DIR/nf/04_analysis_dxy/`).
