@@ -29,7 +29,7 @@ Rscript --vanilla R/fig/plot_SF1.R 2_analysis/newhyb/nh_input/NH.Results/
 
 ```
 
-## Details of `plot_SF.R`
+## Details of `plot_SF1.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts).
@@ -90,7 +90,7 @@ cli::rule(right = getwd())
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directories containing the hybridization data is received and stored in a variable.
+The directory containing the hybridization data is received and stored in a variable.
 
 ```{r, message = FALSE, warning = FALSE}
 # config -----------------------

@@ -19,7 +19,7 @@ Rscript --vanilla R/fig/plot_SF1.R 2_analysis/newhyb/nh_input/NH.Results/
 
 ```
 
-## Details of `plot_SF.R`
+## Details of `plot_SF1.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts).
@@ -82,7 +82,7 @@ cli::rule(right = getwd())
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directories containing the hybridization data is received and stored in a variable.
+The directory containing the hybridization data is received and stored in a variable.
 
 
 ```r
@@ -111,7 +111,7 @@ p_loc <- c("bel", "hon", "pan") %>%
 As an example we can have a look at the result for `plot_loc("pan")`:
 
 <center>
-<img src="plot_SF1_files/figure-html/unnamed-chunk-6-1.png" width="1536" />
+<img src="plot_SF1_files/figure-html/unnamed-chunk-6-1.png" width="960" />
 </center>
 
 All three panels are collected and the final Figure is composed using the pacckage [**patchwork**](https://patchwork.data-imaginist.com/):

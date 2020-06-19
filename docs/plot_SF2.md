@@ -84,6 +84,10 @@ args <- process_input(script_name, args)
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
+The directory containing the $F_{ST}$ data, and the files containing the locations
+of the $F_{ST}$ outlier regions and the genome wide $F_{ST}$ averages are
+received and stored in a variable.
+
 
 ```r
 # config -----------------------
@@ -92,14 +96,16 @@ outlier_file <- as.character(args[2])
 globals_file <- as.character(args[3])
 ```
 
+The files containing the windowed $F_{ST}$ data are located.
 
 
 ```r
 # load data -------------------
 # locate fst data files
-files <- dir(data_path,pattern = '.50k.windowed.weir.fst.gz')
+files <- dir(data_path, pattern = '.50k.windowed.weir.fst.gz')
 ```
 
+Based on these data files, the names of the pair wise species comparisons are created.
 
 
 ```r
@@ -109,6 +115,7 @@ run_files <- files %>%
   str_replace(.,pattern = '([a-z]{3})-([a-z]{3})-([a-z]{3})', '\\2\\1-\\3\\1')
 ```
 
+Then, the genome wide average $F_{ST}$ values are loaded.
 
 
 ```r
@@ -120,6 +127,7 @@ globals <- vroom::vroom(globals_file, delim = '\t',
          run = fct_reorder(run,weighted))
 ```
 
+Next, the windowed $F_{ST}$ data are imported.
 
 
 ```r
@@ -136,6 +144,9 @@ data <- purrr::pmap(tibble(file = str_c(data_path,files),
          run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ))
 ```
 
+To be able to indicate the genome wide average $F_{ST}$ in the background of the
+figure, the $F_{ST}$ values are scaled to the extent of  the hamlet reference genome.
+The rescaled $F_{ST}$ values are compiled into a table for plotting.
 
 
 ```r
@@ -154,6 +165,8 @@ global_bar <- globals %>%
          run_label = fct_reorder(run_label,xmax_org))
 ```
 
+To indicate the genome wide average $F_{ST}$ on a secondary x-axis, the secondary
+x-breakes are pre-computed.
 
 
 ```r
@@ -162,6 +175,7 @@ sc_ax <- scales::cbreaks(c(0,max(globals$weighted)),
                          scales::pretty_breaks(4))
 ```
 
+Then, the Supplementary Figure is assembled.
 
 
 ```r
@@ -205,7 +219,7 @@ p <- ggplot()+
 
 
 <center>
-<img src="plot_SF2_files/figure-html/unnamed-chunk-11-1.png" width="1152" />
+<img src="plot_SF2_files/figure-html/unnamed-chunk-11-1.png" width="768" />
 </center>
 
 Finally, we can export Supplementary Figure 2.

@@ -14,7 +14,7 @@
 #            '2_analysis/fst/50k/',
 #            '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 # script_name <- "R/fig/plot_SF3.R"
-args <- commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)

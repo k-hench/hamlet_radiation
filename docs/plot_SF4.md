@@ -9,17 +9,17 @@ editor_options:
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure .
-The Figure can be recreated by running the **R** script `plot_SF.R`:
+This is the accessory documentation of Supplementary Figure 4.
+The Figure can be recreated by running the **R** script `plot_SF4.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF
+Rscript --vanilla R/fig/plot_SF4
 
 ```
 
-## Details of `plot_SF.R`
+## Details of `plot_SF4.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts).
@@ -40,7 +40,7 @@ Then we drop all the imported information besides the arguments following the sc
 
 
 ```r
-#> ── Script: scripts/plot_SF.R ────────────────────────────────────────────
+#> ── Script: scripts/plot_SF4.R ────────────────────────────────────────────
 #> Parameters read:
 #>
 #> ─────────────────────────────────────────── /current/working/directory ──
