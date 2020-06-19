@@ -76,7 +76,7 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_F2.R ────────────────────────────────────────────
+#> ── Script: scripts/plot_F3.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/fst/50k/
 #> ★ 2: 2_analysis/summaries/fst_globals.txt
