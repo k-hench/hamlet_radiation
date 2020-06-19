@@ -69,8 +69,10 @@ So if you are only interested in a single figure - that is the place to start lo
 
 Furthermore, a more detailed documentation exists for all the figure scripts used for the manuscript:
 
-[F1](figure-1.html), [F2](figure-2.html), [F3](figure-3.html) & [F4](figure-4.html)
+[F1](figure-1.html), [F2](figure-2.html), [F3](figure-3.html), [F4](figure-4.html) and [F5](figure-5.html)
 
 as well as for all the supplementary figures:
 
-[SF1](), [SF2](), [SF3](), [SF4](), [SF5](), [SF6](), [SF7](), [SF8]() and [SF9]().
+[SF1](supplementary-figure-1.html), [SF2](supplementary-figure-2.html), [SF3](supplementary-figure-3.html),
+[SF4](supplementary-figure-4.html), [SF5](supplementary-figure-5.html), [SF6](supplementary-figure-6.html),
+[SF7](supplementary-figure-7.html), [SF8](supplementary-figure-8.html) and [SF9](supplementary-figure-9.html).
