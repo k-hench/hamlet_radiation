@@ -1,3 +1,40 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+# Figure 5
+
+
+
+## Summary
+
+This is the accessory documentation of Figure 5.
+The Figure can be recreated by running the **R** script `plot_F5.R`:
+
+```sh
+cd $BASE_DIR
+
+Rscript --vanilla R/fig/plot_F5.R \
+  2_analysis/twisst/weights/ ressources/plugin/trees/ \
+  https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+  2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
+  2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
+  2_analysis/GxP/50000/ 200 5 2_analysis/fst/poptree/summary/
+
+```
+
+## Details of `plot_F5.R`
+
+In the following, the individual steps of the R script are documented.
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts).
+
+### Config
+
+The scripts start with a header that contains copy & paste templates to execute or debug the script:
+
+
+```r
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F5.R \
@@ -19,6 +56,17 @@
 #           '2_analysis/GxP/50000/', 200, 5,
 #           "2_analysis/fst/poptree/summary/")
 # script_name <- "R/fig/plot_F5.R"
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) is loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+
+```r
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -35,6 +83,30 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: scripts/plot_F5.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/twisst/weights/
+#> ★ 2: ressources/plugin/trees/
+#> ★ 3: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
+#> ★ 4: 2_analysis/summaries/fst_outliers_998.tsv
+#> ★ 5: 2_analysis/dxy/50k/
+#> ★ 6: 2_analysis/fst/50k/
+#> ★ 7: 2_analysis/summaries/fst_globals.txt
+#> ★ 8: 2_analysis/GxP/50000/
+#> ★ 9: 200
+#> ★ 10: 5
+#> ★ 11: 2_analysis/fst/poptree/summary/
+#> ─────────────────────────────────────────── /current/working/directory ──
+```
+
+The directories for the different data types are received and stored in respective variables.
+Also, we source an external r script from the [original twisst github repository](https://github.com/simonhmartin/twisst) that we need to import the twisst data:
+
+
+```r
 # config -----------------------
 w_path <- as.character(args[1])
 d_path <- as.character(args[2])
@@ -48,12 +120,37 @@ twisst_size <- as.numeric(args[9])
 resolution <- as.numeric(args[10])
 fst_summary_path <- as.character(args[11])
 source(twisst_functions, local = TRUE)
+```
 
+The we define a buffer width.
+This is the extent left and right of the $F_{ST}$  outlier windows that is included in the plots.
+We also load the R packages **ape** and **igraph** that will help us working with phylogenetic objects (the twisst topologies).
+
+
+```r
 plan(multiprocess)
 window_buffer <- 2.5*10^5
 #-------------------
 library(ape)
 library(igraph)
+```
+
+### Data import
+
+Then, we start with the data import.
+For the figure we are going to need:
+
+- $d_{XY}$ data
+- genotype $\times$ phenotype data
+- $F_{ST}$ data
+- topology weighing data
+- the positions of the genome annotations
+- the positions of the $F_{ST}$ outlier windows
+
+We start by importing $d_{XY}$ by first listing all $d_{XY}$ data files and then iterating the $d_{XY}$ import function over the files.
+
+
+```r
 # actual script =========================================================
 # locate dxy data files
 dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.', resolution ,'0kb-', resolution ,'kb.tsv.gz'))
@@ -61,21 +158,36 @@ dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.', resolution ,'0kb-'
 # import dxy data
 dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
   purrr::pmap_dfr(get_dxy, kb = str_c(resolution ,'0kb'))
+```
 
+Next we iterate the genotype $\times$ phenotype import function over the trait names *Bars*, *Snout* and *Peduncle*.
+
+
+```r
 # set traits of interest for GxP
 gxp_traits <- c('Bars', 'Snout', 'Peduncle')
 
 # import GxP data
 gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.', resolution ,'0k.', resolution ,'k.txt.gz') %>%
   future_map_dfr(get_gxp_long, kb = 50)
+```
 
+Then, we define two sets of colors - one for the topology highlighting schemes and one for the traits of the genotype $\times$ phenotype association.
+
+
+```r
 # set topology weighting color scheme
 twisst_clr <- c(Blue = "#0140E5", Bars = "#E32210", Butter = "#E4E42E")
 # set GxP color scheme
 gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
   darken(factor = .95) %>%
   set_names(., nm = gxp_traits)
+```
 
+Next, we compute the average genome wide $d_{XY}$ and load the average genome wide $F_{ST}$ values for all 28 pair wise species comparisons.
+
+
+```r
 # copute genome wide average dxy
 dxy_globals <- dxy_data %>%
   filter(BIN_START %% ( resolution * 10000 ) == 1 ) %>%
@@ -90,7 +202,12 @@ fst_globals <- vroom::vroom(fst_globals,delim = '\t',
   separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
   mutate(run = str_c(pop1,loc,'-',pop2,loc),
          run = fct_reorder(run,weighted_fst))
+```
 
+After this, we import $F_{ST}$ by first listing all $F_{ST}$ data files and then iterating the $F_{ST}$ import function over the files.
+
+
+```r
 # locate fst data files
 fst_files <- dir(fst_dir ,pattern = str_c('.', resolution ,'0k.windowed.weir.fst.gz'))
 # import fst data
@@ -100,14 +217,25 @@ fst_data <- str_c(fst_dir, fst_files) %>%
   left_join(fst_globals) %>%
   mutate(run = refactor(., fst_globals),
          BIN_MID = (BIN_START+BIN_END)/2)
+```
 
+We then add the genome wide averages of $F_{ST}$ and $d_{XY}$ as new columns to the $d_{XY}$ data.
+This will be used later for coloring the $d_{XY}$ panel.
+
+
+```r
 # order dxy population pairs by genomewide average fst
 dxy_data <- dxy_data %>%
   left_join(dxy_globals) %>%
   left_join(fst_globals) %>%
   mutate(run = refactor(dxy_data, fst_globals),
          window = 'bold(italic(d[xy]))')
+```
 
+Then, we summarize the $d_{XY}$ data to compute $\Delta d_{XY}$.
+
+
+```r
 # compute delta dxy
 data_dxy_summary <- dxy_data %>%
   group_by(GPOS) %>%
@@ -121,7 +249,13 @@ data_dxy_summary <- dxy_data %>%
             median_dxy = median(dxy),
             sd_dxy = sd(dxy),
             delta_dxy = max(dxy)-min(dxy))
+```
 
+To only load the relevant twisst data, we first load the positions of the $F_{ST}$ outlier regions.
+We also define a set of outliers of interest.
+
+
+```r
 # twisst part ------------------
 # load fst outlier regions
 outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
@@ -129,7 +263,13 @@ outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
 
 # set outlier regions of interest
 outlier_pick = c('LG04_1', 'LG12_3', 'LG12_4')
+```
 
+Then we define a set of genes of interest.
+These are the ones, that later will be labeled in the annotation panel.
+
+
+```r
 # select genes to label
 cool_genes <-  c('arl3','kif16b','cdx1','hmcn2',
                  'sox10','smarca4',
@@ -139,18 +279,35 @@ cool_genes <-  c('arl3','kif16b','cdx1','hmcn2',
                  'hoxc8a','hoxc9','hoxc10a',
                  'hoxc13a','rarga','rarg',
                  'snai1','fam83d','mafb','sws2abeta','sws2aalpha','sws2b','lws','grm8')
+```
 
+Next, we load the twisst data for both locations and list all species from Belize (This will be needed to calculate their pair wise distances for the topology highlighting).
+
+
+```r
 # load twisst data
 data_tables <- list(bel = prep_data(loc = 'bel'),
                     hon = prep_data(loc = 'hon'))
 
 # set species sampled in belize
 pops_bel <- c('ind', 'may', 'nig', 'pue', 'uni')
+```
 
+### Plotting
+
+As a last step before the actual plotting, we are defining a list of outliers to be included within the final plots.
+
+
+```r
 # set outlier region label
 region_label_tibbles <- tibble(outlier_id = outlier_pick,
                             label = c('A','B','C'))
+```
 
+We adjust the trait images to show the depicted trait in the same color it is also plotted within figure.
+
+
+```r
 # load and recolor trait icons
 trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_trait_img$trait %in% gxp_traits],
                      layer = c(4,3,7),
@@ -160,7 +317,13 @@ trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_tra
 
 # recolor second bars-layer
 trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7,color = gxp_clr[["Bars"]])
+```
 
+Then we prepare the population trees by computing neighbour joining trees based on pair wise $F_{ST}$.
+(This happens within `GenomicOriginsScripts::plot_fst_poptree()`.)
+
+
+```r
 # prepare population tree trait_panels ----------------------
 # load outler region wide average fst data
 tree_list <- outlier_pick %>%
@@ -169,7 +332,12 @@ tree_list <- outlier_pick %>%
 # create neighbour-joining trees and plot
 poptree_plot_list <-  tree_list %>%
   purrr::pmap(plot_fst_poptree)
+```
 
+Then, we iterate the main plotting function over all selected $F_{ST}$ outlier windows and combine the resulting plots into a multi panel plot.
+
+
+```r
 # compose base figure
 p_single <- outlier_table %>%
   filter(outlier_id %in% outlier_pick) %>%
@@ -182,7 +350,18 @@ p_single <- outlier_table %>%
   cowplot::plot_grid(plotlist = ., nrow = 2,
                      rel_heights = c(1, .17),
                      labels = letters[1:length(outlier_pick)] %>% project_case())
+```
 
+<center>
+<img src="plot_F5_files/figure-html/unnamed-chunk-19-1.png" width="1344" />
+</center>
+
+At this point all that we miss is the figure legend.
+So, for the $F_{ST}$, $d_{XY}$ and genotype $\times$ phenotype color schemes we create two dummy plots from where we can export the legends.
+We combine those two classical color legends into what will become the left column of the legend.
+
+
+```r
 # compile legend
 # dummy plot for fst legend
 p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_fst) %>% .[[1]]
@@ -198,7 +377,14 @@ p_leg_poptree <- (poptree_plot_list[[1]] + theme(legend.position = "bottom")) %>
 p_leg1 <- cowplot::plot_grid(p_leg_fst,
                              p_leg_gxp,
                              ncol = 1)
+```
 
+Then, we construct the topology highlighting color legend.
+We first define the three highlighting scenarios, the involved species and their base color and then iterate the legend plotting functions over those configurations.
+The resulting legend elements are then combined to create the right side of the figure legend and the two main legend elements are combined.
+
+
+```r
 # create sub-legend 2 (phylogeny schematics)
 p_leg2 <- tibble(spec1 = c('indigo', 'indigo','unicolor'),
                  spec2 = c('maya', 'puella',NA),
@@ -212,21 +398,48 @@ p_leg2 <- tibble(spec1 = c('indigo', 'indigo','unicolor'),
 p_leg_3 <- cowplot::plot_grid(p_leg1,
                             p_leg2,
                             nrow = 1, rel_widths = c(.6, 1))
+```
+
+Lastly, the legend elements from the population trees are added to complete the final legend.
+
+
+```r
 # complete legend
 p_leg <- cowplot::plot_grid(
   p_leg_poptree,
   p_leg_3,
   ncol = 1,
   rel_heights = c(.2, 1))
+```
 
+<center>
+<img src="plot_F5_files/figure-html/unnamed-chunk-23-1.png" width="1344" />
+</center>
+
+After adding the legend to the main part, Figure 4 is complete.
+
+
+```r
 # finalize figure
 p_done <- cowplot::plot_grid(p_single, p_leg,
                              ncol = 1,
                              rel_heights = c(1, .17))
+```
 
+<center>
+<img src="plot_F5_files/figure-html/unnamed-chunk-25-1.png" width="1344" />
+</center>
+
+Finally, we can export Figure 5.
+
+
+```r
 # export figure
 scl <- .9
 hypo_save(plot = p_done, filename = 'figures/F5.pdf',
           width = 14*scl, height = 13*scl,
           comment = script_name,
           device = cairo_pdf)
+```
+
+---
