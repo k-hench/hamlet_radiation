@@ -72,7 +72,7 @@ data2 <- data %>%
 # set font size
 fnt_sz <- 10
 
-# compiule plot
+# compile plot
 p <-  data2 %>%
   # select thresholds of interest
   filter(!(threshold_value %in% (c(0.02,.1,0.3, .4) %>%

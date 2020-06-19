@@ -21,7 +21,7 @@ Rscript --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
 ## Details of `plot_F1.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package **GenomicOriginsScripts**.
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts).
 
 ### Config
 

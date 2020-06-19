@@ -150,5 +150,5 @@ p_done <- p_msmc / p_cc + plot_annotation(tag_levels = c('a'))
 # export figure 2
 hypo_save(plot = p_done, filename = 'figures/F2.pdf',
           width = 10, height = 7,
-          comment = 'Rscript srews this one up',
+          comment = plot_comment,
           device = cairo_pdf)

@@ -9,10 +9,10 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
 library(GenomicOriginsScripts)
-library(patchwork)
-args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
-'2_analysis/msmc/setup/msmc_grouping.txt', '2_analysis/msmc/setup/msmc_cc_grouping.txt',
-'2_analysis/summaries/fst_globals.txt')
+library(ggforce)
+library(hypoimg)
+library(vroom)
+args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
 ```
 
 ## Summary
@@ -24,18 +24,13 @@ It should be possible to recreate the figure by running the **R** script `plot_F
 cd $BASE_DIR
 
 Rscript --vanilla R/fig/plot_F3.R \
-  2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
-  2_analysis/msmc/setup/msmc_cc_grouping.txt 2_analysis/msmc/setup/msmc_grouping.txt \
-  2_analysis/summaries/fst_globals.txt
+   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
 ```
-
-Unfortunately, currently this fails on my local machine apparently due to some inconsistencies between `Rscript` and interactive **R** sessions with regard to the library management.
-If running the script from the command line fails, the script can also be run interactively by un-comenting the `args <- ...` statement in the header and skipping the  header until the `# config ...` line.
 
 ## Details of `plot_F3.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory **R** packages **GenomicOriginsScripts** and on the **R** package [**patchwork**](https://patchwork.data-imaginist.com/).
+It is an executable R script that depends on the accessory **R** packages [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the **R** packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**vroom**](https://vroom.r-lib.org/) and [**ggforce**](https://ggforce.data-imaginist.com/).
 
 ### Config
 
@@ -45,32 +40,30 @@ The scripts start with a header that contains copy & paste templates to execute 
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F3.R \
-#   2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
-#   2_analysis/msmc/setup/msmc_cc_grouping.txt 2_analysis/msmc/setup/msmc_grouping.txt \
-#   2_analysis/summaries/fst_globals.txt
+#    2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 3 of the study "The genomic onset of a marine radiation"
-# by Hench, McMillan and Puebla
+# This script produces Figure 3 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
-# '2_analysis/msmc/setup/msmc_grouping.txt', '2_analysis/msmc/setup/msmc_cc_grouping.txt',
-# '2_analysis/summaries/fst_globals.txt')
-# ----------------------------------------
+# args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
+# script_name <- "R/fig/plot_F3.R"
 ```
 
-The next section processes the input from the command line (supposedly...).
+The next section processes the input from the command line.
 It stores the arguments in the vector `args`.
-The **R** packages **GenomicOriginsScripts** and **patchwork** are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+The R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 ```{r, eval = FALSE}
-args <- commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
-library(patchwork)
+library(ggforce)
+library(hypoimg)
+library(vroom)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -82,165 +75,164 @@ plot_comment <- script_name %>%
 args <- process_input(script_name, args)
 ```
 
-The directories for the demographic inference and the cross-coalescence data are received and stored in respective variables.
-Also, the files containing the groupings for demographic inference and cross-coalescence as well as the reference file for the genome wide $F_{ST}$ values are received.
-
-```{r, message = FALSE, warning = FALSE}
-# config ---------------------an--
-msmc_path <- as.character(args[1])
-cc_path <- as.character(args[2])
-msmc_group_file <- as.character(args[3])
-cc_group_file <- as.character(args[4])
-fst_globals_file <- as.character(args[5])
+```r
+#> ── Script: scripts/plot_F2.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/fst/50k/
+#> ★ 2: 2_analysis/summaries/fst_globals.txt
+#> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
-The **msmc** sample groupings are imported and the $F_{ST}$ values loaded.
+The directory containing the sliding window <i>F<sub>ST</sub></i> data and the and
+the file with the genome wide average <i>F<sub>ST</sub></i> for all the species
+comparisons are received from the command line input.
 
 ```{r, message = FALSE, warning = FALSE}
-# actual script =========================================================
-msmc_groups <- read_tsv(msmc_group_file)
-cc_groups <- read_tsv(cc_group_file)
-
-fst_globals <- vroom::vroom(fst_globals_file, delim = '\t',
-                            col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
-  separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
-  mutate(run = str_c(pop1,loc,'-',pop2,loc),
-         run = fct_reorder(run,weighted_fst))
+# config -----------------------
+data_dir <- as.character(args[1])
+globals_file <- as.character(args[2])
+# script -----------------------
 ```
 
-Next, the filenames of all **msmc** results are collected.
+Then, the data folder is scanned for windowed <i>F<sub>ST</sub></i> data with an
+window size of 50 kb.
 
 ```{r, message = FALSE, warning = FALSE}
-msmc_files <- dir(msmc_path, pattern = '.final.txt.gz')
-cc_files <- dir(cc_path, pattern = '.final.txt.gz')
+# locate data files
+files <- dir(path = data_dir, pattern = '.50k.windowed.weir.fst.gz')
 ```
 
-Separately, all the  demographic inference and cross-coalescence data are read in an compiled into two data sets.
+Next, the genome wide average <i>F<sub>ST</sub></i> data is loaded.
 
 ```{r, message = FALSE, warning = FALSE}
-msmc_data <- msmc_files %>%
-  map_dfr(.f = get_msmc, msmc_path = msmc_path)
-
-cc_data <- cc_files %>%
-  map_dfr(get_cc, cc_groups = cc_groups, cc_path = cc_path) %>%
-  mutate( run = factor(run, levels = levels(fst_globals$run)))
+# load genome wide average fst data
+globals <- vroom::vroom(globals_file, delim = '\t',
+                        col_names = c('loc','run','mean','weighted')) %>%
+  mutate(run = str_c(loc,'-',run) %>%
+           reformat_run_name()
+  )
 ```
 
-The default color scheme is adjusted (to keep _H. unicolor_ visible) and the tick color for the plots is defined.
+The package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) 
+contains the function `get_fst_fixed` to import <i>F<sub>ST</sub></i> data and compute the
+number, average length and cumulative length of regions exceeding a given <i>F<sub>ST</sub></i>
+threshold.
+
+Here, we prepare a table of a series of thresholds and all pair wise species comparisons
+as a configuration table for the following import with `get_fst_fixed`.
 
 ```{r, message = FALSE, warning = FALSE}
-clr_alt <- clr
-clr_alt['uni'] <- rgb(.8,.8,.8)
-clr_ticks <- 'lightgray'
+# prepare data import settings within a data table (tibble)
+import_table <- list(file = str_c(data_dir,files),
+                     fst_threshold = c(.5,.4,.3,.2,.1,.05,.02,.01)) %>%
+  cross_df() %>%
+  mutate( run =  file %>%
+            str_remove('^.*/') %>%
+            str_sub(.,1,11) %>%
+            reformat_run_name())
 ```
 
-The first panel containing the demographic history is created.
+Using the configuration table, the <i>F<sub>ST</sub></i> data are loaded, and the
+threshold-specific stats are computed.
 
 ```{r, message = FALSE, warning = FALSE}
-p_msmc <- msmc_data %>%
-  # remove the two first and last time segments
-  filter(!time_index %in% c(0:2,29:31)) %>%
-  ggplot( aes(x=YBP, y=Ne, group = run_nr, colour = spec)) +
-  # add guides for the logarithmic axes
-  annotation_logticks(sides="tl", color = clr_ticks) +
-  # add the msmc data as lines
-  geom_line()+
-  # set the color scheme
-  scale_color_manual('Species',
-                     values = clr_alt, label = sp_labs) +
-  # format the x axis
-  scale_x_log10(expand = c(0,0),
-                breaks = c(10^3, 10^4, 10^5),
-                position = 'top',
-                labels = c("1-3 kya", "10-30 kya", "100-300 kya"),
-                name = "Years Before Present") +
-  # format the y axis
-  scale_y_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
-                breaks = c(10^3,10^4,10^5,10^6)) +
-  # format the color legend
-  guides(colour = guide_legend(title.position = "top",
-                               override.aes = list(alpha = 1, size=1),
-                               nrow = 2, byrow=TRUE)) +
-  # set the axis titles
-  labs(x="Generations Before Present",
-       y = expression(Effective~Population~Size~(italic(N[e])))) +
-  # set plot range
-  coord_cartesian(xlim = c(250, 5*10^5)) +
-  # tune plot appreance
-  theme_minimal()+
-  theme(axis.ticks = element_line(colour = clr_ticks),
-        legend.position = c(1,.03),
-        legend.justification = c(1,0),
-        legend.text.align = 0,
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        title = element_text(face = 'bold'),
-        axis.title = element_text(face = 'plain'),
-        legend.title = element_text(face = 'plain'))
+# load data and compute statistics based on fixed fst treshold
+data <- purrr::pmap_dfr(import_table,get_fst_fixed) %>%
+  left_join(globals) %>%
+  mutate(run = fct_reorder(run, weighted))
 ```
 
-The second panel containing the cross-coalescence is created.
+To simplify the figure, a subset of the original thresholds are selected
+and some columns are renamed for clean figure labels.
 
 ```{r, message = FALSE, warning = FALSE}
-p_cc <- cc_data %>%
-  # remove the two first and last time segments
-  filter( !time_index %in% c(0:2,29:31)) %>%
-  arrange(run_nr) %>%
-  # attach fst data
-  left_join(fst_globals %>%
-              select(run, weighted_fst)) %>%
-  ggplot(aes(x = YBP, y = Cross_coal, group = run_nr, color = weighted_fst)) +
-  # add guides for the logarithmic axis
-  annotation_logticks(sides="b", color = clr_ticks) +
-  # add the msmc data as lines
-  geom_line(alpha = 0.2)+
-  # set the color scheme
-  scale_color_gradientn(name = expression(Global~weighted~italic(F[ST])),
-                        colours = hypogen::hypo_clr_LGs[1:24])+
-  # format the x axis
-  scale_x_log10(expand = c(0,0),
-                labels = scales::trans_format("log10", scales::math_format(10^.x))) +
-  # set the axis titles
-  guides(color = guide_colorbar(barheight = unit(7, 'pt'),
-                                barwidth = unit(150, 'pt'),
-                                title.position = 'top'))+
-  # set the axis titles
-  labs(x = "Generations Before Present",
-       y = 'Cross-coalescence Rate') +
-  # set plot range
-  coord_cartesian(xlim = c(250, 5*10^5)) +
-  # tune plot appreance
-  theme_minimal()+
-  theme(axis.ticks = element_line(colour = clr_ticks),
-        legend.position = c(1,.03),
-        legend.direction = 'horizontal',
-        legend.justification = c(1,0),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        title = element_text(face = 'bold'),
-        axis.title = element_text(face = 'plain'),
-        legend.title = element_text(face = 'plain'))
+# pre-format labels
+data2 <- data %>%
+  select(threshold_value,weighted,n,avg_length,overal_length) %>%
+  mutate(avg_length = avg_length/1000,
+         overal_length = overal_length/(10^6)) %>%
+  rename(`Number~of~Regions` = 'n',
+         `Average~Region~Length~(kb)` = 'avg_length',
+         `Cummulative~Region~Length~(Mb)` = 'overal_length') %>%
+  pivot_longer(names_to = 'variable',values_to = 'Value',3:5) %>%
+  mutate(threshold_value = str_c('italic(F[ST])~threshold:~',
+                                 threshold_value),
+         variable = factor(variable, levels = c('Number~of~Regions',
+                                                'Average~Region~Length~(kb)',
+                                                'Cummulative~Region~Length~(Mb)')))
 ```
 
-Then, the figure is composed from both panels.
+Then we set the font size and create the figure.
 
 ```{r, message = FALSE, warning = FALSE}
-p_done <- p_msmc / p_cc + plot_annotation(tag_levels = c('a'))
+# set font size
+fnt_sz <- 10
+
+# compile plot
+p <-  data2 %>%
+  # select thresholds of interest
+  filter(!(threshold_value %in% (c(0.02,.1,0.3, .4) %>%
+                                   str_c("italic(F[ST])~threshold:~",.)))) %>%
+  ggplot(aes(x = weighted, y = Value, fill = weighted))+
+  # add red line for genome extent in lowest row
+  geom_hline(data = tibble(variable = factor(c('Cummulative~Region~Length~(Mb)',
+                                               'Average~Region~Length~(kb)',
+                                               'Number~of~Regions'),
+                                             levels = c('Number~of~Regions',
+                                                        'Average~Region~Length~(kb)',
+                                                        'Cummulative~Region~Length~(Mb)')),
+                           y = c(559649677/(10^6),NA,NA)),
+             aes(yintercept = y),
+             color=rgb(1,0,0,.25))+
+  # add data points
+  geom_point(size = 1.75,
+             color = plot_clr, shape = 21)+
+  # define plot stucture
+  facet_grid(variable~threshold_value,
+             scale='free',
+             switch = 'y',
+             labeller = label_parsed)+
+  # configure scales
+  scale_fill_gradientn(name = expression(weighted~italic(F[ST])),
+                       colours = hypogen::hypo_clr_LGs[1:24] %>% clr_lighten(factor = .3))+
+  scale_x_continuous(name = expression(Whole-genome~differentiation~(weighted~italic(F[ST]))),
+                     breaks = c(0,.05,.1),
+                     limits = c(-.00025,.10025),
+                     labels = c("0", "0.05", "0.1"))+
+  # configure legend
+  guides(fill = guide_colorbar(barwidth = unit(150, "pt"),
+                               label.position = "top",
+                               barheight = unit(5,"pt")))+
+  # tweak plot apperance
+  theme(axis.title.y = element_blank(),
+        axis.text.x = element_text(vjust = .5, angle = 0),
+        axis.title.x = element_text(vjust = -2),
+        legend.position = "bottom",
+        strip.text = element_text(size = fnt_sz),
+        legend.direction = "horizontal",
+        strip.placement = 'outside',
+        axis.title = element_text(size = fnt_sz),
+        legend.title = element_text(size = fnt_sz),
+        strip.background.y = element_blank())
 ```
 
 <center>
-```{r, echo = FALSE, fig.width = 10, fig.height = 7}
-p_done
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 10.8, fig.height = 8.1, dev.args = list(type = "cairo")}
+p
 ```
 </center>
 
 Finally, we can export Figure 3.
 
 ```{r, eval = FALSE}
-hypo_save(plot = p_done, filename = 'figures/F3.pdf',
-          width = 10, height = 7,
-          comment = 'Rscript srews this one up',
-          device = cairo_pdf)
+# export figure 3
+scl <- .675
+hypo_save(filename = 'figures/F3.pdf',
+          plot = p,
+          width = 16*scl,
+          height = 12*scl,
+          device = cairo_pdf,
+          comment = plot_comment)
 ```
 
 ---
