@@ -51,7 +51,7 @@ Below is an overview of the steps involved in the analysis.
 <div style="max-width:500px; margin:auto;">
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 girafe( ggobj = dot_plot(file = "docs/analysis_hybrid.dot", git = 9, point_types = prod_hyb),
-        width_svg = 14, height_svg = 10)
+        width_svg = 12, height_svg = 9)
 ```
 </div>
 
@@ -71,6 +71,7 @@ Channel
 	.into{ vcf_loc1; vcf_loc2; vcf_loc3 }
 ```
 
+Since we are going to work on the three sampling locations independently, we create channel for the locations.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 9.2
@@ -80,6 +81,7 @@ Channel
 	.set{ locations_ch }
 ```
 
+Next, we define the species sets sampled at the individual locations.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 9.3
@@ -89,6 +91,7 @@ Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 ```
 
+For each location, we create all possible species pairs and then merge the channels of the different locations.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 9.4
@@ -117,6 +120,8 @@ pan_pairs_ch = Channel.from( "pan" )
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 ```
 
+We are going to run `newhybrids` only on a subset of the most diverged SNPs for each species pair.
+For this we first need to compute the $F_{ST}$ on a SNP level for each species pair.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 9.5
@@ -144,6 +149,7 @@ process fst_run {
 }
 ```
 
+For each species pair, the 800 most diverged SNPs for this particular pair are selected.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 9.6
@@ -166,6 +172,8 @@ process filter_fst {
 }
 ```
 
+This pre-selection is then filtered to guarantee a minimum distance of 5 kb between all SNPs.
+Of this filtered SNP set, 80 SNPs are randomly sampled and formateted for the `newhybrid` analysis.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 9.7
@@ -214,6 +222,7 @@ process prep_nh_input {
 }
 ```
 
+Using a prepared `R` sript we then can run `newhybrids` on the SNP selection.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 9.8
@@ -242,6 +251,6 @@ process run_nh {
 ```
 </div>
 
-Finally, we are done with XX.
+Finally, we are done with the hybridization analysis.
 
 ---

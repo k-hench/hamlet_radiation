@@ -295,6 +295,6 @@ process fasteprr_s3_summary {
 ```
 </div>
 
-Finally, we are done with recombination rate.
+Finally, we are done with preparing the recombination rate for plotting.
 
 ---

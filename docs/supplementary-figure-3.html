@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench" />
 
 
-<meta name="date" content="2020-06-19" />
+<meta name="date" content="2020-06-29" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -284,19 +284,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="24" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html"><i class="fa fa-check"></i><b>24</b> Supplementary Figure 7</a><ul>
 <li class="chapter" data-level="24.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#summary-21"><i class="fa fa-check"></i><b>24.1</b> Summary</a></li>
-<li class="chapter" data-level="24.2" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#details-of-plot_sf.r"><i class="fa fa-check"></i><b>24.2</b> Details of <code>plot_SF.R</code></a><ul>
+<li class="chapter" data-level="24.2" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#details-of-plot_sf7.r"><i class="fa fa-check"></i><b>24.2</b> Details of <code>plot_SF7.R</code></a><ul>
 <li class="chapter" data-level="24.2.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#config-11"><i class="fa fa-check"></i><b>24.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="25" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html"><i class="fa fa-check"></i><b>25</b> Supplementary Figure 8</a><ul>
 <li class="chapter" data-level="25.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#summary-22"><i class="fa fa-check"></i><b>25.1</b> Summary</a></li>
-<li class="chapter" data-level="25.2" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#details-of-plot_sf.r-1"><i class="fa fa-check"></i><b>25.2</b> Details of <code>plot_SF.R</code></a><ul>
+<li class="chapter" data-level="25.2" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#details-of-plot_sf8.r"><i class="fa fa-check"></i><b>25.2</b> Details of <code>plot_SF8.R</code></a><ul>
 <li class="chapter" data-level="25.2.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#config-12"><i class="fa fa-check"></i><b>25.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html"><i class="fa fa-check"></i><b>26</b> Supplementary Figure 9</a><ul>
 <li class="chapter" data-level="26.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#summary-23"><i class="fa fa-check"></i><b>26.1</b> Summary</a></li>
-<li class="chapter" data-level="26.2" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#details-of-plot_sf.r-2"><i class="fa fa-check"></i><b>26.2</b> Details of <code>plot_SF.R</code></a><ul>
+<li class="chapter" data-level="26.2" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#details-of-plot_sf9.r"><i class="fa fa-check"></i><b>26.2</b> Details of <code>plot_SF9.R</code></a><ul>
 <li class="chapter" data-level="26.2.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#config-13"><i class="fa fa-check"></i><b>26.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
@@ -475,52 +475,51 @@ The summary statistics of these regressions are added as separate columns of the
 <span id="cb134-30"><a href="supplementary-figure-3.html#cb134-30"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">8</span>,.<span class="dv">08</span>),</span>
 <span id="cb134-31"><a href="supplementary-figure-3.html#cb134-31"></a>        <span class="dt">strip.text =</span> <span class="kw">element_markdown</span>())</span></code></pre></div>
 <center>
-<pre><code>## Warning: Removed 700 rows containing non-finite values (stat_binhex).</code></pre>
 <img src="plot_SF3_files/figure-html/unnamed-chunk-11-1.png" width="960" />
 </center>
 <p>Then we plot the slopes of the regression within panel <strong>b</strong>.</p>
-<div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="supplementary-figure-3.html#cb136-1"></a><span class="co"># create subplot b (slopes)</span></span>
-<span id="cb136-2"><a href="supplementary-figure-3.html#cb136-2"></a>p2 &lt;-<span class="st"> </span>model_data <span class="op">%&gt;%</span></span>
-<span id="cb136-3"><a href="supplementary-figure-3.html#cb136-3"></a><span class="st">  </span><span class="kw">ggplot</span>()<span class="op">+</span></span>
-<span id="cb136-4"><a href="supplementary-figure-3.html#cb136-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> plot_clr,</span>
-<span id="cb136-5"><a href="supplementary-figure-3.html#cb136-5"></a>             <span class="kw">aes</span>(<span class="dt">x =</span> weighted_fst, <span class="dt">y =</span> slope))<span class="op">+</span></span>
-<span id="cb136-6"><a href="supplementary-figure-3.html#cb136-6"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(genome<span class="op">~</span>wide<span class="op">~</span>weighted<span class="op">~</span>mean<span class="op">~</span><span class="kw">italic</span>(F[ST])),</span>
-<span id="cb136-7"><a href="supplementary-figure-3.html#cb136-7"></a>       <span class="dt">y =</span> <span class="kw">expression</span>(slope<span class="op">~</span>(<span class="kw">f</span>(<span class="kw">italic</span>(F[ST]))<span class="op">==</span>a<span class="op">~</span>rho<span class="op">+</span>b)))<span class="op">+</span></span>
-<span id="cb136-8"><a href="supplementary-figure-3.html#cb136-8"></a><span class="st">  </span><span class="kw">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="supplementary-figure-3.html#cb135-1"></a><span class="co"># create subplot b (slopes)</span></span>
+<span id="cb135-2"><a href="supplementary-figure-3.html#cb135-2"></a>p2 &lt;-<span class="st"> </span>model_data <span class="op">%&gt;%</span></span>
+<span id="cb135-3"><a href="supplementary-figure-3.html#cb135-3"></a><span class="st">  </span><span class="kw">ggplot</span>()<span class="op">+</span></span>
+<span id="cb135-4"><a href="supplementary-figure-3.html#cb135-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> plot_clr,</span>
+<span id="cb135-5"><a href="supplementary-figure-3.html#cb135-5"></a>             <span class="kw">aes</span>(<span class="dt">x =</span> weighted_fst, <span class="dt">y =</span> slope))<span class="op">+</span></span>
+<span id="cb135-6"><a href="supplementary-figure-3.html#cb135-6"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(genome<span class="op">~</span>wide<span class="op">~</span>weighted<span class="op">~</span>mean<span class="op">~</span><span class="kw">italic</span>(F[ST])),</span>
+<span id="cb135-7"><a href="supplementary-figure-3.html#cb135-7"></a>       <span class="dt">y =</span> <span class="kw">expression</span>(slope<span class="op">~</span>(<span class="kw">f</span>(<span class="kw">italic</span>(F[ST]))<span class="op">==</span>a<span class="op">~</span>rho<span class="op">+</span>b)))<span class="op">+</span></span>
+<span id="cb135-8"><a href="supplementary-figure-3.html#cb135-8"></a><span class="st">  </span><span class="kw">theme_minimal</span>()</span></code></pre></div>
 <center>
 <img src="plot_SF3_files/figure-html/unnamed-chunk-13-1.png" width="480" />
 </center>
 <p>And finally the <span class="math inline">\(R^2\)</span> values in panel <strong>c</strong>.</p>
-<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="supplementary-figure-3.html#cb137-1"></a><span class="co"># create subplot c (R^2s)</span></span>
-<span id="cb137-2"><a href="supplementary-figure-3.html#cb137-2"></a>p3 &lt;-<span class="st"> </span>model_data <span class="op">%&gt;%</span></span>
-<span id="cb137-3"><a href="supplementary-figure-3.html#cb137-3"></a><span class="st">  </span><span class="kw">ggplot</span>()<span class="op">+</span></span>
-<span id="cb137-4"><a href="supplementary-figure-3.html#cb137-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> plot_clr,</span>
-<span id="cb137-5"><a href="supplementary-figure-3.html#cb137-5"></a>             <span class="kw">aes</span>(<span class="dt">x =</span> weighted_fst, <span class="dt">y =</span> r.squared))<span class="op">+</span></span>
-<span id="cb137-6"><a href="supplementary-figure-3.html#cb137-6"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(genome<span class="op">~</span>wide<span class="op">~</span>weighted<span class="op">~</span>mean<span class="op">~</span><span class="kw">italic</span>(F[ST])),</span>
-<span id="cb137-7"><a href="supplementary-figure-3.html#cb137-7"></a>       <span class="dt">y =</span> <span class="kw">expression</span>(<span class="kw">italic</span>(R<span class="op">^</span><span class="dv">2</span>)))<span class="op">+</span></span>
-<span id="cb137-8"><a href="supplementary-figure-3.html#cb137-8"></a><span class="st">  </span><span class="kw">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="supplementary-figure-3.html#cb136-1"></a><span class="co"># create subplot c (R^2s)</span></span>
+<span id="cb136-2"><a href="supplementary-figure-3.html#cb136-2"></a>p3 &lt;-<span class="st"> </span>model_data <span class="op">%&gt;%</span></span>
+<span id="cb136-3"><a href="supplementary-figure-3.html#cb136-3"></a><span class="st">  </span><span class="kw">ggplot</span>()<span class="op">+</span></span>
+<span id="cb136-4"><a href="supplementary-figure-3.html#cb136-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> plot_clr,</span>
+<span id="cb136-5"><a href="supplementary-figure-3.html#cb136-5"></a>             <span class="kw">aes</span>(<span class="dt">x =</span> weighted_fst, <span class="dt">y =</span> r.squared))<span class="op">+</span></span>
+<span id="cb136-6"><a href="supplementary-figure-3.html#cb136-6"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(genome<span class="op">~</span>wide<span class="op">~</span>weighted<span class="op">~</span>mean<span class="op">~</span><span class="kw">italic</span>(F[ST])),</span>
+<span id="cb136-7"><a href="supplementary-figure-3.html#cb136-7"></a>       <span class="dt">y =</span> <span class="kw">expression</span>(<span class="kw">italic</span>(R<span class="op">^</span><span class="dv">2</span>)))<span class="op">+</span></span>
+<span id="cb136-8"><a href="supplementary-figure-3.html#cb136-8"></a><span class="st">  </span><span class="kw">theme_minimal</span>()</span></code></pre></div>
 <center>
 <img src="plot_SF3_files/figure-html/unnamed-chunk-15-1.png" width="480" />
 </center>
 <p>The final figure is created by combining the three sub panels.</p>
-<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb138-1"><a href="supplementary-figure-3.html#cb138-1"></a><span class="co"># compose final figure</span></span>
-<span id="cb138-2"><a href="supplementary-figure-3.html#cb138-2"></a>p &lt;-<span class="st"> </span><span class="kw">plot_grid</span>(p1,</span>
-<span id="cb138-3"><a href="supplementary-figure-3.html#cb138-3"></a>               <span class="kw">plot_grid</span>(p2,p3,</span>
-<span id="cb138-4"><a href="supplementary-figure-3.html#cb138-4"></a>                         <span class="dt">nrow =</span> <span class="dv">1</span>,</span>
-<span id="cb138-5"><a href="supplementary-figure-3.html#cb138-5"></a>                         <span class="dt">labels =</span> letters[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>] <span class="op">%&gt;%</span></span>
-<span id="cb138-6"><a href="supplementary-figure-3.html#cb138-6"></a><span class="st">                           </span><span class="kw">project_case</span>()),</span>
-<span id="cb138-7"><a href="supplementary-figure-3.html#cb138-7"></a>          <span class="dt">ncol =</span> <span class="dv">1</span>,</span>
-<span id="cb138-8"><a href="supplementary-figure-3.html#cb138-8"></a>          <span class="dt">rel_heights =</span> <span class="kw">c</span>(<span class="dv">1</span>,.<span class="dv">3</span>),<span class="dt">labels =</span> <span class="kw">project_case</span>(<span class="kw">c</span>(<span class="st">&quot;a&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="supplementary-figure-3.html#cb137-1"></a><span class="co"># compose final figure</span></span>
+<span id="cb137-2"><a href="supplementary-figure-3.html#cb137-2"></a>p &lt;-<span class="st"> </span><span class="kw">plot_grid</span>(p1,</span>
+<span id="cb137-3"><a href="supplementary-figure-3.html#cb137-3"></a>               <span class="kw">plot_grid</span>(p2,p3,</span>
+<span id="cb137-4"><a href="supplementary-figure-3.html#cb137-4"></a>                         <span class="dt">nrow =</span> <span class="dv">1</span>,</span>
+<span id="cb137-5"><a href="supplementary-figure-3.html#cb137-5"></a>                         <span class="dt">labels =</span> letters[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>] <span class="op">%&gt;%</span></span>
+<span id="cb137-6"><a href="supplementary-figure-3.html#cb137-6"></a><span class="st">                           </span><span class="kw">project_case</span>()),</span>
+<span id="cb137-7"><a href="supplementary-figure-3.html#cb137-7"></a>          <span class="dt">ncol =</span> <span class="dv">1</span>,</span>
+<span id="cb137-8"><a href="supplementary-figure-3.html#cb137-8"></a>          <span class="dt">rel_heights =</span> <span class="kw">c</span>(<span class="dv">1</span>,.<span class="dv">3</span>),<span class="dt">labels =</span> <span class="kw">project_case</span>(<span class="kw">c</span>(<span class="st">&quot;a&quot;</span>)))</span></code></pre></div>
 <center>
 <img src="plot_SF3_files/figure-html/unnamed-chunk-17-1.png" width="960" />
 </center>
 <p>Finally, we can export Supplementary Figure 3.</p>
-<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="supplementary-figure-3.html#cb139-1"></a><span class="co"># export final figure</span></span>
-<span id="cb139-2"><a href="supplementary-figure-3.html#cb139-2"></a><span class="kw">hypo_save</span>(<span class="dt">filename =</span> <span class="st">&#39;figures/SF3.pdf&#39;</span>,</span>
-<span id="cb139-3"><a href="supplementary-figure-3.html#cb139-3"></a>          <span class="dt">plot =</span> p,</span>
-<span id="cb139-4"><a href="supplementary-figure-3.html#cb139-4"></a>          <span class="dt">width =</span> <span class="dv">10</span>,</span>
-<span id="cb139-5"><a href="supplementary-figure-3.html#cb139-5"></a>          <span class="dt">height =</span> <span class="dv">16</span>,</span>
-<span id="cb139-6"><a href="supplementary-figure-3.html#cb139-6"></a>          <span class="dt">comment =</span> plot_comment)</span></code></pre></div>
+<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb138-1"><a href="supplementary-figure-3.html#cb138-1"></a><span class="co"># export final figure</span></span>
+<span id="cb138-2"><a href="supplementary-figure-3.html#cb138-2"></a><span class="kw">hypo_save</span>(<span class="dt">filename =</span> <span class="st">&#39;figures/SF3.pdf&#39;</span>,</span>
+<span id="cb138-3"><a href="supplementary-figure-3.html#cb138-3"></a>          <span class="dt">plot =</span> p,</span>
+<span id="cb138-4"><a href="supplementary-figure-3.html#cb138-4"></a>          <span class="dt">width =</span> <span class="dv">10</span>,</span>
+<span id="cb138-5"><a href="supplementary-figure-3.html#cb138-5"></a>          <span class="dt">height =</span> <span class="dv">16</span>,</span>
+<span id="cb138-6"><a href="supplementary-figure-3.html#cb138-6"></a>          <span class="dt">comment =</span> plot_comment)</span></code></pre></div>
 <hr />
 
 </div>

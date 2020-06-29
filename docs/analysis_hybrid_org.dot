@@ -15,6 +15,10 @@ p1 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
 p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
 p1 -> p11 [label="vcf_loc1"];
 
+p2 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p3 [shape=point];
+p2 -> p3 [label="locations_ch"];
+
 p4 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
 p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="into"];
 p4 -> p5;

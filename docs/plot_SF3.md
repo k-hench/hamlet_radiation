@@ -219,11 +219,6 @@ p1 <- combined_data %>%
 ```
 
 <center>
-
-```
-## Warning: Removed 700 rows containing non-finite values (stat_binhex).
-```
-
 <img src="plot_SF3_files/figure-html/unnamed-chunk-11-1.png" width="960" />
 </center>
 

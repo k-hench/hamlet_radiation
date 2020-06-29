@@ -2,7 +2,7 @@
 title: "Script repository"
 subtitle: "(Hench *et al.* supplement)"
 author: "Kosmas Hench"
-date: "2020-06-19"
+date: "2020-06-29"
 documentclass: book
 bibliography: [book.bib]
 biblio-style: apalike
