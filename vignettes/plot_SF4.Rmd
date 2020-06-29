@@ -105,7 +105,7 @@ data <- str_c(dxy_path,files) %>%
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
 ```
 
-To be able to indicate the genome wide average in the background of the plot, we summarize the $d_{XY}$ data for each pair wise comparison and store the summary in a new table.
+To be able to indicate the genome wide average $d_{XY}$ in the background of the plot, we summarize the $d_{XY}$ data for each pair wise comparison and store the summary in a new table.
 
 ```{r, message = FALSE, warning = FALSE}
 # create table for the indication of genome wide average dxy in the plot background
@@ -122,7 +122,7 @@ global_bar <- data %>%
          scaled_dxy = genome_wide_dxy/max(genome_wide_dxy))
 ```
 
-For the hamlet illustrations, we also create a table in which we assign each comparison the matching illustration.
+For the hamlet illustrations, we also create a table in which we assign each illustration the matching comparison.
 
 ```{r, message = FALSE, warning = FALSE}
 # prepare plot annotaton images
@@ -135,7 +135,7 @@ grob_tibble <-  global_bar %>%
   bind_rows()
 ```
 
-The global average $d_{XY}$ indicated in the plot background uses a secondary x-axis. 
+The genome wide average $d_{XY}$ indicated in the plot background uses a secondary x-axis. 
 As a preparation for this, we create the desired breaks and labels for the secondary axis.
 
 ```{r, message = FALSE, warning = FALSE}

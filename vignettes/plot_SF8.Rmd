@@ -29,7 +29,7 @@ Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/
 ## Details of `plot_SF8.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the packages [**hypoimg**](https://k-hench.github.io/hypoimg) and [**ggtext**](https://wilkelab.org/ggtext/).
 
 ### Config
 
@@ -77,20 +77,24 @@ args <- process_input(script_name, args)
 #> ── Script: scripts/plot_SF8.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/pi/50k/
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ─────────────────────────────────────────── /current/working/directory ───
 ```
+
+The path containing the $\pi$ data is received and stored inside a more descriptive variable.
 
 ```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 pi_path <- as.character(args[1])
 ```
 
+This path is then screened for input files.
 
 ```{r, message = FALSE, warning = FALSE}
 # locate pi data files
 files <- dir(pi_path, pattern = '^[a-z]{6}.50k')
 ```
 
+All $\pi$ data files are loaded and compiled into a single data frame.
 
 ```{r, message = FALSE, warning = FALSE}
 # load pi data
@@ -98,6 +102,8 @@ data <- str_c(pi_path, files) %>%
   purrr::map(get_pi) %>%
   bind_rows()
 ```
+
+To be able to indicate the genome wide average $\pi$ in the background of the plot, we summarize the data for each population and store the summary in a new table.
 
 
 ```{r, message = FALSE, warning = FALSE}
@@ -115,6 +121,7 @@ global_bar <- data %>%
          scaled_pi = genome_wide_pi/max(genome_wide_pi))
 ```
 
+For the hamlet illustrations, we also create a table in which we assign each illustration to the matching population.
 
 ```{r, message = FALSE, warning = FALSE}
 # prepare plot annotaton images
@@ -122,6 +129,9 @@ grob_tibble <- global_bar$spec %>%
   purrr::map(fish_plot) %>%
   bind_rows()
 ```
+
+The genome wide average $\pi$ indicated in the plot background uses a secondary x-axis. 
+As a preparation for this, we create the desired breaks and labels for the secondary axis.
 
 
 ```{r, message = FALSE, warning = FALSE}
@@ -136,12 +146,16 @@ labels <- str_c(c("", sc_ax$breaks[2:6]*1000),
 ```
 
 
+Instead of ordering the populations by alphabet, we want them to be sorted by genome wide average $\pi$.
+For this we turn the populations into a factor.
+
 ```{r, message = FALSE, warning = FALSE}
 # sort pair-wise population comparisons by average genome wide pi
 data <- data %>%
   mutate(spec = factor(spec, levels = levels(global_bar$spec)))
 ```
 
+Then we can put together the final plot.
 
 ```{r, message = FALSE, warning = FALSE}
 # compose final figure

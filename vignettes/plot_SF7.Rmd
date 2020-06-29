@@ -237,7 +237,7 @@ tib_drawing <- pheno_plot_data %>%
   ungroup()
 ```
 
-This table is the used to create a small plot.
+This table is then used to create a small plot.
 
 ```{r, message = FALSE, warning = FALSE}
 # create sub-plot for species indication

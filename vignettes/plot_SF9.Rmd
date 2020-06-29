@@ -28,7 +28,7 @@ Rscript --vanilla R/fig/plot_SF9.R 2_analysis/GxP/50000/
 ## Details of `plot_SF9.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg).
 
 ### Config
 
@@ -78,11 +78,14 @@ args <- process_input(script_name, args)
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
+The path containing the $G \times P$ data is received and stored inside a more descriptive variable.
+
 ```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 gxp_path <- as.character(args[1])
 ```
 
+We then set the specific traits for which we want to compare the $G \times P$ association under a *linear model* (lm) versus a *linear mixed model* (lmm).
 
 ```{r, message = FALSE, warning = FALSE}
 # configure which gxp data to load
@@ -94,12 +97,14 @@ trait_tib  <- tibble(file = dir(gxp_path) %>% .[str_detect(.,"Bars|Peduncle|Snou
   mutate(path = gxp_path)
 ```
 
+The we load the $G \times P$ data.
 
 ```{r, message = FALSE, warning = FALSE}
 # load gxp data
-data <- pmap_dfr(trait_tib,get_gxp_both_models)
+data <- pmap_dfr(trait_tib, get_gxp_both_models)
 ```
 
+After the data import this table is already suited for plotting. 
 
 ```{r, message = FALSE, warning = FALSE}
 # compose final figure

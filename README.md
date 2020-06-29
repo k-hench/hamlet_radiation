@@ -1,11 +1,5 @@
 # Code repository for: *Ancestral variation, hybridization and modularity fuel a marine radiation*
 
-```diff
-! Disclaimer: repository is still in development!
-! While the scripts of the actual analysis are finalized,
-! details (particularly of the documentation) will still change before publication.
-```
-
 This project contains the original bioinformatic analysis behind the paper *Ancestral variation, hybridization and modularity fuel a marine radiation* Hench, McMillan and Puebla.
 
 It covers all steps from genotyping based on raw sequencing data, over population genetic analysis to the final plotting of the figures and compilation of tables used within the publication.
