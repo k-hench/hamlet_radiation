@@ -14,7 +14,7 @@ library(phytools)
 library(hypoimg)
 library(geomfactory)
 library(GenomicOriginsScripts)
-args <- c()
+args <- c('2_analysis/fasttree/', 'no_outgroups.all.whg.SNP.tree')
 ```
 
 ## Summary

@@ -327,26 +327,230 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">24.1</span> Summary</h2>
 <p>This is the accessory documentation of Supplementary Figure 7.
 The Figure can be recreated by running the <strong>R</strong> script <code>plot_SF7.R</code>:</p>
-<div class="sourceCode" id="cb145"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb145-1"><a href="supplementary-figure-7.html#cb145-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb145-2"><a href="supplementary-figure-7.html#cb145-2"></a></span>
-<span id="cb145-3"><a href="supplementary-figure-7.html#cb145-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF7</span></code></pre></div>
+<div class="sourceCode" id="cb180"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb180-1"><a href="supplementary-figure-7.html#cb180-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb180-2"><a href="supplementary-figure-7.html#cb180-2"></a></span>
+<span id="cb180-3"><a href="supplementary-figure-7.html#cb180-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF7.R 2_analysis/admixture/ metadata/phenotypes.sc</span></code></pre></div>
 </div>
 <div id="details-of-plot_sf7.r" class="section level2">
 <h2><span class="header-section-number">24.2</span> Details of <code>plot_SF7.R</code></h2>
 <p>In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>.</p>
+It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>, as well as on the packages <a href="https://k-hench.github.io/hypoimg"><strong>hypoimg</strong></a>, <a href="https://wilkelab.org/ggtext/"><strong>ggtext</strong></a>, <a href="https://patchwork.data-imaginist.com/"><strong>patchwork</strong></a> and <a href="https://emilhvitfeldt.github.io/paletteer/"><strong>paletteer</strong></a>.</p>
 <div id="config-11" class="section level3">
 <h3><span class="header-section-number">24.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="supplementary-figure-7.html#cb181-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb181-2"><a href="supplementary-figure-7.html#cb181-2"></a><span class="co"># run from terminal:</span></span>
+<span id="cb181-3"><a href="supplementary-figure-7.html#cb181-3"></a><span class="co"># Rscript --vanilla R/fig/plot_SF7.R 2_analysis/admixture/ metadata/phenotypes.sc</span></span>
+<span id="cb181-4"><a href="supplementary-figure-7.html#cb181-4"></a><span class="co"># ===============================================================</span></span>
+<span id="cb181-5"><a href="supplementary-figure-7.html#cb181-5"></a><span class="co"># This script produces Suppl. Figure 7 of the study &quot;Ancestral variation,</span></span>
+<span id="cb181-6"><a href="supplementary-figure-7.html#cb181-6"></a><span class="co"># hybridization and modularity fuel a marine radiation&quot;</span></span>
+<span id="cb181-7"><a href="supplementary-figure-7.html#cb181-7"></a><span class="co"># by Hench, McMillan and Puebla</span></span>
+<span id="cb181-8"><a href="supplementary-figure-7.html#cb181-8"></a><span class="co"># ---------------------------------------------------------------</span></span>
+<span id="cb181-9"><a href="supplementary-figure-7.html#cb181-9"></a><span class="co"># ===============================================================</span></span>
+<span id="cb181-10"><a href="supplementary-figure-7.html#cb181-10"></a><span class="co"># args &lt;- c( &quot;2_analysis/admixture/&quot;, &quot;metadata/phenotypes.sc&quot;)</span></span>
+<span id="cb181-11"><a href="supplementary-figure-7.html#cb181-11"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF7.R&quot;</span></span></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
-The R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> is loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
+The needed R packages are and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="supplementary-figure-7.html#cb146-1"></a><span class="co">#&gt; ── Script: scripts/plot_SF7.R ────────────────────────────────────────────</span></span>
-<span id="cb146-2"><a href="supplementary-figure-7.html#cb146-2"></a><span class="co">#&gt; Parameters read:</span></span>
-<span id="cb146-3"><a href="supplementary-figure-7.html#cb146-3"></a><span class="co">#&gt;</span></span>
-<span id="cb146-4"><a href="supplementary-figure-7.html#cb146-4"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="supplementary-figure-7.html#cb182-1"></a>args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly=</span><span class="ot">FALSE</span>)</span>
+<span id="cb182-2"><a href="supplementary-figure-7.html#cb182-2"></a><span class="co"># setup -----------------------</span></span>
+<span id="cb182-3"><a href="supplementary-figure-7.html#cb182-3"></a><span class="kw">library</span>(paletteer)</span>
+<span id="cb182-4"><a href="supplementary-figure-7.html#cb182-4"></a><span class="kw">library</span>(patchwork)</span>
+<span id="cb182-5"><a href="supplementary-figure-7.html#cb182-5"></a><span class="kw">library</span>(GenomicOriginsScripts)</span>
+<span id="cb182-6"><a href="supplementary-figure-7.html#cb182-6"></a><span class="kw">library</span>(hypoimg)</span>
+<span id="cb182-7"><a href="supplementary-figure-7.html#cb182-7"></a><span class="kw">library</span>(ggtext)</span>
+<span id="cb182-8"><a href="supplementary-figure-7.html#cb182-8"></a></span>
+<span id="cb182-9"><a href="supplementary-figure-7.html#cb182-9"></a><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb182-10"><a href="supplementary-figure-7.html#cb182-10"></a>script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span></span>
+<span id="cb182-11"><a href="supplementary-figure-7.html#cb182-11"></a><span class="st">  </span><span class="kw">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</span>
+<span id="cb182-12"><a href="supplementary-figure-7.html#cb182-12"></a></span>
+<span id="cb182-13"><a href="supplementary-figure-7.html#cb182-13"></a>plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span></span>
+<span id="cb182-14"><a href="supplementary-figure-7.html#cb182-14"></a><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="kw">getwd</span>(),<span class="st">&#39;/&#39;</span>,.)</span>
+<span id="cb182-15"><a href="supplementary-figure-7.html#cb182-15"></a></span>
+<span id="cb182-16"><a href="supplementary-figure-7.html#cb182-16"></a>cli<span class="op">::</span><span class="kw">rule</span>( <span class="dt">left =</span> <span class="kw">str_c</span>(crayon<span class="op">::</span><span class="kw">bold</span>(<span class="st">&#39;Script: &#39;</span>),crayon<span class="op">::</span><span class="kw">red</span>(script_name)))</span>
+<span id="cb182-17"><a href="supplementary-figure-7.html#cb182-17"></a>args =<span class="st"> </span>args[<span class="dv">7</span><span class="op">:</span><span class="kw">length</span>(args)]</span>
+<span id="cb182-18"><a href="supplementary-figure-7.html#cb182-18"></a><span class="kw">cat</span>(<span class="st">&#39; &#39;</span>)</span>
+<span id="cb182-19"><a href="supplementary-figure-7.html#cb182-19"></a><span class="kw">cat</span>(<span class="kw">str_c</span>(crayon<span class="op">::</span><span class="kw">green</span>(cli<span class="op">::</span>symbol<span class="op">$</span>star),<span class="st">&#39; &#39;</span>, <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(args),<span class="st">&#39;: &#39;</span>,crayon<span class="op">::</span><span class="kw">green</span>(args),<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>))</span>
+<span id="cb182-20"><a href="supplementary-figure-7.html#cb182-20"></a>cli<span class="op">::</span><span class="kw">rule</span>(<span class="dt">right =</span> <span class="kw">getwd</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="supplementary-figure-7.html#cb183-1"></a><span class="co">#&gt; ── Script: scripts/plot_SF7.R ────────────────────────────────────────────</span></span>
+<span id="cb183-2"><a href="supplementary-figure-7.html#cb183-2"></a><span class="co">#&gt; Parameters read:</span></span>
+<span id="cb183-3"><a href="supplementary-figure-7.html#cb183-3"></a><span class="co">#&gt; ★ 1: 2_analysis/admixture/</span></span>
+<span id="cb183-4"><a href="supplementary-figure-7.html#cb183-4"></a><span class="co">#&gt; ★ 2: metadata/phenotypes.sc</span></span>
+<span id="cb183-5"><a href="supplementary-figure-7.html#cb183-5"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<p>The path containing the admixture results and the phenotype data file are received and stored inside more descriptive variables.</p>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="supplementary-figure-7.html#cb184-1"></a><span class="co"># config -----------------------</span></span>
+<span id="cb184-2"><a href="supplementary-figure-7.html#cb184-2"></a>admx_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</span>
+<span id="cb184-3"><a href="supplementary-figure-7.html#cb184-3"></a>pheno_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">2</span>])</span></code></pre></div>
+<p>Then, we extract the outlier region IDs from the admixture data file names for later use.</p>
+<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="supplementary-figure-7.html#cb185-1"></a><span class="co"># load outlier window IDs (crop from admixture result file names)</span></span>
+<span id="cb185-2"><a href="supplementary-figure-7.html#cb185-2"></a>gids &lt;-<span class="st"> </span><span class="kw">dir</span>(admx_path,</span>
+<span id="cb185-3"><a href="supplementary-figure-7.html#cb185-3"></a>            <span class="dt">pattern =</span> <span class="st">&quot;pop.*15.txt&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb185-4"><a href="supplementary-figure-7.html#cb185-4"></a><span class="st">  </span><span class="kw">str_remove</span>(<span class="st">&quot;pop.&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb185-5"><a href="supplementary-figure-7.html#cb185-5"></a><span class="st">  </span><span class="kw">str_remove</span>(<span class="st">&quot;.15.txt&quot;</span>)</span></code></pre></div>
+<p>We start the data import by loading the phenotype data.</p>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="supplementary-figure-7.html#cb186-1"></a><span class="co"># load phenotype data</span></span>
+<span id="cb186-2"><a href="supplementary-figure-7.html#cb186-2"></a>pheno_data &lt;-<span class="st"> </span><span class="kw">read_sc</span>(pheno_file) <span class="op">%&gt;%</span></span>
+<span id="cb186-3"><a href="supplementary-figure-7.html#cb186-3"></a><span class="st">  </span><span class="kw">select</span>(id, Bars, Peduncle, Snout) <span class="op">%&gt;%</span></span>
+<span id="cb186-4"><a href="supplementary-figure-7.html#cb186-4"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(Bars))</span></code></pre></div>
+<p>Then we load all the admixture results that used two clusters (<code>k = 2</code>).</p>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="supplementary-figure-7.html#cb187-1"></a><span class="co"># load admixture data</span></span>
+<span id="cb187-2"><a href="supplementary-figure-7.html#cb187-2"></a>data &lt;-<span class="st"> </span>gids <span class="op">%&gt;%</span></span>
+<span id="cb187-3"><a href="supplementary-figure-7.html#cb187-3"></a><span class="st">  </span><span class="kw">map_dfr</span>(data_amdx, <span class="dt">admx_path =</span> admx_path,</span>
+<span id="cb187-4"><a href="supplementary-figure-7.html#cb187-4"></a>          <span class="dt">k =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p>We want to indicate the phenotype of each trait under the outlier region that is expected to be most relevant for this trait.
+Therefore we assign each trait to a specific outlier ID.</p>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="supplementary-figure-7.html#cb188-1"></a><span class="co"># associate phenotypic trait with outlier region</span></span>
+<span id="cb188-2"><a href="supplementary-figure-7.html#cb188-2"></a>pheno_facet &lt;-<span class="st"> </span><span class="kw">tibble</span>( <span class="dt">trait =</span> <span class="kw">c</span>(<span class="st">&quot;Snout&quot;</span>,<span class="st">&quot;Bars&quot;</span>,  <span class="st">&quot;Peduncle&quot;</span>),</span>
+<span id="cb188-3"><a href="supplementary-figure-7.html#cb188-3"></a>                       <span class="dt">gid =</span> <span class="kw">c</span>(<span class="st">&quot;LG04_1&quot;</span>, <span class="st">&quot;LG12_3&quot;</span>, <span class="st">&quot;LG12_4&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb188-4"><a href="supplementary-figure-7.html#cb188-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">facet_label =</span> <span class="kw">str_c</span>(gid, <span class="st">&quot; / &quot;</span>, trait))</span></code></pre></div>
+<p>Then we format the outlier ID labels for the final plot.</p>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="supplementary-figure-7.html#cb189-1"></a><span class="co"># set outlier region labels</span></span>
+<span id="cb189-2"><a href="supplementary-figure-7.html#cb189-2"></a>gid_labels &lt;-<span class="st">  </span><span class="kw">c</span>(<span class="dt">LG04_1 =</span> <span class="st">&quot;LG04 (A)&quot;</span>,</span>
+<span id="cb189-3"><a href="supplementary-figure-7.html#cb189-3"></a>                 <span class="dt">LG12_3 =</span> <span class="st">&quot;LG12 (B)&quot;</span>,</span>
+<span id="cb189-4"><a href="supplementary-figure-7.html#cb189-4"></a>                 <span class="dt">LG12_4 =</span> <span class="st">&quot;LG12 (C)&quot;</span>)</span></code></pre></div>
+<p>To due the historic development of this script, there is a redundant assignment of outlier ID and trait (both are needed within functions of <strong>GenomicOriginsScripts</strong> 🤷).</p>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="supplementary-figure-7.html#cb190-1"></a><span class="co"># set outlier region phenotypic traits</span></span>
+<span id="cb190-2"><a href="supplementary-figure-7.html#cb190-2"></a>gid_traits &lt;-<span class="st">  </span><span class="kw">c</span>(<span class="dt">LG04_1 =</span> <span class="st">&quot;Snout&quot;</span>,</span>
+<span id="cb190-3"><a href="supplementary-figure-7.html#cb190-3"></a>                 <span class="dt">LG12_3 =</span> <span class="st">&quot;Bars&quot;</span>,</span>
+<span id="cb190-4"><a href="supplementary-figure-7.html#cb190-4"></a>                 <span class="dt">LG12_4 =</span> <span class="st">&quot;Peduncle&quot;</span>)</span></code></pre></div>
+<p>Using the <code>markdown</code> functionality of <strong>ggtext</strong>, we store each trait image in the axis labels using <code>html</code> syntax.</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="supplementary-figure-7.html#cb191-1"></a><span class="co"># set path to trait images</span></span>
+<span id="cb191-2"><a href="supplementary-figure-7.html#cb191-2"></a>trait_icons &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">LG04_1 =</span> <span class="st">&quot;&lt;img src=&#39;ressources/img/snout_c.png&#39; width=&#39;60&#39; /&gt;   &quot;</span>,</span>
+<span id="cb191-3"><a href="supplementary-figure-7.html#cb191-3"></a>               <span class="dt">LG12_3 =</span> <span class="st">&quot;&lt;img src=&#39;ressources/img/bars_c.png&#39; width=&#39;60&#39; /&gt;    &quot;</span>,</span>
+<span id="cb191-4"><a href="supplementary-figure-7.html#cb191-4"></a>               <span class="dt">LG12_4 =</span> <span class="st">&quot;&lt;img src=&#39;ressources/img/peduncle_c.png&#39; width=&#39;60&#39; /&gt;    &quot;</span>)</span></code></pre></div>
+<p>Then we clean and format the phenotype data for plotting.</p>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="supplementary-figure-7.html#cb192-1"></a><span class="co"># format phenotype data</span></span>
+<span id="cb192-2"><a href="supplementary-figure-7.html#cb192-2"></a>pheno_plot_data &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
+<span id="cb192-3"><a href="supplementary-figure-7.html#cb192-3"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">duplicated</span>(id)) <span class="op">%&gt;%</span></span>
+<span id="cb192-4"><a href="supplementary-figure-7.html#cb192-4"></a><span class="st">  </span><span class="kw">select</span>(id<span class="op">:</span>id_order) <span class="op">%&gt;%</span></span>
+<span id="cb192-5"><a href="supplementary-figure-7.html#cb192-5"></a><span class="st">  </span><span class="kw">left_join</span>(pheno_data,<span class="dt">by =</span> <span class="kw">c</span>( <span class="dt">id_nr =</span> <span class="st">&quot;id&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb192-6"><a href="supplementary-figure-7.html#cb192-6"></a><span class="st">  </span><span class="kw">arrange</span>(spec, Bars, Peduncle, Snout, id) <span class="op">%&gt;%</span></span>
+<span id="cb192-7"><a href="supplementary-figure-7.html#cb192-7"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">ord_nr =</span> <span class="kw">row_number</span>()) <span class="op">%&gt;%</span></span>
+<span id="cb192-8"><a href="supplementary-figure-7.html#cb192-8"></a><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="dt">names_to =</span> <span class="st">&quot;trait&quot;</span>,</span>
+<span id="cb192-9"><a href="supplementary-figure-7.html#cb192-9"></a>               <span class="dt">values_to =</span> <span class="st">&quot;phenotype&quot;</span>,</span>
+<span id="cb192-10"><a href="supplementary-figure-7.html#cb192-10"></a>               <span class="dt">cols =</span> Bars<span class="op">:</span>Snout) <span class="op">%&gt;%</span></span>
+<span id="cb192-11"><a href="supplementary-figure-7.html#cb192-11"></a><span class="st">  </span><span class="kw">left_join</span>(pheno_facet)</span></code></pre></div>
+<p>The separate panels of the figure are actually individual plots.
+To assure a consistent sample order, this is defined externally and stored within <code>sample_order</code>.</p>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="supplementary-figure-7.html#cb193-1"></a><span class="co"># helper for consistent sample order across all panels</span></span>
+<span id="cb193-2"><a href="supplementary-figure-7.html#cb193-2"></a>sample_order &lt;-<span class="st"> </span>pheno_plot_data <span class="op">%&gt;%</span></span>
+<span id="cb193-3"><a href="supplementary-figure-7.html#cb193-3"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">duplicated</span>(id)) <span class="op">%&gt;%</span></span>
+<span id="cb193-4"><a href="supplementary-figure-7.html#cb193-4"></a><span class="st">  </span><span class="kw">select</span>(id, ord_nr)</span></code></pre></div>
+<p>Then, the admixture panels (a - c) are created as three sepearted plots and stored within a list.</p>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="supplementary-figure-7.html#cb194-1"></a><span class="co"># create plot panels a-c</span></span>
+<span id="cb194-2"><a href="supplementary-figure-7.html#cb194-2"></a>p_ad &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;LG04_1&quot;</span>, <span class="st">&quot;LG12_3&quot;</span>, <span class="st">&quot;LG12_4&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">map</span>(adm_plot)</span></code></pre></div>
+<p>(Just as an example - here is the plot for panel c)</p>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="supplementary-figure-7.html#cb195-1"></a>p_ad[[<span class="dv">3</span>]] <span class="co"># not part of the actual script</span></span></code></pre></div>
+<center>
+<img src="plot_SF7_files/figure-html/unnamed-chunk-15-1.png" width="1382.4" />
+</center>
+<p>then we create a dummy plot to extract the legend for the phenotypes.</p>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="supplementary-figure-7.html#cb196-1"></a><span class="co"># create dummy plot for the phenotype legend</span></span>
+<span id="cb196-2"><a href="supplementary-figure-7.html#cb196-2"></a>p_phno &lt;-<span class="st"> </span>pheno_plot_data <span class="op">%&gt;%</span></span>
+<span id="cb196-3"><a href="supplementary-figure-7.html#cb196-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> ord_nr))<span class="op">+</span></span>
+<span id="cb196-4"><a href="supplementary-figure-7.html#cb196-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> trait, <span class="dt">fill =</span> <span class="kw">factor</span>(phenotype)),<span class="dt">shape =</span> <span class="dv">21</span>)<span class="op">+</span></span>
+<span id="cb196-5"><a href="supplementary-figure-7.html#cb196-5"></a><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="st">&quot;Phenotype&lt;br&gt;&lt;img src=&#39;ressources/img/all_traits_c.png&#39; width=&#39;110&#39; /&gt;&quot;</span>,</span>
+<span id="cb196-6"><a href="supplementary-figure-7.html#cb196-6"></a>                    <span class="dt">values =</span> <span class="kw">c</span>(<span class="st">`</span><span class="dt">0</span><span class="st">`</span> =<span class="st"> &quot;white&quot;</span>, <span class="st">`</span><span class="dt">1</span><span class="st">`</span> =<span class="st"> &quot;black&quot;</span>),</span>
+<span id="cb196-7"><a href="supplementary-figure-7.html#cb196-7"></a>                    <span class="dt">na.value =</span> <span class="st">&quot;gray&quot;</span>,</span>
+<span id="cb196-8"><a href="supplementary-figure-7.html#cb196-8"></a>                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;absent&quot;</span>, <span class="st">&quot;present&quot;</span>, <span class="st">&quot;not scored&quot;</span>))<span class="op">+</span></span>
+<span id="cb196-9"><a href="supplementary-figure-7.html#cb196-9"></a><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill =</span> <span class="kw">guide_legend</span>(<span class="dt">ncol =</span> <span class="dv">1</span>))<span class="op">+</span></span>
+<span id="cb196-10"><a href="supplementary-figure-7.html#cb196-10"></a><span class="st">  </span><span class="kw">theme_minimal</span>()<span class="op">+</span></span>
+<span id="cb196-11"><a href="supplementary-figure-7.html#cb196-11"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.title =</span> <span class="kw">element_markdown</span>(<span class="dt">hjust =</span> <span class="fl">.5</span>),</span>
+<span id="cb196-12"><a href="supplementary-figure-7.html#cb196-12"></a>    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)</span></code></pre></div>
+<p>Below the panels a - c, the species of the samples are indicated.
+To do this, we prepare a small table from the species affiliation of each sample.</p>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="supplementary-figure-7.html#cb197-1"></a><span class="co"># prepare table with fish annotations for the species indication</span></span>
+<span id="cb197-2"><a href="supplementary-figure-7.html#cb197-2"></a>tib_drawing &lt;-<span class="st"> </span>pheno_plot_data <span class="op">%&gt;%</span></span>
+<span id="cb197-3"><a href="supplementary-figure-7.html#cb197-3"></a><span class="st">  </span><span class="kw">group_by</span>(spec) <span class="op">%&gt;%</span></span>
+<span id="cb197-4"><a href="supplementary-figure-7.html#cb197-4"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">pos =</span> (<span class="kw">min</span>(ord_nr)<span class="op">+</span><span class="kw">max</span>(ord_nr))<span class="op">*</span>.<span class="dv">5</span>) <span class="op">%&gt;%</span></span>
+<span id="cb197-5"><a href="supplementary-figure-7.html#cb197-5"></a><span class="st">  </span><span class="kw">ungroup</span>()</span></code></pre></div>
+<p>This table is then used to create a small plot.</p>
+<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="supplementary-figure-7.html#cb198-1"></a><span class="co"># create sub-plot for species indication</span></span>
+<span id="cb198-2"><a href="supplementary-figure-7.html#cb198-2"></a>p_spec &lt;-<span class="st"> </span>pheno_plot_data <span class="op">%&gt;%</span></span>
+<span id="cb198-3"><a href="supplementary-figure-7.html#cb198-3"></a><span class="st">  </span><span class="kw">group_by</span>(spec) <span class="op">%&gt;%</span></span>
+<span id="cb198-4"><a href="supplementary-figure-7.html#cb198-4"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">start =</span> <span class="kw">min</span>(ord_nr)<span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb198-5"><a href="supplementary-figure-7.html#cb198-5"></a>            <span class="dt">end =</span> <span class="kw">max</span>(ord_nr)) <span class="op">%&gt;%</span></span>
+<span id="cb198-6"><a href="supplementary-figure-7.html#cb198-6"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">xmin =</span> start, <span class="dt">xmax =</span> end,</span>
+<span id="cb198-7"><a href="supplementary-figure-7.html#cb198-7"></a>             <span class="dt">ymin =</span> <span class="op">-</span><span class="ot">Inf</span>,</span>
+<span id="cb198-8"><a href="supplementary-figure-7.html#cb198-8"></a>             <span class="dt">ymax =</span> <span class="ot">Inf</span>))<span class="op">+</span></span>
+<span id="cb198-9"><a href="supplementary-figure-7.html#cb198-9"></a><span class="st">  </span><span class="co"># add colored backgroud boxes</span></span>
+<span id="cb198-10"><a href="supplementary-figure-7.html#cb198-10"></a><span class="st">  </span><span class="kw">geom_rect</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> spec), <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>)<span class="op">+</span></span>
+<span id="cb198-11"><a href="supplementary-figure-7.html#cb198-11"></a><span class="st">  </span><span class="co"># add fish images</span></span>
+<span id="cb198-12"><a href="supplementary-figure-7.html#cb198-12"></a><span class="st">  </span>(tib_drawing <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pmap</span>(add_spec_drawing))<span class="op">+</span></span>
+<span id="cb198-13"><a href="supplementary-figure-7.html#cb198-13"></a><span class="st">  </span><span class="co"># set axis layout</span></span>
+<span id="cb198-14"><a href="supplementary-figure-7.html#cb198-14"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="fl">.5</span>, <span class="dt">labels =</span> <span class="kw">c</span>( <span class="st">&quot;Species&quot;</span>), <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))<span class="op">+</span></span>
+<span id="cb198-15"><a href="supplementary-figure-7.html#cb198-15"></a><span class="st">  </span><span class="kw">scale_x_discrete</span>(<span class="dt">breaks =</span> sample_order<span class="op">$</span>ord_nr,</span>
+<span id="cb198-16"><a href="supplementary-figure-7.html#cb198-16"></a>                   <span class="dt">labels =</span> sample_order<span class="op">$</span>id,</span>
+<span id="cb198-17"><a href="supplementary-figure-7.html#cb198-17"></a>                   <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>)) <span class="op">+</span></span>
+<span id="cb198-18"><a href="supplementary-figure-7.html#cb198-18"></a><span class="st">  </span><span class="co"># set species color scheme</span></span>
+<span id="cb198-19"><a href="supplementary-figure-7.html#cb198-19"></a><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="st">&quot;Species&quot;</span>, <span class="dt">values =</span> clr, <span class="dt">labels =</span> sp_labs)<span class="op">+</span></span>
+<span id="cb198-20"><a href="supplementary-figure-7.html#cb198-20"></a><span class="st">  </span><span class="co"># set general plot layout</span></span>
+<span id="cb198-21"><a href="supplementary-figure-7.html#cb198-21"></a><span class="st">  </span><span class="kw">theme_minimal</span>()<span class="op">+</span></span>
+<span id="cb198-22"><a href="supplementary-figure-7.html#cb198-22"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">9</span>),</span>
+<span id="cb198-23"><a href="supplementary-figure-7.html#cb198-23"></a>        <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb198-24"><a href="supplementary-figure-7.html#cb198-24"></a>        <span class="dt">legend.text.align =</span> <span class="dv">0</span>,</span>
+<span id="cb198-25"><a href="supplementary-figure-7.html#cb198-25"></a>        <span class="dt">axis.title =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb198-26"><a href="supplementary-figure-7.html#cb198-26"></a>        <span class="dt">axis.ticks =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb198-27"><a href="supplementary-figure-7.html#cb198-27"></a>        <span class="dt">axis.text.x =</span> <span class="kw">element_blank</span>())</span></code></pre></div>
+<center>
+<img src="plot_SF7_files/figure-html/unnamed-chunk-19-1.png" width="1382.4" />
+</center>
+<p>Similarely to the species affiliation, we create a second plot to indicate the sampling location.</p>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="supplementary-figure-7.html#cb199-1"></a><span class="co"># create sub-plot for samplong location indication</span></span>
+<span id="cb199-2"><a href="supplementary-figure-7.html#cb199-2"></a>p_loc &lt;-<span class="st"> </span>pheno_plot_data <span class="op">%&gt;%</span></span>
+<span id="cb199-3"><a href="supplementary-figure-7.html#cb199-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">factor</span>(ord_nr)))<span class="op">+</span></span>
+<span id="cb199-4"><a href="supplementary-figure-7.html#cb199-4"></a><span class="st">  </span><span class="co"># add colored boxes</span></span>
+<span id="cb199-5"><a href="supplementary-figure-7.html#cb199-5"></a><span class="st">  </span><span class="kw">geom_raster</span>(<span class="kw">aes</span>(<span class="dt">y =</span> <span class="dv">0</span>, <span class="dt">fill =</span> loc))<span class="op">+</span></span>
+<span id="cb199-6"><a href="supplementary-figure-7.html#cb199-6"></a><span class="st">  </span><span class="co"># set axis layout</span></span>
+<span id="cb199-7"><a href="supplementary-figure-7.html#cb199-7"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Location&quot;</span>))<span class="op">+</span></span>
+<span id="cb199-8"><a href="supplementary-figure-7.html#cb199-8"></a><span class="st">  </span><span class="kw">scale_x_discrete</span>(<span class="dt">breaks =</span> sample_order<span class="op">$</span>ord_nr,</span>
+<span id="cb199-9"><a href="supplementary-figure-7.html#cb199-9"></a>                   <span class="dt">labels =</span> sample_order<span class="op">$</span>id) <span class="op">+</span></span>
+<span id="cb199-10"><a href="supplementary-figure-7.html#cb199-10"></a><span class="st">  </span><span class="co"># set location color scheme</span></span>
+<span id="cb199-11"><a href="supplementary-figure-7.html#cb199-11"></a><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="st">&quot;Location&quot;</span>, <span class="dt">values =</span>  clr_loc, loc_names)<span class="op">+</span></span>
+<span id="cb199-12"><a href="supplementary-figure-7.html#cb199-12"></a><span class="st">  </span><span class="co"># set general plot layout</span></span>
+<span id="cb199-13"><a href="supplementary-figure-7.html#cb199-13"></a><span class="st">  </span><span class="kw">theme_minimal</span>()<span class="op">+</span></span>
+<span id="cb199-14"><a href="supplementary-figure-7.html#cb199-14"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">9</span>),</span>
+<span id="cb199-15"><a href="supplementary-figure-7.html#cb199-15"></a>        <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb199-16"><a href="supplementary-figure-7.html#cb199-16"></a>        <span class="dt">axis.title =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb199-17"><a href="supplementary-figure-7.html#cb199-17"></a>        <span class="dt">axis.ticks =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb199-18"><a href="supplementary-figure-7.html#cb199-18"></a>        <span class="dt">axis.text.x =</span> <span class="kw">element_blank</span>())</span></code></pre></div>
+<center>
+<img src="plot_SF7_files/figure-html/unnamed-chunk-21-1.png" width="1382.4" />
+</center>
+<p>Then, we compose the figre legend from individual sub-legends.</p>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="supplementary-figure-7.html#cb200-1"></a><span class="co"># compose legend from individual legend parts</span></span>
+<span id="cb200-2"><a href="supplementary-figure-7.html#cb200-2"></a>p_l &lt;-<span class="st"> </span>(<span class="kw">get_legend</span>(p_phno) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggdraw</span>()) <span class="op">+</span></span>
+<span id="cb200-3"><a href="supplementary-figure-7.html#cb200-3"></a><span class="st">  </span>(<span class="kw">get_legend</span>(p_spec) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggdraw</span>()) <span class="op">+</span></span>
+<span id="cb200-4"><a href="supplementary-figure-7.html#cb200-4"></a><span class="st">  </span>(<span class="kw">get_legend</span>(p_loc) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggdraw</span>()) <span class="op">+</span></span>
+<span id="cb200-5"><a href="supplementary-figure-7.html#cb200-5"></a><span class="st">  </span><span class="kw">plot_layout</span>(<span class="dt">nrow =</span> <span class="dv">1</span>)</span></code></pre></div>
+<center>
+<img src="plot_SF7_files/figure-html/unnamed-chunk-23-1.png" width="1382.4" />
+</center>
+<p>At this point, we can assemble the final figure.
+Yet, due to the positioning of the trait images with <strong>ggtext</strong> we need to crop the left margin a little (hence we need <code>p_done2</code>).</p>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="supplementary-figure-7.html#cb201-1"></a><span class="co"># finalize figure</span></span>
+<span id="cb201-2"><a href="supplementary-figure-7.html#cb201-2"></a>p_done &lt;-<span class="st"> </span>p_ad[[<span class="dv">1</span>]] <span class="op">+</span></span>
+<span id="cb201-3"><a href="supplementary-figure-7.html#cb201-3"></a><span class="st">  </span>p_ad[[<span class="dv">2</span>]] <span class="op">+</span></span>
+<span id="cb201-4"><a href="supplementary-figure-7.html#cb201-4"></a><span class="st">  </span>p_ad[[<span class="dv">3</span>]]<span class="op">+</span></span>
+<span id="cb201-5"><a href="supplementary-figure-7.html#cb201-5"></a><span class="st">  </span>p_spec <span class="op">+</span><span class="st"> </span>p_loc <span class="op">+</span><span class="st"> </span>p_l <span class="op">+</span></span>
+<span id="cb201-6"><a href="supplementary-figure-7.html#cb201-6"></a><span class="st">  </span><span class="kw">plot_layout</span>(<span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">heights =</span> <span class="kw">c</span>(.<span class="dv">4</span>,.<span class="dv">4</span>,.<span class="dv">4</span>,.<span class="dv">08</span>,.<span class="dv">02</span>,.<span class="dv">1</span>)) <span class="op">&amp;</span></span>
+<span id="cb201-7"><a href="supplementary-figure-7.html#cb201-7"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb201-8"><a href="supplementary-figure-7.html#cb201-8"></a>        <span class="dt">axis.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="supplementary-figure-7.html#cb202-1"></a><span class="co"># crop final figure (remove whitespace on left margin)</span></span>
+<span id="cb202-2"><a href="supplementary-figure-7.html#cb202-2"></a>p_done2 &lt;-<span class="st"> </span><span class="kw">ggdraw</span>(p_done, <span class="dt">xlim =</span> <span class="kw">c</span>(.<span class="dv">023</span>,<span class="dv">1</span>))</span></code></pre></div>
+<center>
+<img src="plot_SF7_files/figure-html/unnamed-chunk-26-1.png" width="1382.4" />
+</center>
+<p>Finally, we can export Supplementary Figure 7.</p>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="supplementary-figure-7.html#cb203-1"></a><span class="co"># export final figure</span></span>
+<span id="cb203-2"><a href="supplementary-figure-7.html#cb203-2"></a>scl &lt;-<span class="st"> </span><span class="fl">.9</span></span>
+<span id="cb203-3"><a href="supplementary-figure-7.html#cb203-3"></a><span class="kw">ggsave</span>(<span class="st">&quot;figures/SF7.pdf&quot;</span>,</span>
+<span id="cb203-4"><a href="supplementary-figure-7.html#cb203-4"></a>       <span class="dt">plot =</span> p_done2,</span>
+<span id="cb203-5"><a href="supplementary-figure-7.html#cb203-5"></a>       <span class="dt">width =</span> <span class="dv">16</span><span class="op">*</span>scl,</span>
+<span id="cb203-6"><a href="supplementary-figure-7.html#cb203-6"></a>       <span class="dt">height =</span> <span class="dv">10</span><span class="op">*</span>scl,</span>
+<span id="cb203-7"><a href="supplementary-figure-7.html#cb203-7"></a>       <span class="dt">device =</span> cairo_pdf)</span></code></pre></div>
 <hr />
 
 </div>

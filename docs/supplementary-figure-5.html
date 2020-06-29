@@ -327,26 +327,141 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">22.1</span> Summary</h2>
 <p>This is the accessory documentation of Supplementary Figure 5.
 The Figure can be recreated by running the <strong>R</strong> script <code>plot_SF5.R</code>:</p>
-<div class="sourceCode" id="cb141"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb141-1"><a href="supplementary-figure-5.html#cb141-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb141-2"><a href="supplementary-figure-5.html#cb141-2"></a></span>
-<span id="cb141-3"><a href="supplementary-figure-5.html#cb141-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF5</span></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb152-1"><a href="supplementary-figure-5.html#cb152-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb152-2"><a href="supplementary-figure-5.html#cb152-2"></a></span>
+<span id="cb152-3"><a href="supplementary-figure-5.html#cb152-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF5.R 2_analysis/pi/50k/ \</span>
+<span id="cb152-4"><a href="supplementary-figure-5.html#cb152-4"></a>  2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span></code></pre></div>
 </div>
 <div id="details-of-plot_sf5.r" class="section level2">
 <h2><span class="header-section-number">22.2</span> Details of <code>plot_SF5.R</code></h2>
 <p>In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>.</p>
+It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> as well as the packages <a href="https://k-hench.github.io/hypoimg"><strong>hypoimg</strong></a> and <a href="https://vroom.r-lib.org/"><strong>vroom</strong></a>.</p>
 <div id="config-9" class="section level3">
 <h3><span class="header-section-number">22.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="supplementary-figure-5.html#cb153-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb153-2"><a href="supplementary-figure-5.html#cb153-2"></a><span class="co"># run from terminal:</span></span>
+<span id="cb153-3"><a href="supplementary-figure-5.html#cb153-3"></a><span class="co"># Rscript --vanilla R/fig/plot_SF5.R 2_analysis/pi/50k/ \</span></span>
+<span id="cb153-4"><a href="supplementary-figure-5.html#cb153-4"></a><span class="co">#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span></span>
+<span id="cb153-5"><a href="supplementary-figure-5.html#cb153-5"></a><span class="co"># ===============================================================</span></span>
+<span id="cb153-6"><a href="supplementary-figure-5.html#cb153-6"></a><span class="co"># This script produces Suppl. Figure 5 of the study &quot;Ancestral variation,</span></span>
+<span id="cb153-7"><a href="supplementary-figure-5.html#cb153-7"></a><span class="co"># hybridization and modularity fuel a marine radiation&quot;</span></span>
+<span id="cb153-8"><a href="supplementary-figure-5.html#cb153-8"></a><span class="co"># by Hench, McMillan and Puebla</span></span>
+<span id="cb153-9"><a href="supplementary-figure-5.html#cb153-9"></a><span class="co"># ---------------------------------------------------------------</span></span>
+<span id="cb153-10"><a href="supplementary-figure-5.html#cb153-10"></a><span class="co"># ===============================================================</span></span>
+<span id="cb153-11"><a href="supplementary-figure-5.html#cb153-11"></a><span class="co"># args &lt;- c(&#39;2_analysis/pi/50k/&#39;,</span></span>
+<span id="cb153-12"><a href="supplementary-figure-5.html#cb153-12"></a><span class="co">#           &#39;2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz&#39;)</span></span>
+<span id="cb153-13"><a href="supplementary-figure-5.html#cb153-13"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF5.R&quot;</span></span></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
-The R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> is loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="supplementary-figure-5.html#cb142-1"></a><span class="co">#&gt; ── Script: scripts/plot_SF5.R ────────────────────────────────────────────</span></span>
-<span id="cb142-2"><a href="supplementary-figure-5.html#cb142-2"></a><span class="co">#&gt; Parameters read:</span></span>
-<span id="cb142-3"><a href="supplementary-figure-5.html#cb142-3"></a><span class="co">#&gt;</span></span>
-<span id="cb142-4"><a href="supplementary-figure-5.html#cb142-4"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="supplementary-figure-5.html#cb154-1"></a>args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly=</span><span class="ot">FALSE</span>)</span>
+<span id="cb154-2"><a href="supplementary-figure-5.html#cb154-2"></a><span class="co"># setup -----------------------</span></span>
+<span id="cb154-3"><a href="supplementary-figure-5.html#cb154-3"></a><span class="kw">library</span>(GenomicOriginsScripts)</span>
+<span id="cb154-4"><a href="supplementary-figure-5.html#cb154-4"></a><span class="kw">library</span>(vroom)</span>
+<span id="cb154-5"><a href="supplementary-figure-5.html#cb154-5"></a><span class="kw">library</span>(hypoimg)</span>
+<span id="cb154-6"><a href="supplementary-figure-5.html#cb154-6"></a></span>
+<span id="cb154-7"><a href="supplementary-figure-5.html#cb154-7"></a><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb154-8"><a href="supplementary-figure-5.html#cb154-8"></a>script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span></span>
+<span id="cb154-9"><a href="supplementary-figure-5.html#cb154-9"></a><span class="st">  </span><span class="kw">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</span>
+<span id="cb154-10"><a href="supplementary-figure-5.html#cb154-10"></a></span>
+<span id="cb154-11"><a href="supplementary-figure-5.html#cb154-11"></a>plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span></span>
+<span id="cb154-12"><a href="supplementary-figure-5.html#cb154-12"></a><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="kw">getwd</span>(),<span class="st">&#39;/&#39;</span>,.)</span>
+<span id="cb154-13"><a href="supplementary-figure-5.html#cb154-13"></a></span>
+<span id="cb154-14"><a href="supplementary-figure-5.html#cb154-14"></a>args &lt;-<span class="st"> </span><span class="kw">process_input</span>(script_name, args)</span></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="supplementary-figure-5.html#cb155-1"></a><span class="co">#&gt; ── Script: scripts/plot_SF5.R ────────────────────────────────────────────</span></span>
+<span id="cb155-2"><a href="supplementary-figure-5.html#cb155-2"></a><span class="co">#&gt; Parameters read:</span></span>
+<span id="cb155-3"><a href="supplementary-figure-5.html#cb155-3"></a><span class="co">#&gt; ★ 1: 2_analysis/pi/50k/</span></span>
+<span id="cb155-4"><a href="supplementary-figure-5.html#cb155-4"></a><span class="co">#&gt; ★ 2: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span></span>
+<span id="cb155-5"><a href="supplementary-figure-5.html#cb155-5"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<p>The paths containing the <span class="math inline">\(\pi\)</span> and <span class="math inline">\(\rho\)</span> data are received and stored inside more descriptive variables.</p>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="supplementary-figure-5.html#cb156-1"></a><span class="co"># config -----------------------</span></span>
+<span id="cb156-2"><a href="supplementary-figure-5.html#cb156-2"></a>pi_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</span>
+<span id="cb156-3"><a href="supplementary-figure-5.html#cb156-3"></a>rho_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">2</span>])</span></code></pre></div>
+<p>The <span class="math inline">\(\pi\)</span>-path is screened for data files in the desired resolution (50 kb windows).</p>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="supplementary-figure-5.html#cb157-1"></a><span class="co"># locate pi data files</span></span>
+<span id="cb157-2"><a href="supplementary-figure-5.html#cb157-2"></a>files &lt;-<span class="st"> </span><span class="kw">dir</span>(pi_path, <span class="dt">pattern =</span> <span class="st">&#39;^[a-z]{6}.50k&#39;</span>)</span></code></pre></div>
+<p>Then, the <span class="math inline">\(\pi\)</span> data is loaded and compiled into a single table containing all populations.</p>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="supplementary-figure-5.html#cb158-1"></a><span class="co"># load pi data</span></span>
+<span id="cb158-2"><a href="supplementary-figure-5.html#cb158-2"></a>data &lt;-<span class="st"> </span><span class="kw">str_c</span>(pi_path, files) <span class="op">%&gt;%</span></span>
+<span id="cb158-3"><a href="supplementary-figure-5.html#cb158-3"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(get_pi) <span class="op">%&gt;%</span></span>
+<span id="cb158-4"><a href="supplementary-figure-5.html#cb158-4"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span></code></pre></div>
+<p>To be able to order the subplots of the final figure by the genome wide average <span class="math inline">\(\pi\)</span> of the populations, we create a second dta table containing the summary of the <span class="math inline">\(\pi\)</span> data for all populations.</p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="supplementary-figure-5.html#cb159-1"></a><span class="co"># compute genome wide average pi for the subplot order</span></span>
+<span id="cb159-2"><a href="supplementary-figure-5.html#cb159-2"></a>global_bar &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
+<span id="cb159-3"><a href="supplementary-figure-5.html#cb159-3"></a><span class="st">  </span><span class="kw">filter</span>( BIN_START <span class="op">%%</span><span class="st"> </span><span class="dv">50000</span> <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></span>
+<span id="cb159-4"><a href="supplementary-figure-5.html#cb159-4"></a><span class="st">  </span><span class="kw">select</span>(N_VARIANTS, PI, spec) <span class="op">%&gt;%</span></span>
+<span id="cb159-5"><a href="supplementary-figure-5.html#cb159-5"></a><span class="st">  </span><span class="kw">group_by</span>(spec) <span class="op">%&gt;%</span></span>
+<span id="cb159-6"><a href="supplementary-figure-5.html#cb159-6"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">genome_wide_pi =</span> <span class="kw">sum</span>(N_VARIANTS<span class="op">*</span>PI)<span class="op">/</span><span class="kw">sum</span>(N_VARIANTS)) <span class="op">%&gt;%</span></span>
+<span id="cb159-7"><a href="supplementary-figure-5.html#cb159-7"></a><span class="st">  </span><span class="kw">arrange</span>(genome_wide_pi) <span class="op">%&gt;%</span></span>
+<span id="cb159-8"><a href="supplementary-figure-5.html#cb159-8"></a><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></span>
+<span id="cb159-9"><a href="supplementary-figure-5.html#cb159-9"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">spec =</span> <span class="kw">fct_reorder</span>(<span class="dt">.f =</span> spec, <span class="dt">.x =</span> genome_wide_pi),</span>
+<span id="cb159-10"><a href="supplementary-figure-5.html#cb159-10"></a>         <span class="dt">scaled_pi =</span> genome_wide_pi<span class="op">/</span><span class="kw">max</span>(genome_wide_pi))</span></code></pre></div>
+<p>Then, we load the <span class="math inline">\(\rho\)</span> data.</p>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="supplementary-figure-5.html#cb160-1"></a><span class="co"># load recombination data</span></span>
+<span id="cb160-2"><a href="supplementary-figure-5.html#cb160-2"></a>rho_data &lt;-<span class="st"> </span><span class="kw">vroom</span>(rho_path, <span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb160-3"><a href="supplementary-figure-5.html#cb160-3"></a><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>BIN_END)</span></code></pre></div>
+<p>To be able to regress <span class="math inline">\(\pi\)</span> on <span class="math inline">\(\rho\)</span> the two data sets are merged based on the window position on the hamlet reference genome.</p>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="supplementary-figure-5.html#cb161-1"></a><span class="co"># merge pi and recombination data</span></span>
+<span id="cb161-2"><a href="supplementary-figure-5.html#cb161-2"></a>combined_data &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
+<span id="cb161-3"><a href="supplementary-figure-5.html#cb161-3"></a><span class="st">  </span><span class="co"># filter pi data to &quot;non-overlapping&quot; windows</span></span>
+<span id="cb161-4"><a href="supplementary-figure-5.html#cb161-4"></a><span class="st">  </span><span class="kw">filter</span>(BIN_START <span class="op">%%</span><span class="st"> </span><span class="dv">50000</span> <span class="op">==</span><span class="st"> </span><span class="dv">1</span> ) <span class="op">%&gt;%</span></span>
+<span id="cb161-5"><a href="supplementary-figure-5.html#cb161-5"></a><span class="st">  </span><span class="co"># reorder populations by genome wide average pi</span></span>
+<span id="cb161-6"><a href="supplementary-figure-5.html#cb161-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">spec =</span> <span class="kw">factor</span>(spec, <span class="dt">levels =</span> <span class="kw">levels</span>(global_bar<span class="op">$</span>spec))) <span class="op">%&gt;%</span></span>
+<span id="cb161-7"><a href="supplementary-figure-5.html#cb161-7"></a><span class="st">  </span><span class="co"># merge with recombination data</span></span>
+<span id="cb161-8"><a href="supplementary-figure-5.html#cb161-8"></a><span class="st">  </span><span class="kw">left_join</span>(rho_data, <span class="dt">by =</span> <span class="kw">c</span>(<span class="dt">CHROM =</span> <span class="st">&#39;CHROM&#39;</span>, <span class="dt">BIN_START =</span> <span class="st">&#39;BIN_START&#39;</span>))</span></code></pre></div>
+<p>Then the data set is nested and for each hamlet population a linear regression of the dependence of <span class="math inline">\(\pi\)</span> on <span class="math inline">\(\rho\)</span> is modeled.
+Then the model statistics are stored in additionnal columns.</p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="supplementary-figure-5.html#cb162-1"></a><span class="co"># nest data to run linear regression on all runs in one go</span></span>
+<span id="cb162-2"><a href="supplementary-figure-5.html#cb162-2"></a>model_data &lt;-<span class="st"> </span>combined_data <span class="op">%&gt;%</span></span>
+<span id="cb162-3"><a href="supplementary-figure-5.html#cb162-3"></a><span class="st">  </span><span class="kw">group_by</span>(spec) <span class="op">%&gt;%</span></span>
+<span id="cb162-4"><a href="supplementary-figure-5.html#cb162-4"></a><span class="st">  </span><span class="kw">nest</span>() <span class="op">%&gt;%</span></span>
+<span id="cb162-5"><a href="supplementary-figure-5.html#cb162-5"></a><span class="st">  </span><span class="kw">left_join</span>(., global_bar) <span class="op">%&gt;%</span></span>
+<span id="cb162-6"><a href="supplementary-figure-5.html#cb162-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">mod =</span>  <span class="kw">map</span>(data, <span class="op">~</span><span class="st"> </span><span class="kw">lm</span>(.<span class="op">$</span>PI <span class="op">~</span><span class="st"> </span>.<span class="op">$</span>RHO))) <span class="op">%&gt;%</span></span>
+<span id="cb162-7"><a href="supplementary-figure-5.html#cb162-7"></a><span class="st">  </span><span class="kw">bind_cols</span>(., <span class="kw">summarise_model</span>(.))</span></code></pre></div>
+<p>To indicate the hamlet population on the sub-plots, hamlet illustrations are loaded.</p>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="supplementary-figure-5.html#cb163-1"></a><span class="co"># create table with fish annotations</span></span>
+<span id="cb163-2"><a href="supplementary-figure-5.html#cb163-2"></a>grob_tibble2 &lt;-<span class="st"> </span>global_bar<span class="op">$</span>spec <span class="op">%&gt;%</span></span>
+<span id="cb163-3"><a href="supplementary-figure-5.html#cb163-3"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(fish_plot2) <span class="op">%&gt;%</span></span>
+<span id="cb163-4"><a href="supplementary-figure-5.html#cb163-4"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span></code></pre></div>
+<p>Then, the final figure is created.</p>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="supplementary-figure-5.html#cb164-1"></a><span class="co"># compose final figure</span></span>
+<span id="cb164-2"><a href="supplementary-figure-5.html#cb164-2"></a>p &lt;-<span class="st"> </span>combined_data <span class="op">%&gt;%</span></span>
+<span id="cb164-3"><a href="supplementary-figure-5.html#cb164-3"></a><span class="st">  </span><span class="kw">ggplot</span>()<span class="op">+</span></span>
+<span id="cb164-4"><a href="supplementary-figure-5.html#cb164-4"></a><span class="st">  </span><span class="co"># add fish annotations</span></span>
+<span id="cb164-5"><a href="supplementary-figure-5.html#cb164-5"></a><span class="st">  </span><span class="kw">geom_hypo_grob2</span>(<span class="dt">data =</span> grob_tibble2,</span>
+<span id="cb164-6"><a href="supplementary-figure-5.html#cb164-6"></a>                  <span class="kw">aes</span>(<span class="dt">grob =</span> grob, <span class="dt">rel_x =</span> <span class="fl">.25</span>,<span class="dt">rel_y =</span> <span class="fl">.75</span>),</span>
+<span id="cb164-7"><a href="supplementary-figure-5.html#cb164-7"></a>                  <span class="dt">angle =</span> <span class="dv">0</span>, <span class="dt">height =</span> <span class="fl">.5</span>,<span class="dt">width =</span> <span class="fl">.5</span>)<span class="op">+</span></span>
+<span id="cb164-8"><a href="supplementary-figure-5.html#cb164-8"></a><span class="st">  </span><span class="co"># add hex-bin desity layer</span></span>
+<span id="cb164-9"><a href="supplementary-figure-5.html#cb164-9"></a><span class="st">  </span><span class="kw">geom_hex</span>(<span class="dt">bins =</span> <span class="dv">30</span>,<span class="dt">color =</span> <span class="kw">rgb</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,.<span class="dv">3</span>),</span>
+<span id="cb164-10"><a href="supplementary-figure-5.html#cb164-10"></a>           <span class="kw">aes</span>(<span class="dt">fill=</span><span class="kw">log10</span>(..count..), <span class="dt">x =</span> RHO, <span class="dt">y =</span> PI))<span class="op">+</span></span>
+<span id="cb164-11"><a href="supplementary-figure-5.html#cb164-11"></a><span class="st"> </span><span class="co"># general plot structure (separated by run)</span></span>
+<span id="cb164-12"><a href="supplementary-figure-5.html#cb164-12"></a><span class="st">  </span><span class="kw">facet_wrap</span>(spec <span class="op">~</span>., <span class="dt">ncol =</span> <span class="dv">3</span>)<span class="op">+</span></span>
+<span id="cb164-13"><a href="supplementary-figure-5.html#cb164-13"></a><span class="st">  </span><span class="co"># set axis layout and color scheme</span></span>
+<span id="cb164-14"><a href="supplementary-figure-5.html#cb164-14"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">name =</span> <span class="kw">expression</span>(rho))<span class="op">+</span></span>
+<span id="cb164-15"><a href="supplementary-figure-5.html#cb164-15"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">name =</span> <span class="kw">expression</span>(pi))<span class="op">+</span></span>
+<span id="cb164-16"><a href="supplementary-figure-5.html#cb164-16"></a><span class="st">  </span>scico<span class="op">::</span><span class="kw">scale_fill_scico</span>(<span class="dt">palette =</span> <span class="st">&#39;berlin&#39;</span>) <span class="op">+</span></span>
+<span id="cb164-17"><a href="supplementary-figure-5.html#cb164-17"></a><span class="st">  </span><span class="co"># customize legend</span></span>
+<span id="cb164-18"><a href="supplementary-figure-5.html#cb164-18"></a><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill =</span> <span class="kw">guide_colorbar</span>(<span class="dt">direction =</span> <span class="st">&#39;horizontal&#39;</span>,</span>
+<span id="cb164-19"><a href="supplementary-figure-5.html#cb164-19"></a>                               <span class="dt">title.position =</span> <span class="st">&#39;top&#39;</span>,</span>
+<span id="cb164-20"><a href="supplementary-figure-5.html#cb164-20"></a>                               <span class="dt">barheight =</span> <span class="kw">unit</span>(<span class="dv">7</span>,<span class="st">&#39;pt&#39;</span>),</span>
+<span id="cb164-21"><a href="supplementary-figure-5.html#cb164-21"></a>                               <span class="dt">barwidth =</span> <span class="kw">unit</span>(<span class="dv">130</span>,<span class="st">&#39;pt&#39;</span>)))<span class="op">+</span></span>
+<span id="cb164-22"><a href="supplementary-figure-5.html#cb164-22"></a><span class="st">  </span><span class="co"># general plot layout</span></span>
+<span id="cb164-23"><a href="supplementary-figure-5.html#cb164-23"></a><span class="st">  </span><span class="kw">theme_minimal</span>()<span class="op">+</span></span>
+<span id="cb164-24"><a href="supplementary-figure-5.html#cb164-24"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">84</span>,.<span class="dv">01</span>),</span>
+<span id="cb164-25"><a href="supplementary-figure-5.html#cb164-25"></a>        <span class="dt">strip.text =</span> <span class="kw">element_blank</span>())</span></code></pre></div>
+<center>
+<img src="plot_SF5_files/figure-html/unnamed-chunk-12-1.png" width="768" />
+</center>
+<p>Finally, we can export Supplementary Figure 5.</p>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="supplementary-figure-5.html#cb165-1"></a><span class="co"># export final figure</span></span>
+<span id="cb165-2"><a href="supplementary-figure-5.html#cb165-2"></a><span class="kw">hypo_save</span>(<span class="dt">filename =</span> <span class="st">&#39;figures/SF5.pdf&#39;</span>,</span>
+<span id="cb165-3"><a href="supplementary-figure-5.html#cb165-3"></a>          <span class="dt">plot =</span> p,</span>
+<span id="cb165-4"><a href="supplementary-figure-5.html#cb165-4"></a>          <span class="dt">width =</span> <span class="dv">8</span>,</span>
+<span id="cb165-5"><a href="supplementary-figure-5.html#cb165-5"></a>          <span class="dt">height =</span> <span class="dv">10</span>,</span>
+<span id="cb165-6"><a href="supplementary-figure-5.html#cb165-6"></a>          <span class="dt">comment =</span> plot_comment)</span></code></pre></div>
 <hr />
 
 </div>

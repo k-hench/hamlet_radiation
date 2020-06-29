@@ -24,7 +24,7 @@ Rscript --vanilla R/fig/plot_SF2.R 2_analysis/fst/50k/ \
 ## Details of `plot_SF2.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg) and [**vroom**](https://vroom.r-lib.org/).
 
 ### Config
 
@@ -51,7 +51,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 
 The next section processes the input from the command line.
 It stores the arguments in the vector `args`.
-The R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) is loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.

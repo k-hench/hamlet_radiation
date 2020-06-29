@@ -64,8 +64,8 @@ args <- process_input(script_name, args)
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directory containing the sliding window <i>F<sub>ST</sub></i> data and the and
-the file with the genome wide average <i>F<sub>ST</sub></i> for all the species
+The directory containing the sliding window $F_{ST}$ data and the and
+the file with the genome wide average $F_{ST}$ for all the species
 comparisons are received from the command line input.
 
 
@@ -76,7 +76,7 @@ globals_file <- as.character(args[2])
 # script -----------------------
 ```
 
-Then, the data folder is scanned for windowed <i>F<sub>ST</sub></i> data with an
+Then, the data folder is scanned for windowed $F_{ST}$ data with an
 window size of 50 kb.
 
 
@@ -85,7 +85,7 @@ window size of 50 kb.
 files <- dir(path = data_dir, pattern = '.50k.windowed.weir.fst.gz')
 ```
 
-Next, the genome wide average <i>F<sub>ST</sub></i> data is loaded.
+Next, the genome wide average $F_{ST}$ data is loaded.
 
 
 ```r
@@ -98,8 +98,8 @@ globals <- vroom::vroom(globals_file, delim = '\t',
 ```
 
 The package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) 
-contains the function `get_fst_fixed` to import <i>F<sub>ST</sub></i> data and compute the
-number, average length and cumulative length of regions exceeding a given <i>F<sub>ST</sub></i>
+contains the function `get_fst_fixed` to import $F_{ST}$ data and compute the
+number, average length and cumulative length of regions exceeding a given $F_{ST}$
 threshold.
 
 Here, we prepare a table of a series of thresholds and all pair wise species comparisons
@@ -117,7 +117,7 @@ import_table <- list(file = str_c(data_dir,files),
             reformat_run_name())
 ```
 
-Using the configuration table, the <i>F<sub>ST</sub></i> data are loaded, and the
+Using the configuration table, the $F_{ST}$ data are loaded, and the
 threshold-specific stats are computed.
 
 

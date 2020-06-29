@@ -336,7 +336,7 @@ The Figure can be recreated by running the <strong>R</strong> script <code>plot_
 <div id="details-of-plot_sf2.r" class="section level2">
 <h2><span class="header-section-number">19.2</span> Details of <code>plot_SF2.R</code></h2>
 <p>In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>.</p>
+It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>, as well as on the packages <a href="https://wilkelab.org/ggtext/"><strong>ggtext</strong></a>, <a href="https://k-hench.github.io/hypoimg"><strong>hypoimg</strong></a> and <a href="https://vroom.r-lib.org/"><strong>vroom</strong></a>.</p>
 <div id="config-6" class="section level3">
 <h3><span class="header-section-number">19.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
@@ -357,7 +357,7 @@ It is an executable R script that depends on the accessory R package <a href="ht
 <span id="cb111-15"><a href="supplementary-figure-2.html#cb111-15"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF2.R&quot;</span></span></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
-The R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> is loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
 <div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="supplementary-figure-2.html#cb112-1"></a>args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly=</span><span class="ot">FALSE</span>)</span>

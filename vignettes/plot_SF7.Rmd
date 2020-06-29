@@ -270,7 +270,7 @@ p_spec <- pheno_plot_data %>%
 ```
 
 <center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 1, dev.args = list(type = "cairo")}
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 1.6, dev.args = list(type = "cairo")}
 p_spec
 ```
 </center>
@@ -316,7 +316,7 @@ p_l <- (get_legend(p_phno) %>% ggdraw()) +
 
 <center>
 ```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 2, dev.args = list(type = "cairo")}
-pl
+p_l
 ```
 </center>
 

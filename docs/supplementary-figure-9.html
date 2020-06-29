@@ -327,26 +327,93 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">26.1</span> Summary</h2>
 <p>This is the accessory documentation of Supplementary Figure 9.
 The Figure can be recreated by running the <strong>R</strong> script <code>plot_SF9.R</code>:</p>
-<div class="sourceCode" id="cb149"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb149-1"><a href="supplementary-figure-9.html#cb149-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb149-2"><a href="supplementary-figure-9.html#cb149-2"></a></span>
-<span id="cb149-3"><a href="supplementary-figure-9.html#cb149-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF9</span></code></pre></div>
+<div class="sourceCode" id="cb217"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb217-1"><a href="supplementary-figure-9.html#cb217-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb217-2"><a href="supplementary-figure-9.html#cb217-2"></a></span>
+<span id="cb217-3"><a href="supplementary-figure-9.html#cb217-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF9.R 2_analysis/GxP/50000/</span></code></pre></div>
 </div>
 <div id="details-of-plot_sf9.r" class="section level2">
 <h2><span class="header-section-number">26.2</span> Details of <code>plot_SF9.R</code></h2>
 <p>In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>.</p>
+It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> and on the package <a href="https://k-hench.github.io/hypoimg"><strong>hypoimg</strong></a>.</p>
 <div id="config-13" class="section level3">
 <h3><span class="header-section-number">26.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="supplementary-figure-9.html#cb218-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb218-2"><a href="supplementary-figure-9.html#cb218-2"></a><span class="co"># run from terminal:</span></span>
+<span id="cb218-3"><a href="supplementary-figure-9.html#cb218-3"></a><span class="co"># Rscript --vanilla R/fig/plot_SF9.R 2_analysis/GxP/50000/</span></span>
+<span id="cb218-4"><a href="supplementary-figure-9.html#cb218-4"></a><span class="co"># ===============================================================</span></span>
+<span id="cb218-5"><a href="supplementary-figure-9.html#cb218-5"></a><span class="co"># This script produces Suppl. Figure 9 of the study &quot;Ancestral variation,</span></span>
+<span id="cb218-6"><a href="supplementary-figure-9.html#cb218-6"></a><span class="co"># hybridization and modularity fuel a marine radiation&quot;</span></span>
+<span id="cb218-7"><a href="supplementary-figure-9.html#cb218-7"></a><span class="co"># by Hench, McMillan and Puebla</span></span>
+<span id="cb218-8"><a href="supplementary-figure-9.html#cb218-8"></a><span class="co"># ---------------------------------------------------------------</span></span>
+<span id="cb218-9"><a href="supplementary-figure-9.html#cb218-9"></a><span class="co"># ===============================================================</span></span>
+<span id="cb218-10"><a href="supplementary-figure-9.html#cb218-10"></a><span class="co"># args &lt;- c(&#39;2_analysis/GxP/50000/&#39;)</span></span>
+<span id="cb218-11"><a href="supplementary-figure-9.html#cb218-11"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF9.R&quot;</span></span></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
-The R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> is loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="supplementary-figure-9.html#cb150-1"></a><span class="co">#&gt; ── Script: scripts/plot_SF9.R ────────────────────────────────────────────</span></span>
-<span id="cb150-2"><a href="supplementary-figure-9.html#cb150-2"></a><span class="co">#&gt; Parameters read:</span></span>
-<span id="cb150-3"><a href="supplementary-figure-9.html#cb150-3"></a><span class="co">#&gt;</span></span>
-<span id="cb150-4"><a href="supplementary-figure-9.html#cb150-4"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="supplementary-figure-9.html#cb219-1"></a>args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb219-2"><a href="supplementary-figure-9.html#cb219-2"></a><span class="co"># setup -----------------------</span></span>
+<span id="cb219-3"><a href="supplementary-figure-9.html#cb219-3"></a><span class="kw">library</span>(GenomicOriginsScripts)</span>
+<span id="cb219-4"><a href="supplementary-figure-9.html#cb219-4"></a><span class="kw">library</span>(hypoimg)</span>
+<span id="cb219-5"><a href="supplementary-figure-9.html#cb219-5"></a></span>
+<span id="cb219-6"><a href="supplementary-figure-9.html#cb219-6"></a><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb219-7"><a href="supplementary-figure-9.html#cb219-7"></a>script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span></span>
+<span id="cb219-8"><a href="supplementary-figure-9.html#cb219-8"></a><span class="st">  </span><span class="kw">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</span>
+<span id="cb219-9"><a href="supplementary-figure-9.html#cb219-9"></a></span>
+<span id="cb219-10"><a href="supplementary-figure-9.html#cb219-10"></a>plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span></span>
+<span id="cb219-11"><a href="supplementary-figure-9.html#cb219-11"></a><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="kw">getwd</span>(),<span class="st">&#39;/&#39;</span>,.)</span>
+<span id="cb219-12"><a href="supplementary-figure-9.html#cb219-12"></a></span>
+<span id="cb219-13"><a href="supplementary-figure-9.html#cb219-13"></a>args &lt;-<span class="st"> </span><span class="kw">process_input</span>(script_name, args)</span></code></pre></div>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="supplementary-figure-9.html#cb220-1"></a><span class="co">#&gt; ── Script: scripts/plot_SF9.R ────────────────────────────────────────────</span></span>
+<span id="cb220-2"><a href="supplementary-figure-9.html#cb220-2"></a><span class="co">#&gt; Parameters read:</span></span>
+<span id="cb220-3"><a href="supplementary-figure-9.html#cb220-3"></a><span class="co">#&gt; ★ 1: 2_analysis/GxP/50000/</span></span>
+<span id="cb220-4"><a href="supplementary-figure-9.html#cb220-4"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<p>The path containing the <span class="math inline">\(G \times P\)</span> data is received and stored inside a more descriptive variable.</p>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="supplementary-figure-9.html#cb221-1"></a><span class="co"># config -----------------------</span></span>
+<span id="cb221-2"><a href="supplementary-figure-9.html#cb221-2"></a>gxp_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</span></code></pre></div>
+<p>We then set the specific traits for which we want to compare the <span class="math inline">\(G \times P\)</span> association under a <em>linear model</em> (lm) versus a <em>linear mixed model</em> (lmm).</p>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="supplementary-figure-9.html#cb222-1"></a><span class="co"># configure which gxp data to load</span></span>
+<span id="cb222-2"><a href="supplementary-figure-9.html#cb222-2"></a>trait_tib  &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">file =</span> <span class="kw">dir</span>(gxp_path) <span class="op">%&gt;%</span><span class="st"> </span>.[<span class="kw">str_detect</span>(.,<span class="st">&quot;Bars|Peduncle|Snout&quot;</span>)]) <span class="op">%&gt;%</span></span>
+<span id="cb222-3"><a href="supplementary-figure-9.html#cb222-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prep =</span> file) <span class="op">%&gt;%</span></span>
+<span id="cb222-4"><a href="supplementary-figure-9.html#cb222-4"></a><span class="st">  </span><span class="kw">separate</span>(prep , <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&quot;trait&quot;</span>, <span class="st">&quot;model_type&quot;</span>, <span class="st">&quot;win&quot;</span>, <span class="st">&quot;step&quot;</span>, <span class="st">&quot;filetype&quot;</span>, <span class="st">&quot;zip&quot;</span>),</span>
+<span id="cb222-5"><a href="supplementary-figure-9.html#cb222-5"></a>           <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">.&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb222-6"><a href="supplementary-figure-9.html#cb222-6"></a><span class="st">  </span><span class="kw">select</span>(file, trait, model_type) <span class="op">%&gt;%</span></span>
+<span id="cb222-7"><a href="supplementary-figure-9.html#cb222-7"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">path =</span> gxp_path)</span></code></pre></div>
+<p>The we load the <span class="math inline">\(G \times P\)</span> data.</p>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="supplementary-figure-9.html#cb223-1"></a><span class="co"># load gxp data</span></span>
+<span id="cb223-2"><a href="supplementary-figure-9.html#cb223-2"></a>data &lt;-<span class="st"> </span><span class="kw">pmap_dfr</span>(trait_tib, get_gxp_both_models)</span></code></pre></div>
+<p>After the data import this table is already suited for plotting.</p>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="supplementary-figure-9.html#cb224-1"></a><span class="co"># compose final figure</span></span>
+<span id="cb224-2"><a href="supplementary-figure-9.html#cb224-2"></a>p &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
+<span id="cb224-3"><a href="supplementary-figure-9.html#cb224-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> gpos, <span class="dt">y =</span> AVG_p_wald))<span class="op">+</span></span>
+<span id="cb224-4"><a href="supplementary-figure-9.html#cb224-4"></a><span class="st">  </span><span class="co"># add gray/white LGs background</span></span>
+<span id="cb224-5"><a href="supplementary-figure-9.html#cb224-5"></a><span class="st">  </span><span class="kw">geom_hypo_LG</span>()<span class="op">+</span></span>
+<span id="cb224-6"><a href="supplementary-figure-9.html#cb224-6"></a><span class="st">  </span><span class="co"># add gxp data points</span></span>
+<span id="cb224-7"><a href="supplementary-figure-9.html#cb224-7"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> plot_clr, <span class="dt">size =</span> <span class="fl">.3</span>)<span class="op">+</span></span>
+<span id="cb224-8"><a href="supplementary-figure-9.html#cb224-8"></a><span class="st">  </span><span class="co"># set axis layout</span></span>
+<span id="cb224-9"><a href="supplementary-figure-9.html#cb224-9"></a><span class="st">  </span><span class="kw">scale_x_hypo_LG</span>()<span class="op">+</span></span>
+<span id="cb224-10"><a href="supplementary-figure-9.html#cb224-10"></a><span class="st">  </span><span class="kw">scale_fill_hypo_LG_bg</span>()<span class="op">+</span></span>
+<span id="cb224-11"><a href="supplementary-figure-9.html#cb224-11"></a><span class="st">  </span><span class="co"># set axis titles</span></span>
+<span id="cb224-12"><a href="supplementary-figure-9.html#cb224-12"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="kw">expression</span>(G<span class="op">~</span>x<span class="op">~</span>P<span class="op">~</span>(average<span class="op">~</span><span class="kw">italic</span>(p)[wald])))<span class="op">+</span></span>
+<span id="cb224-13"><a href="supplementary-figure-9.html#cb224-13"></a><span class="st">  </span><span class="co"># general plot structure separated by model type and trait</span></span>
+<span id="cb224-14"><a href="supplementary-figure-9.html#cb224-14"></a><span class="st">  </span><span class="kw">facet_grid</span>(trait<span class="op">+</span>model_type <span class="op">~</span><span class="st"> </span>., <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)<span class="op">+</span></span>
+<span id="cb224-15"><a href="supplementary-figure-9.html#cb224-15"></a><span class="st">  </span><span class="co"># general plot layout</span></span>
+<span id="cb224-16"><a href="supplementary-figure-9.html#cb224-16"></a><span class="st">  </span><span class="kw">theme_hypo</span>()</span></code></pre></div>
+<center>
+<img src="plot_SF9_files/figure-html/unnamed-chunk-7-1.png" width="1056" />
+</center>
+<p>Finally, we can export Supplementary Figure 9.</p>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="supplementary-figure-9.html#cb225-1"></a><span class="co"># export final figure</span></span>
+<span id="cb225-2"><a href="supplementary-figure-9.html#cb225-2"></a><span class="kw">hypo_save</span>(<span class="dt">filename =</span> <span class="st">&quot;figures/SF9.png&quot;</span>,</span>
+<span id="cb225-3"><a href="supplementary-figure-9.html#cb225-3"></a>       <span class="dt">plot =</span> p,</span>
+<span id="cb225-4"><a href="supplementary-figure-9.html#cb225-4"></a>       <span class="dt">width =</span> <span class="dv">11</span>,</span>
+<span id="cb225-5"><a href="supplementary-figure-9.html#cb225-5"></a>       <span class="dt">height =</span> <span class="dv">7</span>,</span>
+<span id="cb225-6"><a href="supplementary-figure-9.html#cb225-6"></a>       <span class="dt">dpi =</span> <span class="dv">600</span>,</span>
+<span id="cb225-7"><a href="supplementary-figure-9.html#cb225-7"></a>       <span class="dt">type =</span> <span class="st">&quot;cairo&quot;</span>,</span>
+<span id="cb225-8"><a href="supplementary-figure-9.html#cb225-8"></a>       <span class="dt">comment =</span> plot_comment)</span></code></pre></div>
 <hr />
 
 </div>

@@ -364,18 +364,18 @@ This information will later be written into the meta data of the figure to help 
 <span id="cb48-3"><a href="figure-3.html#cb48-3"></a><span class="co">#&gt; ★ 1: 2_analysis/fst/50k/</span></span>
 <span id="cb48-4"><a href="figure-3.html#cb48-4"></a><span class="co">#&gt; ★ 2: 2_analysis/summaries/fst_globals.txt</span></span>
 <span id="cb48-5"><a href="figure-3.html#cb48-5"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
-<p>The directory containing the sliding window <i>F<sub>ST</sub></i> data and the and
-the file with the genome wide average <i>F<sub>ST</sub></i> for all the species
+<p>The directory containing the sliding window <span class="math inline">\(F_{ST}\)</span> data and the and
+the file with the genome wide average <span class="math inline">\(F_{ST}\)</span> for all the species
 comparisons are received from the command line input.</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="figure-3.html#cb49-1"></a><span class="co"># config -----------------------</span></span>
 <span id="cb49-2"><a href="figure-3.html#cb49-2"></a>data_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</span>
 <span id="cb49-3"><a href="figure-3.html#cb49-3"></a>globals_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">2</span>])</span>
 <span id="cb49-4"><a href="figure-3.html#cb49-4"></a><span class="co"># script -----------------------</span></span></code></pre></div>
-<p>Then, the data folder is scanned for windowed <i>F<sub>ST</sub></i> data with an
+<p>Then, the data folder is scanned for windowed <span class="math inline">\(F_{ST}\)</span> data with an
 window size of 50 kb.</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="figure-3.html#cb50-1"></a><span class="co"># locate data files</span></span>
 <span id="cb50-2"><a href="figure-3.html#cb50-2"></a>files &lt;-<span class="st"> </span><span class="kw">dir</span>(<span class="dt">path =</span> data_dir, <span class="dt">pattern =</span> <span class="st">&#39;.50k.windowed.weir.fst.gz&#39;</span>)</span></code></pre></div>
-<p>Next, the genome wide average <i>F<sub>ST</sub></i> data is loaded.</p>
+<p>Next, the genome wide average <span class="math inline">\(F_{ST}\)</span> data is loaded.</p>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="figure-3.html#cb51-1"></a><span class="co"># load genome wide average fst data</span></span>
 <span id="cb51-2"><a href="figure-3.html#cb51-2"></a>globals &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(globals_file, <span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>,</span>
 <span id="cb51-3"><a href="figure-3.html#cb51-3"></a>                        <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&#39;loc&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;weighted&#39;</span>)) <span class="op">%&gt;%</span></span>
@@ -383,8 +383,8 @@ window size of 50 kb.</p>
 <span id="cb51-5"><a href="figure-3.html#cb51-5"></a><span class="st">           </span><span class="kw">reformat_run_name</span>()</span>
 <span id="cb51-6"><a href="figure-3.html#cb51-6"></a>  )</span></code></pre></div>
 <p>The package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>
-contains the function <code>get_fst_fixed</code> to import <i>F<sub>ST</sub></i> data and compute the
-number, average length and cumulative length of regions exceeding a given <i>F<sub>ST</sub></i>
+contains the function <code>get_fst_fixed</code> to import <span class="math inline">\(F_{ST}\)</span> data and compute the
+number, average length and cumulative length of regions exceeding a given <span class="math inline">\(F_{ST}\)</span>
 threshold.</p>
 <p>Here, we prepare a table of a series of thresholds and all pair wise species comparisons
 as a configuration table for the following import with <code>get_fst_fixed</code>.</p>
@@ -396,7 +396,7 @@ as a configuration table for the following import with <code>get_fst_fixed</code
 <span id="cb52-6"><a href="figure-3.html#cb52-6"></a><span class="st">            </span><span class="kw">str_remove</span>(<span class="st">&#39;^.*/&#39;</span>) <span class="op">%&gt;%</span></span>
 <span id="cb52-7"><a href="figure-3.html#cb52-7"></a><span class="st">            </span><span class="kw">str_sub</span>(.,<span class="dv">1</span>,<span class="dv">11</span>) <span class="op">%&gt;%</span></span>
 <span id="cb52-8"><a href="figure-3.html#cb52-8"></a><span class="st">            </span><span class="kw">reformat_run_name</span>())</span></code></pre></div>
-<p>Using the configuration table, the <i>F<sub>ST</sub></i> data are loaded, and the
+<p>Using the configuration table, the <span class="math inline">\(F_{ST}\)</span> data are loaded, and the
 threshold-specific stats are computed.</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="figure-3.html#cb53-1"></a><span class="co"># load data and compute statistics based on fixed fst treshold</span></span>
 <span id="cb53-2"><a href="figure-3.html#cb53-2"></a>data &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">pmap_dfr</span>(import_table,get_fst_fixed) <span class="op">%&gt;%</span></span>

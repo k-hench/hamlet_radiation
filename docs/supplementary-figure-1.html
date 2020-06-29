@@ -334,7 +334,7 @@ The Figure can be recreated by running the <strong>R</strong> script <code>plot_
 <div id="details-of-plot_sf1.r" class="section level2">
 <h2><span class="header-section-number">18.2</span> Details of <code>plot_SF1.R</code></h2>
 <p>In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>.</p>
+It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>, as well as on the packages <a href="https://wilkelab.org/ggtext/"><strong>ggtext</strong></a>, <a href="https://k-hench.github.io/hypoimg"><strong>hypoimg</strong></a>, <a href="https://emilhvitfeldt.github.io/paletteer/"><strong>paletteer</strong></a>, <a href="https://patchwork.data-imaginist.com/"><strong>patchwork</strong></a> and <a href="https://emilhvitfeldt.github.io/prismatic/"><strong>prismatic</strong></a>.</p>
 <div id="config-5" class="section level3">
 <h3><span class="header-section-number">18.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
@@ -351,7 +351,7 @@ It is an executable R script that depends on the accessory R package <a href="ht
 <span id="cb102-11"><a href="supplementary-figure-1.html#cb102-11"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF1.R&quot;</span></span></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
-The R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> is loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
 <div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="supplementary-figure-1.html#cb103-1"></a>args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly=</span><span class="ot">FALSE</span>)</span>

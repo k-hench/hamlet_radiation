@@ -329,24 +329,141 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 The Figure can be recreated by running the <strong>R</strong> script <code>plot_SF4.R</code>:</p>
 <div class="sourceCode" id="cb139"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb139-1"><a href="supplementary-figure-4.html#cb139-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
 <span id="cb139-2"><a href="supplementary-figure-4.html#cb139-2"></a></span>
-<span id="cb139-3"><a href="supplementary-figure-4.html#cb139-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF4</span></code></pre></div>
+<span id="cb139-3"><a href="supplementary-figure-4.html#cb139-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF4.R 2_analysis/dxy/50k/</span></code></pre></div>
 </div>
 <div id="details-of-plot_sf4.r" class="section level2">
 <h2><span class="header-section-number">21.2</span> Details of <code>plot_SF4.R</code></h2>
 <p>In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>.</p>
+It is an executable R script that depends on the accessory R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> and on the packages <a href="https://k-hench.github.io/hypoimg"><strong>hypoimg</strong></a> and <a href="https://wilkelab.org/ggtext/"><strong>ggtext</strong></a>.</p>
 <div id="config-8" class="section level3">
 <h3><span class="header-section-number">21.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="supplementary-figure-4.html#cb140-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb140-2"><a href="supplementary-figure-4.html#cb140-2"></a><span class="co"># run from terminal:</span></span>
+<span id="cb140-3"><a href="supplementary-figure-4.html#cb140-3"></a><span class="co"># Rscript --vanilla R/fig/plot_SF4.R 2_analysis/dxy/50k/</span></span>
+<span id="cb140-4"><a href="supplementary-figure-4.html#cb140-4"></a><span class="co"># ===============================================================</span></span>
+<span id="cb140-5"><a href="supplementary-figure-4.html#cb140-5"></a><span class="co"># This script produces Suppl. Figure 4 of the study &quot;Ancestral variation,</span></span>
+<span id="cb140-6"><a href="supplementary-figure-4.html#cb140-6"></a><span class="co"># hybridization and modularity fuel a marine radiation&quot;</span></span>
+<span id="cb140-7"><a href="supplementary-figure-4.html#cb140-7"></a><span class="co"># by Hench, McMillan and Puebla</span></span>
+<span id="cb140-8"><a href="supplementary-figure-4.html#cb140-8"></a><span class="co"># ---------------------------------------------------------------</span></span>
+<span id="cb140-9"><a href="supplementary-figure-4.html#cb140-9"></a><span class="co"># ===============================================================</span></span>
+<span id="cb140-10"><a href="supplementary-figure-4.html#cb140-10"></a><span class="co"># args &lt;- c(&#39;2_analysis/dxy/50k/&#39;)</span></span>
+<span id="cb140-11"><a href="supplementary-figure-4.html#cb140-11"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF4.R&quot;</span></span></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
-The R package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> is loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="supplementary-figure-4.html#cb140-1"></a><span class="co">#&gt; ── Script: scripts/plot_SF4.R ────────────────────────────────────────────</span></span>
-<span id="cb140-2"><a href="supplementary-figure-4.html#cb140-2"></a><span class="co">#&gt; Parameters read:</span></span>
-<span id="cb140-3"><a href="supplementary-figure-4.html#cb140-3"></a><span class="co">#&gt;</span></span>
-<span id="cb140-4"><a href="supplementary-figure-4.html#cb140-4"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="supplementary-figure-4.html#cb141-1"></a>args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly=</span><span class="ot">FALSE</span>)</span>
+<span id="cb141-2"><a href="supplementary-figure-4.html#cb141-2"></a><span class="co"># setup -----------------------</span></span>
+<span id="cb141-3"><a href="supplementary-figure-4.html#cb141-3"></a><span class="kw">library</span>(GenomicOriginsScripts)</span>
+<span id="cb141-4"><a href="supplementary-figure-4.html#cb141-4"></a><span class="kw">library</span>(hypoimg)</span>
+<span id="cb141-5"><a href="supplementary-figure-4.html#cb141-5"></a><span class="kw">library</span>(ggtext)</span>
+<span id="cb141-6"><a href="supplementary-figure-4.html#cb141-6"></a></span>
+<span id="cb141-7"><a href="supplementary-figure-4.html#cb141-7"></a><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb141-8"><a href="supplementary-figure-4.html#cb141-8"></a>script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span></span>
+<span id="cb141-9"><a href="supplementary-figure-4.html#cb141-9"></a><span class="st">  </span><span class="kw">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</span>
+<span id="cb141-10"><a href="supplementary-figure-4.html#cb141-10"></a></span>
+<span id="cb141-11"><a href="supplementary-figure-4.html#cb141-11"></a>plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span></span>
+<span id="cb141-12"><a href="supplementary-figure-4.html#cb141-12"></a><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="kw">getwd</span>(),<span class="st">&#39;/&#39;</span>,.)</span>
+<span id="cb141-13"><a href="supplementary-figure-4.html#cb141-13"></a></span>
+<span id="cb141-14"><a href="supplementary-figure-4.html#cb141-14"></a>args &lt;-<span class="st"> </span><span class="kw">process_input</span>(script_name, args)</span></code></pre></div>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="supplementary-figure-4.html#cb142-1"></a><span class="co">#&gt; ── Script: scripts/plot_SF4.R ────────────────────────────────────────────</span></span>
+<span id="cb142-2"><a href="supplementary-figure-4.html#cb142-2"></a><span class="co">#&gt; Parameters read:</span></span>
+<span id="cb142-3"><a href="supplementary-figure-4.html#cb142-3"></a><span class="co">#&gt; ★ 1: 2_analysis/dxy/50k/</span></span>
+<span id="cb142-4"><a href="supplementary-figure-4.html#cb142-4"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<p>The path containing the <span class="math inline">\(d_{XY}\)</span> data is received and stored inside a more descriptive variable.</p>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="supplementary-figure-4.html#cb143-1"></a><span class="co"># config -----------------------</span></span>
+<span id="cb143-2"><a href="supplementary-figure-4.html#cb143-2"></a>dxy_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</span></code></pre></div>
+<p>This data path is then screened for input files.</p>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="supplementary-figure-4.html#cb144-1"></a><span class="co"># locate dxy data files</span></span>
+<span id="cb144-2"><a href="supplementary-figure-4.html#cb144-2"></a>files &lt;-<span class="st"> </span><span class="kw">dir</span>(dxy_path)</span></code></pre></div>
+<p>In the next step, all <span class="math inline">\(d_{XY}\)</span> files are read and the data is compiled into a single table.</p>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="supplementary-figure-4.html#cb145-1"></a><span class="co"># load dxy data</span></span>
+<span id="cb145-2"><a href="supplementary-figure-4.html#cb145-2"></a>data &lt;-<span class="st"> </span><span class="kw">str_c</span>(dxy_path,files) <span class="op">%&gt;%</span></span>
+<span id="cb145-3"><a href="supplementary-figure-4.html#cb145-3"></a><span class="st">  </span>purrr<span class="op">::</span><span class="kw">map</span>(get_dxy) <span class="op">%&gt;%</span></span>
+<span id="cb145-4"><a href="supplementary-figure-4.html#cb145-4"></a><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span></span>
+<span id="cb145-5"><a href="supplementary-figure-4.html#cb145-5"></a><span class="st">  </span><span class="kw">set_names</span>(., <span class="dt">nm =</span> <span class="kw">c</span>(<span class="st">&#39;scaffold&#39;</span>, <span class="st">&#39;start&#39;</span>, <span class="st">&#39;end&#39;</span>, <span class="st">&#39;mid&#39;</span>, <span class="st">&#39;sites&#39;</span>, <span class="st">&#39;pi_pop1&#39;</span>,</span>
+<span id="cb145-6"><a href="supplementary-figure-4.html#cb145-6"></a>                      <span class="st">&#39;pi_pop2&#39;</span>, <span class="st">&#39;dxy&#39;</span>, <span class="st">&#39;fst&#39;</span>, <span class="st">&#39;GSTART&#39;</span>, <span class="st">&#39;gpos&#39;</span>, <span class="st">&#39;run&#39;</span>))</span></code></pre></div>
+<p>To be able to indicate the genome wide average <span class="math inline">\(d_{XY}\)</span> in the background of the plot, we summarize the <span class="math inline">\(d_{XY}\)</span> data for each pair wise comparison and store the summary in a new table.</p>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="supplementary-figure-4.html#cb146-1"></a><span class="co"># create table for the indication of genome wide average dxy in the plot background</span></span>
+<span id="cb146-2"><a href="supplementary-figure-4.html#cb146-2"></a><span class="co"># (rescale covered dxy range to the extent of the genome)</span></span>
+<span id="cb146-3"><a href="supplementary-figure-4.html#cb146-3"></a>global_bar &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
+<span id="cb146-4"><a href="supplementary-figure-4.html#cb146-4"></a><span class="st">  </span><span class="co"># filter to non-overlaping windows only</span></span>
+<span id="cb146-5"><a href="supplementary-figure-4.html#cb146-5"></a><span class="st">  </span><span class="kw">filter</span>( start <span class="op">%%</span><span class="st"> </span><span class="dv">50000</span> <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></span>
+<span id="cb146-6"><a href="supplementary-figure-4.html#cb146-6"></a><span class="st">  </span><span class="kw">select</span>(sites, dxy, run) <span class="op">%&gt;%</span></span>
+<span id="cb146-7"><a href="supplementary-figure-4.html#cb146-7"></a><span class="st">  </span><span class="kw">group_by</span>(run) <span class="op">%&gt;%</span></span>
+<span id="cb146-8"><a href="supplementary-figure-4.html#cb146-8"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">genome_wide_dxy =</span> <span class="kw">sum</span>(sites<span class="op">*</span>dxy)<span class="op">/</span><span class="kw">sum</span>(sites)) <span class="op">%&gt;%</span></span>
+<span id="cb146-9"><a href="supplementary-figure-4.html#cb146-9"></a><span class="st">  </span><span class="kw">arrange</span>(genome_wide_dxy) <span class="op">%&gt;%</span></span>
+<span id="cb146-10"><a href="supplementary-figure-4.html#cb146-10"></a><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></span>
+<span id="cb146-11"><a href="supplementary-figure-4.html#cb146-11"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">fct_reorder</span>(<span class="dt">.f =</span> run, <span class="dt">.x =</span> genome_wide_dxy),</span>
+<span id="cb146-12"><a href="supplementary-figure-4.html#cb146-12"></a>         <span class="dt">scaled_dxy =</span> genome_wide_dxy<span class="op">/</span><span class="kw">max</span>(genome_wide_dxy))</span></code></pre></div>
+<p>For the hamlet illustrations, we also create a table in which we assign each illustration the matching comparison.</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="supplementary-figure-4.html#cb147-1"></a><span class="co"># prepare plot annotaton images</span></span>
+<span id="cb147-2"><a href="supplementary-figure-4.html#cb147-2"></a>grob_tibble &lt;-<span class="st">  </span>global_bar <span class="op">%&gt;%</span></span>
+<span id="cb147-3"><a href="supplementary-figure-4.html#cb147-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">loc =</span> <span class="kw">str_sub</span>(run,<span class="dv">4</span>,<span class="dv">6</span>),</span>
+<span id="cb147-4"><a href="supplementary-figure-4.html#cb147-4"></a>         <span class="dt">right =</span> <span class="kw">str_sub</span>(run,<span class="dv">1</span>,<span class="dv">3</span>),</span>
+<span id="cb147-5"><a href="supplementary-figure-4.html#cb147-5"></a>         <span class="dt">left =</span> <span class="kw">str_sub</span>(run,<span class="dv">8</span>,<span class="dv">10</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb147-6"><a href="supplementary-figure-4.html#cb147-6"></a><span class="st">  </span><span class="kw">select</span>(<span class="dv">1</span>,<span class="dv">4</span><span class="op">:</span><span class="dv">6</span>) <span class="op">%&gt;%</span></span>
+<span id="cb147-7"><a href="supplementary-figure-4.html#cb147-7"></a><span class="st">  </span><span class="kw">pmap</span>(.,plot_pair_run) <span class="op">%&gt;%</span></span>
+<span id="cb147-8"><a href="supplementary-figure-4.html#cb147-8"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span></code></pre></div>
+<p>The genome wide average <span class="math inline">\(d_{XY}\)</span> indicated in the plot background uses a secondary x-axis.
+As a preparation for this, we create the desired breaks and labels for the secondary axis.</p>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="supplementary-figure-4.html#cb148-1"></a><span class="co"># prepare plotting elements --------</span></span>
+<span id="cb148-2"><a href="supplementary-figure-4.html#cb148-2"></a><span class="co"># pre-define secondary x-axis breaks</span></span>
+<span id="cb148-3"><a href="supplementary-figure-4.html#cb148-3"></a>sc_ax &lt;-<span class="st"> </span>scales<span class="op">::</span><span class="kw">cbreaks</span>(<span class="kw">c</span>(<span class="dv">0</span>,<span class="kw">max</span>(global_bar<span class="op">$</span>genome_wide_dxy)),</span>
+<span id="cb148-4"><a href="supplementary-figure-4.html#cb148-4"></a>                         scales<span class="op">::</span><span class="kw">pretty_breaks</span>(<span class="dv">4</span>))</span>
+<span id="cb148-5"><a href="supplementary-figure-4.html#cb148-5"></a></span>
+<span id="cb148-6"><a href="supplementary-figure-4.html#cb148-6"></a><span class="co"># pre-define secondary x-axis labels</span></span>
+<span id="cb148-7"><a href="supplementary-figure-4.html#cb148-7"></a>labels &lt;-<span class="st"> </span><span class="kw">str_c</span>(<span class="kw">c</span>(<span class="st">&quot;&quot;</span>, sc_ax<span class="op">$</span>breaks[<span class="dv">2</span><span class="op">:</span><span class="dv">5</span>]<span class="op">*</span><span class="dv">1000</span>),</span>
+<span id="cb148-8"><a href="supplementary-figure-4.html#cb148-8"></a>                <span class="kw">c</span>(<span class="st">&quot;0&quot;</span>, <span class="kw">rep</span>(<span class="st">&quot;\u00B710^-3&quot;</span>,<span class="dv">4</span>)))</span></code></pre></div>
+<p>Instead of ordering the species pairs by alphabet, we want the comparisons to be sorted by genome wide average <span class="math inline">\(d_{XY}\)</span>.
+For this we turn the comparisons into a factor.</p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="supplementary-figure-4.html#cb149-1"></a><span class="co"># sort pair-wise population comparisons by average genome wide dxy</span></span>
+<span id="cb149-2"><a href="supplementary-figure-4.html#cb149-2"></a>data &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
+<span id="cb149-3"><a href="supplementary-figure-4.html#cb149-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">factor</span>(run, <span class="dt">levels =</span> <span class="kw">levels</span>(global_bar<span class="op">$</span>run)))</span></code></pre></div>
+<p>Then we can put together the final plot.</p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="supplementary-figure-4.html#cb150-1"></a><span class="co"># compose final figure</span></span>
+<span id="cb150-2"><a href="supplementary-figure-4.html#cb150-2"></a>p &lt;-<span class="st"> </span><span class="kw">ggplot</span>()<span class="op">+</span></span>
+<span id="cb150-3"><a href="supplementary-figure-4.html#cb150-3"></a><span class="st">  </span><span class="co"># general plot structure separated by run</span></span>
+<span id="cb150-4"><a href="supplementary-figure-4.html#cb150-4"></a><span class="st">  </span><span class="kw">facet_wrap</span>( .<span class="op">~</span>run, <span class="dt">as.table =</span> <span class="ot">TRUE</span>, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">dir =</span> <span class="st">&#39;v&#39;</span>)<span class="op">+</span></span>
+<span id="cb150-5"><a href="supplementary-figure-4.html#cb150-5"></a><span class="st">  </span><span class="co"># add genome wide average dxy in the background</span></span>
+<span id="cb150-6"><a href="supplementary-figure-4.html#cb150-6"></a><span class="st">  </span><span class="kw">geom_rect</span>(<span class="dt">data =</span> global_bar <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">xmax =</span> scaled_dxy <span class="op">*</span><span class="st"> </span>hypo_karyotype<span class="op">$</span>GEND[<span class="dv">24</span>]),</span>
+<span id="cb150-7"><a href="supplementary-figure-4.html#cb150-7"></a>            <span class="kw">aes</span>(<span class="dt">xmin =</span> <span class="dv">0</span>, <span class="dt">xmax =</span> xmax, <span class="dt">ymin =</span> <span class="op">-</span><span class="ot">Inf</span>, <span class="dt">ymax =</span> <span class="ot">Inf</span>), <span class="dt">color =</span> <span class="kw">rgb</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),<span class="dt">fill =</span> clr_below)<span class="op">+</span></span>
+<span id="cb150-8"><a href="supplementary-figure-4.html#cb150-8"></a><span class="st">  </span><span class="co"># add LG borders</span></span>
+<span id="cb150-9"><a href="supplementary-figure-4.html#cb150-9"></a><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">data =</span> hypogen<span class="op">::</span>hypo_karyotype, <span class="kw">aes</span>(<span class="dt">xintercept =</span> GEND), <span class="dt">color =</span> hypo_clr_lg)<span class="op">+</span></span>
+<span id="cb150-10"><a href="supplementary-figure-4.html#cb150-10"></a><span class="st">  </span><span class="co"># add dxy data points</span></span>
+<span id="cb150-11"><a href="supplementary-figure-4.html#cb150-11"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> data, <span class="kw">aes</span>(<span class="dt">x =</span> gpos, <span class="dt">y =</span> dxy),</span>
+<span id="cb150-12"><a href="supplementary-figure-4.html#cb150-12"></a>             <span class="dt">size=</span>.<span class="dv">2</span>,<span class="dt">color =</span> plot_clr) <span class="op">+</span></span>
+<span id="cb150-13"><a href="supplementary-figure-4.html#cb150-13"></a><span class="st">  </span><span class="co"># add fish images</span></span>
+<span id="cb150-14"><a href="supplementary-figure-4.html#cb150-14"></a><span class="st">  </span><span class="kw">geom_hypo_grob2</span>(<span class="dt">data =</span> grob_tibble,</span>
+<span id="cb150-15"><a href="supplementary-figure-4.html#cb150-15"></a>                  <span class="kw">aes</span>(<span class="dt">grob =</span> grob, <span class="dt">rel_x =</span> <span class="fl">.945</span>, <span class="dt">rel_y =</span> <span class="fl">.5</span>),</span>
+<span id="cb150-16"><a href="supplementary-figure-4.html#cb150-16"></a>                  <span class="dt">angle =</span> <span class="dv">0</span>, <span class="dt">height =</span> <span class="fl">.9</span>, <span class="dt">width =</span> <span class="fl">.13</span>)<span class="op">+</span></span>
+<span id="cb150-17"><a href="supplementary-figure-4.html#cb150-17"></a><span class="st">  </span><span class="co"># axis layout</span></span>
+<span id="cb150-18"><a href="supplementary-figure-4.html#cb150-18"></a><span class="st">  </span><span class="kw">scale_x_hypo_LG</span>(<span class="dt">sec.axis =</span>  <span class="kw">sec_axis</span>(<span class="op">~</span><span class="st"> </span>.<span class="op">/</span>hypo_karyotype<span class="op">$</span>GEND[<span class="dv">24</span>],</span>
+<span id="cb150-19"><a href="supplementary-figure-4.html#cb150-19"></a>                                       <span class="dt">breaks =</span> (sc_ax<span class="op">$</span>breaks<span class="op">/</span><span class="kw">max</span>(global_bar<span class="op">$</span>genome_wide_dxy))[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>],</span>
+<span id="cb150-20"><a href="supplementary-figure-4.html#cb150-20"></a>                                       <span class="dt">labels =</span> labels,</span>
+<span id="cb150-21"><a href="supplementary-figure-4.html#cb150-21"></a>                                       <span class="dt">name =</span> <span class="kw">expression</span>(Genomic<span class="op">~</span>position<span class="op">/</span><span class="er">~</span>Genome<span class="op">~</span>wide<span class="op">~</span><span class="kw">italic</span>(d[XY]))))<span class="op">+</span></span>
+<span id="cb150-22"><a href="supplementary-figure-4.html#cb150-22"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">name =</span> <span class="kw">expression</span>(<span class="kw">italic</span>(d[XY])), <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">01</span>, <span class="fl">.02</span>))<span class="op">+</span></span>
+<span id="cb150-23"><a href="supplementary-figure-4.html#cb150-23"></a><span class="st">  </span><span class="co"># set plot extent</span></span>
+<span id="cb150-24"><a href="supplementary-figure-4.html#cb150-24"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, hypo_karyotype<span class="op">$</span>GEND[<span class="dv">24</span>]<span class="op">*</span><span class="fl">1.135</span>))<span class="op">+</span></span>
+<span id="cb150-25"><a href="supplementary-figure-4.html#cb150-25"></a><span class="st">  </span><span class="co"># general plot layout</span></span>
+<span id="cb150-26"><a href="supplementary-figure-4.html#cb150-26"></a><span class="st">  </span><span class="kw">theme_hypo</span>()<span class="op">+</span></span>
+<span id="cb150-27"><a href="supplementary-figure-4.html#cb150-27"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">strip.text =</span> <span class="kw">element_blank</span>(),</span>
+<span id="cb150-28"><a href="supplementary-figure-4.html#cb150-28"></a>        <span class="dt">legend.position =</span> <span class="st">&#39;none&#39;</span>,</span>
+<span id="cb150-29"><a href="supplementary-figure-4.html#cb150-29"></a>        <span class="dt">axis.title.x =</span> <span class="kw">element_text</span>(),</span>
+<span id="cb150-30"><a href="supplementary-figure-4.html#cb150-30"></a>        <span class="dt">axis.text.x.bottom =</span> <span class="kw">element_markdown</span>(<span class="dt">colour =</span> <span class="st">&#39;darkgray&#39;</span>))</span></code></pre></div>
+<center>
+<img src="plot_SF4_files/figure-html/unnamed-chunk-11-1.png" width="768" />
+</center>
+<p>Finally, we can export Supplementary Figure 4.</p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="supplementary-figure-4.html#cb151-1"></a><span class="co"># export final figure</span></span>
+<span id="cb151-2"><a href="supplementary-figure-4.html#cb151-2"></a><span class="kw">hypo_save</span>(<span class="dt">filename =</span> <span class="st">&#39;figures/SF4.png&#39;</span>,</span>
+<span id="cb151-3"><a href="supplementary-figure-4.html#cb151-3"></a>          <span class="dt">plot =</span> p,</span>
+<span id="cb151-4"><a href="supplementary-figure-4.html#cb151-4"></a>          <span class="dt">width =</span> <span class="dv">8</span>,</span>
+<span id="cb151-5"><a href="supplementary-figure-4.html#cb151-5"></a>          <span class="dt">height =</span> <span class="dv">12</span>,</span>
+<span id="cb151-6"><a href="supplementary-figure-4.html#cb151-6"></a>          <span class="dt">type =</span> <span class="st">&quot;cairo&quot;</span>,</span>
+<span id="cb151-7"><a href="supplementary-figure-4.html#cb151-7"></a>          <span class="dt">comment =</span> plot_comment)</span></code></pre></div>
 <hr />
 
 </div>
