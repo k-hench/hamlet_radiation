@@ -82,7 +82,7 @@ pheno_plot_data <- data %>%
                cols = Bars:Snout) %>%
   left_join(pheno_facet)
 
-# helper for consistant sample order across all panels
+# helper for consistent sample order across all panels
 sample_order <- pheno_plot_data %>%
   filter(!duplicated(id)) %>%
   select(id, ord_nr)
