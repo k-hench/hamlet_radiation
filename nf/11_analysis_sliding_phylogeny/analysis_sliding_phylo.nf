@@ -5,12 +5,17 @@ Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
 	.into{ vcf_ch }
 
+	Channel
+		.from( "hamlet_only" , "all" )
+		.into{ sample_modes }
+
 // git 11.2
 // load focal outlier regions
 Channel
 	.fromPath("ressources/focal_outlier.tsv")
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ chrom:row.chrom, start:row.start, end:row.end, gid:row.gid ] }
+	.combine( sample_modes )
 	.combine( vcf_ch )
 	.set{ vcf_phylo }
 
@@ -20,20 +25,30 @@ process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
 	input:
-	set val( outlier ),  val( vcfidx ), file( vcf ) from vcf_phylo
+	set val( outlier ), val( sample_mode ), val( vcfidx ), file( vcf ) from vcf_phylo
 
 	output:
-	set val( outlier.gid ), file( "${outlier.gid}.vcf.gz" ) into ( vcf_filtered )
+	set val( outlier.gid ), val( sample_mode ), file( "${outlier.gid}.${sample_mode}.vcf.gz" ) into ( vcf_filtered )
 
 	script:
 	"""
 	echo -e "CHROM\\tSTART\\tEND" > outl.bed
 	echo -e "${outlier.chrom}\\t${outlier.start}\\t${outlier.end}" >> outl.bed
 
+	echo -e "20478tabhon\\n28393torpan\\ns_tort_3torpan" > outgr.pop
+
+	# check if outgroups need to be dropped
+	if [ "${sample_mode}" == "all" ];then
+		INDS=""
+	else
+		INDS="--remove outgr.pop"
+	fi
+
 	vcftools --gzvcf ${vcf[0]} \
+	  \$INDS \
 		--bed outl.bed \
 		--recode \
-		--stdout | gzip > ${outlier.gid}.vcf.gz
+		--stdout | gzip > ${outlier.gid}.${sample_mode}.vcf.gz
 	"""
 }
 
@@ -43,15 +58,15 @@ process vcf2geno_loc {
 	label 'L_2g15m_vcf2geno'
 
 	input:
-	set val( gid ), file( vcf ) from vcf_filtered
+	set val( gid ), val( sample_mode ), file( vcf ) from vcf_filtered
 
 	output:
-	set val( gid ), file( "${gid}.geno.gz" ) into ( geno_filtered )
+	set val( gid ), val( sample_mode ), file( "${gid}.geno.gz" ) into ( geno_filtered )
 
 	script:
 	"""
 	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py \
-	  -i ${vcf}| gzip > ${gid}.geno.gz
+	  -i ${vcf}| gzip > ${gid}.${sample_mode}.geno.gz
 	"""
 }
 
@@ -62,7 +77,7 @@ process twisst_prep {
   publishDir "../../2_analysis/sliding_phylo/positions/${loc}/", mode: 'copy'
 
   input:
-  set val( gid ), file( geno ) into ( geno_filtered )
+  set val( gid ), val( sample_mode ), file( geno ) into ( geno_filtered )
 
 	output:
 	set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ), file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
@@ -73,7 +88,7 @@ process twisst_prep {
       -g ${geno} \
       --windType sites \
       -w 10000 \
-      --prefix ${gid}.phyml_bionj \
+      --prefix ${gid}.${sample_mode}.phyml_bionj \
       --model GTR \
       --optimise n \
 		--threads 2
