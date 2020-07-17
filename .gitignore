@@ -10,6 +10,7 @@ temp_files
 data/*
 !data/RADME.md
 ressources/*
+!ressources/focal_outlier.tsv
 !ressources/README.md
 !ressources/img
 !ressources/other_studies/
