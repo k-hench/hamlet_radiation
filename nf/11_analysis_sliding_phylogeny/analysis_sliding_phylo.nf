@@ -29,7 +29,7 @@ process subset_vcf_by_location {
 	set val( outlier ), val( sample_mode ), val( vcfidx ), file( vcf ) from starter_ch
 
 	output:
-	set val( outlier.gid ), val( sample_mode ), file( "${outlier.gid}.${sample_mode}.vcf.gz" ) into ( vcf_filtered )
+	set val( outlier.gid ), val( sample_mode ), file( "${outlier.gid}.${sample_mode}.vcf.gz" ), file( "outl.bed")  into ( vcf_filtered )
 
 	script:
 	"""
@@ -61,10 +61,10 @@ process vcf2geno_loc {
 	label 'L_2g15m_vcf2geno'
 
 	input:
-	set val( gid ), val( sample_mode ), file( vcf ) from vcf_filtered
+	set val( gid ), val( sample_mode ), file( vcf ), file( bed )  from vcf_filtered
 
 	output:
-	set val( gid ), val( sample_mode ), file( "${gid}.${sample_mode}.geno.gz" ) into ( geno_filtered )
+	set val( gid ), val( sample_mode ), file( "${gid}.${sample_mode}.geno.gz" ), file( bed ) into ( geno_filtered )
 
 	script:
 	"""
@@ -80,17 +80,21 @@ process twisst_prep {
   publishDir "../../2_analysis/sliding_phylo/positions/${loc}/", mode: 'copy'
 
   input:
-  set val( gid ), val( sample_mode ), file( geno ) from ( geno_filtered )
+  set val( gid ), val( sample_mode ), file( geno ), file( bed )  from ( geno_filtered )
 
 	output:
 	set file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
 
   script:
    """
-		python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
+	 tail -n 1 ${bed} | \
+	   awk '{l = \$1; s = \$2; e = \$3; while (s < e) { print l" "s" "s+999 ; s = s + 1000} }' \
+		 > steps.bed
+
+	python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
       -g ${geno} \
-      --windType sites \
-      -S 10000 \
+      --windType coordinate \
+			--windCoords steps.bed \ 
       --prefix ${gid}.${sample_mode}.phyml_bionj \
       --model GTR \
       --optimise n \
