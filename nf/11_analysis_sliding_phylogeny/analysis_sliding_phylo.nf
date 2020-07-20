@@ -94,7 +94,7 @@ process twisst_prep {
 	python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
       -g ${geno} \
       --windType coordinate \
-			--windCoords steps.bed \ 
+			--windCoords steps.bed \
       --prefix ${gid}.${sample_mode}.phyml_bionj \
       --model GTR \
       --optimise n \
