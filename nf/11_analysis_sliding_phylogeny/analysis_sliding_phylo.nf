@@ -62,7 +62,7 @@ process vcf2geno_loc {
 	set val( gid ), val( sample_mode ), file( vcf ) from vcf_filtered
 
 	output:
-	set val( gid ), val( sample_mode ), file( "${gid}.geno.gz" ) into ( geno_filtered )
+	set val( gid ), val( sample_mode ), file( "${gid}.${sample_mode}.geno.gz" ) into ( geno_filtered )
 
 	script:
 	"""
