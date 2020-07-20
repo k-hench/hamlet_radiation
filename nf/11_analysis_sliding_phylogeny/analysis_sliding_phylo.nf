@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 // git 11.1
 // open genotype data
-//Channel
-//	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
-//	.into{ vcf_ch }
+Channel
+	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
+	.into{ vcf_ch }
 
 Channel
 	.from( "hamlet_only" , "all" )
@@ -16,7 +16,7 @@ Channel
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ chrom:row.chrom, start:row.start, end:row.end, gid:row.gid ] }
 	.combine( sample_modes )
-	//.combine( vcf_ch )
+	.combine( vcf_ch )
 	.set{ starter_ch }
 
 // git 11.3
@@ -25,8 +25,8 @@ process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
 	input:
-	set val( outlier ), val( sample_mode ) from starter_ch
-//	set val( outlier ), val( sample_mode ), val( vcfidx ), file( vcf ) from vcf_phylo
+//	set val( outlier ), val( sample_mode ) from starter_ch
+	set val( outlier ), val( sample_mode ), val( vcfidx ), file( vcf ) from vcf_phylo
 
 	output:
 	set val( outlier.gid ), val( sample_mode ), file( "${outlier.gid}.${sample_mode}.vcf.gz" ) into ( vcf_filtered )
@@ -45,7 +45,8 @@ process subset_vcf_by_location {
 		INDS="--remove outgr.pop"
 	fi
 
-	vcftools --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd.allBP.${outlier.chrom}.vcf.gz \
+	#vcftools --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd.allBP.${outlier.chrom}.vcf.gz \
+	vcftools --gzvcf ${vcf[0]} \
 	  \$INDS \
 		--bed outl.bed \
 		--recode \
@@ -88,7 +89,7 @@ process twisst_prep {
 		python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
       -g ${geno} \
       --windType sites \
-      -w 10000 \
+      -S 10000 \
       --prefix ${gid}.${sample_mode}.phyml_bionj \
       --model GTR \
       --optimise n \
