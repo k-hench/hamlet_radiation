@@ -49,7 +49,7 @@ process subset_vcf_by_location {
 
 	vcftools --gzvcf ${vcf[0]} \
 	  \$INDS \
-		-- mac 3 \
+		--mac 3 \
 		--bed outl.bed \
 		--recode \
 		--stdout | gzip > ${outlier.gid}.${sample_mode}.vcf.gz
