@@ -2,7 +2,7 @@
 // git 11.1
 // open genotype data
 Channel
-	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
+	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_ch }
 
 Channel
