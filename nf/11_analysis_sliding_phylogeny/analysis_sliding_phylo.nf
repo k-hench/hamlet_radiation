@@ -3,7 +3,7 @@
 // open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
-	.into{ vcf_ch }
+	.set{ vcf_ch }
 
 Channel
 	.from( "hamlet_only" , "all" )
@@ -26,7 +26,7 @@ process subset_vcf_by_location {
 
 	input:
 //	set val( outlier ), val( sample_mode ) from starter_ch
-	set val( outlier ), val( sample_mode ), val( vcfidx ), file( vcf ) from vcf_phylo
+	set val( outlier ), val( sample_mode ), val( vcfidx ), file( vcf ) from starter_ch
 
 	output:
 	set val( outlier.gid ), val( sample_mode ), file( "${outlier.gid}.${sample_mode}.vcf.gz" ) into ( vcf_filtered )
