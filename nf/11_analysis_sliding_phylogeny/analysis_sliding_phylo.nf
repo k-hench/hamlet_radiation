@@ -15,9 +15,9 @@ Channel
 	.fromPath("../../ressources/focal_outlier.tsv")
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ chrom:row.chrom, start:row.start, end:row.end, gid:row.gid ] }
-	.combine( sample_modes ).println()
+	.combine( sample_modes )
 	//.combine( vcf_ch )
-/*	.set{ starter_ch }
+	.set{ starter_ch }
 
 // git 11.3
 // subset the genotypes by location
@@ -95,4 +95,3 @@ process twisst_prep {
 		--threads 2
 	 """
 }
-*/
