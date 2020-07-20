@@ -49,6 +49,7 @@ process subset_vcf_by_location {
 
 	vcftools --gzvcf ${vcf[0]} \
 	  \$INDS \
+		-- mac 3 \
 		--bed outl.bed \
 		--recode \
 		--stdout | gzip > ${outlier.gid}.${sample_mode}.vcf.gz
@@ -94,7 +95,7 @@ process twisst_prep {
 	python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
       -g ${geno} \
 			--windType sites \
-      -w 100 \
+      -w 200 \
       --prefix ${gid}.${sample_mode}.phyml_bionj \
       --model GTR \
       --optimise n \
