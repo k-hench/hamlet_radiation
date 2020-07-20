@@ -45,7 +45,8 @@ process subset_vcf_by_location {
 		INDS="--remove outgr.pop"
 	fi
 
-	#vcftools --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd.allBP.${outlier.chrom}.vcf.gz \
+	# vcftools --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/filterd.allBP.${outlier.chrom}.vcf.gz
+
 	vcftools --gzvcf ${vcf[0]} \
 	  \$INDS \
 		--bed outl.bed \
