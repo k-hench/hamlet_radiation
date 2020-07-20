@@ -81,7 +81,7 @@ process twisst_prep {
   set val( gid ), val( sample_mode ), file( geno ) from ( geno_filtered )
 
 	output:
-	set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ), file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
+	set file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
 
   script:
    """
