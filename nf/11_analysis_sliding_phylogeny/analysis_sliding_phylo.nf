@@ -12,7 +12,7 @@ Channel
 // git 11.2
 // load focal outlier regions
 Channel
-	.fromPath("ressources/focal_outlier.tsv")
+	.fromPath("../../ressources/focal_outlier.tsv")
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ chrom:row.chrom, start:row.start, end:row.end, gid:row.gid ] }
 	.combine( sample_modes )
