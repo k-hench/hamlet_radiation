@@ -7,7 +7,7 @@
 
 Channel
 	.from( "hamlet_only" , "all" )
-	.into{ sample_modes }
+	.set{ sample_modes }
 
 // git 11.2
 // load focal outlier regions
@@ -78,7 +78,7 @@ process twisst_prep {
   publishDir "../../2_analysis/sliding_phylo/positions/${loc}/", mode: 'copy'
 
   input:
-  set val( gid ), val( sample_mode ), file( geno ) into ( geno_filtered )
+  set val( gid ), val( sample_mode ), file( geno ) from ( geno_filtered )
 
 	output:
 	set val( loc ), val( lg ), file( geno ), file( pop ), val( twisst_w ), file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
