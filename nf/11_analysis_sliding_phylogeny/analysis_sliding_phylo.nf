@@ -9,6 +9,10 @@ Channel
 	.from( "hamlet_only" , "all" )
 	.set{ sample_modes }
 
+Channel
+	.from( 50, 100, 150, 200 )
+	.set{ window_ch }
+
 // git 11.2
 // load focal outlier regions
 Channel
@@ -81,7 +85,7 @@ process twisst_prep {
   publishDir "../../2_analysis/sliding_phylo/positions/${loc}/", mode: 'copy'
 
   input:
-  set val( gid ), val( sample_mode ), file( geno ), file( bed )  from ( geno_filtered )
+  set val( gid ), val( sample_mode ), file( geno ), file( bed ), val( win )  from geno_filtered.combine( window_ch )
 
 	output:
 	set file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
@@ -95,7 +99,7 @@ process twisst_prep {
 	python \$SFTWR/genomics_general/phylo/phyml_sliding_windows.py \
       -g ${geno} \
 			--windType sites \
-      -w 200 \
+      -w ${win} \
       --prefix ${gid}.${sample_mode}.phyml_bionj \
       --model GTR \
       --optimise n \
