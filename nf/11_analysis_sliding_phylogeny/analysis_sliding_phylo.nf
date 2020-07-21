@@ -134,7 +134,6 @@ process raxml_slide {
       -w ${win} \
       --prefix ${gid}.${sample_mode}.${win}w.raxml_bionj \
       --model GTR \
-      --optimise n \
 		--threads 2
 	 """
 }
