@@ -82,7 +82,7 @@ process vcf2geno_loc {
 // create the phylogenies along the sliding window
 process twisst_prep {
   label "L_30g2h4x_subset_vcf_whg"
-  publishDir "../../2_analysis/sliding_phylo/positions/${loc}/", mode: 'copy'
+  publishDir "../../2_analysis/sliding_phylo/", mode: 'copy'
 
   input:
   set val( gid ), val( sample_mode ), file( geno ), file( bed ), val( win )  from geno_filtered.combine( window_ch )
