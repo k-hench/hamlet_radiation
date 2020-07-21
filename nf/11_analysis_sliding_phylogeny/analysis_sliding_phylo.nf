@@ -100,7 +100,7 @@ process twisst_prep {
       -g ${geno} \
 			--windType sites \
       -w ${win} \
-      --prefix ${gid}.${sample_mode}.phyml_bionj \
+      --prefix ${gid}.${sample_mode}.${win}w.phyml_bionj \
       --model GTR \
       --optimise n \
 		--threads 2
