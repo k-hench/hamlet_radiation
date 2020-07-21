@@ -69,7 +69,7 @@ process vcf2geno_loc {
 	set val( gid ), val( sample_mode ), file( vcf ), file( bed )  from vcf_filtered
 
 	output:
-	set val( gid ), val( sample_mode ), file( "${gid}.${sample_mode}.geno.gz" ), file( bed ) into ( geno_filtered )
+	set val( gid ), val( sample_mode ), file( "${gid}.${sample_mode}.geno.gz" ), file( bed ) into ( geno_filtered  )
 
 	script:
 	"""
@@ -79,13 +79,18 @@ process vcf2geno_loc {
 }
 
 // git 11.17
+geno_filtered
+	.combine( window_ch )
+	.into{ phyml_input_ch; raxml_input_ch }
+
+// git 11.17
 // create the phylogenies along the sliding window
-process twisst_prep {
+process phyml_slide {
   label "L_30g2h4x_subset_vcf_whg"
   publishDir "../../2_analysis/sliding_phylo/", mode: 'copy'
 
   input:
-  set val( gid ), val( sample_mode ), file( geno ), file( bed ), val( win )  from geno_filtered.combine( window_ch )
+  set val( gid ), val( sample_mode ), file( geno ), file( bed ), val( win ) from phyml_input_ch
 
 	output:
 	set file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
@@ -101,6 +106,33 @@ process twisst_prep {
 			--windType sites \
       -w ${win} \
       --prefix ${gid}.${sample_mode}.${win}w.phyml_bionj \
+      --model GTR \
+      --optimise n \
+		--threads 2
+	 """
+}
+
+process raxml_slide {
+  label "L_30g2h4x_subset_vcf_whg"
+  publishDir "../../2_analysis/sliding_phylo/", mode: 'copy'
+
+  input:
+  set val( gid ), val( sample_mode ), file( geno ), file( bed ), val( win ) from phyml_input_ch
+
+	output:
+	set file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
+
+  script:
+   """
+	 tail -n 1 ${bed} | \
+	   awk '{l = \$1; s = \$2; e = \$3; while (s < e) { print l" "s" "s+999 ; s = s + 1000} }' \
+		 > steps.bed
+
+	python \$SFTWR/genomics_general/phylo/raxml_sliding_windows.py \
+      -g ${geno} \
+			--windType sites \
+      -w ${win} \
+      --prefix ${gid}.${sample_mode}.${win}w.raxml_bionj \
       --model GTR \
       --optimise n \
 		--threads 2
