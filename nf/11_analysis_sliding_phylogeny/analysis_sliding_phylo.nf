@@ -133,7 +133,7 @@ process raxml_slide {
 			--windType sites \
       -w ${win} \
       --prefix ${gid}.${sample_mode}.${win}w.raxml_bionj \
-      --model GTR \
+      --model GTRCAT \
 		--threads 2
 	 """
 }
