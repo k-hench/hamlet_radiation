@@ -93,7 +93,7 @@ process phyml_slide {
   set val( gid ), val( sample_mode ), file( geno ), file( bed ), val( win ) from phyml_input_ch
 
 	output:
-	set file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
+	set file( "*.trees.gz" ), file( "*.data.tsv" ) into phyml_out
 
   script:
    """
@@ -117,10 +117,10 @@ process raxml_slide {
   publishDir "../../2_analysis/sliding_phylo/", mode: 'copy'
 
   input:
-  set val( gid ), val( sample_mode ), file( geno ), file( bed ), val( win ) from phyml_input_ch
+  set val( gid ), val( sample_mode ), file( geno ), file( bed ), val( win ) from raxml_input_ch
 
 	output:
-	set file( "*.trees.gz" ), file( "*.data.tsv" ) into twisst_prep_ch
+	set file( "*.trees.gz" ), file( "*.data.tsv" ) into raxml_out
 
   script:
    """
