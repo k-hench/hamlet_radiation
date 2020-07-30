@@ -104,7 +104,7 @@ process create_positions {
 	set val( lg ), file( vcf ) from ( vcf_aa_ch )
 
 	output:
-	set val( lg ), file( "${lg}_aa_h_variant.vcf.gz" ), file( "${lg}_positions.txt" ) into ( positions_ch )
+	set val( lg ), file( "${lg}_aa_h_variant.vcf" ), file( "${lg}_positions.txt" ) into ( positions_ch )
 
 	script:
 	"""
@@ -120,10 +120,9 @@ process create_positions {
 		--gzvcf - \
 		--mac 1 \
 		--recode \
-		--stdout | \
-		gzip > ${lg}_aa_h_variant.vcf.gz
+		--stdout > ${lg}_aa_h_variant.vcf
 
-	zcat ${lg}_aa_h_variant.vcf.gz | \
+	cat ${lg}_aa_h_variant.vcf | \
 		grep -v "^#" | \
 		cut -f 2 | \
 		head -n -1 > ${lg}_positions.txt
