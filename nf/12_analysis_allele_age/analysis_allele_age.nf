@@ -121,7 +121,7 @@ process create_positions {
 		--mac 1 \
 		--recode \
 		--stdout | \
-		bgzip > ${lg}_aa_h_variant.vcf.gz
+		gzip > ${lg}_aa_h_variant.vcf.gz
 
 	zcat ${lg}_aa_h_variant.vcf.gz | \
 		grep -v "^#" | \
