@@ -140,7 +140,7 @@ process run_geva {
 	set val( lg ), file( vcf ), file( pos ) from ( positions_ch )
 
 	output:
-	set file( "gzip ${lg}.marker.txt.gz" ), file( "gzip ${lg}.sample.txt.gz" ), file( "${lg}.sites.txt.gz" ), file( "${lg}.pairs.txt.gz" ) into ( output_ch )
+	set file( "${lg}.marker.txt.gz" ), file( "${lg}.sample.txt.gz" ), file( "${lg}.sites.txt.gz" ), file( "${lg}.pairs.txt.gz" ) into ( output_ch )
 
 	script:
 	"""
