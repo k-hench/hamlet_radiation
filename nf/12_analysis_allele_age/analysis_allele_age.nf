@@ -140,14 +140,14 @@ process run_geva {
 	set val( lg ), file( vcf ), file( pos ) from ( positions_ch )
 
 	output:
-	set file( "${lg}.marker.txt.gz" ), file( "${lg}.sample.txt.gz" ), file( "${lg}.sites.txt.gz" ), file( "${lg}.pairs.txt.gz" ) into ( output_ch )
+	set file( "*.marker.txt.gz" ), file( "*.sample.txt.gz" ), file( "*.sites.txt.gz" ), file( "*.pairs.txt.gz" ) into ( output_ch )
 
 	script:
 	"""
 	mkdir -p sub_positions sub_results
 	split positions.txt -l 750 -d sub_positions/sub_pos_
 
-	r=$(awk -v k=${lg} '\$1 == k {print \$4}' \$BASE_DIR/ressources/avg_rho_by_LG.tsv)
+	r=\$(awk -v k=${lg} '\$1 == k {print \$4}' \$BASE_DIR/ressources/avg_rho_by_LG.tsv)
 
 	geva_v1beta \
 		--vcf ${vcf} --rec \$r --out ${lg}
