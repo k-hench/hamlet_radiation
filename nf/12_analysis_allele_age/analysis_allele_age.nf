@@ -154,7 +154,7 @@ process run_geva {
 	script:
 	"""
 	mkdir -p sub_positions sub_results
-	split ${pos} -l 750 -d sub_positions/sub_pos_
+	split ${pos} -a 5 -l 750 -d sub_positions/sub_pos_
 
 	r=\$(awk -v k=${lg} '\$1 == k {print \$4}' \$BASE_DIR/ressources/avg_rho_by_LG.tsv)
 
