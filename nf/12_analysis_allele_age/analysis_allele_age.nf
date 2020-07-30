@@ -52,7 +52,7 @@ process prepare_vcf {
 
 	# determine allele frquencies
 	vcftools \
-		--gzvcf \${lg}.vcf.gz \
+		--gzvcf ${lg}.vcf.gz \
 		--freq \
 		--stdout | \
 		sed 's/{ALLELE:FREQ}/ALLELE1\\tALLELE2/' > ${lg}_allele_counts.tsv
