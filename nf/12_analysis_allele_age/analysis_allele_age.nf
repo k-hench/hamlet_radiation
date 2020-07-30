@@ -161,14 +161,14 @@ process run_geva {
 		geva_v1beta \
 			 -t 6 \
 			 -i ${lg}.bin \
-			 -o sub_results/${lg}_${run_id}\
+			 -o sub_results/${lg}_\${run_id}\
 			 --positions \$sp \
 			 --Ne 30000 \
 			 --mut 3.7e-08 \
 			 --hmm \$SFTWR/geva/hmm/hmm_initial_probs.txt \$SFTWR/geva/hmm/hmm_emission_probs.txt
 
-		tail -n +2 sub_results/${lg}_${run_id}.sites.txt >> ${lg}.sites.txt
-		tail -n +2 sub_results/${lg}_${run_id}.pairs.txt >> ${lg}.pairs.txt
+		tail -n +2 sub_results/${lg}_\${run_id}.sites.txt >> ${lg}.sites.txt
+		tail -n +2 sub_results/${lg}_\${run_id}.pairs.txt >> ${lg}.pairs.txt
 	done
 
 	gzip ${lg}.sites.txt
