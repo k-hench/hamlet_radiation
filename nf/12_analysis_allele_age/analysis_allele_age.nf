@@ -135,7 +135,7 @@ process create_positions {
 		--stdout | \
 		bgzip > ${lg}_aa_h_variant.vcf.gz
 
-	cut -f 2 	${lg}_aa_no_outgroup.vcf.gz > ${lg}_positions.txt
+	cut -f 2 ${lg}_positions_prep.txt > ${lg}_positions.txt
 	"""
 }
 
