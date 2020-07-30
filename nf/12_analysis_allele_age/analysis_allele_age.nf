@@ -121,12 +121,21 @@ process create_positions {
 		--mac 1 \
 		--recode \
 		--stdout | \
+		bgzip > ${lg}_aa_no_outgroup.vcf.gz
+
+	zcat ${lg}_aa_no_outgroup.vcf.gz | \
+		grep -v "^#" | \
+		cut -f 1,2 | \
+		head -n -1 > ${lg}_positions_prep.txt
+
+	vcftools \
+		--gzvcf ${vcf} \
+		--positions ${lg}_positions_prep.txt \
+		--recode \
+		--stdout | \
 		bgzip > ${lg}_aa_h_variant.vcf.gz
 
-	zcat ${lg}_aa_h_variant.vcf.gz | \
-		grep -v "^#" | \
-		cut -f 2 | \
-		head -n -1 > ${lg}_positions.txt
+	cut -f 2 	${lg}_aa_no_outgroup.vcf.gz > ${lg}_positions.txt
 	"""
 }
 
