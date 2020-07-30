@@ -32,7 +32,7 @@ process prepare_vcf {
 		--chr ${lg} \
 		--recode \
 		--stdout | \
-		sed 's/\(##FORMAT=<ID=GT,Number=1,Type=String,Description="Phased Genotype">\)/\1\n##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes, for each ALT allele, in the same order as listed">/' | \
+		sed 's/\\(##FORMAT=<ID=GT,Number=1,Type=String,Description="Phased Genotype">\\)/\\1\\n##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes, for each ALT allele, in the same order as listed">/' | \
 		bgzip > ${lg}.vcf.gz
 
 	# determine ancestral state based on invariant sites in outgoup
