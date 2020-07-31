@@ -151,7 +151,7 @@ process pre_split {
 	set val( lg ), file( vcf ), file( pos ) from ( positions_ch )
 
 	output:
-	set val( lg ), file( "pre_positions/pre_*" ), file( "*.bin" ), file( "*.marker.txt.gz" ), file( "*.sample.txt.gz" ) into ( geva_setup_ch )
+	set val( lg ), file( "pre_positions/pre_*" ), file( "*.bin" ), file( "*.marker.txt" ), file( "*.sample.txt" ) into ( geva_setup_ch )
 
 	script:
 	"""
