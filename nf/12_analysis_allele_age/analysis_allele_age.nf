@@ -139,55 +139,96 @@ process create_positions {
 	"""
 }
 
+
 // git 12.5
 // set ancestral state in vcf
-process run_geva {
-	label 'L_30g10h6x_run_geva'
+// all in one takes too long...
+process pre_split {
+	label 'L_2g2h_pre_split'
 	publishDir "../../2_analysis/geva/", mode: 'copy'
 
 	input:
 	set val( lg ), file( vcf ), file( pos ) from ( positions_ch )
 
 	output:
-	set file( "*.marker.txt.gz" ), file( "*.sample.txt.gz" ), file( "*.sites.txt.gz" ), file( "*.pairs.txt.gz" ) into ( output_ch )
+	set val( lg ), file( "pre_positions/pre_*" ), file( "*.bin" ), file( "*.marker.txt.gz" ), file( "*.sample.txt.gz" ) into ( geva_setup_ch )
 
 	script:
 	"""
-	mkdir -p sub_positions sub_results
+	mkdir -p pre_positions
 
 	head -n -1 ${pos} | \
 	 tail -n +2  > inner_pos.txt
-	
-	split inner_pos.txt -a 5 -l 750 -d sub_positions/sub_pos_
+
+	split inner_pos.txt -a 4 -l 75000 -d pre_positions/pre_
 
 	r=\$(awk -v k=${lg} '\$1 == k {print \$4}' \$BASE_DIR/ressources/avg_rho_by_LG.tsv)
 
 	geva_v1beta \
 		--vcf ${vcf} --rec \$r --out ${lg}
+	"""
+}
 
-	echo "MarkerID Clock Filtered N_Concordant N_Discordant PostMean PostMode PostMedian" > ${lg}.sites.txt
-	echo "MarkerID Clock SampleID0 Chr0 SampleID1 Chr1 Shared Pass SegmentLHS SegmentRHS Shape Rate" > ${lg}.pairs.txt
+// git 12.6
+// set ancestral state in vcf
+process run_geva {
+	label 'L_30g15h6x_run_geva'
 
-	for sp in \$(ls sub_positions/sub_pos_*); do
-		run_id=\$(echo \$sp | sed 's=sub_positions/sub_pos_==')
+	input:
+	set val( lg ), file( pos ), file( bin ), file( marker ), file( sample ) from geva_setup_ch.transpose()
+
+	output:
+	set val( lg ), file( "*.sites.txt.gz" ), file( "*.pairs.txt.gz" ) into ( output_split_ch )
+
+	script:
+	"""
+  pref=$(echo "${pos}" | sed 's=^.*/A==; s=pre_positions/pre_==')
+
+	mkdir -p sub_positions sub_results
+
+	split ${pos} -a 4 -l 750 -d sub_positions/sub_pos_\${pref}_
+
+	r=\$(awk -v k=${lg} '\$1 == k {print \$4}' \$BASE_DIR/ressources/avg_rho_by_LG.tsv)
+
+	for sp in \$(ls sub_positions/sub_pos_\${pref}_*); do
+		run_id=\$(echo \$sp | sed "s=sub_positions/sub_pos_\${pref}_==")
 
 		geva_v1beta \
 			 -t 6 \
-			 -i ${lg}.bin \
-			 -o sub_results/${lg}_\${run_id}\
+			 -i ${bin} \
+			 -o sub_results/${lg}_\${pref}_\${run_id}\
 			 --positions \$sp \
 			 --Ne 30000 \
 			 --mut 3.7e-08 \
 			 --hmm \$SFTWR/geva/hmm/hmm_initial_probs.txt \$SFTWR/geva/hmm/hmm_emission_probs.txt
 
-		tail -n +2 sub_results/${lg}_\${run_id}.sites.txt >> ${lg}.sites.txt
-		tail -n +2 sub_results/${lg}_\${run_id}.pairs.txt >> ${lg}.pairs.txt
+		tail -n +2 sub_results/${lg}_\${pref}_\${run_id}.sites.txt >> ${lg}_\${pref}.sites.txt
+		tail -n +2 sub_results/${lg}_\${pref}_\${run_id}.pairs.txt >> ${lg}_\${pref}.pairs.txt
 	done
 
-	gzip ${lg}.sites.txt
-	gzip ${lg}.pairs.txt
-	gzip ${lg}.marker.txt
-	gzip ${lg}.sample.txt
+	gzip ${lg}_\${pref}.sites.txt
+	gzip ${lg}_\${pref}.pairs.txt
+	"""
+}
 
+// git 12.7
+// collect by lg
+process collect_by_lg {
+	label 'L_2g2h_collect'
+	publishDir "../../2_analysis/geva/", mode: 'copy'
+
+	input:
+	set val( lg ), file( sites ), file( pairs ) from output_split_ch.groupTuple()
+
+	output:
+	set file( "*.sites.txt.gz" ), file( "*.pairs.txt.gz" ) into ( output_lg_ch )
+
+	script:
+	"""
+	echo "MarkerID Clock Filtered N_Concordant N_Discordant PostMean PostMode PostMedian" > ${lg}.sites.txt.gz
+	echo "MarkerID Clock SampleID0 Chr0 SampleID1 Chr1 Shared Pass SegmentLHS SegmentRHS Shape Rate" > ${lg}.pairs.txt.gz
+
+	zcat ${sites} | gzip  >> ${lg}.sites.txt.gz
+	zcat ${pairs} | gzip  >> ${lg}.pairs.txt.gz
 	"""
 }
