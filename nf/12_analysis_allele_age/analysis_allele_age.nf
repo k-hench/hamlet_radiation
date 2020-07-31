@@ -182,7 +182,7 @@ process run_geva {
 
 	script:
 	"""
-  pref=$(echo "${pos}" | sed 's=^.*/A==; s=pre_positions/pre_==')
+  pref=\$(echo "${pos}" | sed 's=^.*/A==; s=pre_positions/pre_==')
 
 	mkdir -p sub_positions sub_results
 
