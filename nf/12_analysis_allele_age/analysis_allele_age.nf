@@ -152,6 +152,7 @@ process pre_split {
 
 	output:
 	set val( lg ), file( "pre_positions/pre_*" ), file( "*.bin" ), file( "*.marker.txt" ), file( "*.sample.txt" ) into ( geva_setup_ch )
+	set val( lg ), file( "inner_pos.txt" ), file( vcf ) into ( ccf_vcf_ch )
 
 	script:
 	"""
@@ -242,14 +243,14 @@ Channel
 	.fromPath('../../ressources/plugin/ccf_pairs.tsv')
 	.splitCsv(header:true, sep:"\t")
 	.map{ row -> [ target:row.target, querry:row.querry] }
-	.combine( output_lg_ch )
+	.combine( output_lg_ch.join(ccf_vcf_ch) )
 	.set { ccf_pairs_ch }
-
+/*
 // git 12.9
 // prepare ccf pair
 process prep_ccf_pair {
 	label 'L_2g15min_collect'
-	publishDir "../../2_analysis/geva/", mode: 'copy'
+	publishDir "../../2_analysis/ccf/", mode: 'copy'
 
 	input:
 	set val( ccfpair ), val( lg ), file( sites ), file( pairs ) from ccf_pairs_ch
@@ -259,6 +260,8 @@ process prep_ccf_pair {
 
 	script:
 	"""
+
+
 	Rscript --vanilla \$BASE_DIR/R/ccf_prep.R \$BASE_DIR/2_analysis/geva/ ${lg} ${ccfpair.target} ${ccfpair.querry}
 	"""
 }
@@ -297,3 +300,4 @@ process run_ccf {
 
 	"""
 }
+*/
