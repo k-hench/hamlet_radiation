@@ -245,9 +245,6 @@ Channel
 	.combine( output_lg_ch )
 	.set { ccf_pairs_ch }
 
-
-ccf_pairs_ch.println()
-
 // git 12.9
 // prepare ccf pair
 process prep_ccf_pair {
