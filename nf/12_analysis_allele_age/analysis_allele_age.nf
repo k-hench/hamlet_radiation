@@ -249,7 +249,7 @@ Channel
 // git 12.9
 // prepare ccf pair
 process prep_ccf_pair {
-	label 'L_2g2h_prep_ccf_pair'
+	label 'L_20g2h_prep_ccf_pair'
 	publishDir "../../2_analysis/ccf/", mode: 'copy'
 
 	input:
