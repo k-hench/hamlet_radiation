@@ -279,7 +279,7 @@ process prep_ccf_pair {
 // git 12.10
 // run ccf
 process run_ccf {
-	label 'L_20g6h_run_ccf'
+	label 'L_50g2h_run_ccf'
 	publishDir "../../2_analysis/ccf/", mode: 'copy'
 
 	input:
