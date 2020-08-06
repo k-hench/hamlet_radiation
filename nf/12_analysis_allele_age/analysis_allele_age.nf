@@ -221,7 +221,7 @@ process collect_by_lg {
 	set val( lg ), file( sites ), file( pairs ) from output_split_ch.groupTuple()
 
 	output:
-	set file( "*.sites.txt.gz" ), file( "*.pairs.txt.gz" ) into ( output_lg_ch )
+	set val( lg ), file( "*.sites.txt.gz" ), file( "*.pairs.txt.gz" ) into ( output_lg_ch )
 
 	script:
 	"""
@@ -233,5 +233,76 @@ process collect_by_lg {
 
 	gzip ${lg}.sites.txt
 	gzip ${lg}.pairs.txt
+	"""
+}
+
+// git 12.8
+// load ccf pairs
+Channel
+	.fromPath('../../ressources/plugin/ccf_pairs.tsv')
+	.splitCsv(header:true, sep:"\t")
+	.map{ row -> [ target:row.target, querry:row.querry] }
+	.combine( output_lg_ch )
+	.set { ccf_pairs_ch }
+
+// git 12.9
+// prepare ccf pair
+process prep_ccf_pair {
+	label 'L_2g15min_collect'
+	publishDir "../../2_analysis/geva/", mode: 'copy'
+
+	input:
+	set val( lg ), file( sites ), file( pairs ), val( ccfpair ) from ccf_pairs_ch
+
+	output:
+	set val( lg ), val( ccfpair ), file( "*ccf_prep.tsv.gz" ) into ( ccf_prep_ch )
+
+	script:
+	"""
+	Rscript --vanilla \$BASE_DIR/R/ccf_prep.R \$BASE_DIR/2_analysis/geva/ ${lg} ${ccfpair.target} ${ccfpair.querry}
+	"""
+}
+
+/*
+// git 12.9
+Channel
+	.from( '1'..'6' )
+	.combine( ccf_pairs_ch )
+	.set{ ccf_idx_ch }
+*/
+
+// git 12.10
+// run ccf
+process run_ccf {
+	label 'L_20g6h_run_ccf'
+	publishDir "../../2_analysis/ccf/", mode: 'copy'
+
+	input:
+	//set val( ccfidx ), val( lg ), file( ccf ) from ( ccf_prep_ch )
+	set, val( lg ), val( ccfpair ), file( ccf ) from ( ccf_prep_ch )
+
+
+	output:
+	 file( "ccf.*.gz" ) into ( ccf_output )
+
+	script:
+	"""
+  # x=\$((${ccfidx}+2))
+
+	for idx in \$( seq 1 6 ); do
+		x=\$((\${idx}+2))
+	  zcat ${ccf} | \
+		   cut -f \$x | \
+			  tail -n 2+ > input.\$x.txt
+
+	echo "idx_"\$x > output.\$x.tsv
+	ccf input.\$x.txt >> output.\$x.tsv
+	done
+
+	zcat ${ccf} | \
+		cut -f -2,9 | \
+		paste -d "\\t" - output.* | \
+		gzip > ccf.${lg}.${ccfpair.target}.${ccfpair.querry}.tsv.gz
+
 	"""
 }
