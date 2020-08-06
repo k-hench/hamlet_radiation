@@ -7,8 +7,6 @@
 # ===============================================================
 library(tidyverse)
 
-
-
 targets <- read_tsv("metadata/sample_info.txt") %>%
   filter(id %in% c("18161", "18172", "18174", "18152", "18180")) %>%
   .$label
@@ -20,5 +18,7 @@ querries <- read_tsv("metadata/sample_info.txt") %>%
                    c("18161", "18172", "18174", "18152", "18180")))%>%
   .$label
 
-cross_df(list(target = targets, querry = querries)) %>%
-  write_tsv("ccf_pairs.tsv", col_names = TRUE)
+filter <- function(x, y) x == y
+
+cross_df(list(target = targets, querry = querries), .filter = filter) %>%
+  write_tsv("ressources/plugin/ccf_pairs.tsv", col_names = TRUE)
