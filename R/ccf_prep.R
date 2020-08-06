@@ -2,7 +2,7 @@
 # run from terminal:
 # Rscript --vanilla R/ccf_prep.R 2_analysis/geva/ LG01 16_21-30nigpan 20553puehon
 # ===============================================================
-# This script 
+# This script
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( "2_analysis/geva/", "LG01", "16_21-30nigpan", "20553puehon")
@@ -30,7 +30,7 @@ chrom <- as.character(args[2])
 target <- as.character(args[3])
 querry <- as.character(args[4])
 
-data <- vroom::vroom("~/work/tests/ancient_allele_vcf/phased2.vcf", delim = "\t",skip = 5)
+data <- vroom::vroom("input.vcf.gz", delim = "\t",skip = 5)
 
 data_geva <-   vroom::vroom(file = str_c(geva_path, chrom,".sites.txt.gz"), delim = " ") %>%
   left_join(vroom::vroom(str_c(geva_path, chrom,".marker.txt.gz"), delim = " ")) %>%
@@ -43,7 +43,7 @@ data_geva <-   vroom::vroom(file = str_c(geva_path, chrom,".sites.txt.gz"), deli
 split_id <- function(data, target, querry){
   target <- enquo(target)
   querry <- enquo(querry)
-  
+
   data %>%
     separate(!!target, into = c("target_A", "target_B"), sep = "\\|",convert = TRUE) %>%
     separate(!!querry, into = c("querry_A", "querry_B"), sep = "\\|",convert = TRUE) %>%
@@ -56,10 +56,10 @@ split_id <- function(data, target, querry){
     select(`#CHROM`, POS, tAtB:qAqB) %>%
     left_join(data_geva, by = c(`#CHROM` = "#CHROM", POS = "POS")) %>%
     filter(!is.na(PostMedian)) %>%
-    arrange(PostMedian) 
+    arrange(PostMedian)
 }
 
-data %>% 
+data %>%
   split_id(target, querry) %>%
     set_names(nm = c("#CHROM", "POS",
                      str_c(target, "_1-", target, "_2"),
@@ -72,4 +72,3 @@ data %>%
   write_tsv(str_c(chrom,"_",target, "-", querry,"_ccf_prep.tsv"))
 
 system(str_c("gzip ",chrom,"_",target, "-", querry,"_ccf_prep.tsv"))
-

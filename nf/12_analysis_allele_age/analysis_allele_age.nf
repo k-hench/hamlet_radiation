@@ -247,22 +247,28 @@ Channel
 	.set { ccf_pairs_ch }
 
 ccf_pairs_ch.println()
-/*
+
 // git 12.9
 // prepare ccf pair
 process prep_ccf_pair {
-	label 'L_2g15min_collect'
+	label 'L_2g2h_prep_ccf_pair'
 	publishDir "../../2_analysis/ccf/", mode: 'copy'
 
 	input:
-	set val( ccfpair ), val( lg ), file( sites ), file( pairs ) from ccf_pairs_ch
+	set val( ccfpair ), val( lg ), file( sites ), file( pairs ), file( pos ), file( vcf ) from ccf_pairs_ch
 
 	output:
 	set val( lg ), val( ccfpair ), file( "*ccf_prep.tsv.gz" ) into ( ccf_prep_ch )
 
 	script:
 	"""
-
+	vcftools \
+		--gzvcf ${vcf} \
+		--chr ${lg} \
+		--positions ${pos} \
+		--recode \
+		--stdout | \
+		gzip > input.vcf.gz
 
 	Rscript --vanilla \$BASE_DIR/R/ccf_prep.R \$BASE_DIR/2_analysis/geva/ ${lg} ${ccfpair.target} ${ccfpair.querry}
 	"""
