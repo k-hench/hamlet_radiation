@@ -260,7 +260,7 @@ process prep_ccf_pair {
 
 	script:
 	"""
-	NUMLG=\$(echo ${lg} | sed 's/LG//; s/^0//')
+	NUMLG=\$(echo ${lg} | sed 's/LG//')
 
 	awk -v l=\$NUMLG '{print l"\\t"\$1}' ${pos} > positions.txt
 
