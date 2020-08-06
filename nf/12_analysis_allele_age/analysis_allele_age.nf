@@ -279,8 +279,7 @@ process run_ccf {
 
 	input:
 	//set val( ccfidx ), val( lg ), file( ccf ) from ( ccf_prep_ch )
-	set, val( lg ), val( ccfpair ), file( ccf ) from ( ccf_prep_ch )
-
+	set val( lg ), val( ccfpair ), file( ccf ) from ( ccf_prep_ch )
 
 	output:
 	 file( "ccf.*.gz" ) into ( ccf_output )
