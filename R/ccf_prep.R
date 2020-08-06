@@ -30,7 +30,7 @@ chrom <- as.character(args[2])
 target <- as.character(args[3])
 querry <- as.character(args[4])
 
-data <- vroom::vroom("input.vcf.gz", delim = "\t",skip = 5)
+data <- vroom::vroom("input.vcf.gz", delim = "\t",skip = 10)
 
 data_geva <-   vroom::vroom(file = str_c(geva_path, chrom,".sites.txt.gz"), delim = " ") %>%
   left_join(vroom::vroom(str_c(geva_path, chrom,".marker.txt.gz"), delim = " ")) %>%

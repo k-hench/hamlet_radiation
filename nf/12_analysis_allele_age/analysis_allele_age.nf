@@ -260,9 +260,11 @@ process prep_ccf_pair {
 
 	script:
 	"""
+	NUMLG=\$(echo ${lg} | sed 's/LG//; s/^0//')
+
 	vcftools \
 		--gzvcf ${vcf} \
-		--chr ${lg} \
+		--chr \$NUMLG \
 		--positions ${pos} \
 		--recode \
 		--stdout | \
