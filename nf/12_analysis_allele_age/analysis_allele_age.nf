@@ -225,10 +225,13 @@ process collect_by_lg {
 
 	script:
 	"""
-	echo "MarkerID Clock Filtered N_Concordant N_Discordant PostMean PostMode PostMedian" > ${lg}.sites.txt.gz
-	echo "MarkerID Clock SampleID0 Chr0 SampleID1 Chr1 Shared Pass SegmentLHS SegmentRHS Shape Rate" > ${lg}.pairs.txt.gz
+	echo "MarkerID Clock Filtered N_Concordant N_Discordant PostMean PostMode PostMedian" > ${lg}.sites.txt
+	echo "MarkerID Clock SampleID0 Chr0 SampleID1 Chr1 Shared Pass SegmentLHS SegmentRHS Shape Rate" > ${lg}.pairs.txt
 
-	zcat ${sites} | gzip  >> ${lg}.sites.txt.gz
-	zcat ${pairs} | gzip  >> ${lg}.pairs.txt.gz
+	zcat ${sites}  >> ${lg}.sites.txt
+	zcat ${pairs}  >> ${lg}.pairs.txt
+
+	gzip ${lg}.sites.txt
+	gzip ${lg}.pairs.txt
 	"""
 }
