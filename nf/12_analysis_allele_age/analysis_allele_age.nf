@@ -306,4 +306,3 @@ process run_ccf {
 
 	"""
 }
-*/
