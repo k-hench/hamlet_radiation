@@ -297,7 +297,7 @@ process run_ccf {
 		x=\$((\${idx}+2))
 	  zcat ${ccf} | \
 		   cut -f \$x | \
-			  tail -n 2+ > input.\$x.txt
+			  tail -n +2 > input.\$x.txt
 
 	echo "idx_"\$x > output.\$x.tsv
 	ccf input.\$x.txt >> output.\$x.tsv
