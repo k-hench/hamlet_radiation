@@ -245,6 +245,8 @@ Channel
 	.map{ row -> [ target:row.target, querry:row.querry] }
 	.combine( output_lg_ch.join(ccf_vcf_ch) )
 	.set { ccf_pairs_ch }
+
+ccf_pairs_ch.println()
 /*
 // git 12.9
 // prepare ccf pair
