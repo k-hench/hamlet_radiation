@@ -32,12 +32,12 @@ querry <- as.character(args[4])
 
 data <- vroom::vroom("input.vcf.gz", delim = "\t", skip = 10)
 
-data_geva <-   vroom::vroom(file = str_c(geva_path, chrom,".sites.txt.gz"), delim = " ") %>%
+data_geva <- vroom::vroom(file = str_c(geva_path, chrom,".sites.txt.gz"), delim = " ") %>%
   left_join(vroom::vroom(str_c(geva_path, chrom,".marker.txt.gz"), delim = " ")) %>%
   filter(Clock == "J", Filtered == 0) %>%
   arrange(Position) %>%
   mutate(#`#CHROM` = str_c("LG", str_pad(Chromosome,width = 2,pad = "0")),
-         `#CHROM` = Chromosome,
+         `#CHROM` = str_pad(Chromosome,width = 2,pad = "0"),
          POS = Position) %>%
   select(`#CHROM`,POS,PostMedian)
 
@@ -48,12 +48,12 @@ split_id <- function(data, target, querry){
   data %>%
     separate(!!target, into = c("target_A", "target_B"), sep = "\\|",convert = TRUE) %>%
     separate(!!querry, into = c("querry_A", "querry_B"), sep = "\\|",convert = TRUE) %>%
-    mutate(tAtB = as.numeric((target_A-target_B) == 0),
-           tAqA = as.numeric((target_A-querry_A) == 0),
-           tAqB = as.numeric((target_A-querry_B) == 0),
-           tBqA = as.numeric((target_B-querry_A) == 0),
-           tBqB = as.numeric((target_B-querry_B) == 0),
-           qAqB = as.numeric((querry_A-querry_B) == 0)) %>%
+    mutate(tAtB = 1L - (as.numeric((target_A-target_B) == 0)),
+           tAqA = 1L - (as.numeric((target_A-querry_A) == 0)),
+           tAqB = 1L - (as.numeric((target_A-querry_B) == 0)),
+           tBqA = 1L - (as.numeric((target_B-querry_A) == 0)),
+           tBqB = 1L - (as.numeric((target_B-querry_B) == 0)),
+           qAqB = 1L - (as.numeric((querry_A-querry_B) == 0))) %>%
     select(`#CHROM`, POS, tAtB:qAqB) %>%
     left_join(data_geva, by = c(`#CHROM` = "#CHROM", POS = "POS")) %>%
     filter(!is.na(PostMedian)) %>%
