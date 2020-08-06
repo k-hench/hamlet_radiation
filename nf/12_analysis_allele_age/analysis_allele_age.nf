@@ -245,6 +245,9 @@ Channel
 	.combine( output_lg_ch )
 	.set { ccf_pairs_ch }
 
+
+ccf_pairs_ch.println()
+/*
 // git 12.9
 // prepare ccf pair
 process prep_ccf_pair {
@@ -262,14 +265,6 @@ process prep_ccf_pair {
 	Rscript --vanilla \$BASE_DIR/R/ccf_prep.R \$BASE_DIR/2_analysis/geva/ ${lg} ${ccfpair.target} ${ccfpair.querry}
 	"""
 }
-
-/*
-// git 12.9
-Channel
-	.from( '1'..'6' )
-	.combine( ccf_pairs_ch )
-	.set{ ccf_idx_ch }
-*/
 
 // git 12.10
 // run ccf
@@ -305,3 +300,4 @@ process run_ccf {
 
 	"""
 }
+*/
