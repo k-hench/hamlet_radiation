@@ -291,7 +291,7 @@ process run_ccf {
 
 	script:
 	"""
-  # x=\$((${ccfidx}+2))
+  # x=\$((\${ccfidx}+2))
 
 	for idx in \$( seq 1 6 ); do
 		x=\$((\${idx}+2))
