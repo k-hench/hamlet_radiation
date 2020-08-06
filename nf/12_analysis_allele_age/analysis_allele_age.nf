@@ -260,12 +260,14 @@ process prep_ccf_pair {
 
 	script:
 	"""
+	awk -v l=${lg} '{print l"\t"$1}' ${pos} > positions.txt
+
 	NUMLG=\$(echo ${lg} | sed 's/LG//; s/^0//')
 
 	vcftools \
 		--gzvcf ${vcf} \
 		--chr \$NUMLG \
-		--positions ${pos} \
+		--positions positions.txt \
 		--recode \
 		--stdout | \
 		gzip > input.vcf.gz
