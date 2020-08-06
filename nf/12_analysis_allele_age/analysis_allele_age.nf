@@ -247,7 +247,7 @@ Channel
 
 
 ccf_pairs_ch.println()
-/*
+
 // git 12.9
 // prepare ccf pair
 process prep_ccf_pair {
@@ -255,7 +255,7 @@ process prep_ccf_pair {
 	publishDir "../../2_analysis/geva/", mode: 'copy'
 
 	input:
-	set val( lg ), file( sites ), file( pairs ), val( ccfpair ) from ccf_pairs_ch
+	set val( ccfpair ), val( lg ), file( sites ), file( pairs ) from ccf_pairs_ch
 
 	output:
 	set val( lg ), val( ccfpair ), file( "*ccf_prep.tsv.gz" ) into ( ccf_prep_ch )
@@ -300,4 +300,3 @@ process run_ccf {
 
 	"""
 }
-*/
