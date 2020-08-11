@@ -72,6 +72,8 @@ labels <- str_c(c("", sc_ax$breaks[2:5]*1000),
 data <- data %>%
   mutate(run = factor(run, levels = levels(global_bar$run)))
 
+
+
 # compose final figure
 p <- ggplot()+
   # general plot structure separated by run

@@ -1,5 +1,5 @@
 #!/usr/bin/env nextflow
-// git 11.1
+// git 12.1
 // open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
@@ -13,7 +13,7 @@ Channel
 	.from( 50, 100, 150, 200 )
 	.set{ window_ch }
 
-// git 11.2
+// git 12.2
 // load focal outlier regions
 Channel
 	.fromPath("../../ressources/focal_outlier.tsv")
@@ -23,7 +23,7 @@ Channel
 	.combine( vcf_ch )
 	.set{ starter_ch }
 
-// git 11.3
+// git 12.3
 // subset the genotypes by location
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
@@ -60,7 +60,7 @@ process subset_vcf_by_location {
 	"""
 }
 
-// git 11.4
+// git 12.4
 // subset genotypes by LG
 process vcf2geno_loc {
 	label 'L_2g15m_vcf2geno'
@@ -78,12 +78,12 @@ process vcf2geno_loc {
 	"""
 }
 
-// git 11.17
+// git 12.17
 geno_filtered
 	.combine( window_ch )
 	.into{ phyml_input_ch; raxml_input_ch }
 
-// git 11.17
+// git 12.17
 // create the phylogenies along the sliding window
 process phyml_slide {
   label "L_30g2h4x_subset_vcf_whg"

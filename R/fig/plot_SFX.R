@@ -17,6 +17,7 @@ library(ggtext)
 library(ggpointdensity)
 library(scales)
 library(grid)
+library(prismatic)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -108,28 +109,34 @@ base_length <- 8
 base_lwd <- .15
 base_line_clr <- "black"
 
+splitage <- tibble(intercept = 5000)
+
 p <- data %>%
   pivot_longer(names_to = "trait",
                values_to = "p_wald",
                cols = Bars:Snout) %>%
   filter(Clock == "J", Filtered == 1) %>%
   ggplot(aes(x = PostMedian,y = p_wald)) +
+  #geom_vline(data = splitage, aes(xintercept = intercept), linetype = 3, color = rgb(0,0,0,.9)) +
   theme_gradient_bg_x(xlim_in = xrange, #range(economics$unemploy),
                       colors = c( rgb(.95,.95,.95,0),
                                   rgb(.1,.1,.1,.15)),
                       fun = log10) +
-  geom_pointdensity()+
+  geom_pointdensity(size = .75)+
   facet_grid(gid ~ trait, scales = "free_y")+
   scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)))+
   scale_y_continuous(trans=reverselog_trans(10),
                       labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  scale_color_viridis_c(option = "B")+
+#  scale_color_viridis_c(option = "B")+
+#  scico::scale_color_scico(palette = "berlin")+
+  scale_color_gradientn(colours = scico::scico(n = 9,palette = "berlin") %>% clr_desaturate(shift = .1) #%>% clr_darken(shift = .25)
+                        )+
   labs(y = "*p* value <sub>Wald</sub>",
-       x  = "Allele Age (Post Median)")+
+       x  = "Allele Age (gen., Post Median)")+
   guides(color = guide_colorbar(barwidth = unit(150, "pt"),
                                 barheight = unit(7, "pt")))+
   theme_minimal()+
-  theme(text = element_text(family = "Futura Lt BT"),
+  theme(#text = element_text(family = "Futura Lt BT"),
         axis.title.y = element_markdown(),
         legend.position = "bottom",
         plot.subtitle = element_markdown(),
@@ -146,3 +153,4 @@ hypo_save(plot = p,
           comment = plot_comment,
           device = cairo_pdf,
           bg = "transparent")
+

@@ -1,11 +1,11 @@
 #!/usr/bin/env nextflow
-// git 12.1
+// git 11.1
 // open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_ch }
 
-// git 12.2
+// git 11.2
 // initialize LGs
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
@@ -13,8 +13,9 @@ Channel
 	.combine( vcf_ch )
 	.set{ lg_ch }
 
-// git 12.3
-// subset the genotypes by location
+// git 11.3
+// subset the genotypes by LG
+// and add ancestral allele annotation
 process prepare_vcf {
 	label "L_20g2h_prepare_vcf"
 
@@ -74,8 +75,8 @@ process prepare_vcf {
 	"""
 }
 
-// git 12.4
-// set ancestral state in vcf
+// git 11.4
+// re-write ancestral state in vcf
 process set_ancestral_states {
 	label 'L_2g15m_ancestral_states'
 	publishDir "../../1_genotyping/5_ancestral_allele", mode: 'copy'
@@ -94,8 +95,8 @@ process set_ancestral_states {
 	"""
 }
 
-// git 12.5
-// set ancestral state in vcf
+// git 11.5
+// filter vcf to remove invariant sites in hamlets
 process create_positions {
 	label 'L_20g2h_create_positions'
 	publishDir "../../2_analysis/sliding_phylo/", mode: 'copy'
@@ -140,9 +141,9 @@ process create_positions {
 }
 
 
-// git 12.5
-// set ancestral state in vcf
-// all in one takes too long...
+// git 11.5
+// prepare the age estimation by splitting the vcf
+// (all in one takes too long...)
 process pre_split {
 	label 'L_2g2h_pre_split'
 	publishDir "../../2_analysis/geva/", mode: 'copy'
@@ -170,8 +171,8 @@ process pre_split {
 	"""
 }
 
-// git 12.6
-// set ancestral state in vcf
+// git 11.6
+// run geva on vcf subsets
 process run_geva {
 	label 'L_30g15h6x_run_geva'
 
@@ -212,8 +213,8 @@ process run_geva {
 	"""
 }
 
-// git 12.7
-// collect by lg
+// git 11.7
+// collect results by lg
 process collect_by_lg {
 	label 'L_2g2h_collect'
 	publishDir "../../2_analysis/geva/", mode: 'copy'
@@ -237,7 +238,7 @@ process collect_by_lg {
 	"""
 }
 
-// git 12.8
+// git 11.8
 // load ccf pairs
 Channel
 	.fromPath('../../ressources/plugin/ccf_pairs.tsv')
@@ -246,7 +247,7 @@ Channel
 	.combine( output_lg_ch.join(ccf_vcf_ch) )
 	.set { ccf_pairs_ch }
 
-// git 12.9
+// git 11.9
 // prepare ccf pair
 process prep_ccf_pair {
 	label 'L_20g2h_prep_ccf_pair'
@@ -276,7 +277,7 @@ process prep_ccf_pair {
 	"""
 }
 
-// git 12.10
+// git 11.10
 // run ccf
 process run_ccf {
 	label 'L_50g2h_run_ccf'
