@@ -277,6 +277,9 @@ plot_panel2_gxp <- function(gid_in = "LG12_3"){
     coord_cartesian(xlim = c(outlier_data$start[[which(outlier_data$gid == gid_in)]] - window_buffer,
                              outlier_data$end[[which(outlier_data$gid == gid_in)]] + window_buffer),
                     expand = .01)+
+    geom_hypo_grob(inherit.aes = FALSE,
+                   data = tibble(grob = list(annotation_grobs[[gid_in]])), 
+                   aes(x = .82, y = .75, grob = grob), width = .42, height = .42, angle = 0)+
     geom_rect(data = outlier_data %>%
                 filter(gid == gid_in),
               inherit.aes = FALSE,
@@ -348,6 +351,14 @@ plot_curtain2 <- function(gid_in, title, theme_curtain = theme){
             plot_panel2_aa(gid_in) + theme_curtain(),
             ncol = 1,align = "v",label_fontface = "plain")
 }
+
+annotation_grobs <- tibble(svg = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c( 'Snout', 'Bars', 'Peduncle')],
+                          layer = c(4,3,7),
+                          color = gxp_clr[c(1,3,2)]) %>%
+  pmap(hypo_recolor_svg) %>%
+  set_names(nm = c( "LG12_3","LG12_4","LG04_1"))
+annotation_grobs$LG12_3 <- hypo_recolor_svg(annotation_grobs$LG12_3,layer = 7, color = gxp_clr[[1]] %>% clr_desaturate %>% clr_lighten(.25))
+
 
 theme_inner_curtain <- function(...){theme(legend.position = "none", axis.title.y = element_blank(), axis.title.x = element_blank(), ...)}
 theme_outer_curtain <- function(...){theme(legend.position = "none", axis.title.y = element_markdown(), axis.title.x = element_blank(), ...)}

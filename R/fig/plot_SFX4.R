@@ -33,12 +33,23 @@ data <- str_c(dxy_path,files) %>%
   set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
 
-
 genoe_wide_avg <- data %>% 
   group_by(run) %>%
   summarise(avg_dxy = mean(dxy)) %>%
   ungroup() %>%
   arrange(avg_dxy)
+
+model_data <- data %>%
+  pivot_longer(cols = starts_with("pi_pop"),
+               names_to = "pi_pop", 
+               values_to= "pi") %>%
+  mutate(pop = str_remove(pi_pop,"pi_pop") %>% str_c("pop: ",.))  %>%
+  # filter fst data to "non-overlapping" windows
+  filter(start %% 50000 == 1 ) %>%
+  group_by(run, pop) %>%
+  nest() %>%
+  mutate(mod =  map(data, function(data){lm(pi ~ dxy, data = data)})) %>%
+  bind_cols(., summarise_model(.))
 
 dxy_subplot <- function(select_idx){
   #run_select <- genoe_wide_avg$run[c(1,7,14,21,28)]
@@ -60,6 +71,17 @@ dxy_subplot <- function(select_idx){
     facet_grid(pop ~ run,switch = "y")+
     geom_hex(bins = 30, color = rgb(0,0,0,.3),
              aes(fill=log10(..count..)))+
+    # add regression line
+    geom_abline(data = model_data %>%
+                  filter(run %in% run_select),
+                color = rgb(1,1,1,.8),
+                linetype = 2,
+                aes(intercept = intercept, slope = slope)) +
+    # add R^2 label
+    geom_text(data = model_data%>%
+                filter(run %in% run_select), x = 0, y = .022,
+              parse = TRUE, hjust = 0, vjust = 1, size = 3,
+              aes(label = str_c('italic(R)^2:~',round(r.squared,2)))) +
     scale_y_continuous("\U03C0",
                        breaks = c(0,.01,.02),labels = c("0", "0.01", "0.02"))+
     scale_x_continuous(expression(italic(d[XY])),
@@ -96,4 +118,6 @@ hypo_save(filename = 'figures/SFX4.pdf',
           height = 12,
           device = cairo_pdf,
           comment = plot_comment)
+
+model_data$adj.r.squared %>% range()
 
