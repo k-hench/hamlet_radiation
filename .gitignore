@@ -22,7 +22,7 @@ ressources/plugin/*
 !ressources/plugin/ccf_pairs.tsv
 ressources/other_studies/stankowski_etal_2019.tsv
 1_genotyping
-2_analysis
+2_analysis/*
 !2_analysis/fasttree/*
 figures
 tables
