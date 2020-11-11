@@ -23,7 +23,7 @@ ressources/plugin/*
 ressources/other_studies/stankowski_etal_2019.tsv
 1_genotyping
 2_analysis
-!2_analysis/fasttree
+!2_analysis/fasttree/*
 figures
 tables
 vignettes/*
