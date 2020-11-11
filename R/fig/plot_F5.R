@@ -180,8 +180,9 @@ p_single <- outlier_table %>%
   pmap(plot_curtain, cool_genes = cool_genes) %>%
   c(., poptree_plot_list) %>%
   cowplot::plot_grid(plotlist = ., nrow = 2,
-                     rel_heights = c(1, .17),
-                     labels = letters[1:length(outlier_pick)] %>% project_case())
+                     rel_heights = c(1, .14),
+                     labels = letters[1:length(outlier_pick)] %>% project_case(),
+                     label_size = plot_text_size)
 
 # compile legend
 # dummy plot for fst legend
@@ -193,7 +194,9 @@ p_leg_fst <- (p_dummy_fst+theme(legend.position = 'bottom')) %>% get_legend()
 # gxp legend
 p_leg_gxp <- (p_dummy_gxp+theme(legend.position = 'bottom')) %>% get_legend()
 # create poptree legend
-p_leg_poptree <- (poptree_plot_list[[1]] + theme(legend.position = "bottom")) %>% get_legend()
+p_leg_poptree <- (poptree_plot_list[[1]] + 
+                    theme(text = element_text(size = plot_text_size),
+                          legend.position = "bottom")) %>% get_legend()
 # create sub-legend 1
 p_leg1 <- cowplot::plot_grid(p_leg_fst,
                              p_leg_gxp,
@@ -211,7 +214,8 @@ p_leg2 <- tibble(spec1 = c('indigo', 'indigo','unicolor'),
 # create sub-legend 3
 p_leg_3 <- cowplot::plot_grid(p_leg1,
                             p_leg2,
-                            nrow = 1, rel_widths = c(.6, 1))
+                            nrow = 1, 
+                            rel_widths = c(.6, 1))
 # complete legend
 p_leg <- cowplot::plot_grid(
   p_leg_poptree,
@@ -225,8 +229,8 @@ p_done <- cowplot::plot_grid(p_single, p_leg,
                              rel_heights = c(1, .17))
 
 # export figure
-scl <- .9
 hypo_save(plot = p_done, filename = 'figures/F5.pdf',
-          width = 14*scl, height = 13*scl,
+          width = f_width, 
+          height = f_width * .93,
           comment = script_name,
           device = cairo_pdf)

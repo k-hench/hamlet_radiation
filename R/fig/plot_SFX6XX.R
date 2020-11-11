@@ -7,8 +7,8 @@
 # by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/fasttree/', 'no_outgroups.all.whg.SNP.tree')
-# script_name <- "R/fig/plot_SF6.R"
+# args <- c('2_analysis/fasttree/', 'no_outgroups.all.whg.SNP.tree', 'all.all.whg.SNP.tree')
+# script_name <- "R/fig/plot_SF6XX.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(ggtree)      # remotes::install_github("YuLab-SMU/ggtree")
@@ -30,6 +30,7 @@ args <- process_input(script_name, args)
 # config -----------------------
 tree_path <- as.character(args[1])
 tree_file <- as.character(args[2])
+tree_file2 <- as.character(args[3])
 geomfactory::factory_geom_point('support')
 
 # load phylogenetic tree
@@ -140,9 +141,125 @@ p <- ggtree(tree_df, layout = lyout,
   # set general plot layout
   theme_void()
 
+
+# ============================================================================
+get_tree2 <- function (loc, file, tree_dir, ...) {
+  tree <- read.tree(stringr::str_c(tree_dir, file))
+  if (loc == "all") {
+    pttrn <- ".*torpan"
+    tree <- root_manual(tree, outgroup = which(tree$tip.label %in%
+                                                 c(tree$tip.label[stringr::str_detect(pattern = pttrn,
+                                                                                      string = tree$tip.label)])))
+  }
+  tibble::tibble(loc = loc, tree = list(tree))
+}
+
+# load phylogenetic tree
+tree_select2 <- get_tree2(loc = 'all', file = tree_file2, tree_dir = tree_path)$tree[[1]]
+
+# adjust tree layout by rotating specific branches for visualization
+tree_rot2 <- ggtree(tree_select2, layout = 'circular') %>%
+  ggtree::rotate(596) %>%
+  ggtree::rotate(482) %>%
+  .$data
+
+# drop "_A/_B" suffix from the pseudo-haplotype labels (crop to sample ID)
+# also: set branch class
+tree_df2 <- tree_rot2 %>%
+  mutate(id = str_remove(label,"_[A,B]"),
+         spec = str_sub(id,start = -6,end = -4) %>% str_remove(.,"[0-9.]{1,3}$")%>% str_remove(.," "),
+         spec = ifelse(spec == "",'ungrouped',spec),
+         geo = str_sub(id,start = -3,end = -1) %>% str_remove(.,"[0-9]{1,3}$")%>% str_remove(.," "),
+         geo = ifelse(geo == "",'ungrouped',geo),
+         grouped = ifelse(spec == 'ungrouped', 'ungrouped', 'species'))
+
+# prepare colored plot background (indication of sampling-location)
+geo_chunks2 <- tree_df2 %>%
+  filter(isTip) %>%
+  select(y,spec,geo) %>%
+  arrange(y) %>%
+  mutate(check = 1-(geo == lag(geo,default = '')),
+         chunk = cumsum(check)) %>%
+  group_by(chunk) %>%
+  summarise(geo = geo[1],
+            ymin = min(y),
+            ymax = max(y))
+
+# compose final figure ---------------
+# initialize tree plot
+p2 <- ggtree(tree_df2, layout = lyout,
+            aes(color = spec), color = NA)+
+  # add colored background
+  geom_rect(inherit.aes = FALSE,
+            data = geo_chunks2,
+            aes(xmin = 6.35, xmax = 6.55,
+                ymin = ymin, ymax = ymax,
+                fill = geo), size = 2)+
+  # # make baground color under the tree more faint
+  geom_rect(inherit.aes = FALSE,
+            data = tibble(xmax = 1.335),
+            aes(xmin = 6.3, xmax = 6.45,
+                ymin = -Inf, ymax = Inf),
+            fill = rgb(1, 1 ,1 ,.9), size = 2)+
+  # add brach layer
+  #  geom_nodelab(aes(label = node))+
+  geom_tree(data = tree_df2,
+            layout = lyout) +
+  # add leafs/ samples (pseudo-haplotypes)
+  geom_tippoint(size = 1)+
+  # add node-support layer
+  # geom_nodepoint_support(data = tree_df %>% filter(!isTip),
+  #                        aes(support_f = as.numeric(label)),
+  #                        size = .5,
+  #                        shape = 21)+
+  # set axis layout
+  scale_x_continuous(expand = c(0,0))+
+  scale_y_continuous(expand = c(0,.5))+
+  # set branch color scheme
+  scale_color_manual(values = c_vals,
+                     breaks = c_breaks,
+                     labels = c_labs)+
+  # set sample color scheme
+  scale_fill_manual(values = clr_loc,
+                    breaks = names(clr_loc),
+                    labels = loc_names)+
+  # set node-support color scheme
+  scale_support_f_continuous(low = 'lightgray',
+                             high = 'black',
+                             guide = guide_colourbar_support(title = 'Node support',
+                                                             direction = 'horizontal',
+                                                             order = 3,
+                                                             title.position = 'top',
+                                                             barheight = unit(5, 'pt'),
+                                                             barwidth = unit(150, 'pt')))+
+  # customize legend entries
+  guides(fill = guide_legend(title = 'Location', ncol = 2, order = 2),
+         color = guide_legend(title = 'Species',
+                              ncol = 2,
+                              order = 1,
+                              label.hjust = 0))+
+  # set general plot layout
+  theme_void()
+
+p_leg <- (p2 +
+  geom_nodepoint_support(data = tree_df %>% filter(!isTip),
+                         aes(support_f = as.numeric(label)),
+                         size = .5,
+                         shape = 21)) %>%
+  get_legend()
+
+p_done <- plot_grid(p + theme(legend.position = "none"),
+          p2 + theme(legend.position = "none"),
+          p_leg,
+          nrow = 1,
+          rel_widths = c(1, 1, .7),
+          labels = c("a", "b", NULL),
+          label_fontface = "plain")
+# =============================================================================
+
 # export final figure
-hypo_save(filename = 'figures/SF7.pdf',
-          plot = p,
-          width = 9,
+hypo_save(filename = 'figures/SF6XX.pdf',
+          plot = p_done,
+          width = 15,
           height = 6,
           comment = plot_comment)

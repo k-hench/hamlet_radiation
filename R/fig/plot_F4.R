@@ -231,10 +231,13 @@ p_done <- ggplot()+
   geom_segment(data = outlier_label,
                aes(x = gpos,
                    xend = gpos_label2, y = outlier_y, yend = outlier_yend),
-               color = alpha(outlr_clr,1),size = .2)+
+               color = alpha(outlr_clr,1),
+               size = .2)+
   # the outlier labels are added
   geom_text(data = outlier_label, aes(x = gpos_label, y = outlier_yend, label = label),
-            color = alpha(outlr_clr,1), fontface = 'bold')+
+            color = alpha(outlr_clr,1), 
+            fontface = 'bold',
+            size = plot_text_size / ggplot2:::.pt)+
   # the fst, delta dxy and gxp data is plotted
   geom_point(data = data, aes(x = GPOS, y = value),size = plot_size, color = plot_clr) +
   # the dxy data is plotted
@@ -245,7 +248,7 @@ p_done <- ggplot()+
   geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
   # the smoothed rho is plotted
   geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
-                color = 'red', se = FALSE, size = .7) +
+                color = 'red', se = FALSE, size = .4) +
   # the topology weighting data is plotted
   geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel), size = .4) +
   # the null weighting is added
@@ -262,15 +265,17 @@ p_done <- ggplot()+
   facet_grid(window~.,scales = 'free',switch = 'y', labeller = label_parsed)+
   # tweak plot appreance
   theme_hypo()+
-  theme(legend.position = 'bottom',
-    axis.title = element_blank(),strip.text = element_text(size = 11),
-    strip.background = element_blank(),
-    strip.placement = 'outside')
+  theme(text = element_text(size = plot_text_size),
+        legend.position = 'bottom',
+        axis.title = element_blank(),
+        strip.text = element_text(size = plot_text_size),
+        strip.background = element_blank(),
+        strip.placement = 'outside')
 
 # export figure 4
-scl <- .8
+#scl <- .8
 hypo_save(p_done, filename = 'figures/F4.png',
-          width = 297*scl, height = 275*scl,
-          units = 'mm',
+          width = f_width,
+          height = f_width * .9,
           type = "cairo",
           comment = plot_comment)

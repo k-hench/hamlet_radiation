@@ -6,7 +6,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("2_analysis/dxy/50k/")
-# script_name <- "R/fig/plot_SF4.R"
+# script_name <- "R/fig/plot_SFX4.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -43,7 +43,7 @@ model_data <- data %>%
   pivot_longer(cols = starts_with("pi_pop"),
                names_to = "pi_pop", 
                values_to= "pi") %>%
-  mutate(pop = str_remove(pi_pop,"pi_pop") %>% str_c("pop: ",.))  %>%
+  mutate(pop = str_remove(pi_pop,"pi_pop") %>% str_c("Pop. ",.))  %>%
   # filter fst data to "non-overlapping" windows
   filter(start %% 50000 == 1 ) %>%
   group_by(run, pop) %>%
@@ -60,14 +60,15 @@ dxy_subplot <- function(select_idx){
     pivot_longer(cols = starts_with("pi_pop"),
                  names_to = "pi_pop", 
                  values_to= "pi") %>%
-    mutate(pop = str_remove(pi_pop,"pi_pop") %>% str_c("pop: ",.))
+    mutate(pop = str_remove(pi_pop,"pi_pop") %>% 
+             str_c("Pop. ",.))
   
   base_lwd <- .15
   base_line_clr <- "black"
   
   p <- plt_data %>%
     ggplot(aes(x = dxy, y = pi))+
-    coord_equal()+
+    #coord_equal()+
     facet_grid(pop ~ run,switch = "y")+
     geom_hex(bins = 30, color = rgb(0,0,0,.3),
              aes(fill=log10(..count..)))+
@@ -81,7 +82,7 @@ dxy_subplot <- function(select_idx){
     geom_text(data = model_data%>%
                 filter(run %in% run_select), x = 0, y = .022,
               parse = TRUE, hjust = 0, vjust = 1, size = 3,
-              aes(label = str_c('italic(R)^2:~',round(r.squared,2)))) +
+              aes(label = str_c('italic(R)^2:~',round(r.squared, 3)))) +
     scale_y_continuous("\U03C0",
                        breaks = c(0,.01,.02),labels = c("0", "0.01", "0.02"))+
     scale_x_continuous(expression(italic(d[XY])),
@@ -96,8 +97,11 @@ dxy_subplot <- function(select_idx){
     theme(legend.position = "bottom",
           axis.title.y = element_text(face = "italic"),
           strip.placement = "outside", 
-          strip.background.x = element_rect(fill = rgb(.95,.95,.95),colour = base_line_clr,size = base_lwd),
-          panel.border = element_rect(size = base_lwd, color = base_line_clr %>% clr_lighten(factor = .8), fill = rgb(1,1,1,0))
+          strip.background.x = element_rect(fill = rgb(.95,.95,.95),
+                                            colour = base_line_clr,size = base_lwd),
+          panel.border = element_rect(size = base_lwd,
+                                      color = base_line_clr %>% 
+                                        clr_lighten(factor = .8), fill = rgb(1,1,1,0))
     )
   p
 }
@@ -107,15 +111,16 @@ ps <- list(1:7, 8:14, 15:21, 22:28) %>% map(dxy_subplot)
 p <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = element_blank()), 
           ps[[2]] + theme(legend.position = "none", axis.title.x = element_blank()), 
           ps[[3]] + theme(legend.position = "none", axis.title.x = element_blank()),
-          ps[[4]] + theme(legend.position = "none", axis.title.x = element_blank()),
+          ps[[4]] + theme(legend.position = "none"),
           ps[[4]]  %>% get_legend(),
           ncol = 1, rel_heights = c(1,1,1,1,.3))
 
 # export final figure
+scl <- 1.2
 hypo_save(filename = 'figures/SFX4.pdf',
           plot = p,
-          width = 9,
-          height = 12,
+          width = f_width * scl,
+          height = f_width * 1.15 * scl,
           device = cairo_pdf,
           comment = plot_comment)
 

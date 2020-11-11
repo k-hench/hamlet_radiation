@@ -19,7 +19,7 @@ args <- commandArgs(trailingOnly=FALSE)
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(patchwork)
-
+# plot_text_size <- 8
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -67,42 +67,49 @@ p_msmc <- msmc_data %>%
   filter(!time_index %in% c(0:2,29:31)) %>%
   ggplot( aes(x=YBP, y=Ne, group = run_nr, colour = spec)) +
   # add guides for the logarithmic axes
-  annotation_logticks(sides="tl", color = clr_ticks) +
+  annotation_logticks(sides="tl", color = clr_ticks, size = plot_lwd) +
   # add the msmc data as lines
-  geom_line()+
+  geom_line(size = .3)+
   # set the color scheme
-  scale_color_manual('Species',
+  scale_color_manual(NULL,
                      values = clr_alt, label = sp_labs) +
   # format the x axis
   scale_x_log10(expand = c(0,0),
                 breaks = c(10^3, 10^4, 10^5),
                 position = 'top',
-                labels = c("1-3 kya", "10-30 kya", "100-300 kya"),
-                name = "Years Before Present") +
+                labels = scales::trans_format("log10", scales::math_format(10^.x))
+                #labels = c("1-3 kya", "10-30 kya", "100-300 kya"),
+                #name = "Years Before Present"
+                ) +
   # format the y axis
   scale_y_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
                 breaks = c(10^3,10^4,10^5,10^6)) +
   # format the color legend
   guides(colour = guide_legend(title.position = "top",
                                override.aes = list(alpha = 1, size=1),
-                               nrow = 2, byrow=TRUE)) +
+                               nrow = 3,
+                               keywidth = unit(7, "pt"),
+                               byrow = TRUE)) +
   # set the axis titles
-  labs(x="Generations Before Present",
+  labs(x = "Generations Before Present",
        y = expression(Effective~Population~Size~(italic(N[e])))) +
   # set plot range
   coord_cartesian(xlim = c(250, 5*10^5)) +
   # tune plot appreance
   theme_minimal()+
-  theme(axis.ticks = element_line(colour = clr_ticks),
-        legend.position = c(1,.03),
+  theme(text = element_text(size = plot_text_size),
+        axis.ticks = element_line(colour = clr_ticks),
+        legend.position = c(1.05,-.175),
         legend.justification = c(1,0),
         legend.text.align = 0,
-        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
         panel.grid.minor.y = element_blank(),
         title = element_text(face = 'bold'),
+        legend.spacing.y = unit(-5,"pt"),
+        legend.spacing.x = unit(3, "pt"),
         axis.title = element_text(face = 'plain'),
-        axis.text.x = element_blank(),
-        axis.title.x = element_blank(),
+    #   axis.text.x = element_blank(),
+#        axis.title.x = element_blank(),
         legend.title = element_text(face = 'plain'))
 
 p_cc <- cc_data %>%
@@ -114,9 +121,9 @@ p_cc <- cc_data %>%
               select(run, weighted_fst)) %>%
   ggplot(aes(x = YBP, y = Cross_coal, group = run_nr, color = weighted_fst)) +
   # add guides for the logarithmic axis
-  annotation_logticks(sides="b", color = clr_ticks) +
+  annotation_logticks(sides="b", color = clr_ticks, size = plot_lwd) +
   # add the msmc data as lines
-  geom_line(alpha = 0.2)+
+  geom_line(alpha = 0.2, size = .3)+
   # set the color scheme
   scale_color_gradientn(name = expression(Global~weighted~italic(F[ST])),
                         colours = hypogen::hypo_clr_LGs[1:24])+
@@ -124,9 +131,10 @@ p_cc <- cc_data %>%
   scale_x_log10(expand = c(0,0),
                 labels = scales::trans_format("log10", scales::math_format(10^.x))) +
   # set the axis titles
-  guides(color = guide_colorbar(barheight = unit(7, 'pt'),
-                                barwidth = unit(150, 'pt'),
-                                title.position = 'top'))+
+  guides(color = guide_colorbar(barheight = unit(3, 'pt'),
+                                barwidth = unit(110, 'pt'),
+                                title.position = 'top'
+  )) +
   # set the axis titles
   labs(x = "Generations Before Present",
        y = 'Cross-coalescence Rate') +
@@ -134,21 +142,36 @@ p_cc <- cc_data %>%
   coord_cartesian(xlim = c(250, 5*10^5)) +
   # tune plot appreance
   theme_minimal()+
-  theme(axis.ticks = element_line(colour = clr_ticks),
+  theme(text = element_text(size = plot_text_size),
+        axis.ticks = element_line(colour = clr_ticks),
         legend.position = c(1,.03),
         legend.direction = 'horizontal',
         legend.justification = c(1,0),
-        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
         panel.grid.minor.y = element_blank(),
         title = element_text(face = 'bold'),
         axis.title = element_text(face = 'plain'),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
         legend.title = element_text(face = 'plain'))
 
 # combine panels a and b
-p_done <- p_msmc / p_cc + plot_annotation(tag_levels = c('a'))
+p_done <- p_msmc / 
+  p_cc  +
+  plot_annotation(tag_levels = c('a')) & 
+  theme(#legend.position = "bottom", 
+    legend.text = element_text(size = plot_text_size_small),
+    legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"),
+    panel.grid.major = element_line(size = plot_lwd),
+    axis.ticks.x = element_blank(),
+    panel.background = element_blank(),
+    plot.background = element_blank())
 
 # export figure 2
 hypo_save(plot = p_done, filename = 'figures/F2.pdf',
-          width = 10, height = 7,
+          width = f_width_half,
+          height = f_width_half * .95,
           comment = plot_comment,
+          bg = "transparent",
           device = cairo_pdf)
+

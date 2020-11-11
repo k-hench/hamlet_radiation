@@ -99,13 +99,13 @@ networx <- tibble( loc = c('bel','hon', 'pan'),
 
 # plot the individual networks by location
 plot_list <- networx %>%
-  purrr::pmap(plot_network, node_lab_shift = .2)
+    purrr::pmap(plot_network, node_lab_shift = .2)
 
 # assemble panel a
 p1 <- cowplot::plot_grid(
-  grid::textGrob('Belize'),
-  grid::textGrob('Honduras'),
-  grid::textGrob('Panama'),
+  grid::textGrob('Belize', gp = gpar(fontsize = plot_text_size)),
+  grid::textGrob('Honduras', gp = gpar(fontsize = plot_text_size)),
+  grid::textGrob('Panama', gp = gpar(fontsize = plot_text_size)),
   plot_list[[1]], plot_list[[2]], plot_list[[3]],
   ncol = 3, rel_heights = c(.1,1))
 
@@ -114,14 +114,17 @@ p2 <- data %>%
   filter(popstat == "weighted-fst") %>%
   ggplot(aes(color = loc)) +
   geom_segment(aes(x = x, xend = x,
-                   y = lowpoint, yend = highpoint))+
+                   y = lowpoint, yend = highpoint),
+               lwd = plot_lwd)+
   geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
                 ymin = lower, ymax = upper),
-             fill = 'white')+
+             fill = 'white',
+            size = plot_lwd)+
   geom_segment(aes(x = x - wdh,
                    xend = x + wdh,
                    y = median,
-                   yend = median), lwd = .9)+
+                   yend = median),
+               lwd = plot_lwd)+
   geom_point(aes(x = x, y = mean),
              shape = 21, size = .7, fill = 'white')+
   scale_x_continuous(breaks = 1:28) +
@@ -133,7 +136,8 @@ p2 <- data %>%
   coord_cartesian(xlim = c(0,29),
                   expand = c(0,0))+
   theme_minimal()+
-  theme(axis.title.x = element_blank(),
+  theme(text = element_text(size = plot_text_size),
+        axis.title.x = element_blank(),
         legend.position = 'none',
         strip.placement = 'outside',
         strip.text = element_text(size = 12),
@@ -147,14 +151,17 @@ p3 <- data %>%
   filter(popstat == "dxy") %>%
   ggplot(aes(color = loc)) +
   geom_segment(aes(x = x, xend = x,
-                   y = lowpoint, yend = highpoint))+
+                   y = lowpoint, yend = highpoint),
+               lwd = plot_lwd)+
   geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
                 ymin = lower, ymax = upper),
-            fill = 'white')+
+            fill = 'white',
+            size = plot_lwd)+
   geom_segment(aes(x = x - wdh,
                    xend = x + wdh,
                    y = median,
-                   yend = median),lwd = .9)+
+                   yend = median),
+               lwd = plot_lwd)+
   geom_point(aes(x = x, y = mean),
              shape = 21, size = .7, fill = 'white')+
   scale_x_continuous(breaks = 1:28) +
@@ -167,7 +174,8 @@ p3 <- data %>%
   coord_cartesian(xlim = c(0,29),
                   expand = c(0,0))+
   theme_minimal()+
-  theme(axis.title.x = element_blank(),
+  theme(text = element_text(size = plot_text_size),
+        axis.title.x = element_blank(),
         legend.position = 'none',
         strip.placement = 'outside',
         strip.text = element_text(size = 12),
@@ -180,17 +188,19 @@ p3 <- data %>%
 p23 <- cowplot::plot_grid(p2,p3,
                           ncol = 2,
                           labels = letters[2:3] %>%
-                            project_case())
+                            project_case(),
+                          label_size = plot_text_size)
 
 # merge all panels
 p_done <- cowplot::plot_grid(p1, p23,
                              ncol = 1,
                              rel_heights = c(.9,1),
-                             labels = c(letters[1], NULL) %>% project_case())
-
+                             labels = c(letters[1], NULL) %>%
+                               project_case(),
+                             label_size = plot_text_size)
 # export figure 1
 hypo_save(p_done, filename = 'figures/F1.pdf',
-          width = 11, height = 6.5,
+          width = f_width, height =  f_width * .6,
           comment = plot_comment)
 
 # compile fst and dxy table (table 1) for the manuscript
