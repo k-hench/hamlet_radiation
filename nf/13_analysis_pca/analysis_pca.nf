@@ -49,7 +49,6 @@ process pca_location {
 	label "L_20g15h_pca_location"
 	publishDir "../../figures/pca", mode: 'copy' , pattern: "*.pdf"
 	publishDir "../../2_analysis/pca", mode: 'copy' , pattern: "*.gz"
-	module "R3.5.2"
 
 	input:
 	set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
@@ -71,7 +70,6 @@ process pca_all {
 	publishDir "../../figures/pca", mode: 'copy' , pattern: "*.pdf"
 	publishDir "../../2_analysis/pca", mode: 'copy' , pattern: "*.txt.gz"
 	publishDir "../../1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
-	module "R3.5.2"
 
 	input:
 	set vcfId, file( vcf ) from vcf_all_samples_pca
