@@ -60,7 +60,7 @@ process pca_location {
 	"""
 	awk '{print \$1"\\t"\$1}' ${loc}.pop | \
 		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > ${loc}.pop.txt
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R ${loc}.pop.txt 6
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} ${loc}.pop.txt 6
 	"""
 }
 
@@ -85,7 +85,7 @@ process pca_all {
 	vcfsamplenames ${vcf[0]} | \
 		awk '{print \$1"\\t"\$1}' | \
 		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > all.pop.txt
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} \$BASE_DIR/R/project_config.R all.pop.txt 6
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} all.pop.txt 6
 	# PCA without outgroups ---------------
 	vcfsamplenames ${vcf[0]} | \
 		grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" > outgroup.pop
@@ -98,7 +98,7 @@ process pca_all {
 		--remove outgroup.pop \
 		--recode \
 		--stdout | gzip > hamlets_only.vcf.gz
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.vcf.gz \$BASE_DIR/R/project_config.R hamlets_only.pop.txt 6
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.vcf.gz hamlets_only.pop.txt 6
 	# PCA without indtgo or gumigutta ---------------
 	grep -v "ind\\|gum" hamlets_only.pop.txt > core_hamlets.pop.txt
 	cut -f 1 core_hamlets.pop.txt > core_hamlets.pop
@@ -107,6 +107,6 @@ process pca_all {
 		--keep core_hamlets.pop \
 		--recode \
 		--stdout | gzip > core_hamlets.vcf.gz
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R core_hamlets.vcf.gz \$BASE_DIR/R/project_config.R core_hamlets.pop.txt 6
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R core_hamlets.vcf.gz core_hamlets.pop.txt 6
 	"""
 }

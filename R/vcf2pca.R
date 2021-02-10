@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla vcf2pca.R simulated.vcf.gz project_config.R pops_sim.txt 5
+# Rscript --vanilla vcf2pca.R simulated.vcf.gz pops_sim.txt 5
 # ===============================================================
 # This script used the package SNPrelate to produce a PCA on a given VCF file.
 # The number of PCs considdered can be varied.
@@ -14,7 +14,7 @@
 #     - individual scores on PCx - PCz
 #     - SNPs with top loadings
 # ===============================================================
-# args <- c('simulated.vcf.gz','project_config.R', 'pops_sim.txt', '5')
+# args <- c('simulated.vcf.gz', 'pops_sim.txt', '5')
 args = commandArgs(trailingOnly=FALSE)
 args = args[7:10]
 print(args)
@@ -23,6 +23,7 @@ library(SNPRelate)
 library(stringr)
 library(tidyverse)
 library(hypoimg)
+library(GenomicOriginsScripts)
 # custom functions -------------------
 get_pca_scores <- function(mat,n_ev){mat[,1:n_ev] %>%
     as_tibble() %>%
@@ -68,11 +69,9 @@ prep_laoding_ev <- function(df,EV){df %>% mutate(ev = EV) %>% select(snpnr,ev,id
 # config:
 set.seed(1000)
 vcf.fn <- as.character(args[1])
-config_script <- as.character(args[2])
-vcf_samples <- as.character(args[3])
-n_ev <- as.numeric(args[4])
+vcf_samples <- as.character(args[2])
+n_ev <- as.numeric(args[3])
 # ------------------------------------
-source(config_script)
 base_name <- str_remove(vcf.fn,'.vcf.gz')
 
 # reformating genotypes
