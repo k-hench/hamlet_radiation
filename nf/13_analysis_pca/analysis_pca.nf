@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 Channel
 	.from( "whg", "subset_non_diverged")
-	.into{ subset_type_ch }
+	.set{ subset_type_ch }
 
 Channel
 	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
@@ -13,6 +13,8 @@ Channel
 	.combine( subset_type_ch )
 	.set{ vcf_ch }
 
+vcf_ch.println()
+/*
 process subset_vcf_divergence_based {
 	label "L_20g2h_subset_divergence"
 
@@ -76,8 +78,8 @@ process subset_vcf_by_location {
 	"""
 }
 
-/* 1) PCA section ============== */
-/* 1a) PCA (local) -------------- */
+// 1) PCA section ==============
+// 1a) PCA (local) --------------
 process pca_location {
 	label "L_20g15h_pca_location"
 	publishDir "../../figures/pca", mode: 'copy' , pattern: "*.pdf"
@@ -97,7 +99,7 @@ process pca_location {
 	"""
 }
 
-/* 1b) PCA (global) -------------- */
+// 1b) PCA (global) -------------- 
 process pca_all {
 	label "L_20g15h_pca_all"
 	publishDir "../../figures/pca", mode: 'copy' , pattern: "*.pdf"
@@ -135,3 +137,4 @@ process pca_all {
 	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.${subset_type}.vcf.gz hamlets_only.${subset_type}.pop.txt 6
 	"""
 }
+*/
