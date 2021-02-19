@@ -1,12 +1,45 @@
 #!/usr/bin/env nextflow
-/* create channel of linkage groups */
 Channel
-	.from( 2..12 )
-	.into{ admx_ch; admx_loc_ch }
+	.from( "whg", "subset_non_diverged")
+	.into{ subset_type_ch }
+
+Channel
+	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
+	.set{ outlier_tab }
 
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.into{ vcf_locations; vcf_all_samples_pca; vcf_admx; vcf_geno }
+	.combine( outlier_tab )
+	.combine( subset_type_ch )
+	.set{ vcf_ch }
+
+process subset_vcf_divergence_based {
+	label "L_20g2h_subset_divergence"
+
+	input:
+	set  vcfId, file( vcf ), file( outlier_tab ), value( subset_type ) from vcf_ch
+
+	output:
+	set file( "${subset_type}.vcf.gz" ), file( "${subset_type}.vcf.gz.tbi" ), value( subset_type ) into ( vcf_locations, vcf_all_samples_pca )
+
+	script:
+	"""
+	if [ "${subset_type}" == "subset_non_diverged" ];then
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' > diverged_regions.bed 
+		SUBSET="--exclude-positions diverged_regions.bed"
+	else
+		SUBSET=""
+	fi
+
+	vcftools --gzvcf ${vcf[0]} \
+		\$SUBSET \
+		--recode \
+		--stdout | bgzip > ${subset_type}.vcf.gz
+	
+	tabix ${subset_type}.vcf.gz
+	"""
+}
+//	.into{ vcf_locations; vcf_all_samples_pca}
 
 Channel
 	.from( "bel", "hon", "pan")
@@ -24,22 +57,22 @@ process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
 	input:
-	set val( loc ), vcfId, file( vcf ) from vcf_location_combo
+	set val( loc ), file( vcf ), file( vcfidx ), value( subset_type ) from vcf_location_combo
 
 	output:
-	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pca, vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3, vcf_loc_admix )
+	set val( loc ), file( "*.vcf.gz" ), file( "*.pop" ), value( subset_type ) into ( vcf_loc_pca )
 
 	script:
 	"""
-	vcfsamplenames ${vcf[0]} | \
+	vcfsamplenames ${vcf} | \
 		grep ${loc} | \
 		grep -v tor | \
-		grep -v tab > ${loc}.pop
-	vcftools --gzvcf ${vcf[0]} \
-		--keep ${loc}.pop \
+		grep -v tab > ${loc}.${subset_type}.pop
+	vcftools --gzvcf ${vcf} \
+		--keep ${loc}.${subset_type}.pop \
 		--mac 3 \
 		--recode \
-		--stdout | gzip > ${loc}.vcf.gz
+		--stdout | gzip > ${loc}.${subset_type}.vcf.gz
 	"""
 }
 
@@ -51,16 +84,16 @@ process pca_location {
 	publishDir "../../2_analysis/pca", mode: 'copy' , pattern: "*.gz"
 
 	input:
-	set val( loc ), file( vcf ), file( pop ) from vcf_loc_pca
+	set val( loc ), file( vcf ), file( pop ), value( subset_type ) from vcf_loc_pca
 
 	output:
-	set file( "${loc}.prime_pca.pdf" ), file( "${loc}.pca.pdf" ), file( "${loc}.exp_var.txt.gz" ), file( "${loc}.scores.txt.gz" ) into pca_loc_out
+	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_loc_out
 
 	script:
 	"""
-	awk '{print \$1"\\t"\$1}' ${loc}.pop | \
-		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > ${loc}.pop.txt
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} ${loc}.pop.txt 6
+	awk '{print \$1"\\t"\$1}' ${loc}.${subset_type}.pop | \
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > ${loc}.${subset_type}.pop.txt
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf} ${loc}.${subset_type}.pop.txt 6
 	"""
 }
 
@@ -72,41 +105,33 @@ process pca_all {
 	publishDir "../../1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
 
 	input:
-	set vcfId, file( vcf ) from vcf_all_samples_pca
+	set file( vcf ), file( vcfidx ), value( subset_type ) from vcf_all_samples_pca.combine( subset_type_all_ch )
 
 	output:
 	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
-	file( "hamlets_only.vcf.gz*" ) into vcf_hamlets_only
-	set file( "hamlets_only.vcf.gz*" ), file( "hamlets_only.pop.txt" ) into vcf_multi_fst
+	file( "hamlets_only.${subset_type}.vcf.gz" ) into vcf_hamlets_only
+	set file( "hamlets_only.${subset_type}.vcf.gz" ), file( "hamlets_only.${subset_type}.pop.txt" ) into vcf_multi_fst
 
 	script:
 	"""
 	# complete PCA, all samples ------------
-	vcfsamplenames ${vcf[0]} | \
+	vcfsamplenames ${vcf} | \
 		awk '{print \$1"\\t"\$1}' | \
-		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > all.pop.txt
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf[0]} all.pop.txt 6
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > all.${subset_type}.pop.txt
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf} all.${subset_type}.pop.txt 6
+
 	# PCA without outgroups ---------------
-	vcfsamplenames ${vcf[0]} | \
-		grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" > outgroup.pop
-	vcfsamplenames ${vcf[0]} | \
-		grep "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni" | \
+	vcfsamplenames ${vcf} | \
+		grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni\\|flo" > outgroup.${subset_type}.pop
+	vcfsamplenames ${vcf} | \
+		grep "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni\\|flo" | \
 		awk '{print \$1"\\t"\$1}' | \
-		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > hamlets_only.pop.txt
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > hamlets_only.${subset_type}.pop.txt
 	vcftools \
-		--gzvcf ${vcf[0]} \
-		--remove outgroup.pop \
+		--gzvcf ${vcf} \
+		--remove outgroup.${subset_type}.pop \
 		--recode \
-		--stdout | gzip > hamlets_only.vcf.gz
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.vcf.gz hamlets_only.pop.txt 6
-	# PCA without indtgo or gumigutta ---------------
-	grep -v "ind\\|gum" hamlets_only.pop.txt > core_hamlets.pop.txt
-	cut -f 1 core_hamlets.pop.txt > core_hamlets.pop
-	vcftools \
-		--gzvcf ${vcf[0]} \
-		--keep core_hamlets.pop \
-		--recode \
-		--stdout | gzip > core_hamlets.vcf.gz
-	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R core_hamlets.vcf.gz core_hamlets.pop.txt 6
+		--stdout | gzip > hamlets_only.${subset_type}.vcf.gz
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.${subset_type}.vcf.gz hamlets_only.${subset_type}.pop.txt 6
 	"""
 }
