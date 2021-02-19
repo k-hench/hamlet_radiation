@@ -105,7 +105,7 @@ process pca_all {
 	publishDir "../../1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
 
 	input:
-	set file( vcf ), file( vcfidx ), val( subset_type ) from vcf_all_samples_pca.combine( subset_type_all_ch )
+	set file( vcf ), file( vcfidx ), val( subset_type ) from vcf_all_samples_pca
 
 	output:
 	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
