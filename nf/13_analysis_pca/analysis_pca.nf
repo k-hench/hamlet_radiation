@@ -17,10 +17,10 @@ process subset_vcf_divergence_based {
 	label "L_20g2h_subset_divergence"
 
 	input:
-	set  vcfId, file( vcf ), file( outlier_tab ), value( subset_type ) from vcf_ch
+	set  vcfId, file( vcf ), file( outlier_tab ), val( subset_type ) from vcf_ch
 
 	output:
-	set file( "${subset_type}.vcf.gz" ), file( "${subset_type}.vcf.gz.tbi" ), value( subset_type ) into ( vcf_locations, vcf_all_samples_pca )
+	set file( "${subset_type}.vcf.gz" ), file( "${subset_type}.vcf.gz.tbi" ), val( subset_type ) into ( vcf_locations, vcf_all_samples_pca )
 
 	script:
 	"""
@@ -57,10 +57,10 @@ process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
 	input:
-	set val( loc ), file( vcf ), file( vcfidx ), value( subset_type ) from vcf_location_combo
+	set val( loc ), file( vcf ), file( vcfidx ), val( subset_type ) from vcf_location_combo
 
 	output:
-	set val( loc ), file( "*.vcf.gz" ), file( "*.pop" ), value( subset_type ) into ( vcf_loc_pca )
+	set val( loc ), file( "*.vcf.gz" ), file( "*.pop" ), val( subset_type ) into ( vcf_loc_pca )
 
 	script:
 	"""
@@ -84,7 +84,7 @@ process pca_location {
 	publishDir "../../2_analysis/pca", mode: 'copy' , pattern: "*.gz"
 
 	input:
-	set val( loc ), file( vcf ), file( pop ), value( subset_type ) from vcf_loc_pca
+	set val( loc ), file( vcf ), file( pop ), val( subset_type ) from vcf_loc_pca
 
 	output:
 	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_loc_out
@@ -105,7 +105,7 @@ process pca_all {
 	publishDir "../../1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
 
 	input:
-	set file( vcf ), file( vcfidx ), value( subset_type ) from vcf_all_samples_pca.combine( subset_type_all_ch )
+	set file( vcf ), file( vcfidx ), val( subset_type ) from vcf_all_samples_pca.combine( subset_type_all_ch )
 
 	output:
 	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
