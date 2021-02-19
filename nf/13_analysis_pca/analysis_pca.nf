@@ -13,8 +13,6 @@ Channel
 	.combine( subset_type_ch )
 	.set{ vcf_ch }
 
-vcf_ch.println()
-/*
 process subset_vcf_divergence_based {
 	label "L_20g2h_subset_divergence"
 
@@ -137,4 +135,3 @@ process pca_all {
 	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.${subset_type}.vcf.gz hamlets_only.${subset_type}.pop.txt 6
 	"""
 }
-*/
