@@ -25,7 +25,7 @@ process subset_vcf_divergence_based {
 	script:
 	"""
 	if [ "${subset_type}" == "subset_non_diverged" ];then
-		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		awk -v OFS="\\t" 'NR>1{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
 		SUBSET="--exclude-positions diverged_regions.bed"
 	else
 		SUBSET=""
