@@ -95,6 +95,8 @@ process fst_run {
 Channel
 	.from( ('0'..'9'))
 	.set{ sub_pre_ch }
+
+rand_bocy_ch.combine(sub_pre_ch).println()
 /*	.into{ singles_ch; tens_ch }
 
 singles_ch
@@ -103,7 +105,7 @@ singles_ch
 	.toSortedList()
 	.flatten()
 	.set{ sub_pre_ch }
-*/
+
 process split_allBP {
 	label 'L_32g30m_fst_run'
 
@@ -137,3 +139,4 @@ process split_allBP {
 	done
 	"""
 }
+*/
