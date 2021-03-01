@@ -91,7 +91,6 @@ process complie_window_stats {
 
 	data <- data_SNPs %>%
 		left_join(data_allBPs, by = c(CHROM = "CHROM", START = "START", END = "END")) %>%
-		filter(COV_ALL > 0 ) %>% # redundnat
 		mutate(SNP_density = round(COV_SNP/ COV_ALL, 2), 
 		REL_COV =  round(COV_ALL/ (END-START), 2))
 	
