@@ -74,7 +74,7 @@ process fst_run {
 
 	script:
 	"""
-	grep "${spec1}\|${spec2}" all.pop > prep.pop
+	grep "${spec1}\\|${spec2}" all.pop > prep.pop
 	grep ${spec1} ${pop} > pop1.txt
 	grep ${spec2} ${pop} > pop2.txt
 	
