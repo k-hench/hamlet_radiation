@@ -66,4 +66,11 @@ p2 <- patchwork_pcas(types[[2]])
 
 cowplot::plot_grid(p1, p2)
 
-ggsave("~/Desktop/whg_pcas.pdf", width = 10, height = 8.5, device = cairo_pdf)
+# Searching floflo 
+# clr_swap <- clr
+# clr_swap[] <- "gray"
+# clr_swap["flo"] <- "red"
+# p1 & scale_color_manual(values = clr_swap)& scale_fill_manual(values = clr_swap)
+
+scl <- .7
+ggsave("~/Desktop/whg_pcas.pdf", width = 16 * scl, height = 9 * scl, device = cairo_pdf)
