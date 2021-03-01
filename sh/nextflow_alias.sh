@@ -12,3 +12,4 @@ alias nf_run_sliding_phylo="nextflow run analysis_sliding_phylo.nf -with-dag ../
 alias nf_run_aa="nextflow run analysis_allele_age.nf -with-dag ../../docs/analysis_allele_age.dot -with-report ../../docs/analysis_allele_age.html -with-timeline ../../docs/analysis_allele_age.html -c nextflow.config -resume"
 alias nf_run_pca="nextflow run analysis_pca.nf -with-dag ../../docs/analysis_pca.dot -with-report ../../docs/analysis_pca.html -with-timeline ../../docs/analysis_pca.html -c nextflow.config -resume"
 alias nf_run_revpomo="nextflow run analysis_revpomo.nf -with-dag ../../docs/analysis_revpomo.dot -with-report ../../docs/analysis_revpomo.html -with-timeline ../../docs/analysis_revpomo.html -c nextflow.config -resume"
+alias nf_run_fstsig="nextflow run analysis_fst_sign.nf -with-dag ../../docs/analysis_fstsig.dot -with-report ../../docs/analysis_fstsig.html -with-timeline ../../docs/analysis_fstsig.html -c nextflow.config -resume"
