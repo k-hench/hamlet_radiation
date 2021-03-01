@@ -20,7 +20,7 @@ process subset_vcf_by_location {
 	set val( loc ), vcfId, file( vcf ) from vcf_location_combo
 
 	output:
-	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
+	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.vcf.gz.tbi" ), file( "${loc}.pop" ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
 
 	script:
 	"""
@@ -33,7 +33,9 @@ process subset_vcf_by_location {
 		--keep ${loc}.pop \
 		--mac 3 \
 		--recode \
-		--stdout | gzip > ${loc}.vcf.gz
+		--stdout | bgzip > ${loc}.vcf.gz
+	
+	tabix ${loc}.vcf.gz
 	"""
 }
 
@@ -65,7 +67,7 @@ process fst_run {
 	label 'L_32g1h_fst_run'
 
 	input:
-	set val( loc ), file( vcf ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
+	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
 
 	output:
 	set val( "${spec1}${loc}-${spec2}${loc}" ), val( loc ), file( "*_random_fst.tsv" ) into rand_header_ch
@@ -73,7 +75,8 @@ process fst_run {
 
 	script:
 	"""
-	grep "${spec1}\\|${spec2}" all.pop > prep.pop
+	vcfsamplenames ${vcf} | \
+		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
 	grep ${spec1} ${pop} > pop1.txt
 	grep ${spec2} ${pop} > pop2.txt
 	
