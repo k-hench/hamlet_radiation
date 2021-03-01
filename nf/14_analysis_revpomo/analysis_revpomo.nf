@@ -77,7 +77,7 @@ process complie_window_stats {
 	library(tidyverse)
 
 	data_SNPs <- read_tsv("phased_mac2_cov.tsv.gz",
-						  col_names = c("CHROM", "START", "END", "COV_SNP"))
+							col_names = c("CHROM", "START", "END", "COV_SNP"))
 
 	data_allBPs <- 1:24 %>% 
 					str_pad(width = 2, pad = 0) %>%
