@@ -106,7 +106,6 @@ singles_ch
 */
 process split_allBP {
 	label 'L_32g30m_fst_run'
-	tag "${run}_${pre}"
 
 	input:
 	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) rand_bocy_ch.combine(sub_pre_ch)
