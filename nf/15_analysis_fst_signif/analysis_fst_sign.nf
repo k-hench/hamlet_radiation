@@ -62,8 +62,7 @@ pan_pairs_ch = Channel.from( "pan" )
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 process fst_run {
-	label 'L_32g30m_fst_run'
-	tag "${spec1}${loc}-${spec2}${loc}"
+	label 'L_32g1h_fst_run'
 
 	input:
 	set val( loc ), file( vcf ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
@@ -139,4 +138,52 @@ process split_allBP {
 	done
 	"""
 }
+*/
+
+// =======================
+// Genepop section
+/*
+process thin_vcf_genepop {
+	label "L_20g2h_subset_vcf"
+
+	input:
+	set vcfId, file( vcf ) from vcf_genepop_SNP
+
+	output:
+	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
+
+	script:
+	"""
+	vcfsamplenames ${vcf[0]} | \
+		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}' > pop.txt
+
+	vcftools \
+		--vcf test.vcf \
+		--thin 5000 \
+		--recode --stdout | \
+		vcfrandomsample -s 0.1 -p 42 > test_sub.vcf
+
+	vcfsamplenames ${vcf[0]} | \
+		grep ${loc} | \
+		grep -v tor | \
+		grep -v tab > ${loc}.pop
+
+	vcftools --gzvcf ${vcf[0]} \
+		--keep ${loc}.pop \
+		--mac 3 \
+		--recode \
+		--stdout | gzip > ${loc}.vcf.gz
+	"""
+}
+
+*/
+/*
+
+# module load Java/8.112
+java -jar /software/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile test.vcf -outputfile test_genepop_geno.txt -spid vcf2gp_no_pops.spid
+
+sed 's/[A-Za-z0-9_-]*\([a-z]\{6\}\) ,/\1 ,/' test_genepop_geno.txt > test_genepop_geno_pops.txt
+
+Genepop BatchNumber=20 GenepopInputFile=test_genepop_geno_pops.txt MenuOptions=3.1,3.2 Mode=Batch
+
 */

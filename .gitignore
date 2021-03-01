@@ -17,6 +17,7 @@ ressources/*
 !ressources/other_studies/
 !ressources/plugin
 !ressources/vcf2nh.spid
+!ressources/vcf2gp.spid
 !ressources/avg_rho_by_LG.tsv
 ressources/plugin/*
 !ressources/plugin/poptrees
