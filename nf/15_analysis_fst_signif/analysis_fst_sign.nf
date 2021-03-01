@@ -47,20 +47,20 @@ bel_pairs_ch = Channel.from( "bel" )
 	.join( vcf_loc_pair1 )
 	.combine(bel_spec1_ch)
 	.combine(bel_spec2_ch)
-	.filter{ it[3] < it[5] }
-	.map{ it[0,1,2,4,6]}
+	.filter{ it[4] < it[6] }
+	.map{ it[0,1,2,3,5,7]}
 hon_pairs_ch = Channel.from( "hon" )
 	.join( vcf_loc_pair2 )
 	.combine(hon_spec1_ch)
 	.combine(hon_spec2_ch)
-	.filter{ it[3] < it[5] }
-	.map{ it[0,1,2,4,6]}
+	.filter{ it[4] < it[6] }
+	.map{ it[0,1,2,3,5,7]}
 pan_pairs_ch = Channel.from( "pan" )
 	.join( vcf_loc_pair3 )
 	.combine(pan_spec1_ch)
 	.combine(pan_spec2_ch)
-	.filter{ it[3] < it[5] }
-	.map{ it[0,1,2,4,6]}
+	.filter{ it[4] < it[6] }
+	.map{ it[0,1,2,3,5,7]}
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 process fst_run {
@@ -145,40 +145,51 @@ process split_allBP {
 
 // =======================
 // Genepop section
-/*
 process thin_vcf_genepop {
 	label "L_20g2h_subset_vcf"
 
 	input:
-	set vcfId, file( vcf ) from vcf_genepop_SNP
+	set vcfId, file( vcf ) from vcf_genepop_SNP.map{ [it[0].minus(".vcf"), it[1]]}
 
 	output:
-	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.pop" ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
+	set vcfId, file( "${vcfId}_genepop_pops.txt" ) into genepop_prep_ch
 
 	script:
 	"""
+	module load Java/8.112
+
 	vcfsamplenames ${vcf[0]} | \
 		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}' > pop.txt
 
 	vcftools \
-		--vcf test.vcf \
+		--gzvcf ${vcf[0]} \
 		--thin 5000 \
 		--recode --stdout | \
-		vcfrandomsample -s 0.1 -p 42 > test_sub.vcf
+		vcfrandomsample -r 0.0043 -p 42 > ${vcfId}_sub.vcf # 0.43% ~ 100k SNPs
 
-	vcfsamplenames ${vcf[0]} | \
-		grep ${loc} | \
-		grep -v tor | \
-		grep -v tab > ${loc}.pop
+	java -jar \$SFTWR/PGDSpider/PGDSpider2-cli.jar \
+		-inputfile ${vcfId}_sub.vcf \
+		-outputfile ${vcfId}_genepop.txt \
+		-spid \$BASE_DIR/ressources/vcf2gp.spid
 
-	vcftools --gzvcf ${vcf[0]} \
-		--keep ${loc}.pop \
-		--mac 3 \
-		--recode \
-		--stdout | gzip > ${loc}.vcf.gz
+	sed 's/[A-Za-z0-9_-]*\\([a-z]\\{6\\}\\) ,/\\1 ,/' ${vcfId}_genepop.txt > ${vcfId}_genepop_pops.txt
 	"""
 }
+/*
+process run_genepop {
+	label "L_20g2h_run_genepop"
 
+	input:
+	set vcfId, file( gp_in ) into genepop_prep_ch
+
+	output:
+	set file( "*GE" ) into genepop_prep_ch
+
+	script:
+	"""
+	Genepop BatchNumber=20 GenepopInputFile=${gp_in} MenuOptions=3.1,3.2 Mode=Batch
+	"""
+}
 */
 /*
 
