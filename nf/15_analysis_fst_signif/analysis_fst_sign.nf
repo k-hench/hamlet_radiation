@@ -100,15 +100,15 @@ Channel
 	.from( ('0'..'9'))
 	.set{ sub_pre_ch }
 
-rand_bocy_ch.combine(sub_pre_ch).println()
-/*	.into{ singles_ch; tens_ch }
+/*rand_bocy_ch.combine(sub_pre_ch).println()
+	.into{ singles_ch; tens_ch }
 
 singles_ch
 	.combine(tens_ch)
 	.map{ it[0]+it[1] }
 	.toSortedList()
 	.flatten()
-	.set{ sub_pre_ch }
+	.set{ sub_pre_ch } */
 
 process random_bodies {
 	label 'L_32g30m_fst_run'
@@ -143,7 +143,6 @@ process random_bodies {
 	done
 	"""
 }
-*/
 
 // =======================
 // Genepop section
@@ -165,9 +164,8 @@ process thin_vcf_genepop {
 
 	vcftools \
 		--gzvcf ${vcf[0]} \
-		--thin 5000 \
-		--recode --stdout | \
-		vcfrandomsample -r 0.0043 -p 42 > ${vcfId}_sub.vcf # 0.43% ~ 100k SNPs
+		--thin 10000 \
+		--recode --stdout > ${vcfId}_sub.vcf
 
 	java -jar \$SFTWR/PGDSpider/PGDSpider2-cli.jar \
 		-inputfile ${vcfId}_sub.vcf \
