@@ -88,7 +88,7 @@ process fst_run {
 	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
 	paste idx.txt fst.tsv >> ${spec1}${loc}_${spec2}${loc}_random_fst_00.tsv
 
-	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt idx.txt
+	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt
 
 	awk '{print \$1}' prep.pop > col1.pop
 	"""
@@ -108,7 +108,7 @@ singles_ch
 	.flatten()
 	.set{ sub_pre_ch }
 
-process split_allBP {
+process random_bodies {
 	label 'L_32g30m_fst_run'
 
 	input:
@@ -173,31 +173,22 @@ process thin_vcf_genepop {
 		-spid \$BASE_DIR/ressources/vcf2gp.spid
 
 	sed 's/[A-Za-z0-9_-]*\\([a-z]\\{6\\}\\) ,/\\1 ,/' ${vcfId}_genepop.txt > ${vcfId}_genepop_pops.txt
+	rm ${vcfId}_genepop.txt ${vcfId}_sub.vcf
 	"""
 }
-/*
+
 process run_genepop {
-	label "L_20g2h_run_genepop"
+	label "L_32g12h_run_genepop"
+	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
 
 	input:
 	set vcfId, file( gp_in ) into genepop_prep_ch
 
 	output:
-	set file( "*GE" ) into genepop_prep_ch
+	set file( "*GE" ), file( "*GE2" ) into genepop_prep_ch
 
 	script:
 	"""
 	Genepop BatchNumber=20 GenepopInputFile=${gp_in} MenuOptions=3.1,3.2 Mode=Batch
 	"""
 }
-*/
-/*
-
-# module load Java/8.112
-java -jar /software/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile test.vcf -outputfile test_genepop_geno.txt -spid vcf2gp_no_pops.spid
-
-sed 's/[A-Za-z0-9_-]*\([a-z]\{6\}\) ,/\1 ,/' test_genepop_geno.txt > test_genepop_geno_pops.txt
-
-Genepop BatchNumber=20 GenepopInputFile=test_genepop_geno_pops.txt MenuOptions=3.1,3.2 Mode=Batch
-
-*/
