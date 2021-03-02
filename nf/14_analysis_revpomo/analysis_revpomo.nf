@@ -69,7 +69,7 @@ process filter_vcf_missingnes {
 	vcfsamplenames ${vcfId}_filtered.vcf.gz | head -n 1 > first_ind.txt
 
 	vcftools \
-		--gzvcf ${vcf[0]} \
+		--gzvcf ${vcfId}_filtered.vcf.gz \
 		--keep first_ind.txt \
 		--recode \
 		--stdout | \
