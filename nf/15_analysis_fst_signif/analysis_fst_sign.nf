@@ -131,7 +131,7 @@ process random_bodies {
 	grep "${spec1}${loc}\$" rand.pop > r_pop1.pop
 	grep "${spec2}${loc}\$" rand.pop > r_pop2.pop
 
-	vcftools --gzvcf test.vcf.gz \
+	vcftools --gzvcf ${vcf} \
 		--weir-fst-pop r_pop1.pop \
 		--weir-fst-pop r_pop2.pop \
 		--stdout  2> fst.log 1> tmp.txt
