@@ -125,7 +125,7 @@ process random_bodies {
 	echo "Iteration_"\$k
 	echo -e "\$k\trandom" > idx.txt
 
-	awk '{print \$2}' ${preppop} | shuf > col2.pop # premutation happens here
+	awk '{print \$2}' ${prepop} | shuf > col2.pop # premutation happens here
 	paste ${col1} col2.pop > rand.pop
 
 	grep "${spec1}\$" rand.pop > r_pop1.pop
