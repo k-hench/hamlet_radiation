@@ -83,7 +83,7 @@ process compute_coverage {
 	script:
 	"""
 	LG=\$( echo ${vcfId} | sed 's/.*\\(LG[0-9]\\{2\\}\\)/\\1/' )
-	echo "CHROM\\tSTART\\tEND" > windows_1kb.\$LG.bed
+	echo -e "CHROM\\tSTART\\tEND" > windows_1kb.\$LG.bed
 
 	zcat ${window} | \
 		grep \$LG >> windows_1kb.\$LG.bed
@@ -93,9 +93,9 @@ process compute_coverage {
 	bedtools coverage \
 		-a windows_1kb.\$LG.bed.gz \
 		-b ${vcf[0]} \
-		-counts  > ${vcfId}_cov.\$LG.tsv
+		-counts  > ${vcfId}_cov.tsv
 	
-	gzip ${vcfId}_cov.\$LG.tsv
+	gzip ${vcfId}_cov.tsv
 	"""
 }
 
