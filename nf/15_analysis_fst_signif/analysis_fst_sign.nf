@@ -182,7 +182,7 @@ process run_genepop {
 	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
 
 	input:
-	set vcfId, file( gp_in ) into genepop_prep_ch
+	set vcfId, file( gp_in ) from genepop_prep_ch
 
 	output:
 	set file( "*GE" ), file( "*GE2" ) into genepop_prep_ch
