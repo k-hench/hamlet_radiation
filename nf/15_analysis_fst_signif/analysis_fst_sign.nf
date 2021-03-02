@@ -75,6 +75,8 @@ process fst_run {
 
 	script:
 	"""
+	echo -e "000\treal_pop" > idx.txt
+
 	vcfsamplenames ${vcf} | \
 		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
 	grep ${spec1} ${pop} > pop1.txt
@@ -88,7 +90,7 @@ process fst_run {
 	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
 	paste idx.txt fst.tsv >> ${spec1}${loc}_${spec2}${loc}_random_fst_00.tsv
 
-	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt
+	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt idx.txt
 
 	awk '{print \$1}' prep.pop > col1.pop
 	"""
