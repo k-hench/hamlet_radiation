@@ -62,7 +62,7 @@ process compute_coverage {
 }
 
 // Compile summary table
-process complie_window_stats {
+process compile_window_stats {
 	label "L_20g2h_window_stats"
 	publishDir "../../2_analysis/revPoMo/", mode: 'copy' 
 
