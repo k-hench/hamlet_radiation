@@ -70,7 +70,7 @@ process fst_run {
 	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
 
 	output:
-	set val( "${spec1}${loc}-${spec2}${loc}" ), val( loc ), file( "*_random_fst.tsv" ) into rand_header_ch
+	set val( "${spec1}${loc}-${spec2}${loc}" ), val( loc ), file( "*_random_fst_00.tsv" ) into rand_header_ch
 	set val( "${spec1}${loc}-${spec2}${loc}" ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( "col1.pop" ), file( "prep.pop" ) into rand_bocy_ch
 
 	script:
