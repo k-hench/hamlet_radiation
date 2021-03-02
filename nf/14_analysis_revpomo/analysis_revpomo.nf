@@ -32,7 +32,9 @@ process filter_vcf_missingnes {
 		--gzvcf ${vcf[0]} \
 		--max-missing 0.9 \
 		--recode \
-		--stdout | bgzip > ${vcfId}_filtered.vcf.gz
+		--stdout | \
+		sed "s/<NON_REF>/./g" | \
+		bgzip > ${vcfId}_filtered.vcf.gz
 	
 	tabix ${vcfId}_filtered.vcf.gz
 	"""
