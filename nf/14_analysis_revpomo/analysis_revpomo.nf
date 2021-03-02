@@ -40,7 +40,7 @@ process filter_vcf_missingnes {
 
 // Coverage of SNPs vcf for SNPdensity, allBP for Ns
 process compute_coverage {
-	label "L_20g6h_coverage"
+	label "L_50g3h_coverage"
 	tag "${vcfId}"
 	publishDir "../../2_analysis/revPoMo/coverage", mode: 'copy' 
 

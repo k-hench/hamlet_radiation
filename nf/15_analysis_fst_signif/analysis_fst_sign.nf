@@ -111,7 +111,7 @@ singles_ch
 	.set{ sub_pre_ch } */
 
 process random_bodies {
-	label 'L_32g30m_fst_run'
+	label 'L_32g6h_fst_run'
 
 	input:
 	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_bocy_ch.combine(sub_pre_ch)
