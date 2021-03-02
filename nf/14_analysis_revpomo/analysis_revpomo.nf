@@ -5,6 +5,34 @@ Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_snps_ch }
 
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24'))
+	.map{ "LG" + it }
+	.set{ lg_ch }
+
+process subset_snps_by_lg {
+	label "L_20g2h_subset_lg"
+	tag "${vcfId}"
+
+	input:
+	set  vcfId, file( vcf ), val ( lg ) from vcf_snps_ch.map{ [it[0].minus(".vcf"), it[1]]}.combine( lg_ch )
+	
+	output:
+	set val( "${vcfId}.${lg}.vcf" ), file( "${vcfId}.${lg}.vcf.gz*" ) into vcf_snps_lg_ch
+
+	script:
+	"""
+	vcftools \
+		--gzvcf ${vcf[0]} \
+		--chr ${lg} \
+		--recode \
+		--stdout | \
+		bgzip > ${vcfId}.${lg}.vcf.gz
+	
+	tabix ${vcfId}.${lg}.vcf.gz
+	"""
+}
+
 // Open the allBP data set (will be expanded x 24 LGs)
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG*.vcf.{gz,gz.tbi}")
@@ -21,7 +49,7 @@ process filter_vcf_missingnes {
 	tag "${vcfId}"
 
 	input:
-	set  vcfId, file( vcf ) from vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
+	set  vcfId, file( vcf ) from vcf_snps_lg_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
 	
 	output:
 	set val( vcfId ),  file( "*_filtered.vcf.gz*" ) into vcf_snps_filterd_ch
@@ -50,19 +78,28 @@ process compute_coverage {
 	set vcfId, file( vcf ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
 	
 	output:
-	file( "${vcfId}_cov.tsv.gz" ) into coverage_ch
+	file( "${vcfId}_cov.*.tsv.gz" ) into coverage_ch
 
 	script:
 	"""
-	bedtools coverage \
-		-a ${window} \
-		-b ${vcf[0]} \
-		-counts  > ${vcfId}_cov.tsv
+	LG=\$( echo ${vcfId} | sed 's/.*\\(LG[0-9]\\{2\\}\\)/\\1/' )
+	echo "CHROM\\tSTART\\tEND" > windows_1kb.\$LG.bed
+
+	zcat ${window} | \
+		grep \$LG >> windows_1kb.\$LG.bed
 	
-	gzip ${vcfId}_cov.tsv
+	gzip windows_1kb.\$LG.bed
+
+	bedtools coverage \
+		-a windows_1kb.\$LG.bed.gz \
+		-b ${vcf[0]} \
+		-counts  > ${vcfId}_cov.\$LG.tsv
+	
+	gzip ${vcfId}_cov.\$LG.tsv
 	"""
 }
 
+/*
 // Compile summary table
 process compile_window_stats {
 	label "L_20g2h_window_stats"
@@ -101,3 +138,4 @@ process compile_window_stats {
 	write_tsv(x = data, file = "window_stats.tsv.gz")
 	"""
 }
+*/
