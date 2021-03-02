@@ -185,7 +185,7 @@ process run_genepop {
 	set vcfId, file( gp_in ) from genepop_prep_ch
 
 	output:
-	set file( "*GE" ), file( "*GE2" ) into genepop_prep_ch
+	set file( "*GE" ), file( "*GE2" ) into genepop_output_ch
 
 	script:
 	"""
