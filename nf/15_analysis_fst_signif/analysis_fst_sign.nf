@@ -128,8 +128,8 @@ process random_bodies {
 	awk '{print \$2}' ${prepop} | shuf > col2.pop # premutation happens here
 	paste ${col1} col2.pop > rand.pop
 
-	grep "${spec1}\$" rand.pop > r_pop1.pop
-	grep "${spec2}\$" rand.pop > r_pop2.pop
+	grep "${spec1}${loc}\$" rand.pop > r_pop1.pop
+	grep "${spec2}${loc}\$" rand.pop > r_pop2.pop
 
 	vcftools --gzvcf test.vcf.gz \
 		--weir-fst-pop r_pop1.pop \
