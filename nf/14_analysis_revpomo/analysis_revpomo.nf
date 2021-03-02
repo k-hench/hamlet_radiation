@@ -52,7 +52,7 @@ process filter_vcf_missingnes {
 	set  vcfId, file( vcf ) from vcf_snps_lg_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
 	
 	output:
-	set val( vcfId ),  file( "*_filtered.vcf.gz*" ) into vcf_snps_filterd_ch
+	set val( vcfId ),  file( "*_single_ind.vcf.gz*" ) into vcf_snps_filterd_ch
 
 	script:
 	"""
@@ -65,6 +65,17 @@ process filter_vcf_missingnes {
 		bgzip > ${vcfId}_filtered.vcf.gz
 	
 	tabix ${vcfId}_filtered.vcf.gz
+
+	vcfsamplenames ${vcfId}_filtered.vcf.gz | head -n 1 > first_ind.txt
+
+	vcftools \
+		--gzvcf ${vcf[0]} \
+		--keep first_ind.txt \
+		--recode \
+		--stdout | \
+		bgzip > ${vcfId}_single_ind.vcf.gz
+	
+	tabix ${vcfId}_single_ind.vcf.gz
 	"""
 }
 
