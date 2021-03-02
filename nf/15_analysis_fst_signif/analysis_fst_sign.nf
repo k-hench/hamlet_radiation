@@ -114,7 +114,7 @@ process random_bodies {
 	label 'L_32g30m_fst_run'
 
 	input:
-	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) rand_bocy_ch.combine(sub_pre_ch)
+	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_bocy_ch.combine(sub_pre_ch)
 
 	output:
 	file("*txt") into out_ch
