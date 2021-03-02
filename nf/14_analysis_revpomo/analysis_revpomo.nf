@@ -78,7 +78,7 @@ process compute_coverage {
 	set vcfId, file( vcf ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
 	
 	output:
-	file( "${vcfId}_cov.*.tsv.gz" ) into coverage_ch
+	file( "${vcfId}_cov.tsv.gz" ) into coverage_ch
 
 	script:
 	"""
