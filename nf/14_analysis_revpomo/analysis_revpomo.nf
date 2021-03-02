@@ -55,7 +55,9 @@ process compute_coverage {
 	bedtools coverage \
 		-a ${window} \
 		-b ${vcf[0]} \
-		-counts | gzip > ${vcfId}_cov.tsv.gz
+		-counts  > ${vcfId}_cov.tsv
+	
+	gzip ${vcfId}_cov.tsv
 	"""
 }
 
