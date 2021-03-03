@@ -70,7 +70,7 @@ process fst_run {
 	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
 
 	output:
-	set val( "${spec1}${loc}-${spec2}${loc}" ), val( loc ), file( "*_random_fst_00.tsv" ) into rand_header_ch
+	set val( "${spec1}${loc}-${spec2}${loc}" ), file( "*_random_fst_00.tsv" ) into rand_header_ch
 	set val( "${spec1}${loc}-${spec2}${loc}" ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( "col1.pop" ), file( "prep.pop" ) into rand_bocy_ch
 
 	script:
@@ -117,7 +117,7 @@ process random_bodies {
 	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_bocy_ch.combine(sub_pre_ch)
 
 	output:
-	set val( run ), val( loc ), file("*_random_fst_${pre}.tsv") into rand_body_out_ch
+	set val( run ), file("*_random_fst_${pre}.tsv") into rand_body_out_ch
 
 	script:
 	"""
@@ -144,8 +144,7 @@ process random_bodies {
 	"""
 }
 
-rand_header_ch.println()
-rand_body_out_ch.groupTuple().println()
+rand_body_out_ch.groupTuple().join(rand_header_ch, remainder: true).view()
 // =======================
 // Genepop section
 process thin_vcf_genepop {
