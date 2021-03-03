@@ -10,8 +10,8 @@ data <- vroom::vroom("2_analysis/revPoMo/window_stats.tsv.gz", delim = "\t") %>%
   left_join(hypo_chrom_start) %>%
   mutate(GPOS = GSTART + (START + END) / 2 )
 
-cov_tres <- quantile(data$REL_COV,probs = .66)
-snp_tres <- quantile(data$SNP_density,probs = .66)
+cov_tres <- quantile(data$REL_COV, probs = .66)
+snp_tres <- quantile(data$SNP_density, probs = .66)
 
 set.seed(42)
 random_subset <- data %>%
