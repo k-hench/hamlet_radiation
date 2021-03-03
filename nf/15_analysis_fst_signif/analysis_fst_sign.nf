@@ -178,7 +178,7 @@ process thin_vcf_genepop {
 }
 
 process run_genepop {
-	label "L_32g12h_run_genepop"
+	label "L_32g48h_run_genepop"
 	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
 
 	input:

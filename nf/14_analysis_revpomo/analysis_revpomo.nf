@@ -110,7 +110,7 @@ process compute_coverage {
 	"""
 }
 
-/*
+
 // Compile summary table
 process compile_window_stats {
 	label "L_20g2h_window_stats"
@@ -128,12 +128,19 @@ process compile_window_stats {
 
 	library(tidyverse)
 
-	data_SNPs <- read_tsv("phased_mac2_cov.tsv.gz",
-							col_names = c("CHROM", "START", "END", "COV_SNP"))
+	data_SNPs <- 1:24 %>% 
+					str_pad(width = 2, pad = 0) %>%
+					str_c("phased_mac2.LG", ., "_cov.tsv.gz") %>%
+					map_dfr(.f = function(file){
+							read_tsv(file, 
+								col_names = c("CHROM", "START", "END", "COV_SNP") %>%
+							filter(COV_SNP > 0 )
+							}
+						)
 
 	data_allBPs <- 1:24 %>% 
 					str_pad(width = 2, pad = 0) %>%
-					str_c("filterd.allBP.LG", ., "".tsv.gz") %>%
+					str_c("filterd.allBP.LG", ., "_cov.tsv.gz") %>%
 					map_dfr(.f = function(file){
 							read_tsv(file, 
 								col_names = c("CHROM", "START", "END", "COV_ALL") %>%
@@ -149,4 +156,3 @@ process compile_window_stats {
 	write_tsv(x = data, file = "window_stats.tsv.gz")
 	"""
 }
-*/
