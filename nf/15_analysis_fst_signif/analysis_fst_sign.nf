@@ -121,9 +121,9 @@ process random_bodies {
 
 	script:
 	"""
-	for k in {01..99}; do
+	for k in {00..99}; do
 	echo "Iteration_"\$k
-	echo -e "\$k\trandom" > idx.txt
+	echo -e "${prepop}\$k\trandom" > idx.txt
 
 	awk '{print \$2}' ${prepop} | shuf > col2.pop # premutation happens here
 	paste ${col1} col2.pop > rand.pop
@@ -193,7 +193,7 @@ process thin_vcf_genepop {
 	rm ${vcfId}_genepop.txt ${vcfId}_sub.vcf
 	"""
 }
-/*
+
 process run_genepop {
 	label "L_32g48h_run_genepop"
 	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
@@ -209,4 +209,3 @@ process run_genepop {
 	Genepop BatchNumber=20 GenepopInputFile=${gp_in} MenuOptions=3.1,3.2 Mode=Batch
 	"""
 }
-*/
