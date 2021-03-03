@@ -133,17 +133,16 @@ process compile_window_stats {
 					str_c("phased_mac2.LG", ., "_cov.tsv.gz") %>%
 					map_dfr(.f = function(file){
 							read_tsv(file, 
-								col_names = c("CHROM", "START", "END", "COV_SNP") %>%
+								col_names = c("CHROM", "START", "END", "COV_SNP")) %>%
 							filter(COV_SNP > 0 )
-							}
-						)
-
+								} ) 
+					
 	data_allBPs <- 1:24 %>% 
 					str_pad(width = 2, pad = 0) %>%
 					str_c("filterd.allBP.LG", ., "_cov.tsv.gz") %>%
 					map_dfr(.f = function(file){
 							read_tsv(file, 
-								col_names = c("CHROM", "START", "END", "COV_ALL") %>%
+								col_names = c("CHROM", "START", "END", "COV_ALL")) %>%
 							filter(COV_ALL > 0 )
 							}
 						)
