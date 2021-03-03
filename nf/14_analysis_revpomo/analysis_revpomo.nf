@@ -152,6 +152,6 @@ process compile_window_stats {
 		mutate(SNP_density = round(COV_SNP/ COV_ALL, 2), 
 		REL_COV =  round(COV_ALL/ (END-START), 2))
 	
-	write_tsv(x = data, file = "window_stats.tsv.gz")
+	data %>% write_tsv("window_stats.tsv.gz")
 	"""
 }
