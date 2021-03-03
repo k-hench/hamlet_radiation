@@ -101,23 +101,3 @@ ggsave(plot = p_done,
 random_subset %>%
   select(CHROM:END) %>%
   write_tsv(file = "2_analysis/revPoMo/random_1k_windows.bed.gz")
-
-
-data %>%
-  ggplot(aes(y = SNP_density)) +
-  geom_histogramh(aes(x = ..count.. / 1000,
-                      fill = ..count.. /1000,
-                      color = after_scale(clr_darken(fill))),
-                  bins = 37) +
-  geom_histogramh(data = random_subset, 
-                  aes(x = ..count.. / 5),
-                  color = rgb(1,1,1,.6),
-                  fill = rgb(1,1,1,.4),
-                  bins = 37) +
-  scale_fill_gradientn(colours = fll_vrds, guide = FALSE) +
-  scale_y_continuous(limits = c(0, .25)) +
-  scale_x_continuous(position = "top") +
-  theme_minimal() +
-  theme(axis.title = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks = element_blank())
