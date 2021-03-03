@@ -144,6 +144,24 @@ process random_bodies {
 	"""
 }
 
+process compile_random_results {
+	label 'L_20g2h_compile_rand'
+	publishDir "../../2_analysis/fst_signif/random", mode: 'copy' 
+
+	input:
+	set val( run ), file( body ), file( head ) from rand_bocy_ch.combine(sub_pre_ch)
+
+	output:
+	file("${run}_random_fst.tsv.gz") into rand_body_out_ch
+
+	script:
+	"""
+	cat ${head} > ${run}_random_fst.tsv
+	cat ${body} >> ${run}_random_fst.tsv
+	gzip ${run}_random_fst.tsv
+	"""
+}
+
 rand_body_out_ch.groupTuple().join(rand_header_ch, remainder: true).view()
 // =======================
 // Genepop section
