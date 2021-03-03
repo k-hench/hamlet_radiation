@@ -88,6 +88,7 @@ process fst_run {
 		--stdout 2> fst.log 1> tmp.txt
 
 	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
+	echo -e "idx\\ttype\\tmean_fst\\tweighted_fst" > ${spec1}${loc}_${spec2}${loc}_random_fst_00.tsv
 	paste idx.txt fst.tsv >> ${spec1}${loc}_${spec2}${loc}_random_fst_00.tsv
 
 	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt idx.txt

@@ -8,7 +8,6 @@ data <- vroom::vroom("2_analysis/revPoMo/window_stats.tsv.gz", delim = "\t") %>%
   left_join(hypo_chrom_start) %>%
   mutate(GPOS = GSTART + (START + END) / 2 )
 
-
 p1 <- data %>%
   ggplot( aes( x = GPOS, y = SNP_density ) ) +
   geom_hypo_LG() +
