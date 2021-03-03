@@ -117,7 +117,7 @@ process random_bodies {
 	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_bocy_ch.combine(sub_pre_ch)
 
 	output:
-	file("*txt") into out_ch
+	set val( run ), val( loc ), file("*_random_fst_${pre}.tsv") into rand_body_out_ch
 
 	script:
 	"""
@@ -144,6 +144,8 @@ process random_bodies {
 	"""
 }
 
+rand_header_ch.println()
+rand_body_out_ch.groupTuple().println()
 // =======================
 // Genepop section
 process thin_vcf_genepop {
@@ -176,7 +178,7 @@ process thin_vcf_genepop {
 	rm ${vcfId}_genepop.txt ${vcfId}_sub.vcf
 	"""
 }
-
+/*
 process run_genepop {
 	label "L_32g48h_run_genepop"
 	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
@@ -192,3 +194,4 @@ process run_genepop {
 	Genepop BatchNumber=20 GenepopInputFile=${gp_in} MenuOptions=3.1,3.2 Mode=Batch
 	"""
 }
+*/
