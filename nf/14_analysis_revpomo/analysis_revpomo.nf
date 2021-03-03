@@ -150,7 +150,7 @@ process compile_window_stats {
 	data <- data_SNPs %>%
 		left_join(data_allBPs, by = c(CHROM = "CHROM", START = "START", END = "END")) %>%
 		mutate(SNP_density = COV_SNP/ COV_ALL, 
-		REL_COV =  COV_ALL/ (END-START))
+				REL_COV =  COV_ALL/ (END-START))
 	
 	data %>% write_tsv("window_stats.tsv.gz")
 	"""

@@ -29,6 +29,7 @@ ressources/other_studies/stankowski_etal_2019.tsv
 !2_analysis/revPoMo/
 2_analysis/revPoMo/*
 !2_analysis/revPoMo/window_stats.tsv.gz
+!2_analysis/revPoMo/random_1k_windows.bed.gz
 figures
 tables
 vignettes/*
