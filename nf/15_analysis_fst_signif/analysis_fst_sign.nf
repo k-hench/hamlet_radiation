@@ -226,6 +226,8 @@ process catch_genepop {
 	tail -n 140 phased_mac2_genepop_pops.txt.GE2 | \
 	  grep -v "^--\\|^Normal" | \
 	  grep "^[A-Za-z]" | \
+	  sed 's/        & /-/; s/y s/y_s/' | \
+	  awk '{print \$1"\\t"\$2"\\t"\$3"\\t"\$4}' | \
 	  gzip > genepop_summary.tsv.gz
 	"""
 }
