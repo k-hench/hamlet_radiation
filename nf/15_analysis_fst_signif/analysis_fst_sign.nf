@@ -210,3 +210,22 @@ process run_genepop {
 	Genepop BatchNumber=20 GenepopInputFile=${gp_in} MenuOptions=3.1,3.2 Mode=Batch
 	"""
 }
+
+process catch_genepop {
+	label "L_32g48h_run_genepop"
+	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
+
+	input:
+	set file( GE ), file( GE2 ) from genepop_output_ch
+
+	output:
+	file( "genepop_summary.tsv.gz" ) into genepop_catch_ch
+
+	script:
+	"""
+	tail -n 140 phased_mac2_genepop_pops.txt.GE2 | \
+	  grep -v "^--\\|^Normal" | \
+	  grep "^[A-Za-z]" | \
+	  gzip > genepop_summary.tsv.gz
+	"""
+}
