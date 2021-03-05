@@ -206,13 +206,13 @@ process thin_vcf_genepop {
 		LAB="${conf[0]}"
 	fi
 
+	# trim linkage last (seprartely, unsure about order within vcftools)
 	vcftools \
 		--gzvcf ${vcf[0]} \
 		--mac 3 \
 		\$SUBSET \
-		--recode \
-		--stdout | \ 
-		vcftools --vcf - \ # trim linkage last (seprartely, unsure about order within vcftools)
+		--recode --stdout | \
+		vcftools --vcf - \
 			--thin 10000 \
 			--recode \
 			--stdout > \${LAB}_sub.vcf
