@@ -172,10 +172,10 @@ process thin_vcf_genepop {
 	label "L_20g2h_subset_vcf"
 
 	input:
-	set vcfId, file( vcf ), val( conf ) from vcf_genepop_SNP.map{ [it[0].minus(".vcf"), it[1]]}.combine(genepop_config_ch)
+	set vcfId, file( vcf ), val( pop ), val( type ) from vcf_genepop_SNP.map{ [it[0].minus(".vcf"), it[1]]}.combine(genepop_config_ch)
 
 	output:
-	set val( "${conf[0]}" ) , file( "*_genepop_pops.txt" ) into genepop_prep_ch
+	set val( "${pop}" ) , file( "*_genepop_pops.txt" ) into genepop_prep_ch
 
 	script:
 	"""
@@ -184,14 +184,14 @@ process thin_vcf_genepop {
 	vcfsamplenames ${vcf[0]} | \
 		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}' > prep.pop
 
-	if [ "${conf[1]}" == "loc" ];then
-		grep ${conf[0]} prep.pop | \
+	if [ "${type}" == "loc" ];then
+		grep ${pop} prep.pop | \
 		grep -v tor | \
 		grep -v tab > pop.txt
 
 		cut -f 1 pop.txt > keepers.txt
 		SUBSET="--keep keepers.txt"
-	elif [ "${conf[0]}" == "hamlets" ]; then
+	elif [ "${pop}" == "hamlets" ]; then
 		grep -v flo prep.pop | \
 		grep -v tor | \
 		grep -v tab > pop.txt
@@ -212,15 +212,15 @@ process thin_vcf_genepop {
 		vcftools --vcf - \
 			--thin 10000 \
 			--recode \
-			--stdout > ${conf[0]}_sub.vcf
+			--stdout > ${pop}_sub.vcf
 
 	java -jar \$SFTWR/PGDSpider/PGDSpider2-cli.jar \
-		-inputfile ${conf[0]}_sub.vcf \
-		-outputfile ${conf[0]}_genepop.txt \
+		-inputfile ${pop}_sub.vcf \
+		-outputfile ${pop}_genepop.txt \
 		-spid \$BASE_DIR/ressources/vcf2gp.spid
 
-	sed 's/[A-Za-z0-9_-]*\\([a-z]\\{6\\}\\) ,/\\1 ,/' ${conf[0]}_genepop.txt > ${conf[0]}_genepop_pops.txt
-	rm ${conf[0]}_genepop.txt ${conf[0]}_sub.vcf
+	sed 's/[A-Za-z0-9_-]*\\([a-z]\\{6\\}\\) ,/\\1 ,/' ${pop}_genepop.txt > ${pop}_genepop_pops.txt
+	rm ${pop}_genepop.txt ${pop}_sub.vcf
 	"""
 }
 
@@ -229,10 +229,10 @@ process run_genepop {
 	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
 
 	input:
-	set val( conf ), file( gp_in ) from genepop_prep_ch
+	set val( pop ), file( gp_in ) from genepop_prep_ch
 
 	output:
-	set val( conf ), file( "*GE" ), file( "*GE2" ) into genepop_output_ch
+	set val( pop ), file( "*GE" ), file( "*GE2" ) into genepop_output_ch
 
 	script:
 	"""
@@ -245,10 +245,10 @@ process catch_genepop {
 	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
 
 	input:
-	set val( conf ), file( GE ), file( GE2 ) from genepop_output_ch
+	set val( pop ), file( GE ), file( GE2 ) from genepop_output_ch
 
 	output:
-	file( "genepop_summary_${conf}.tsv.gz" ) into genepop_catch_ch
+	file( "genepop_summary_${pop}.tsv.gz" ) into genepop_catch_ch
 
 	script:
 	"""
@@ -257,6 +257,6 @@ process catch_genepop {
 	  grep "^[A-Za-z]" | \
 	  sed 's/        & /-/; s/y s/y_s/' | \
 	  awk '{print \$1"\\t"\$2"\\t"\$3"\\t"\$4}' | \
-	  gzip > genepop_summary_${conf}.tsv.gz
+	  gzip > genepop_summary_${pop}.tsv.gz
 	"""
 }
