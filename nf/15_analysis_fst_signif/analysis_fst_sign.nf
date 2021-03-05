@@ -175,7 +175,7 @@ process thin_vcf_genepop {
 	set vcfId, file( vcf ), val( conf ) from vcf_genepop_SNP.map{ [it[0].minus(".vcf"), it[1]]}.combine(genepop_config_ch)
 
 	output:
-	set val( conf[0] ) , file( "*_genepop_pops.txt" ) into genepop_prep_ch
+	set val( "${conf[0]}" ) , file( "*_genepop_pops.txt" ) into genepop_prep_ch
 
 	script:
 	"""
@@ -248,7 +248,7 @@ process catch_genepop {
 	set val( conf ), file( GE ), file( GE2 ) from genepop_output_ch
 
 	output:
-	file( "genepop_summary.tsv.gz" ) into genepop_catch_ch
+	file( "genepop_summary_${conf}.tsv.gz" ) into genepop_catch_ch
 
 	script:
 	"""
