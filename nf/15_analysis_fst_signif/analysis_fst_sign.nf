@@ -164,34 +164,66 @@ process compile_random_results {
 }
 // =======================
 // Genepop section
+Channel
+	.from(["all", "all"], ["hamlets", "all"], ["bel", "loc"], ["hon", "loc"], ["pan", "loc"])
+	.set{ genepop_config_ch }
+
 process thin_vcf_genepop {
 	label "L_20g2h_subset_vcf"
 
 	input:
-	set vcfId, file( vcf ) from vcf_genepop_SNP.map{ [it[0].minus(".vcf"), it[1]]}
+	set vcfId, file( vcf ), val( conf ) from vcf_genepop_SNP.map{ [it[0].minus(".vcf"), it[1]]}.combine(genepop_config_ch)
 
 	output:
-	set vcfId, file( "${vcfId}_genepop_pops.txt" ) into genepop_prep_ch
+	set vcfId, file( "*_genepop_pops.txt" ) into genepop_prep_ch
 
 	script:
 	"""
 	module load Java/8.112
 
 	vcfsamplenames ${vcf[0]} | \
-		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}' > pop.txt
+		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}' > prep.pop
+
+	if [ "${conf[1]}" == "loc" ];then
+		grep ${conf[0]} prep.pop | \
+		grep -v tor | \
+		grep -v tab > pop.txt
+
+		cut -f 1 pop.txt > keepers.txt
+		SUBSET="--keep keepers.txt"
+		LAB="${conf[1]}"
+	elif [ "${conf[0]}" == "hamlets" ]; then
+		grep -v flo prep.pop | \
+		grep -v tor | \
+		grep -v tab > pop.txt
+
+		cut -f 1 pop.txt > keepers.txt
+		SUBSET="--keep keepers.txt"
+		LAB="${conf[0]}"
+	else
+		mv prep.pop pop.txt
+		SUBSET=""
+		LAB="${conf[0]}"
+	fi
 
 	vcftools \
 		--gzvcf ${vcf[0]} \
-		--thin 10000 \
-		--recode --stdout > ${vcfId}_sub.vcf
+		--mac 3 \
+		\$SUBSET \
+		--recode \
+		--stdout | \ 
+		vcftools --vcf - \ # trim linkage last (seprartely, unsure about order within vcftools)
+			--thin 10000 \
+			--recode \
+			--stdout > \${LAB}_sub.vcf
 
 	java -jar \$SFTWR/PGDSpider/PGDSpider2-cli.jar \
-		-inputfile ${vcfId}_sub.vcf \
-		-outputfile ${vcfId}_genepop.txt \
+		-inputfile \${LAB}_sub.vcf \
+		-outputfile \${LAB}_genepop.txt \
 		-spid \$BASE_DIR/ressources/vcf2gp.spid
 
-	sed 's/[A-Za-z0-9_-]*\\([a-z]\\{6\\}\\) ,/\\1 ,/' ${vcfId}_genepop.txt > ${vcfId}_genepop_pops.txt
-	rm ${vcfId}_genepop.txt ${vcfId}_sub.vcf
+	sed 's/[A-Za-z0-9_-]*\\([a-z]\\{6\\}\\) ,/\\1 ,/' \${LAB}_genepop.txt > \${LAB}_genepop_pops.txt
+	rm \${LAB}_genepop.txt \${LAB}_sub.vcf
 	"""
 }
 
