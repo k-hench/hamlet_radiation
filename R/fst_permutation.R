@@ -21,7 +21,7 @@ get_percentile <- function(data){
   ran <- data$weighted_fst[data$type == "random"]
   real_fst <- data$weighted_fst[data$type == "real_pop"]
   
-  sprintf("%.3f", sum(ran < real_fst) / length(ran))
+  sprintf("%.2f", sum(ran < real_fst) / length(ran))
 }
 
 get_n_above<- function(data){
@@ -40,15 +40,21 @@ data_grouped <- data %>%
   group_by(run) %>%
   nest() %>%
   ungroup() %>%
-  mutate(percentile = map_chr(data, get_percentile),
+  mutate(real_pop = map_dbl(data, function(data){data$weighted_fst[data$type == "real_pop"]}),
+         percentile = map_chr(data, get_percentile),
          above = map_dbl(data, get_n_above),
          total = map_dbl(data, get_n_total),
-         label = str_c(percentile, "<br>(",above, "/", total, ")"))
+         label = str_c(percentile, "<br>(",above, "/", total, ")")) %>%
+  arrange(-as.numeric(percentile), -real_pop) %>%
+  mutate(rank = row_number(),
+         run = fct_reorder(run, rank)) 
 
 data %>%
+  mutate(run = factor(run, levels = levels(data_grouped$run))) %>%
   filter(type == "random") %>%
   ggplot() +
   geom_vline(data = data %>%
+               mutate(run = factor(run, levels = levels(data_grouped$run))) %>%
                filter(type == "real_pop"),
              aes(xintercept = weighted_fst),
              color = "red") +
@@ -61,11 +67,21 @@ data %>%
                 label.size = 0,
                 label.color = "transparent",
                 fill = "transparent") +
-  facet_wrap(run ~ .) +
-  theme_minimal()
+  facet_wrap(run ~ ., ncol = 4,dir = "v") +
+  theme_minimal() +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
 
-scl <- .75
+scl <- 1
 ggsave("~/Desktop/fst_permutation.pdf",
-       width = 16 * scl,
-       height = 9 * scl,
+       width = 10 * scl,
+       height = 8 * scl,
        device = cairo_pdf)
+
+data_export <- data_grouped %>%
+  select(run, real_pop,percentile) %>%
+  mutate(pre = run,
+         p_perm = 1 - as.numeric(percentile)) %>%
+  separate(pre, into = c("p2", "p1"))
+
+write_rds(data_export, "~/Desktop/perm_summary.rds")
