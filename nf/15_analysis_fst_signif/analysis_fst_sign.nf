@@ -75,7 +75,7 @@ process fst_run {
 
 	script:
 	"""
-	echo -e "000\treal_pop" > idx.txt
+	echo -e "0000\treal_pop" > idx.txt
 
 	vcfsamplenames ${vcf} | \
 		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
@@ -97,11 +97,9 @@ process fst_run {
 	"""
 }
 
+
 Channel
 	.from( ('0'..'9'))
-	.set{ sub_pre_ch }
-
-/*rand_bocy_ch.combine(sub_pre_ch).println()
 	.into{ singles_ch; tens_ch }
 
 singles_ch
@@ -109,7 +107,7 @@ singles_ch
 	.map{ it[0]+it[1] }
 	.toSortedList()
 	.flatten()
-	.set{ sub_pre_ch } */
+	.set{ sub_pre_ch }
 
 process random_bodies {
 	label 'L_32g6h_fst_run'

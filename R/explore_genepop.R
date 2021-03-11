@@ -92,7 +92,6 @@ data_comb_summary <- data_comb %>%
   ungroup()
 
 library(ggtext)
-
 data_comb %>%
   ggplot(aes(x = p_perm, y = p)) +
   geom_vline(xintercept = .05) +
@@ -105,3 +104,57 @@ data_comb %>%
         axis.title.y = element_markdown())
 
 ggsave("~/Desktop/fst_genepop_vs_perm.pdf", width = 6, height = 4, device = cairo_pdf)
+
+# ================
+
+permuation_summary <- read_rds("~/Desktop/perm_summary.rds")  %>% 
+  rename(p = "p_perm") %>%
+  select(p1,p2,p) %>%
+  mutate(type = "permuation")
+
+
+data_both_tiles <- c("bel", "hon", "pan") %>%
+  str_c("2_analysis/fst_signif/workshop/genepop_summary_", ., ".tsv") %>%
+  map_dfr(import_data) %>% 
+  select(p1,p2,p) %>%
+  mutate(type = "genepop") %>%
+  bind_rows(permuation_summary) %>%
+  mutate(p1 = factor(p1, levels = pop_levels),
+         p2 = factor(p2, levels = pop_levels))
+
+data_both_tiles %>%
+  ggplot(aes(x = p1, y = p2)) +
+  geom_tile(aes( fill = p,
+                 color = after_scale(prismatic::clr_darken(fill,shift = .3))),
+            size = .5,
+            width = .75, height = .75) +
+  geom_tile(data = data_both_tiles %>% 
+              filter(p <= .05),
+            fill = "transparent",
+            aes(color = p),
+            size = .3,
+            width = .925, height = .925) +
+  scale_fill_gradientn(colours = viridis::cividis(15)%>%
+                         clr_desaturate(.15),
+                       limits = c(0,1)) +
+  scale_color_gradientn(colours = viridis::cividis(15)%>%
+                          clr_desaturate(.15) %>%
+                          prismatic::clr_darken(shift = .3),
+                        limits =c(0, 1), guide = FALSE)+
+  coord_equal()+
+  guides(fill = guide_colorbar(title.position = "top",
+                               barwidth = unit(120, "pt"),
+                               barheight = unit(5, "pt")))+
+  labs(title = "Comparison genpop vs. permutation",
+       subtitle = "(upper: genepop, lower: permutation)",
+       caption = "<i>p<sub>perm</sub></i> = n(<i>F<sub>ST</sub> perm</i> > <i>F<sub>ST</sub> real</i>) /1000<br>boxed tiles indicate <i>p</i> ≤ 0.05") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90),
+        axis.title = element_blank(),
+        legend.position = c(.93, .015),
+        legend.justification = c(1, 0),
+        # legend.background = ggfx::with_shadow(element_rect(),x_offset = 0, y_offset = 0),
+        legend.direction = "horizontal",
+        plot.caption = element_markdown()) 
+
+ggsave("~/Desktop/fst_genepop_perm_loc.pdf", width = 5,height = 5.5, device = cairo_pdf)
