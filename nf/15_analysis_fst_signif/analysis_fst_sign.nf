@@ -70,7 +70,7 @@ process fst_run {
 	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
 
 	output:
-	set val( "${spec1}${loc}-${spec2}${loc}" ), file( "*_random_fst_00.tsv" ) into rand_header_ch
+	set val( "${spec1}${loc}-${spec2}${loc}" ), file( "*_random_fst_a00.tsv" ) into rand_header_ch
 	set val( "${spec1}${loc}-${spec2}${loc}" ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( "col1.pop" ), file( "prep.pop" ) into rand_bocy_ch
 
 	script:
@@ -88,8 +88,8 @@ process fst_run {
 		--stdout 2> fst.log 1> tmp.txt
 
 	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
-	echo -e "idx\\ttype\\tmean_fst\\tweighted_fst" > ${spec1}${loc}_${spec2}${loc}_random_fst_00.tsv
-	paste idx.txt fst.tsv >> ${spec1}${loc}_${spec2}${loc}_random_fst_00.tsv
+	echo -e "idx\\ttype\\tmean_fst\\tweighted_fst" > ${spec1}${loc}_${spec2}${loc}_random_fst_a00.tsv
+	paste idx.txt fst.tsv >> ${spec1}${loc}_${spec2}${loc}_random_fst_a00.tsv
 
 	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt idx.txt
 
@@ -116,7 +116,7 @@ process random_bodies {
 	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_bocy_ch.combine(sub_pre_ch)
 
 	output:
-	set val( run ), file("*_random_fst_${pre}.tsv") into rand_body_out_ch
+	set val( run ), file("*_random_fst_b${pre}.tsv") into rand_body_out_ch
 
 	script:
 	"""
@@ -136,7 +136,7 @@ process random_bodies {
 		--stdout  2> fst.log 1> tmp.txt
 
 	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
-	paste idx.txt fst.tsv >> ${spec1}${loc}_${spec2}${loc}_random_fst_${pre}.tsv
+	paste idx.txt fst.tsv >> ${spec1}${loc}_${spec2}${loc}_random_fst_b${pre}.tsv
 
 	rm fst.tsv fst.log rand.pop col2.pop r_pop1.pop r_pop2.pop tmp.txt 
 	done
