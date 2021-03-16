@@ -5,7 +5,7 @@ This folder contains mostly *external data* which are not novel but inherited fr
 The hamlet genome files are originally from the Hench *et al* 2019 ([doi: 10.1038/s41559-019-0814-5](https://doi.org/10.1038/s41559-019-0814-5)),
 while the mappability masks are from Moran *et al* 2019 ([doi: 10.1111/mec.15110](https://doi.org/10.1111/mec.15110)).
 
-Furthermore, panel **a** of **figure 1** is based on data and scripts by Rabosky *et al.* (2018). For this, the corresponding [Dryad repository](https://datadryad.org/stash/dataset/doi:10.5061/dryad.fc71cp4) (*Data from: An inverse latitudinal gradient in speciation rate for marine fishes*, doi: [10.5061/dryad.fc71cp4](doi.org/10.5061/dryad.fc71cp4)) was downloaded and decompressed into the sub-folder `ressources/Rabosky_etal_2018`.
+Furthermore, panel **a** of **figure 1** is based on data and scripts by Rabosky *et al.* (2018). For this, the corresponding Dryad repository ([doi: 10.5061/dryad.fc71cp4](doi.org/10.5061/dryad.fc71cp4)) was downloaded and decompressed into the sub-folder `ressources/Rabosky_etal_2018`.
 
 
 Apart from this, the `ressources` folder also contains some intermediate results from this study that were reused a later stages (this was mainly an awkward fix to solve some cluster incompatibilities with some software used in some pipelines or a manual resurrection of intermediate steps after a pipeline had finished).
