@@ -107,22 +107,22 @@ plot_network <- function(loc, nodes, edges, asp = 0.8, sep = 0, node_lab_shift =
   clrs <- colorRampPalette(clr_prep)(max(edges$idx))
   p <- nodes %>% ggplot(aes(x, y)) + 
     coord_fixed(ratio = asp) + 
-    ggfx:::with_blur.Layer(geom_arc(inherit.aes = FALSE,
-             aes(x0 = x, 
-                 y0 = y, r = .3,
-                 start = -loc_edge[[loc]] * pi + seq(0,2*pi,length.out = max(idx+1))[idx], 
-                 end = loc_edge[[loc]] * pi + seq(0,2*pi,length.out = max(idx+1))[idx]),
-             color = "black",#rgb(.8,.8,.8), 
-             # arrow = arrow(type = "closed",length = unit(0,"pt")),
-              linetype = 1, size = .6), 
-             sigma = 1.15) +
-    geom_arc(inherit.aes = FALSE,
-             aes(x0 = x, 
-                 y0 = y, r = .3,
-                 start = -loc_edge[[loc]] * pi + seq(0,2*pi,length.out = max(idx+1))[idx], 
-                 end = loc_edge[[loc]] * pi + seq(0,2*pi,length.out = max(idx+1))[idx],
-                 color = str_sub(label, -6,-4)), 
-             linetype = 1, size = 1) +
+    # ggfx:::with_blur.Layer(geom_arc(inherit.aes = FALSE,
+    #          aes(x0 = x, 
+    #              y0 = y, r = .3,
+    #              start = -loc_edge[[loc]] * pi + seq(0,2*pi,length.out = max(idx+1))[idx], 
+    #              end = loc_edge[[loc]] * pi + seq(0,2*pi,length.out = max(idx+1))[idx]),
+    #          color = "black",#rgb(.8,.8,.8), 
+    #          # arrow = arrow(type = "closed",length = unit(0,"pt")),
+    #           linetype = 1, size = .6), 
+    #          sigma = 1.15) +
+    # geom_arc(inherit.aes = FALSE,
+    #          aes(x0 = x, 
+    #              y0 = y, r = .3,
+    #              start = -loc_edge[[loc]] * pi + seq(0,2*pi,length.out = max(idx+1))[idx], 
+    #              end = loc_edge[[loc]] * pi + seq(0,2*pi,length.out = max(idx+1))[idx],
+    #              color = str_sub(label, -6,-4)), 
+    #          linetype = 1, size = 1) +
     geom_segment(data = edges,
                  aes(xend = xend, yend = yend, size = median), 
                  color = clr_loc[loc]) +#, size = plot_lwd)
