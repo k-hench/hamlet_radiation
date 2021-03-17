@@ -117,7 +117,7 @@ p1 <- as.grob(function(){
   bammplot_k(x = edvr_serr_short,
              labels = T,
              lwd = .8, #legend = TRUE,
-             cex = .5,
+             cex = .3,
              pal = clr_tree,
              labelcolor = c(rep("black", 9),
                             rep("darkgray", 31)))
@@ -128,7 +128,7 @@ p1 <- as.grob(function(){
   text(x = 12.5 + leg_shift_x,
        y = .5,
        labels = "25 MYR",
-       cex = .5, 
+       cex = .4, 
        col = "darkgray")
 }
 )
@@ -150,19 +150,21 @@ blank_hamlet <- hypoimg::hypo_outline %>%
   geom_polygon(aes(x, y), color = rgb(0, 0, 0, .5), fill = rgb(1, 1, 1, .3), size = .1)+
   theme_void()
 
-p_tree <- ggplot()+
+p_tree <- ggplot() +
   geom_point(data = tibble(v = c(.056, 2.4)),
              x = .5, y = .5, aes(color = v),alpha = 0)+
   scale_color_gradientn(colours = clr_tree, limits = c(.056, 2.4))+
   annotation_custom(grob = grob_grad,
-                    ymin = .035, ymax = .247,
-                    xmin = .4, xmax = .9)+
+                    ymin = 0, ymax = .22,
+                    xmin = .4, xmax = .96)+
   annotation_custom(grob = ggplotGrob(blank_hamlet),
-                    xmin = 0.4, xmax = .63,
-                    ymin = .05, ymax = .175)+
+                    xmin = 0.55, xmax = .75,
+                    ymin = 0.015, ymax = .14)+
   annotation_custom(grob = p1,
                     xmin = -.16,
-                    ymin = -.1) +
+                    xmax = 1.05,
+                    ymin = -.22,
+                    ymax = 1) +
   coord_cartesian(xlim = c(0, 1),
                   ylim = c(0, 1),
                   expand = 0)+
@@ -174,7 +176,7 @@ p_tree <- ggplot()+
                                 ticks.colour = "white")) +
   # theme_minimal()+
   theme_void()+
-  theme(legend.position = c(.01, .1),
+  theme(legend.position = c(.01, .08),
         legend.justification = c(0, 0))
 
 # =================================================================================================
@@ -284,14 +286,17 @@ pca_plot <- function(loc){
     ggforce::geom_mark_ellipse(aes(color = spec),
     fill = "transparent",
     linetype = 3,
+    size = .3,
     expand = unit(5, "pt"))+
-    geom_point(shape = 21) +
+    geom_point(shape = 21, aes(color = after_scale(prismatic::clr_darken(fill))), size = .7) +
     (pca_fish_pos$data[[which(pca_fish_pos$loc == loc)]] %>%
        pmap(plot_fish_lwd))+
     labs(x = str_c("PC1 (", sprintf("%.2f",evs$exp_var[[1]]), " %)"),
          y = str_c("PC2 (", sprintf("%.2f",evs$exp_var[[2]]), " %)"))+
     scale_fill_manual(values = clr)+
-    scale_color_manual(values = clr_alt)+
+    scale_color_manual(values = clr_alt %>%
+                         prismatic::clr_alpha(alpha = .7) %>%
+                         set_names(nm = names(clr_alt)))+
     labs(title = loc_names[[loc]])+
     theme_minimal()+
     theme(legend.position = "none", 
@@ -350,15 +355,25 @@ p2 <- fst_data_gatger %>%
         axis.text.y.right = element_text(color = clr_sec),
         axis.title.y.right = element_text(color = clr_sec))
 
-p_done <- (p_tree + p2 + plot_layout(widths = c(1, .9))) /
+p_done <- (wrap_elements(plot = p_tree +
+             theme(axis.title = element_blank(),
+                   text = element_text(size = plot_text_size)
+                   # plot.margin = unit(c(0, 0, 0,0), "pt"),
+                   # plot.background = element_rect(fill = "green")
+                   ),
+             clip = FALSE) +
+             p2) /
   (pcas %>% wrap_plots()) +
-  plot_layout(heights = c(1,.45)) +
+  plot_layout(heights = c(1,.75)) +
   plot_annotation(tag_levels = 'a') &
-  theme(text = element_text(size = plot_text_size))
+  theme(text = element_text(size = plot_text_size),
+        plot.background = element_rect(fill = "transparent",
+                                       color = "transparent"))
 
 scl <- .75
 hypo_save(p_done, filename = 'figures/F1_redesign.pdf',
           width = 9 * scl,
-          height = 9 * scl,
+          height = 6 * scl,
           device = cairo_pdf,
+          bg = "transparent",
           comment = plot_comment)
