@@ -1,17 +1,41 @@
-library(tidyverse)
+#!/usr/bin/env Rscript
+# run from terminal:
+# Rscript --vanilla R/fig/plot_SFY.R 2_analysis/fst_signif/random/
+# ===============================================================
+# This script produces Figure 1 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
+# ---------------------------------------------------------------
+# ===============================================================
+# args <- c("2_analysis/fst_signif/random/")
+# script_name <- "R/fig/plot_F1.R"
+args <- commandArgs(trailingOnly=FALSE)
+# setup -----------------------
+library(GenomicOriginsScripts)
+library(hypoimg)
 library(vroom)
 library(ggtext)
 
-rand_path <- "2_analysis/fst_signif/random/"
+cat('\n')
+script_name <- args[5] %>%
+  str_remove(., '--file=')
+
+plot_comment <- script_name %>%
+  str_c('mother-script = ', getwd(), '/', .)
+
+args <- process_input(script_name, args)
+
+# config -----------------------
+rand_path <- as.character(args[1])
 rand_files <- dir(path = rand_path)
 
 get_random_fst <- function(file){
-  nm <- file %>% str_remove(pattern = ".*\\/") %>% str_remove("_random_fst.tsv.gz")
+  nm <- file %>% str_remove(pattern = ".*\\/") %>%
+    str_remove("_random_fst.tsv.gz")
   vroom::vroom(file = file,
                delim = "\t",
                col_names = c("idx", "type", "mean_fst", "weighted_fst"),
                col_types = "dcdd") %>%
-  mutate(run = nm)
+    mutate(run = nm)
 }
 
 data <- str_c(rand_path, rand_files) %>%
@@ -33,7 +57,7 @@ get_n_above<- function(data){
 
 get_n_total <- function(data){
   ran <- data$weighted_fst[data$type == "random"]
- length(ran)
+  length(ran)
 }
 
 data_grouped <- data %>% 
@@ -49,7 +73,7 @@ data_grouped <- data %>%
   mutate(rank = row_number(),
          run = fct_reorder(run, rank)) 
 
-data %>%
+p_done <- data %>%
   mutate(run = factor(run, levels = levels(data_grouped$run))) %>%
   filter(type == "random") %>%
   ggplot() +
@@ -73,10 +97,11 @@ data %>%
         axis.ticks.y = element_blank())
 
 scl <- 1
-ggsave("~/Desktop/fst_permutation.pdf",
-       width = 10 * scl,
-       height = 8 * scl,
-       device = cairo_pdf)
+hypo_save(p_done, filename = 'figures/SFY.pdf',
+          width = 10 * scl,
+          height = 8 * scl,
+          device = cairo_pdf,
+          comment = plot_comment)
 
 data_export <- data_grouped %>%
   select(run, real_pop,percentile) %>%
@@ -84,4 +109,4 @@ data_export <- data_grouped %>%
          p_perm = 1 - as.numeric(percentile)) %>%
   separate(pre, into = c("p2", "p1"))
 
-write_rds(data_export, "~/Desktop/perm_summary.rds")
+write_tsv(x = data_export, file = "2_analysis/summaries/fst_permutation_summary.tsv")

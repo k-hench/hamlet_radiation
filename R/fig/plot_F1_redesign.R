@@ -1,13 +1,17 @@
 #!/usr/bin/env Rscript
+#
+# Context: this script depends on the input file 2_analysis/summaries/fst_permutation_summary.tsv
+#          which is created by R/figs/plot_SFY.R
+#
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F1.R \
-#    2_analysis/dxy/50k/ 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_F1_redesign.R \
+#    2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt 2_analysis/summaries/fst_permutation_summary.tsv
 # ===============================================================
 # This script produces Figure 1 of the study "Ancestral variation, hybridization and modularity
 # fuel a marine radiation" by Hench, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
+# args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt', '2_analysis/summaries/fst_permutation_summary.tsv')
 # script_name <- "R/fig/plot_F1.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
@@ -28,17 +32,17 @@ plot_comment <- script_name %>%
 
 args <- process_input(script_name, args)
 # config -----------------------
-dxy_dir <- as.character(args[1])
-fst_dir <- as.character(args[2])
-fst_globals <- as.character(args[3])
+fst_dir <- as.character(args[1])
+fst_globals <- as.character(args[2])
+fst_permutation_file <- as.character(args[3])
 wdh <- .3          # The width of the boxplots
-scaler <- 20       # the ratio of the Fst and the dxy axis
+scaler <- 20       # the ratio of the Fst and the dxy axis (legacy - not really needed anymore)
 clr_sec <- 'gray'  # the color of the secondary axis (dxy)
 # start script -------------------
-# =================================================================================================
+# === fig 1. panel a: modified plugin from ressources/Rabosky_etal_2018/scripts/main figures/Figure3.R =============
 library(BAMMtools)
 library(geiger)
-library(base2grob)
+library(ggplotify)
 source("R/bammtools_plot_mod.R")
 
 basepath <- 'ressources/Rabosky_etal_2018/'
@@ -51,7 +55,7 @@ fspdata <- paste0(basepath, "dataFiles/rate_lat_stats_by_sp_fixed0.5.csv")
 
 anadromous <- FALSE
 
-vx          <- read.tree(treefile) 
+vx <- read.tree(treefile) 
 
 # node rotations for plotting:
 rset <- c(15447, 15708:15719)
@@ -108,7 +112,7 @@ clr_tree <- scico::scico(6, palette = "berlin") %>% # viridis::plasma(6) %>% #
   prismatic::clr_darken(shift = .2)
 # plot(edvr_serr_short, labels = TRUE, legend = TRUE,pal = rainbow(15),logcolor = TRUE, cex = .7)
 
-p1 <- base2grob(function(){
+p1 <- as.grob(function(){
   par(mar = c(0,0,0,0))
   bammplot_k(x = edvr_serr_short,
              labels = T,
@@ -301,7 +305,7 @@ pca_plot <- function(loc){
 }
 
 pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
-fst_sig_attach <- read_rds("~/Desktop/perm_summary.rds")
+fst_sig_attach <- read_tsv(fst_permutation_file)
 
 # assemble panel b
 p2 <- fst_data_gatger %>%
@@ -346,12 +350,15 @@ p2 <- fst_data_gatger %>%
         axis.text.y.right = element_text(color = clr_sec),
         axis.title.y.right = element_text(color = clr_sec))
 
-p_out <- (p_tree + p2 + plot_layout(widths = c(1, .9))) /
+p_done <- (p_tree + p2 + plot_layout(widths = c(1, .9))) /
   (pcas %>% wrap_plots()) +
   plot_layout(heights = c(1,.45)) +
   plot_annotation(tag_levels = 'a') &
   theme(text = element_text(size = plot_text_size))
 
 scl <- .75
-ggsave(plot = p_out, "~/Desktop/f1_re_draft_c.pdf",
-       width = 9 * scl, height = 9 * scl, device = cairo_pdf)
+hypo_save(p_done, filename = 'figures/F1_redesign.pdf',
+          width = 9 * scl,
+          height = 9 * scl,
+          device = cairo_pdf,
+          comment = plot_comment)
