@@ -133,9 +133,9 @@ p <- data2 %>%
 # export figure 3
 hypo_save(filename = 'figures/F3X_a.pdf',
           plot = p,
-          width = f_width,
-          height = .55 * f_width,
+          width = .52 * f_width,
+          height = .52 * f_width,
           device = cairo_pdf,
           comment = plot_comment,
           bg = "transparent")
-  
+    
