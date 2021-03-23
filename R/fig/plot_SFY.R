@@ -45,7 +45,7 @@ get_percentile <- function(data){
   ran <- data$weighted_fst[data$type == "random"]
   real_fst <- data$weighted_fst[data$type == "real_pop"]
   
-  sprintf("%.2f", sum(ran < real_fst) / length(ran))
+  sprintf("%.7f", sum(ran < real_fst) / length(ran))
 }
 
 get_n_above<- function(data){
@@ -104,7 +104,7 @@ hypo_save(p_done, filename = 'figures/SFY.pdf',
           comment = plot_comment)
 
 data_export <- data_grouped %>%
-  select(run, real_pop,percentile) %>%
+  select(run, real_pop, percentile) %>%
   mutate(pre = run,
          p_perm = 1 - as.numeric(percentile)) %>%
   separate(pre, into = c("p2", "p1"))

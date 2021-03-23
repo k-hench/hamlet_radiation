@@ -263,8 +263,8 @@ fst_data_gather <- fst_data %>%
          popstat_loc = str_c(popstat,'[',loc,']'))
  
 # sort run by average genome wide Fst
-run_ord <- tibble(run = levels(fst_data_gatger$run),
-                  run_ord = 1:length(levels(fst_data_gatger$run)))
+run_ord <- tibble(run = levels(fst_data_gather$run),
+                  run_ord = 1:length(levels(fst_data_gather$run)))
 
 clr_alt <- clr
 clr_alt[["uni"]] <- "lightgray"
@@ -327,16 +327,21 @@ pca_plot <- function(loc){
 }
 
 pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
-fst_sig_attach <- read_tsv(fst_permutation_file)
+
+fst_sig_attach <- read_tsv(fst_permutation_file) %>% 
+  mutate(loc = str_sub(run, -3, -1)) %>%
+  group_by(loc) %>% 
+  mutate(loc_n = length(loc),
+         fdr_correction_factor =  sum(1 / 1:length(loc)),
+         fdr_alpha = .05 / fdr_correction_factor,
+         is_sig = p_perm > fdr_alpha) %>% 
+  ungroup()
 
 # assemble panel b
 p2 <- fst_data_gather %>%
   filter(popstat == "weighted-fst") %>%
   left_join(fst_sig_attach) %>% 
   mutate(loc = str_sub(run, -3, -1)) %>% 
-  group_by(loc) %>% 
-  mutate(loc_n = length(loc),
-         is_sig = p_perm > .05/loc_n) %>% 
   ggplot(aes(color = loc)) +
   geom_segment(aes(x = x, xend = x,
                    y = lowpoint, yend = highpoint),
@@ -486,7 +491,7 @@ p_combined <- ((wrap_elements(plot = p_tree +
                   # wrap_plots(p_net, p2,ncol = 1,heights = c(.8,1))
                  p2 + annotation_custom(p_net, ymin = .15, xmax = 25)
                 ) /
-                 (pcas %>% wrap_plots())+
+                 (pcas %>% wrap_plots()) +
                  plot_layout(heights = c(1,.75)) +
                  plot_annotation(tag_levels = 'a') &
                  theme(text = element_text(size = plot_text_size),

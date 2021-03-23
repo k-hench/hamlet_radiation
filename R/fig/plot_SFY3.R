@@ -7,8 +7,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe")
-# script_name <- "R/fig/plot_F1.R"
-args <- commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
