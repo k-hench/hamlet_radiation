@@ -1,8 +1,33 @@
+#!/usr/bin/env Rscript
+# run from terminal:
+# Rscript --vanilla R/fig/plot_SFY3.R ~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
+# ===============================================================
+# This script produces Figure 1 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, McMillan and Puebla
+# ---------------------------------------------------------------
+# ===============================================================
+# args <- c("~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe")
+# script_name <- "R/fig/plot_F1.R"
+args <- commandArgs(trailingOnly=FALSE)
+# setup -----------------------
 library(GenomicOriginsScripts)
+library(hypoimg)
 library(ape)
 library(ggtree)
 
-raxml_tree <- read.tree("~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe") 
+cat('\n')
+script_name <- args[5] %>%
+  str_remove(., '--file=')
+
+plot_comment <- script_name %>%
+  str_c('mother-script = ', getwd(), '/', .)
+
+args <- process_input(script_name, args)
+
+# config -----------------------
+tree_file <- as.character(args[1])
+
+raxml_tree <- read.tree(tree_file) 
 raxml_tree_rooted <- root(phy = raxml_tree, outgroup="PL17_160floflo")
 clr_neutral <- rgb(.6, .6, .6)
 lyout <- 'circular'
@@ -59,7 +84,7 @@ p_tree <- (open_tree(
                          offset = -3,fontsize = 3,
                          color = clr_neutral) +
   xlim(c(-.0007,.0092)) +
-  scale_color_manual(values = c(ungrouped = clr_neutral, clr2),
+  scale_color_manual(values = c(ungrouped = clr_neutral, GenomicOriginsScripts::clr2),
                      guide = FALSE) +
   # scale_fill_distiller(palette = "Greys",
   #                      direction = 1,
@@ -103,8 +128,10 @@ p_done <- ggplot() +
   theme_void()
 
 scl <- 1.5
-ggsave(plot = p_done,
-       filename = "figures/raxml_tree.pdf", 
+hypo_save(plot = p_done,
+       filename = "figures/SFY3.pdf", 
        width = 7.5 * scl,
        height = 4.5 * scl, 
-       device = cairo_pdf, bg = "transparent")
+       device = cairo_pdf, 
+       bg = "transparent",
+       comment = plot_comment)
