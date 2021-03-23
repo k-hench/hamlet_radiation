@@ -100,10 +100,27 @@ serranids <- c("Hypoplectrus_gemma", "Hypoplectrus_unicolor", "Hypoplectrus_gumm
 edvr_serr <- edvr %>% 
   subtreeBAMM(tips = serranids)
 
+label_two_chars <- c(`italic(S.~'beta')` = "italic(Sc.~'beta')",
+                     `italic(S.~notospilus)` = "italic(Se.~notospilus)",
+                     `italic(S.~phoebe)` = "italic(Se.~phoebe)",
+                     `italic(S.~psittacinus)` = "italic(Se.~psittacinus)",
+                     `italic(S.~baldwini)` = "italic(Se.~baldwini)",
+                     `italic(S.~tigrinus)` = "italic(Se.~tigrinus)",
+                     `italic(S.~cabrilla)` = "italic(Se.~cabrilla)",
+                     `italic(S.~atricauda)` = "italic(Se.~atricauda)",
+                     `italic(S.~scriba)` = "italic(Se.~scriba)",
+                     `italic(S.~hepatus)` = "italic(Se.~hepatus)",
+                     `italic(S.~accraensis)` = "italic(Se.~accraensis)",
+                     `italic(C.~striata)` = "italic(Cp.~striata)",
+                     `italic(C.~occipitalis)` = "italic(Ch.~occipitalis)",
+                     `italic(C.~investigatoris)` = "italic(Ch.~investigatoris)",
+                     `italic(C.~pleurospilus)` = "italic(Ch.~pleurospilus)")
+
 edvr_serr_short <- edvr_serr
 edvr_serr_short$tip.label <- edvr_serr$tip.label %>% 
   str_replace(pattern = "([A-Z])[a-z]*_([a-z]*)", "italic(\\1.~\\2)")%>% 
-  str_replace(pattern = "beta", "'beta'") %>% 
+  str_replace(pattern = "beta", "'beta'") %>%
+  ifelse(. %in% names(label_two_chars), label_two_chars[.], .) %>% 
   ggplot2:::parse_safe()
 
 clr_tree <- scico::scico(6, palette = "berlin") %>% # viridis::plasma(6) %>% #
@@ -220,7 +237,7 @@ fst_order <- fst_data %>%
   select(run, `mean_weighted-fst`) %>%
   mutate(run = fct_reorder(run, `mean_weighted-fst`))
 
-fst_data_gatger <- fst_data %>% 
+fst_data_gather <- fst_data %>% 
   gather(key = 'stat', value = 'val', -run) %>%
   # sumstat contains the values needed to plot the boxplots (quartiles, etc)
   separate(stat, into = c('sumstat', 'popstat'), sep = '_') %>%
@@ -291,8 +308,8 @@ pca_plot <- function(loc){
     geom_point(shape = 21, aes(color = after_scale(prismatic::clr_darken(fill))), size = .7) +
     (pca_fish_pos$data[[which(pca_fish_pos$loc == loc)]] %>%
        pmap(plot_fish_lwd))+
-    labs(x = str_c("PC1 (", sprintf("%.2f",evs$exp_var[[1]]), " %)"),
-         y = str_c("PC2 (", sprintf("%.2f",evs$exp_var[[2]]), " %)"))+
+    labs(x = str_c("PC1 (", sprintf("%.1f",evs$exp_var[[1]]), " %)"),
+         y = str_c("PC2 (", sprintf("%.1f",evs$exp_var[[2]]), " %)"))+
     scale_fill_manual(values = clr)+
     scale_color_manual(values = clr_alt %>%
                          prismatic::clr_alpha(alpha = .7) %>%
@@ -313,7 +330,7 @@ pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
 fst_sig_attach <- read_tsv(fst_permutation_file)
 
 # assemble panel b
-p2 <- fst_data_gatger %>%
+p2 <- fst_data_gather %>%
   filter(popstat == "weighted-fst") %>%
   left_join(fst_sig_attach) %>% 
   mutate(loc = str_sub(run, -3, -1)) %>% 
@@ -335,7 +352,7 @@ p2 <- fst_data_gatger %>%
                lwd = plot_lwd)+
   geom_point(aes(x = x, y = mean, shape = is_sig, fill = after_scale(color)),
              size = .8)+
-  scale_x_continuous(name = "Index of Sympatric Hamlet Species Pair",
+  scale_x_continuous(name = "Pair of sympatric species",
                      breaks = 1:28) +
   scale_y_continuous(#breaks = c(0,.05,.1,.15),
     name = expression(italic(F[ST])))+
@@ -355,7 +372,32 @@ p2 <- fst_data_gatger %>%
         axis.text.y.right = element_text(color = clr_sec),
         axis.title.y.right = element_text(color = clr_sec))
 
-p_done <- (wrap_elements(plot = p_tree +
+
+fish_tib <- tibble(short = names(clr)[!names(clr) %in% c("flo", "tab", "tor")],
+       # x = ((seq_along(short) - 1)  %% 4 + 1)* 3 - 2.5,
+       # y = ((seq_along(short) - 1)  %/% 4 ) * -1.5 + .5,
+       # x = (seq_along(short) - 1) * 3 + .5,
+       x = c(0.5,  3.5,  7,  9.7, 12.25, 15.25, 18, 21.5)
+       )
+
+key_sz <- .75
+p_leg <- fish_tib %>% 
+  ggplot() +
+  # coord_equal(xlim = c(-.05, 12), expand = 0) +
+  coord_equal(xlim = c(-.05, 24), expand = 0) +
+  geom_tile(aes(x = x, y = 0,
+                fill = short, 
+                color = after_scale(prismatic::clr_darken(fill, .25))),
+            width = key_sz, height = key_sz, size = .3) +
+  geom_text(aes(x = x + .6, y = 0,
+                label = str_c("H. ", sp_names[short])), 
+            hjust = 0, fontface = "italic", size = plot_text_size / ggplot2:::.pt) +
+  # labs(subtitle = "Hamlet Species") +
+  pmap(fish_tib, plot_fish_lwd, width = 1, height = 1, y = 0) +
+  scale_fill_manual(values = clr, guide = FALSE) +
+  theme_void()
+
+p_combined <- ((wrap_elements(plot = p_tree +
              theme(axis.title = element_blank(),
                    text = element_text(size = plot_text_size)
                    # plot.margin = unit(c(0, 0, 0,0), "pt"),
@@ -363,17 +405,100 @@ p_done <- (wrap_elements(plot = p_tree +
                    ),
              clip = FALSE) +
              p2) /
-  (pcas %>% wrap_plots()) +
+  (pcas %>% wrap_plots())+
   plot_layout(heights = c(1,.75)) +
   plot_annotation(tag_levels = 'a') &
   theme(text = element_text(size = plot_text_size),
         plot.background = element_rect(fill = "transparent",
-                                       color = "transparent"))
+                                       color = "transparent"))) 
+
+p_done <- cowplot::plot_grid(p_combined, p_leg, ncol = 1, rel_heights = c(1,.06))
 
 scl <- .75
 hypo_save(p_done, filename = 'figures/F1_redesign.pdf',
           width = 9 * scl,
-          height = 6 * scl,
+          height = 6.5 * scl,
           device = cairo_pdf,
           bg = "transparent",
           comment = plot_comment)
+
+networx <- tibble( loc = c('bel','hon', 'pan'),
+                   n = c(5,6,3),
+                   label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
+                                str_c(c('abe','gum','nig','pue','ran','uni'),'hon'),
+                                str_c(c('nig','pue','uni'),'pan')),
+                   weight = c(1,1.45,1)) %>%
+  purrr::pmap_dfr(network_layout) %>%
+  mutate(edges = map(edges, function(x){x %>% left_join(fst_data_gather %>% filter(popstat == "weighted-fst") %>% select(run, median, mean)) }))
+
+
+plot_network <- function(loc, nodes, edges, asp = 0.8, sep = 0, node_lab_shift = 0){
+  loc_edge <- c(bel = .68, hon = .66, pan = .82) -.03
+  clr_prep <- (scales::colour_ramp(c("black",
+                                     clr_loc[loc])))(c(0.4, 1))
+  clrs <- colorRampPalette(clr_prep)(max(edges$idx))
+  p <- nodes %>% ggplot(aes(x, y)) + 
+    coord_fixed(ratio = asp) + 
+  geom_segment(data = edges,
+               aes(xend = xend, yend = yend, size = median), 
+               color = clr_loc[loc]) +#, size = plot_lwd)
+    # scale_size(limits = c(0, 1), range = c(.1, 4))+
+    scale_size(limits = c(0, 1), range = c(.1, 2))+
+    scale_color_manual(values = clr)
+  for (k in nodes$idx) {
+    p <- p + plot_fish_lwd(short = str_sub(nodes$label[k], 1,  3),
+                       x = nodes$x[k], y = nodes$y[k], height = .7, width = .7)
+  }
+  p + geom_label(data = edges, aes(x = xmid_shift + sign(xmid_shift) * sep,
+                                   y = ymid_shift + sign(ymid_shift) * sep * asp,
+                                   label = run_ord),
+                 color = clr_loc[loc],
+                 label.padding = unit(1, "pt"),
+                 label.size = 0,
+                 size = plot_text_size * .5 /ggplot2::.pt) +
+    scale_fill_manual(values = clr_loc,
+                      guide = FALSE) +
+    scale_x_continuous(limits = c(-1.3, 1.3),
+                       expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0.1)) +
+    theme_void()
+}
+
+plot_list <- networx %>%
+  purrr::pmap(plot_network, node_lab_shift = .2)
+
+p_net <- cowplot::plot_grid(
+  # grid::textGrob('Belize', gp = gpar(fontsize = plot_text_size,)),
+  # grid::textGrob('Honduras', gp = gpar(fontsize = plot_text_size)),
+  # grid::textGrob('Panama', gp = gpar(fontsize = plot_text_size)),
+  plot_list[[1]] + theme(legend.position = "none"), plot_list[[2]] + theme(legend.position = "none"), plot_list[[3]] + theme(legend.position = "none"),
+  ncol = 3#, 
+  #rel_heights = c(.1,1)
+) %>% cowplot::as_grob()
+
+p_combined <- ((wrap_elements(plot = p_tree +
+                                theme(axis.title = element_blank(),
+                                      text = element_text(size = plot_text_size)
+                                      # plot.margin = unit(c(0, 0, 0,0), "pt"),
+                                      # plot.background = element_rect(fill = "green")
+                                ),
+                              clip = FALSE) +
+                  # wrap_plots(p_net, p2,ncol = 1,heights = c(.8,1))
+                 p2 + annotation_custom(p_net, ymin = .15, xmax = 25)
+                ) /
+                 (pcas %>% wrap_plots())+
+                 plot_layout(heights = c(1,.75)) +
+                 plot_annotation(tag_levels = 'a') &
+                 theme(text = element_text(size = plot_text_size),
+                       plot.background = element_rect(fill = "transparent",
+                                                      color = "transparent"))) 
+
+p_done <- cowplot::plot_grid(p_combined, p_leg, ncol = 1, rel_heights = c(1,.06))
+
+hypo_save(p_done, filename = 'figures/F1_redesign_net2.pdf',
+          width = 9 * scl,
+          height = 6.5 * scl,
+          device = cairo_pdf,
+          bg = "transparent",
+          comment = plot_comment)
+

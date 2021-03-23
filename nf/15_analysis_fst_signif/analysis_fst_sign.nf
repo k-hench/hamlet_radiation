@@ -7,35 +7,53 @@ Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
+Channel
+	.from( "whg", "subset_non_diverged")
+	.set{ subset_type_ch }
+
+Channel
+	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
+	.set{ outlier_tab }
+
 // git 3.3
 // attach genotypes to location
 locations_ch
 	.combine( vcf_locations )
+	.combine( outlier_tab )
+	.combine( subset_type_ch )
 	.set{ vcf_location_combo }
 
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
 	input:
-	set val( loc ), vcfId, file( vcf ) from vcf_location_combo
+	set val( loc ), vcfId, file( vcf ), file( outlier_tab ), val( subset_type ) from vcf_location_combo
 
 	output:
-	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.vcf.gz.tbi" ), file( "${loc}.pop" ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
+	set val( loc ), file( "${loc}.${subset_type}.vcf.gz" ), file( "${loc}.${subset_type}.vcf.gz.tbi" ), file( "${loc}.${subset_type}.pop" ), val( subset_type ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
 
 	script:
 	"""
+	if [ "${subset_type}" == "subset_non_diverged" ];then
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		SUBSET="--exclude-bed diverged_regions.bed"
+	else
+		SUBSET=""
+	fi
+
 	vcfsamplenames ${vcf[0]} | \
 		grep ${loc} | \
 		grep -v tor | \
-		grep -v tab > ${loc}.pop
+		grep -v tab > ${loc}.${subset_type}.pop
 
 	vcftools --gzvcf ${vcf[0]} \
-		--keep ${loc}.pop \
+		\$SUBSET \
+		--keep ${loc}.${subset_type}.pop \
 		--mac 3 \
 		--recode \
-		--stdout | bgzip > ${loc}.vcf.gz
+		--stdout | bgzip > ${loc}.${subset_type}.vcf.gz
 	
-	tabix ${loc}.vcf.gz
+	tabix ${loc}.${subset_type}.vcf.gz
 	"""
 }
 
@@ -47,31 +65,31 @@ bel_pairs_ch = Channel.from( "bel" )
 	.join( vcf_loc_pair1 )
 	.combine(bel_spec1_ch)
 	.combine(bel_spec2_ch)
-	.filter{ it[4] < it[6] }
-	.map{ it[0,1,2,3,5,7]}
+	.filter{ it[5] < it[7] }
+	.map{ it[0,1,2,3,4,6,8]}
 hon_pairs_ch = Channel.from( "hon" )
 	.join( vcf_loc_pair2 )
 	.combine(hon_spec1_ch)
 	.combine(hon_spec2_ch)
-	.filter{ it[4] < it[6] }
-	.map{ it[0,1,2,3,5,7]}
+	.filter{ it[5] < it[7] }
+	.map{ it[0,1,2,3,4,6,8]}
 pan_pairs_ch = Channel.from( "pan" )
 	.join( vcf_loc_pair3 )
 	.combine(pan_spec1_ch)
 	.combine(pan_spec2_ch)
-	.filter{ it[4] < it[6] }
-	.map{ it[0,1,2,3,5,7]}
+	.filter{ it[5] < it[7] }
+	.map{ it[0,1,2,3,4,6,8]}
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
 process fst_run {
 	label 'L_32g1h_fst_run'
 
 	input:
-	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
+	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), val( spec1 ), val( spec2 ), val( subset_type ) from all_fst_pairs_ch
 
 	output:
-	set val( "${spec1}${loc}-${spec2}${loc}" ), file( "*_random_fst_a00.tsv" ) into rand_header_ch
-	set val( "${spec1}${loc}-${spec2}${loc}" ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( "col1.pop" ), file( "prep.pop" ) into rand_bocy_ch
+	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), file( "*_random_fst_a00.tsv" ) into rand_header_ch
+	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( "col1.pop" ), file( "prep.pop" ) into rand_bocy_ch
 
 	script:
 	"""
@@ -88,15 +106,14 @@ process fst_run {
 		--stdout 2> fst.log 1> tmp.txt
 
 	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
-	echo -e "idx\\ttype\\tmean_fst\\tweighted_fst" > ${spec1}${loc}_${spec2}${loc}_random_fst_a00.tsv
-	paste idx.txt fst.tsv >> ${spec1}${loc}_${spec2}${loc}_random_fst_a00.tsv
+	echo -e "idx\\ttype\\tmean_fst\\tweighted_fst" > ${spec1}${loc}-${spec2}${loc}_${subset_type}_random_fst_a00.tsv
+	paste idx.txt fst.tsv >> ${spec1}${loc}-${spec2}${loc}_${subset_type}_random_fst_a00.tsv
 
 	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt idx.txt
 
 	awk '{print \$1}' prep.pop > col1.pop
 	"""
 }
-
 
 Channel
 	.from( ('0'..'9'))
@@ -136,7 +153,7 @@ process random_bodies {
 		--stdout  2> fst.log 1> tmp.txt
 
 	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
-	paste idx.txt fst.tsv >> ${spec1}${loc}_${spec2}${loc}_random_fst_b${pre}.tsv
+	paste idx.txt fst.tsv >> ${run}_random_fst_b${pre}.tsv
 
 	rm fst.tsv fst.log rand.pop col2.pop r_pop1.pop r_pop2.pop tmp.txt 
 	done

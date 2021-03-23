@@ -18,9 +18,9 @@ nigbel-unibel	0.015483	1.00	nigbel	unibel	0
 puepan-unipan	0.012774	1.00	puepan	unipan	0
 ranhon-unihon	0.0075491	0.99	ranhon	unihon	0.010000000000000009
 abehon-unihon	0.0056853	0.99	abehon	unihon	0.010000000000000009
-nighon-ranhon	0.0049906	0.99	nighon	ranhon	0.010000000000000009
+puehon-ranhon	0.0047692	0.99	puehon	ranhon	0.010000000000000009
 nighon-unihon	0.0050249	0.98	nighon	unihon	0.020000000000000018
-puehon-ranhon	0.0047692	0.98	puehon	ranhon	0.020000000000000018
+nighon-ranhon	0.0049906	0.98	nighon	ranhon	0.020000000000000018
 abehon-ranhon	0.0039099	0.96	abehon	ranhon	0.040000000000000036
 abehon-nighon	0.0033385	0.96	abehon	nighon	0.040000000000000036
 nighon-puehon	0.0032668	0.96	nighon	puehon	0.040000000000000036
