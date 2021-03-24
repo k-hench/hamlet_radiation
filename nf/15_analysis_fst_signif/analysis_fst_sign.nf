@@ -85,7 +85,7 @@ process fst_run {
 	label 'L_32g1h_fst_run'
 
 	input:
-	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), val( spec1 ), val( spec2 ), val( subset_type ) from all_fst_pairs_ch
+	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), val( subset_type ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
 
 	output:
 	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), file( "*_random_fst_a00.tsv" ) into rand_header_ch
