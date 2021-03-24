@@ -20,40 +20,31 @@ Channel
 locations_ch
 	.combine( vcf_locations )
 	.combine( outlier_tab )
-	.combine( subset_type_ch )
 	.set{ vcf_location_combo }
 
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
 	input:
-	set val( loc ), vcfId, file( vcf ), file( outlier_tab ), val( subset_type ) from vcf_location_combo
+	set val( loc ), vcfId, file( vcf ), file( outlier_tab ) from vcf_location_combo
 
 	output:
-	set val( loc ), file( "${loc}.${subset_type}.vcf.gz" ), file( "${loc}.${subset_type}.vcf.gz.tbi" ), file( "${loc}.${subset_type}.pop" ), val( subset_type ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
+	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.vcf.gz.tbi" ), file( "${loc}.pop" ), file( outlier_tab ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
 
 	script:
 	"""
-	if [ "${subset_type}" == "subset_non_diverged" ];then
-		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
-		SUBSET="--exclude-bed diverged_regions.bed"
-	else
-		SUBSET=""
-	fi
-
 	vcfsamplenames ${vcf[0]} | \
 		grep ${loc} | \
 		grep -v tor | \
-		grep -v tab > ${loc}.${subset_type}.pop
+		grep -v tab > ${loc}.pop
 
 	vcftools --gzvcf ${vcf[0]} \
-		\$SUBSET \
-		--keep ${loc}.${subset_type}.pop \
+		--keep ${loc}.pop \
 		--mac 3 \
 		--recode \
-		--stdout | bgzip > ${loc}.${subset_type}.vcf.gz
+		--stdout | bgzip > ${loc}.vcf.gz
 	
-	tabix ${loc}.${subset_type}.vcf.gz
+	tabix ${loc}.vcf.gz
 	"""
 }
 
@@ -85,22 +76,36 @@ process fst_run {
 	label 'L_32g1h_fst_run'
 
 	input:
-	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), val( subset_type ), val( spec1 ), val( spec2 ) from all_fst_pairs_ch
+	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), file( outlier_tab ), val( spec1 ), val( spec2 ), val( subset_type ) from all_fst_pairs_ch.combine( subset_type_ch )
 
 	output:
 	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), file( "*_random_fst_a00.tsv" ) into rand_header_ch
-	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( "col1.pop" ), file( "prep.pop" ) into rand_bocy_ch
+	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), val( loc ), val( spec1 ), val( spec2 ), file( "${loc}.${subset_type}.vcf.gz" ), file( "col1.pop" ), file( "prep.pop" ) into rand_bocy_ch
 
 	script:
 	"""
+	if [ "${subset_type}" == "subset_non_diverged" ];then
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		SUBSET="--exclude-bed diverged_regions.bed"
+	else
+		SUBSET=""
+	fi
+
+	vcftools --gzvcf ${vcf[0]} \
+		\$SUBSET \
+		--recode \
+		--stdout | bgzip > ${loc}.${subset_type}.vcf.gz
+
+	tabix ${loc}.${subset_type}.vcf.gz
+
 	echo -e "0000\treal_pop" > idx.txt
 
-	vcfsamplenames ${vcf} | \
+	vcfsamplenames ${loc}.${subset_type}.vcf.gz | \
 		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
 	grep ${spec1} ${pop} > pop1.txt
 	grep ${spec2} ${pop} > pop2.txt
 	
-	vcftools --gzvcf ${vcf} \
+	vcftools --gzvcf ${loc}.${subset_type}.vcf.gz \
 		--weir-fst-pop pop1.txt \
 		--weir-fst-pop pop2.txt \
 		--stdout 2> fst.log 1> tmp.txt
