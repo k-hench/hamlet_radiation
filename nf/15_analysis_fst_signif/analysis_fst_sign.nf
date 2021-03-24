@@ -117,6 +117,8 @@ process fst_run {
 
 Channel
 	.from( ('0'..'9'))
+	.map{ "0" + it }.set{ sub_pre_ch }
+/*
 	.into{ singles_ch; tens_ch }
 
 singles_ch
@@ -124,7 +126,7 @@ singles_ch
 	.map{ it[0]+it[1] }
 	.toSortedList()
 	.flatten()
-	.set{ sub_pre_ch }
+	.set{ sub_pre_ch } */
 
 process random_bodies {
 	label 'L_32g6h_fst_run'
@@ -177,6 +179,7 @@ process compile_random_results {
 	gzip ${run}_random_fst.tsv
 	"""
 }
+/*
 // =======================
 // Genepop section
 Channel
@@ -275,3 +278,4 @@ process catch_genepop {
 	  gzip > genepop_summary_${pop}.tsv.gz
 	"""
 }
+*/

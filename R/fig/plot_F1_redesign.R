@@ -114,7 +114,9 @@ label_two_chars <- c(`italic(S.~'beta')` = "italic(Sc.~'beta')",
                      `italic(C.~striata)` = "italic(Cp.~striata)",
                      `italic(C.~occipitalis)` = "italic(Ch.~occipitalis)",
                      `italic(C.~investigatoris)` = "italic(Ch.~investigatoris)",
-                     `italic(C.~pleurospilus)` = "italic(Ch.~pleurospilus)")
+                     `italic(C.~pleurospilus)` = "italic(Ch.~pleurospilus)",
+                     `italic(S.~tabacarius)` = "italic(Se.~tabacarius)",
+                     `italic(S.~tortugarum)` = "italic(Se.~tortugarum)")
 
 edvr_serr_short <- edvr_serr
 edvr_serr_short$tip.label <- edvr_serr$tip.label %>% 
@@ -172,7 +174,7 @@ p_tree <- ggplot() +
              x = .5, y = .5, aes(color = v),alpha = 0)+
   scale_color_gradientn(colours = clr_tree, limits = c(.056, 2.4))+
   annotation_custom(grob = grob_grad,
-                    ymin = 0, ymax = .22,
+                    ymin = 0.01, ymax = .23,
                     xmin = .4, xmax = .96)+
   annotation_custom(grob = ggplotGrob(blank_hamlet),
                     xmin = 0.55, xmax = .75,
@@ -185,7 +187,7 @@ p_tree <- ggplot() +
   coord_cartesian(xlim = c(0, 1),
                   ylim = c(0, 1),
                   expand = 0)+
-  guides(color = guide_colorbar(title = "Diversification Rate",
+  guides(color = guide_colorbar(title = "Speciation Rate",
                                 title.position = "top",
                                 direction = "horizontal",
                                 barheight = unit(3, "pt"),
@@ -502,7 +504,7 @@ p_done <- cowplot::plot_grid(p_combined, p_leg, ncol = 1, rel_heights = c(1,.06)
 
 hypo_save(p_done, filename = 'figures/F1_redesign_net2.pdf',
           width = 9 * scl,
-          height = 6.5 * scl,
+          height = 6 * scl,
           device = cairo_pdf,
           bg = "transparent",
           comment = plot_comment)
