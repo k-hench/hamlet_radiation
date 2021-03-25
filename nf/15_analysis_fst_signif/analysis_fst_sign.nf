@@ -9,7 +9,7 @@ Channel
 
 Channel
 	.from( "whg", "subset_non_diverged")
-	.set{ subset_type_ch }
+	.into{ subset_type_ch; subset_type_ch2 }
 
 Channel
 	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
