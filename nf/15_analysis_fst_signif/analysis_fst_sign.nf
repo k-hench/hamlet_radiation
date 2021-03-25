@@ -242,8 +242,8 @@ process fst_run_adapt {
 
 	vcfsamplenames ${spec}.${subset_type}.vcf.gz | \
 		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
-	grep ${loc1} ${pop} > pop1.txt
-	grep ${loc2} ${pop} > pop2.txt
+	grep ${loc1} ${spec}.pop > pop1.txt
+	grep ${loc2} ${spec}.pop > pop2.txt
 	
 	vcftools --gzvcf ${spec}.${subset_type}.vcf.gz \
 		--weir-fst-pop pop1.txt \
