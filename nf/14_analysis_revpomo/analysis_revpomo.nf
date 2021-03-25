@@ -1,18 +1,19 @@
 #!/usr/bin/env nextflow
-
-// Open the SNP data set
 // git 14.1
+// Open the SNP data set
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_snps_ch }
 
 // git 14.2
+// Prepare LG channel for vcf subsetting
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24'))
 	.map{ "LG" + it }
 	.set{ lg_ch }
 
 // git 14.3
+// Subset snp data set by LG
 process subset_snps_by_lg {
 	label "L_20g2h_subset_lg"
 	tag "${vcfId}"

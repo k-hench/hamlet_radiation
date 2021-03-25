@@ -1,20 +1,24 @@
 #!/usr/bin/env nextflow
 // git 15.1
+// open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_locations; vcf_adapt }
 
 // git 15.2
+// prepare location channel
 Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
 // git 15.3
+// prepare subset modes (whole genome vs non-diverged regions)
 Channel
 	.from( "whg", "subset_non_diverged")
 	.into{ subset_type_ch; subset_type_ch2 }
 
 // git 15.4
+// load table with differentiation outlier regions
 Channel
 	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
 	.into{ outlier_tab; outlier_tab2 }
@@ -27,6 +31,7 @@ locations_ch
 	.set{ vcf_location_combo }
 
 // git 15.6
+// subset vcf by location
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
@@ -54,10 +59,20 @@ process subset_vcf_by_location {
 }
 
 // git 15.7
+// define location specific sepcies set
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
+// git 15.8
+// prepare pairwise fsts
+// ------------------------------
+/* (create all possible species pairs depending on location
+   and combine with genotype subset (for the respective location))*/
+// ------------------------------
+/* channel content after joinig:
+  set [0:val(loc), 1:file(vcf), 2:file( vcfidx ), 3:file(pop), 4:file( outlier_tab ), 5:val(spec1), 6:val(spec2)]*/
+// ------------------------------
 bel_pairs_ch = Channel.from( "bel" )
 	.join( vcf_loc_pair1 )
 	.combine(bel_spec1_ch)
@@ -78,7 +93,8 @@ pan_pairs_ch = Channel.from( "pan" )
 	.map{ it[0,1,2,3,4,6,8]}
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
-// git 15.8
+// git 15.9
+// run fst on actual populations
 process fst_run {
 	label 'L_32g1h_fst_run'
 
@@ -127,14 +143,14 @@ process fst_run {
 	"""
 }
 
-
 Channel
 	.from( ('0'..'9'))
 	.map{ "0" + it }.into{ sub_pre_ch; sub_pre_ch2 }
 /*
 	.into{ singles_ch; tens_ch }
 
-// git 15.9
+// git 15.10
+// create indexes for permutation itteration
 singles_ch
 	.combine(tens_ch)
 	.map{ it[0]+it[1] }
@@ -142,7 +158,9 @@ singles_ch
 	.flatten()
 	.into{ sub_pre_ch; sub_pre_ch2 }*/
 
-// git 15.10
+// git 15.11
+// for each itteration run fst on 100
+// permutations of population assignment
 process random_bodies {
 	label 'L_32g6h_fst_run'
 
@@ -177,7 +195,9 @@ process random_bodies {
 	"""
 }
 
-// git 15.11
+// git 15.12
+// collect all itterations and compile
+// output for each population pair
 process compile_random_results {
 	label 'L_20g2h_compile_rand'
 	publishDir "../../2_analysis/fst_signif/random", mode: 'copy' 
@@ -196,17 +216,21 @@ process compile_random_results {
 	"""
 }
 
-// same for adaptation -----------
-// git 15.12
+// -----------------------------------------
+// repeat the same procedure for adaptation
+// (permuting location within species)
+
+// git 15.13
+// prepare species channel
 Channel
 	.from( "nig", "pue", "uni")
 	.set{ species_ch }
 
-// git 15.13
+// git 15.14
 // define location set
 Channel.from( [[1, "bel"], [2, "hon"], [3, "pan"]]).into{ locations_ch_1;locations_ch_2 }
 
-// git 15.14
+// git 15.15
 // create location pairs
 locations_ch_1
 	.combine(locations_ch_2)
@@ -218,7 +242,10 @@ locations_ch_1
 	.combine( subset_type_ch2 )
 	.set{ vcf_location_combo_adapt }
 
-// git 15.15
+// git 15.16
+// collapsed analog to git 15.6 & 9
+// subset vcf by species and
+// run fst on actual populations
 process fst_run_adapt {
 	label 'L_32g1h_fst_run'
 
@@ -272,7 +299,9 @@ process fst_run_adapt {
 	"""
 }
 
-// git 15.16
+// git 15.17
+// for each itteration run fst on 100
+// permutations of location assignment
 process random_bodies_adapt {
 	label 'L_32g6h_fst_run'
 
@@ -307,7 +336,9 @@ process random_bodies_adapt {
 	"""
 }
 
-// git 15.17
+// git 15.18
+// collect all itterations and compile
+// output for each location pair
 process compile_random_results_adapt {
 	label 'L_20g2h_compile_rand'
 	publishDir "../../2_analysis/fst_signif/random/adapt", mode: 'copy' 
