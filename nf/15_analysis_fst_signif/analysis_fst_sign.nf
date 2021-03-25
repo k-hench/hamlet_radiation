@@ -1,27 +1,32 @@
 #!/usr/bin/env nextflow
+// git 15.1
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_locations; vcf_adapt }
 
+// git 15.2
 Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
+// git 15.3
 Channel
 	.from( "whg", "subset_non_diverged")
 	.into{ subset_type_ch; subset_type_ch2 }
 
+// git 15.4
 Channel
 	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
 	.into{ outlier_tab; outlier_tab2 }
 
-// git 3.3
+// git 15.5
 // attach genotypes to location
 locations_ch
 	.combine( vcf_locations )
 	.combine( outlier_tab )
 	.set{ vcf_location_combo }
 
+// git 15.6
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
 
@@ -48,6 +53,7 @@ process subset_vcf_by_location {
 	"""
 }
 
+// git 15.7
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
@@ -72,6 +78,7 @@ pan_pairs_ch = Channel.from( "pan" )
 	.map{ it[0,1,2,3,4,6,8]}
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 
+// git 15.8
 process fst_run {
 	label 'L_32g1h_fst_run'
 
@@ -120,19 +127,22 @@ process fst_run {
 	"""
 }
 
+
 Channel
 	.from( ('0'..'9'))
 	.map{ "0" + it }.into{ sub_pre_ch; sub_pre_ch2 }
 /*
 	.into{ singles_ch; tens_ch }
 
+// git 15.9
 singles_ch
 	.combine(tens_ch)
 	.map{ it[0]+it[1] }
 	.toSortedList()
 	.flatten()
-	.set{ sub_pre_ch } */
+	.into{ sub_pre_ch; sub_pre_ch2 }*/
 
+// git 15.10
 process random_bodies {
 	label 'L_32g6h_fst_run'
 
@@ -167,6 +177,7 @@ process random_bodies {
 	"""
 }
 
+// git 15.11
 process compile_random_results {
 	label 'L_20g2h_compile_rand'
 	publishDir "../../2_analysis/fst_signif/random", mode: 'copy' 
@@ -185,17 +196,17 @@ process compile_random_results {
 	"""
 }
 
-
-// -----------------------
+// same for adaptation -----------
+// git 15.12
 Channel
 	.from( "nig", "pue", "uni")
 	.set{ species_ch }
 
-// git 3.22
+// git 15.13
 // define location set
 Channel.from( [[1, "bel"], [2, "hon"], [3, "pan"]]).into{ locations_ch_1;locations_ch_2 }
 
-// git 3.23
+// git 15.14
 // create location pairs
 locations_ch_1
 	.combine(locations_ch_2)
@@ -207,6 +218,7 @@ locations_ch_1
 	.combine( subset_type_ch2 )
 	.set{ vcf_location_combo_adapt }
 
+// git 15.15
 process fst_run_adapt {
 	label 'L_32g1h_fst_run'
 
@@ -260,6 +272,7 @@ process fst_run_adapt {
 	"""
 }
 
+// git 15.16
 process random_bodies_adapt {
 	label 'L_32g6h_fst_run'
 
@@ -294,6 +307,7 @@ process random_bodies_adapt {
 	"""
 }
 
+// git 15.17
 process compile_random_results_adapt {
 	label 'L_20g2h_compile_rand'
 	publishDir "../../2_analysis/fst_signif/random/adapt", mode: 'copy' 
@@ -311,104 +325,3 @@ process compile_random_results_adapt {
 	gzip ${run}_random_fst.tsv
 	"""
 }
-
-/*
-// =======================
-// Genepop section
-Channel
-	.from(["all", "all"], ["hamlets", "all"], ["bel", "loc"], ["hon", "loc"], ["pan", "loc"])
-	.set{ genepop_config_ch }
-
-process thin_vcf_genepop {
-	label "L_20g2h_subset_vcf"
-
-	input:
-	set vcfId, file( vcf ), val( pop ), val( type ) from vcf_genepop_SNP.map{ [it[0].minus(".vcf"), it[1]]}.combine(genepop_config_ch)
-
-	output:
-	set val( "${pop}" ) , file( "*_genepop_pops.txt" ) into genepop_prep_ch
-
-	script:
-	"""
-	module load Java/8.112
-
-	vcfsamplenames ${vcf[0]} | \
-		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}' > prep.pop
-
-	if [ "${type}" == "loc" ];then
-		grep ${pop} prep.pop | \
-		grep -v tor | \
-		grep -v tab > pop.txt
-
-		cut -f 1 pop.txt > keepers.txt
-		SUBSET="--keep keepers.txt"
-	elif [ "${pop}" == "hamlets" ]; then
-		grep -v flo prep.pop | \
-		grep -v tor | \
-		grep -v tab > pop.txt
-
-		cut -f 1 pop.txt > keepers.txt
-		SUBSET="--keep keepers.txt"
-	else
-		mv prep.pop pop.txt
-		SUBSET=""
-	fi
-
-	# trim linkage last (seprartely, unsure about order within vcftools)
-	vcftools \
-		--gzvcf ${vcf[0]} \
-		--mac 3 \
-		\$SUBSET \
-		--recode --stdout | \
-		vcftools --vcf - \
-			--thin 10000 \
-			--recode \
-			--stdout > ${pop}_sub.vcf
-
-	java -jar \$SFTWR/PGDSpider/PGDSpider2-cli.jar \
-		-inputfile ${pop}_sub.vcf \
-		-outputfile ${pop}_genepop.txt \
-		-spid \$BASE_DIR/ressources/vcf2gp.spid
-
-	sed 's/[A-Za-z0-9_-]*\\([a-z]\\{6\\}\\) ,/\\1 ,/' ${pop}_genepop.txt > ${pop}_genepop_pops.txt
-	rm ${pop}_genepop.txt ${pop}_sub.vcf
-	"""
-}
-
-process run_genepop {
-	label "L_32g48h_run_genepop"
-	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
-
-	input:
-	set val( pop ), file( gp_in ) from genepop_prep_ch
-
-	output:
-	set val( pop ), file( "*GE" ), file( "*GE2" ) into genepop_output_ch
-
-	script:
-	"""
-	Genepop BatchNumber=20 GenepopInputFile=${gp_in} MenuOptions=3.1,3.2 Mode=Batch
-	"""
-}
-
-process catch_genepop {
-	label "L_32g48h_run_genepop"
-	publishDir "../../2_analysis/fst_signif", mode: 'copy' 
-
-	input:
-	set val( pop ), file( GE ), file( GE2 ) from genepop_output_ch
-
-	output:
-	file( "genepop_summary_${pop}.tsv.gz" ) into genepop_catch_ch
-
-	script:
-	"""
-	tail -n 140 ${GE2} | \
-	  grep -v "^--\\|^Normal" | \
-	  grep "^[A-Za-z]" | \
-	  sed 's/        & /-/; s/y s/y_s/' | \
-	  awk '{print \$1"\\t"\$2"\\t"\$3"\\t"\$4}' | \
-	  gzip > genepop_summary_${pop}.tsv.gz
-	"""
-}
-*/

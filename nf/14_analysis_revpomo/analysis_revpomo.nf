@@ -1,15 +1,18 @@
 #!/usr/bin/env nextflow
 
 // Open the SNP data set
+// git 14.1
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.set{ vcf_snps_ch }
 
+// git 14.2
 Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24'))
 	.map{ "LG" + it }
 	.set{ lg_ch }
 
+// git 14.3
 process subset_snps_by_lg {
 	label "L_20g2h_subset_lg"
 	tag "${vcfId}"
@@ -33,16 +36,19 @@ process subset_snps_by_lg {
 	"""
 }
 
+// git 14.4
 // Open the allBP data set (will be expanded x 24 LGs)
 Channel
 	.fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG*.vcf.{gz,gz.tbi}")
 	.set{ vcf_allbp_ch }
 
+// git 14.5
 // Open the pre-defined window positions
 Channel
 	.fromPath("../../ressources/windows_1kb.bed.gz")
 	.set{ windows_ch }
 
+// git 14.6
 // Subset ALL vcf files (also allBP) by missingnes (max. 10%)
 process filter_vcf_missingnes {
 	label "L_20g6h_filter_vcf"
@@ -79,6 +85,7 @@ process filter_vcf_missingnes {
 	"""
 }
 
+// git 14.7
 // Coverage of SNPs vcf for SNPdensity, allBP for Ns
 process compute_coverage {
 	label "L_50g3h_coverage"
@@ -110,7 +117,7 @@ process compute_coverage {
 	"""
 }
 
-
+// git 14.8
 // Compile summary table
 process compile_window_stats {
 	label "L_20g2h_window_stats"
