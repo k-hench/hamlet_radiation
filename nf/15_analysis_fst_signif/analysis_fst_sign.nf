@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.into{ vcf_locations; vcf_genepop_SNP }
+	.into{ vcf_locations; vcf_adapt }
 
 Channel
 	.from( "bel", "hon", "pan")
@@ -13,7 +13,7 @@ Channel
 
 Channel
 	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
-	.set{ outlier_tab }
+	.into{ outlier_tab; outlier_tab2 }
 
 // git 3.3
 // attach genotypes to location
@@ -80,7 +80,7 @@ process fst_run {
 
 	output:
 	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), file( "*_random_fst_a00.tsv" ) into rand_header_ch
-	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), val( loc ), val( spec1 ), val( spec2 ), file( "${loc}.${subset_type}.vcf.gz" ), file( "col1.pop" ), file( "prep.pop" ) into rand_bocy_ch
+	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), val( loc ), val( spec1 ), val( spec2 ), file( "${loc}.${subset_type}.vcf.gz" ), file( "col1.pop" ), file( "prep.pop" ) into rand_body_ch
 
 	script:
 	"""
@@ -122,7 +122,7 @@ process fst_run {
 
 Channel
 	.from( ('0'..'9'))
-	.map{ "0" + it }.set{ sub_pre_ch }
+	.map{ "0" + it }.into{ sub_pre_ch; sub_pre_ch2 }
 /*
 	.into{ singles_ch; tens_ch }
 
@@ -137,7 +137,7 @@ process random_bodies {
 	label 'L_32g6h_fst_run'
 
 	input:
-	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_bocy_ch.combine(sub_pre_ch)
+	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_body_ch.combine(sub_pre_ch)
 
 	output:
 	set val( run ), file("*_random_fst_b${pre}.tsv") into rand_body_out_ch
@@ -184,6 +184,134 @@ process compile_random_results {
 	gzip ${run}_random_fst.tsv
 	"""
 }
+
+
+// -----------------------
+Channel
+	.from( "nig", "pue", "uni")
+	.set{ species_ch }
+
+// git 3.22
+// define location set
+Channel.from( [[1, "bel"], [2, "hon"], [3, "pan"]]).into{ locations_ch_1;locations_ch_2 }
+
+// git 3.23
+// create location pairs
+locations_ch_1
+	.combine(locations_ch_2)
+	.filter{ it[0] < it[2] }
+	.map{ it[1,3]}
+	.combine( species_ch )
+	.combine( vcf_adapt )
+	.combine( outlier_tab2 )
+	.combine( subset_type_ch2 )
+	.set{ vcf_location_combo_adapt }
+
+process fst_run_adapt {
+	label 'L_32g1h_fst_run'
+
+	input:
+	set val( loc1 ), val( loc2 ), val( spec ), val( vcf_indx) , file( vcf ), file( outlier_tab ), val( subset_type ) from vcf_location_combo_adapt
+
+	output:
+	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), file( "*_random_fst_a00.tsv" ) into rand_header_adapt_ch
+	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), val( spec ), val( loc1 ), val( loc2 ), file( "${loc}.${subset_type}.vcf.gz" ), file( "col1.pop" ), file( "prep.pop" ) into rand_body_adapt_ch
+
+	script:
+	"""
+	vcfsamplenames ${vcf[0]} | \
+		grep ${spec} > ${spec}.pop
+
+	if [ "${subset_type}" == "subset_non_diverged" ];then
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		SUBSET="--exclude-bed diverged_regions.bed"
+	else
+		SUBSET=""
+	fi
+
+	vcftools --gzvcf ${vcf[0]} \
+		\$SUBSET \
+		--keep ${spec}.pop \
+		--mac 3 \
+		--recode \
+		--stdout | bgzip > ${spec}.${subset_type}.vcf.gz
+
+	tabix ${spec}.${subset_type}.vcf.gz
+
+	echo -e "0000\treal_pop" > idx.txt
+
+	vcfsamplenames ${spec}.${subset_type}.vcf.gz | \
+		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
+	grep ${loc1} ${pop} > pop1.txt
+	grep ${loc2} ${pop} > pop2.txt
+	
+	vcftools --gzvcf ${spec}.${subset_type}.vcf.gz \
+		--weir-fst-pop pop1.txt \
+		--weir-fst-pop pop2.txt \
+		--stdout 2> fst.log 1> tmp.txt
+
+	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
+	echo -e "idx\\ttype\\tmean_fst\\tweighted_fst" > ${spec}${loc1}-${spec}${loc2}_${subset_type}_random_fst_a00.tsv
+	paste idx.txt fst.tsv >> ${spec}${loc1}-${spec}${loc2}_${subset_type}_random_fst_a00.tsv
+
+	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt idx.txt
+
+	awk '{print \$1}' prep.pop > col1.pop
+	"""
+}
+
+process random_bodies_adapt {
+	label 'L_32g6h_fst_run'
+
+	input:
+	set val( run ), val( spec ), val( loc1 ), val( loc2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_body_adapt_ch.combine(sub_pre_ch2)
+
+	output:
+	set val( run ), file("*_random_fst_b${pre}.tsv") into rand_body_out_adapt_ch
+
+	script:
+	"""
+	for k in {00..99}; do
+	echo "Iteration_"\$k
+	echo -e "${prepop}\$k\trandom" > idx.txt
+
+	awk '{print \$2}' ${prepop} | shuf > col2.pop # premutation happens here
+	paste ${col1} col2.pop > rand.pop
+
+	grep "${spec}${loc1}\$" rand.pop > r_pop1.pop
+	grep "${spec}${loc2}\$" rand.pop > r_pop2.pop
+
+	vcftools --gzvcf ${vcf} \
+		--weir-fst-pop r_pop1.pop \
+		--weir-fst-pop r_pop2.pop \
+		--stdout  2> fst.log 1> tmp.txt
+
+	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
+	paste idx.txt fst.tsv >> ${run}_random_fst_b${pre}.tsv
+
+	rm fst.tsv fst.log rand.pop col2.pop r_pop1.pop r_pop2.pop tmp.txt 
+	done
+	"""
+}
+
+process compile_random_results_adapt {
+	label 'L_20g2h_compile_rand'
+	publishDir "../../2_analysis/fst_signif/random/adapt", mode: 'copy' 
+
+	input:
+	set val( run ), file( body ), file( head ) from rand_body_out_adapt_ch.groupTuple().join(rand_header_adapt_ch, remainder: true)
+
+	output:
+	file("${run}_random_fst.tsv.gz") into random_lists_adapt_result
+
+	script:
+	"""
+	cat ${head} > ${run}_random_fst.tsv
+	cat ${body} >> ${run}_random_fst.tsv
+	gzip ${run}_random_fst.tsv
+	"""
+}
+
 /*
 // =======================
 // Genepop section
