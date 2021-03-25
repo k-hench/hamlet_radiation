@@ -68,7 +68,7 @@ data_grouped <- data %>%
          percentile = map_chr(data, get_percentile),
          above = map_dbl(data, get_n_above),
          total = map_dbl(data, get_n_total),
-         label = str_c(percentile, "<br>(",above, "/", total, ")")) %>%
+         label = str_c(sprintf("%.2f", as.numeric(percentile)), "<br>(",above, "/10<sup>",log10(total),"</sup>)")) %>%
   arrange(-as.numeric(percentile), -real_pop) %>%
   mutate(rank = row_number(),
          run = fct_reorder(run, rank)) 
@@ -85,25 +85,27 @@ p_done <- data %>%
   geom_density(aes( x = weighted_fst ),
                fill = rgb(0,0,0,.3)) +
   geom_richtext(data = data_grouped,
-                aes(x = .08, y = 400, label = label), 
+                aes(x = .08, y = 470, label = label), 
                 hjust = .5, vjust = 1, size = 3,
                 label.padding = unit(3,"pt"),
                 label.size = 0,
                 label.color = "transparent",
                 fill = "transparent") +
+  scale_x_continuous(breaks = c(0, .05, .1)) +
   facet_wrap(run ~ ., ncol = 4,dir = "v") +
   theme_minimal() +
   theme(axis.text.y = element_blank(),
         axis.ticks.y = element_blank())
 
-scl <- 1
+scl <- 1.4
 hypo_save(p_done, filename = 'figures/SFY.pdf',
-          width = 10 * scl,
-          height = 8 * scl,
+          width = f_width * scl,
+          height = f_width * .6  * scl,
           device = cairo_pdf,
-          comment = plot_comment)
+          comment = plot_comment,
+          bg = "transparent")
 
-data_export <- data_grouped %>%
+  data_export <- data_grouped %>%
   select(run, real_pop, percentile) %>%
   mutate(pre = run,
          p_perm = 1 - as.numeric(percentile)) %>%
