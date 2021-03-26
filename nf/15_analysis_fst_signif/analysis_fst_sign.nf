@@ -253,8 +253,8 @@ process fst_run_adapt {
 	set val( loc1 ), val( loc2 ), val( spec ), val( vcf_indx) , file( vcf ), file( outlier_tab ), val( subset_type ) from vcf_location_combo_adapt
 
 	output:
-	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), file( "*_random_fst_a00.tsv" ) into rand_header_adapt_ch
-	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), val( spec ), val( loc1 ), val( loc2 ), file( "${loc}.${subset_type}.vcf.gz" ), file( "col1.pop" ), file( "prep.pop" ) into rand_body_adapt_ch
+	set val( "${spec}${loc1}-${spec}${loc2}_${subset_type}" ), file( "*_random_fst_a00.tsv" ) into rand_header_adapt_ch
+	set val( "${spec}${loc1}-${spec}${loc2}_${subset_type}" ), val( spec ), val( loc1 ), val( loc2 ), file( "${spec}.${subset_type}.vcf.gz" ), file( "col1.pop" ), file( "prep.pop" ) into rand_body_adapt_ch
 
 	script:
 	"""
