@@ -447,7 +447,8 @@ plot_network <- function(loc, nodes, edges, asp = 0.8, sep = 0, node_lab_shift =
   p <- nodes %>% ggplot(aes(x, y)) + 
     coord_fixed(ratio = asp) + 
   geom_segment(data = edges,
-               aes(xend = xend, yend = yend, size = median), 
+               aes(xend = xend, yend = yend),#, size = median), 
+               size = .1,
                color = clr_loc[loc]) +#, size = plot_lwd)
     # scale_size(limits = c(0, 1), range = c(.1, 4))+
     scale_size(limits = c(0, 1), range = c(.1, 2))+
@@ -502,7 +503,7 @@ p_combined <- ((wrap_elements(plot = p_tree +
 
 p_done <- cowplot::plot_grid(p_combined, p_leg, ncol = 1, rel_heights = c(1,.06))
 
-hypo_save(p_done, filename = 'figures/F1_redesign_net2.pdf',
+hypo_save(p_done, filename = 'figures/F1_redesign_net2b.pdf',
           width = 9 * scl,
           height = 6 * scl,
           device = cairo_pdf,

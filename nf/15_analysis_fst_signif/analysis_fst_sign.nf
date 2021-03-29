@@ -143,20 +143,20 @@ process fst_run {
 	"""
 }
 
-Channel
-	.from( ('0'..'9'))
-	.map{ "0" + it }.into{ sub_pre_ch; sub_pre_ch2 }
-/*
-	.into{ singles_ch; tens_ch }
 
 // git 15.10
 // create indexes for permutation itteration
+Channel
+	.from( ('0'..'9'))
+	.map{ "0" + it } //.into{ sub_pre_ch; sub_pre_ch2 }
+	.into{ singles_ch; tens_ch }
+
 singles_ch
 	.combine(tens_ch)
 	.map{ it[0]+it[1] }
 	.toSortedList()
 	.flatten()
-	.into{ sub_pre_ch; sub_pre_ch2 }*/
+	.into{ sub_pre_ch; sub_pre_ch2 }
 
 // git 15.11
 // for each itteration run fst on 100
@@ -174,7 +174,7 @@ process random_bodies {
 	"""
 	for k in {00..99}; do
 	echo "Iteration_"\$k
-	echo -e "${prepop}\$k\trandom" > idx.txt
+	echo -e "${pre}\$k\trandom" > idx.txt
 
 	awk '{print \$2}' ${prepop} | shuf > col2.pop # premutation happens here
 	paste ${col1} col2.pop > rand.pop
@@ -315,7 +315,7 @@ process random_bodies_adapt {
 	"""
 	for k in {00..99}; do
 	echo "Iteration_"\$k
-	echo -e "${prepop}\$k\trandom" > idx.txt
+	echo -e "${pre}\$k\trandom" > idx.txt
 
 	awk '{print \$2}' ${prepop} | shuf > col2.pop # premutation happens here
 	paste ${col1} col2.pop > rand.pop
