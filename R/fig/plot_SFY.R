@@ -128,6 +128,10 @@ p_done <- data %>%
         axis.title.y = element_markdown(),
         axis.title.x = element_markdown())
 
+library(cowplot)
+p_done <- ggdraw() + draw_plot(p_done) + 
+  draw_label("Draft (10^3)", color = rgb(0,0,0,.2), size = 100, angle = 45)
+
 scl <- 1.4
 hypo_save(p_done, filename = 'figures/SFY.pdf',
           width = f_width * scl,
@@ -136,7 +140,7 @@ hypo_save(p_done, filename = 'figures/SFY.pdf',
           comment = plot_comment,
           bg = "transparent")
 
-  data_export <- data_grouped %>%
+data_export <- data_grouped %>%
   select(run, real_pop, percentile) %>%
   mutate(pre = run,
          p_perm = 1 - as.numeric(percentile)) %>%
@@ -148,7 +152,7 @@ write_tsv(x = data_export, file = "2_analysis/summaries/fst_permutation_summary.
 data_export %>% 
   mutate(loc = str_sub(run, -3, -1)) %>%
   group_by(loc) %>% 
-  mutate(loc_n = length(loc),
+  mutate(loc_n = 28,#length(loc),
          fdr_correction_factor =  sum(1 / 1:length(loc)),
          fdr_alpha = .05 / fdr_correction_factor,
          is_sig = p_perm > fdr_alpha) %>% 
@@ -162,7 +166,84 @@ data_export %>%
   summarise(all_sig = sum(!check),
             non_sig = sum(check))
   filter(grepl( "hon", run)) 
-  
-oscar <- readxl::read_xlsx("~/Downloads/Fst_permutations.xlsx") %>% select(run = Pair,`p-value`)
-  select(run = Pair, `0.05 seq.`:FDR)
-  
+
+  # adaptation
+    
+adapt_path <- str_c(rand_path,"/adapt/")
+rand_files_a <- dir(adapt_path, pattern = "_random_fst.tsv.gz")
+
+data_a <- str_c(adapt_path, rand_files_a) %>%
+  map_dfr(.f = get_random_fst) %>% 
+  mutate(sign = c(subset_non_diverged = -1, whg = 1)[subset_type])
+
+
+data_grouped_a <- data_a %>% 
+  group_by(group, run, subset_type, sign) %>%
+  nest() %>%
+  ungroup() %>% 
+  mutate(real_pop = map_dbl(data, function(data){data$weighted_fst[data$type == "real_pop"]}),
+         percentile = map_chr(data, get_percentile),
+         above = map_dbl(data, get_n_above),
+         total = map_dbl(data, get_n_total),
+         label = str_c(sprintf("%.2f", as.numeric(percentile)), "<br>(",above, "/10<sup>",log10(total),"</sup>)")) %>%
+  arrange(-sign, -as.numeric(percentile), -real_pop)
+
+run_lvls_a <- data_grouped_a %>% filter(sign == 1) %>%
+  mutate(rank = row_number(),
+         run = fct_reorder(run, rank)) %>% 
+  .$run %>%  levels()
+
+data_grouped_ordered_a <- data_grouped_a %>% 
+  mutate(run = factor(run, levels = run_lvls_a))
+
+p_done_a <- data_a %>%
+  mutate(run = factor(run, levels = run_lvls_a)) %>%
+  filter(type == "random") %>%
+  ggplot(aes(group = group)) +
+  geom_segment(data = data_a %>%
+                 mutate(run = factor(run, levels = run_lvls_a)) %>%
+                 filter(type == "real_pop"),
+               aes(x = weighted_fst,
+                   xend = weighted_fst,
+                   y = 0,
+                   yend = Inf * sign,
+                   color = subset_type)) +
+  geom_density(data = data_a %>%  filter(sign == 1),
+               aes( x = weighted_fst,
+                    y = ..density..,
+                    color = subset_type,
+                    fill = after_scale(prismatic::clr_alpha(color,alpha = .3)))) +
+  geom_density(data = data_a %>%  filter(sign == -1),
+               aes( x = weighted_fst, y = ..density.. * -1,
+                    color = subset_type,
+                    fill = after_scale(prismatic::clr_alpha(color,alpha = .3)))) +
+  geom_richtext(data = data_grouped_ordered_a,
+                aes(x = .08, y = 750 * sign,
+                    label = label),
+                hjust = .5, 
+                vjust = .5,
+                size = 2.5,
+                label.padding = unit(3,"pt"),
+                label.size = 0,
+                label.color = "transparent",
+                fill = "transparent") +
+  scale_x_continuous(breaks = c(0, .05, .1), limits = c(0,.1)) +
+  scale_color_manual(values = c(whg = "#4D4D4D", 
+                                subset_non_diverged = "#A2A2A2"),
+                     guide = FALSE) +
+  labs( y = "Density (<span style='color:#4D4D4D'>whg</span> / <span style='color:#A2A2A2'>diverged regions excluded</span>)",
+        x = "Weighted Average <i>F<sub>ST</sub></i>") +
+  facet_wrap(run ~ ., ncol = 4, dir = "v") +
+  theme_minimal() +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_markdown(),
+        axis.title.x = element_markdown())
+
+scl_a <- .85
+hypo_save(p_done_a, filename = 'figures/SFY_adapt.pdf',
+          width = f_width * scl_a,
+          height = f_width * .65 * scl_a,
+          device = cairo_pdf,
+          comment = plot_comment,
+          bg = "transparent")

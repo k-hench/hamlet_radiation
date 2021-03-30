@@ -333,7 +333,7 @@ pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
 fst_sig_attach <- read_tsv(fst_permutation_file) %>% 
   mutate(loc = str_sub(run, -3, -1)) %>%
   group_by(loc) %>% 
-  mutate(loc_n = length(loc),
+  mutate(loc_n = 28,#length(loc),
          fdr_correction_factor =  sum(1 / 1:length(loc)),
          fdr_alpha = .05 / fdr_correction_factor,
          is_sig = p_perm > fdr_alpha) %>% 
@@ -430,7 +430,7 @@ hypo_save(p_done, filename = 'figures/F1_redesign.pdf',
           comment = plot_comment)
 
 networx <- tibble( loc = c('bel','hon', 'pan'),
-                   n = c(5,6,3),
+                   n = c(5, 6, 3),
                    label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
                                 str_c(c('abe','gum','nig','pue','ran','uni'),'hon'),
                                 str_c(c('nig','pue','uni'),'pan')),
