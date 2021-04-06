@@ -23,6 +23,7 @@ library(SNPRelate)
 library(stringr)
 library(tidyverse)
 library(hypoimg)
+library(hypogen)
 library(GenomicOriginsScripts)
 # custom functions -------------------
 get_pca_scores <- function(mat,n_ev){mat[,1:n_ev] %>%

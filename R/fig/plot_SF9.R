@@ -13,6 +13,7 @@ args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 
 cat('\n')
 script_name <- args[5] %>%

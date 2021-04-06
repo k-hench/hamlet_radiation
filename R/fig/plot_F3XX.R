@@ -14,6 +14,7 @@ args <- commandArgs(trailingOnly=FALSE)
 library(GenomicOriginsScripts)
 library(ggforce)
 library(hypoimg)
+library(hypogen)
 library(vroom)
 
 cat('\n')

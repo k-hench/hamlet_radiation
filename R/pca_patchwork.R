@@ -1,4 +1,5 @@
 library(GenomicOriginsScripts)
+library(hypogen)
 library(patchwork)
 
 types <- c("whg", "subset_non_diverged")

@@ -17,6 +17,7 @@ args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(patchwork)
 library(ape)
 library(ggraph)
@@ -43,7 +44,6 @@ clr_sec <- 'gray'  # the color of the secondary axis (dxy)
 library(BAMMtools)
 library(geiger)
 library(ggplotify)
-source("R/bammtools_plot_mod.R")
 
 basepath <- 'ressources/Rabosky_etal_2018/'
 source(paste0(basepath, "scripts/supporting_fxns/PlottingFunctions.R"))

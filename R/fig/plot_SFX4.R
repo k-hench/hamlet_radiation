@@ -10,6 +10,7 @@
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
+library(hypogen)
 library(hypoimg)
 library(patchwork)
 cat('\n')

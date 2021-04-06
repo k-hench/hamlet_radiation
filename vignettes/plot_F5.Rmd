@@ -10,17 +10,24 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(furrr)
 library(ggraph)
 library(tidygraph)
 library(ggtext)
+library(ape)
+library(ggtree)
+library(patchwork)
+library(ggplotify)
+library(phangorn)
 args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
           'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
           '2_analysis/summaries/fst_outliers_998.tsv',
           '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
           '2_analysis/summaries/fst_globals.txt',
           '2_analysis/GxP/50000/', 200, 5,
-          "2_analysis/fst/poptree/summary/")
+          "2_analysis/fst/poptree/summary/",
+          "~/work/puebla_lab/stash/pomo/")
 ```
 
 ## Summary
@@ -85,10 +92,16 @@ args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(furrr)
 library(ggraph)
 library(tidygraph)
 library(ggtext)
+library(ape)
+library(ggtree)
+library(patchwork)
+library(ggplotify)
+library(phangorn)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -132,6 +145,10 @@ gxp_dir <- as.character(args[8])
 twisst_size <- as.numeric(args[9])
 resolution <- as.numeric(args[10])
 fst_summary_path <- as.character(args[11])
+
+pomo_path <- as.character(args[12])
+pomo_trees <- dir(pomo_path, pattern = "155_pop")
+
 source(twisst_functions, local = TRUE)
 ```
 
@@ -143,7 +160,6 @@ We also load the R packages **ape** and **igraph** that will help us working wit
 plan(multiprocess)
 window_buffer <- 2.5*10^5
 #-------------------
-library(ape)
 library(igraph)
 ```
 
@@ -168,7 +184,7 @@ dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.', resolution ,'0kb-'
 
 # import dxy data
 dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
-  purrr::pmap_dfr(get_dxy, kb = str_c(resolution ,'0kb'))
+  purrr::pmap_dfr(get_dxy, kb = str_c(resolution, '0kb'))
 ```
 
 Next we iterate the genotype $\times$ phenotype import function over the trait names *Bars*, *Snout* and *Peduncle*.
@@ -196,7 +212,7 @@ gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
 Next, we compute the average genome wide $d_{XY}$ and load the average genome wide $F_{ST}$ values for all 28 pair wise species comparisons.
 
 ```{r, message = FALSE, warning = FALSE}
-# copute genome wide average dxy
+# compute genome wide average dxy
 dxy_globals <- dxy_data %>%
   filter(BIN_START %% ( resolution * 10000 ) == 1 ) %>%
   group_by( run ) %>%
@@ -216,7 +232,7 @@ After this, we import $F_{ST}$ by first listing all $F_{ST}$ data files and then
 
 ```{r, message = FALSE, warning = FALSE}
 # locate fst data files
-fst_files <- dir(fst_dir ,pattern = str_c('.', resolution ,'0k.windowed.weir.fst.gz'))
+fst_files <- dir(fst_dir, pattern = str_c('.', resolution ,'0k.windowed.weir.fst.gz'))
 # import fst data
 fst_data <- str_c(fst_dir, fst_files) %>%
   future_map_dfr(get_fst, kb = str_c(resolution ,'0k')) %>%
@@ -274,7 +290,7 @@ These are the ones, that later will be labeled in the annotation panel.
 
 ```{r, message = FALSE, warning = FALSE}
 # select genes to label
-cool_genes <-  c('arl3','kif16b','cdx1','hmcn2',
+cool_genes <- c('arl3','kif16b','cdx1','hmcn2',
                  'sox10','smarca4',
                  'rorb',
                  'alox12b','egr1',
@@ -329,8 +345,59 @@ tree_list <- outlier_pick %>%
   purrr::map_dfr(get_fst_summary_data)
 
 # create neighbour-joining trees and plot
-poptree_plot_list <-  tree_list %>%
+poptree_plot_list <- tree_list %>%
   purrr::pmap(plot_fst_poptree)
+```
+
+
+```{r, message = FALSE, warning = FALSE}
+pomo_data <- str_c(pomo_path, pomo_trees) %>% 
+  purrr::map_dfr(import_tree) %>% 
+  mutate(rooted_tree = map2(.x = tree,.y = type, .f = root_hamlets))
+
+p_pomo1 <- pomo_data$tree[[1]] %>% 
+  midpoint() %>%
+  ggtree::ggtree(layout = "circular") %>%
+  .$data %>%
+  dplyr::mutate(support = as.numeric(label) /100,
+                support_class = cut(support, c(0,.5,.7,.9,1)) %>%
+                  as.character() %>%
+                  factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))) %>%
+  plot_tree(higl_node = 21,
+            angle_in = 168,
+            color = twisst_clr[["Blue"]], 
+            xlim = c(-.015, .1),
+            open_angle = 168)
+
+p_pomo2 <- pomo_data$tree[[2]] %>% 
+  midpoint() %>%
+  ggtree::ggtree(layout = "circular") %>%
+  .$data %>%
+  dplyr::mutate(support = as.numeric(label) /100,
+                support_class = cut(support, c(0,.5,.7,.9,1)) %>%
+                  as.character() %>%
+                  factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))) %>%
+  plot_tree(higl_node = 27,
+            color = twisst_clr[["Bars"]], 
+            xlim = c(-.015,.065),
+            angle_in = 168,
+            open_angle = 168)
+
+p_pomo3 <- pomo_data$tree[[3]] %>% 
+  midpoint() %>%
+  ggtree::ggtree(layout = "circular") %>%
+  .$data %>%
+  dplyr::mutate(support = as.numeric(label) /100,
+                support_class = cut(support, c(0,.5,.7,.9,1)) %>%
+                  as.character() %>%
+                  factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))) %>%
+  plot_tree(higl_node = 28,
+            color = twisst_clr[["Butter"]], 
+            xlim = c(-.01, .053),
+            angle_in = 168,
+            open_angle = 168)
+
+plot_list <- list(p_pomo1, p_pomo2, p_pomo3)
 ```
 
 Then, we iterate the main plotting function over all selected $F_{ST}$ outlier windows and combine the resulting plots into a multi panel plot.
@@ -341,13 +408,15 @@ p_single <- outlier_table %>%
   filter(outlier_id %in% outlier_pick) %>%
   left_join(region_label_tibbles) %>%
   mutate(outlier_nr = row_number(),
-         text = ifelse(outlier_nr == 1,TRUE,FALSE),
+         text = ifelse(outlier_nr == 1, TRUE, FALSE),
          trait = c('Snout', 'Bars', 'Peduncle')) %>%
-  pmap(plot_curtain, cool_genes = cool_genes) %>%
-  c(., poptree_plot_list) %>%
+  pmap(plot_curtain, cool_genes = cool_genes, data_tables = data_tables) %>%
+   c(., plot_list) %>%
   cowplot::plot_grid(plotlist = ., nrow = 2,
-                     rel_heights = c(1, .17),
-                     labels = letters[1:length(outlier_pick)] %>% project_case())
+                     rel_heights = c(1, .18),
+                     labels = letters[1:length(outlier_pick)] %>% project_case(),
+                     label_size = plot_text_size)
+# ------------------- vvvvvv --------------------------
 ```
 
 <center>

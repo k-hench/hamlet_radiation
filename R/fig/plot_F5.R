@@ -23,6 +23,7 @@ args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(furrr)
 library(ggraph)
 library(tidygraph)

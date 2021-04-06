@@ -9,6 +9,7 @@
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
+library(hypogen)
 library(parallelnewhybrid)
 
 cat('\n')

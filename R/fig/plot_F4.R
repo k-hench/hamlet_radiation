@@ -22,7 +22,7 @@ args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
-
+library(hypogen)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -135,7 +135,7 @@ pi_summary <- dxy_data %>%
   group_by(pop2,run) %>%
   summarise(avg_pi = mean(PI_POP2)) %>%
   ungroup() %>%
-  set_names(., nm = c('pop','run','avg_pi')) %>%
+  purrr::set_names(., nm = c('pop','run','avg_pi')) %>%
   bind_rows(pi_summary_1)  %>%
   group_by(pop) %>%
   summarise(n = length(pop),
@@ -163,10 +163,10 @@ select_pi_pops <- pi_summary %>%
 # all pair-wise runs is calculated for each window
 pi_data_select <- dxy_data %>%
   select(GPOS, PI_POP1, pop1 )%>%
-  set_names(., nm = c('GPOS','pi','pop')) %>%
+  purrr::set_names(., nm = c('GPOS','pi','pop')) %>%
   bind_rows(.,dxy_data %>%
               select(GPOS, PI_POP2, pop2 )%>%
-              set_names(., nm = c('GPOS','pi','pop'))) %>%
+              purrr::set_names(., nm = c('GPOS','pi','pop'))) %>%
   group_by(GPOS,pop) %>%
   summarise(n = length(pop),
             mean_pi = mean(pi),

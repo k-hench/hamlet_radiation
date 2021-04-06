@@ -11,6 +11,7 @@
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
+library(hypogen)
 library(hypoimg)
 library(vroom)
 library(ggtext)

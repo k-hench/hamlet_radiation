@@ -15,6 +15,7 @@ library(ggtree)      # remotes::install_github("YuLab-SMU/ggtree")
 library(ape)
 library(phytools)
 library(hypoimg)
+library(hypogen)
 library(geomfactory) # remotes::install_github("k-hench/geomfactory")
 library(GenomicOriginsScripts)
 

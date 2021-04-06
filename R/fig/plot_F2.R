@@ -18,6 +18,7 @@ args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(patchwork)
 # plot_text_size <- 8
 cat('\n')

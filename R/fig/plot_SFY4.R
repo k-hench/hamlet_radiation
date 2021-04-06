@@ -13,7 +13,7 @@ args <- commandArgs(trailingOnly=FALSE)
 library(GenomicOriginsScripts)
 library(patchwork)
 library(hypoimg)
-
+library(hypogen)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(., '--file=')

@@ -72,7 +72,7 @@ dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.', resolution ,'0kb-'
 
 # import dxy data
 dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
-  purrr::pmap_dfr(get_dxy, kb = str_c(resolution ,'0kb'))
+  purrr::pmap_dfr(get_dxy, kb = str_c(resolution, '0kb'))
 
 # set traits of interest for GxP
 gxp_traits <- c('Bars', 'Snout', 'Peduncle')
@@ -88,7 +88,7 @@ gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
   darken(factor = .95) %>%
   set_names(., nm = gxp_traits)
 
-# copute genome wide average dxy
+# compute genome wide average dxy
 dxy_globals <- dxy_data %>%
   filter(BIN_START %% ( resolution * 10000 ) == 1 ) %>%
   group_by( run ) %>%
@@ -104,7 +104,7 @@ fst_globals <- vroom::vroom(fst_globals,delim = '\t',
          run = fct_reorder(run,weighted_fst))
 
 # locate fst data files
-fst_files <- dir(fst_dir ,pattern = str_c('.', resolution ,'0k.windowed.weir.fst.gz'))
+fst_files <- dir(fst_dir, pattern = str_c('.', resolution ,'0k.windowed.weir.fst.gz'))
 # import fst data
 fst_data <- str_c(fst_dir, fst_files) %>%
   future_map_dfr(get_fst, kb = str_c(resolution ,'0k')) %>%
@@ -179,7 +179,7 @@ tree_list <- outlier_pick %>%
   purrr::map_dfr(get_fst_summary_data)
 
 # create neighbour-joining trees and plot
-poptree_plot_list <-  tree_list %>%
+poptree_plot_list <- tree_list %>%
   purrr::pmap(plot_fst_poptree)
 
 import_tree <- function(file){

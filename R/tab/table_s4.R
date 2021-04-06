@@ -10,7 +10,7 @@
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
-
+library(hypogen)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')

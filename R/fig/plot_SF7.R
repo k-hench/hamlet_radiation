@@ -15,6 +15,7 @@ library(paletteer)
 library(patchwork)
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(ggtext)
 
 cat('\n')

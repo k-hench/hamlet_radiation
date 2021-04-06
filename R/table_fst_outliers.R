@@ -11,6 +11,7 @@
 args = commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
+library(hypogen)
 library(vroom)
 
 cat('\n')

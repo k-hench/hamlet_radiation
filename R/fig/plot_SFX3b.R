@@ -12,6 +12,7 @@
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
+library(hypogen)
 library(hypoimg)
 library(ggtext)
 library(ggpointdensity)
