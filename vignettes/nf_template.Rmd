@@ -5,7 +5,7 @@ editor_options:
 css: highlight.css
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::knit_hooks$set(source = function(x, options) {
   if (!is.null(options$hilang)) {
       code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
@@ -27,7 +27,7 @@ knitr::opts_knit$set(root.dir = '../')
 ```
 
 
-```{r, include=FALSE}
+```{r, include = FALSE}
 source('R/draw_workflow.R')
 prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'gemma_results',
                         'phenotype_file', 'fst_glob', "fst_10k_output","fst_50k", 'fst_logs',
@@ -42,8 +42,6 @@ This pipeline can be executed as follows:
 cd $BASE_DIR/nf/<span style="color:red;">...</span>_analysis_<span style="color:red;">...</span>
 source ../sh/nextflow_alias.sh
 nf_run_<span style="color:red;">...</span>
-
-
 ```
 
 ## Summary
@@ -68,8 +66,9 @@ girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
 
 The nextflow script starts by <span style="color:red;">...</span>
 
-<div class="kclass">
+:::kclass
 ```{r , eval = FALSE, hilang = 'nf'}
 ```
+:::
 
 ---

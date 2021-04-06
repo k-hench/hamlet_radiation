@@ -4,7 +4,7 @@
 # ===============================================================
 # This script produces Suppl. Figure 7 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
-# by Hench, McMillan and Puebla
+# by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")

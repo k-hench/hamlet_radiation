@@ -5,7 +5,7 @@
 # ===============================================================
 # This script produces Suppl. Figure 5 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
-# by Hench, McMillan and Puebla
+# by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/pi/50k/',

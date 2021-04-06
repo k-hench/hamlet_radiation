@@ -4,7 +4,7 @@
 #    2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script produces Figure 3 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')

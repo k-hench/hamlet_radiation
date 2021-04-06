@@ -3,6 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
+
 # Figure 2
 
 ```{r setup, include=FALSE}
@@ -48,7 +49,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 #    2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script produces Figure 2 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
@@ -119,7 +120,7 @@ fst_globals <- vroom::vroom(fst_globals_file,delim = '\t',
          run = fct_reorder(run,weighted_fst))
 ```
 
-Next, the filenames of all **msmc** results are collected.
+Next, the file names of all **msmc** results are collected.
 
 ```{r, message = FALSE, warning = FALSE}
 # locate cross-coalescence results
@@ -252,11 +253,9 @@ Then, the figure is composed from both panels.
 p_done <- p_msmc / p_cc + plot_annotation(tag_levels = c('a'))
 ```
 
-<center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 11.1, fig.height = 10.3, dev.args = list(type = "cairo")}
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 11.1, fig.height = 10.3, dev.args = list(type = "cairo"), fig.align = "center"}
 p_done
 ```
-</center>
 
 Finally, we can export Figure 2.
 

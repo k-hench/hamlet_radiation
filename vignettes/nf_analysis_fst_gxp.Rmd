@@ -66,7 +66,7 @@ girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
 
 The nextflow script starts by opening the genotype data and feeding it into three different streams.
 
-<div class="kclass">
+:::kclass
 ```{r , eval = FALSE, hilang = 'nf'}
 #!/usr/bin/env nextflow
 // git 3.1
@@ -622,6 +622,6 @@ process fst_run_adapt {
 }
 
 ```
-</div>
+:::
 
 ---

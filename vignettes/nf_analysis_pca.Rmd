@@ -1,0 +1,255 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include = FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include = FALSE}
+source('R/draw_workflow.R')
+prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'gemma_results',
+                        'phenotype_file', 'fst_glob', "fst_10k_output","fst_50k", 'fst_logs',
+                        'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
+```
+
+# (git 13) Analysis XI (Principal Component Analysis)
+
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/13_analysis_pca
+source ../sh/nextflow_alias.sh
+nf_run_pca
+```
+
+## Summary
+
+The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_pca.nf` (located under `$BASE_DIR/nf/13_analysis_pca/`).
+It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+Below is an overview of the steps involved in the analysis.
+(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+
+<div style="max-width:800px; margin:auto;">
+```{r, eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
+                         git = 3, point_types = prod_basic),
+        width_svg = 16, height_svg = 16)
+
+```
+</div>
+
+## Details of `analysis_pca.nf`
+
+### Setup
+
+The nextflow script starts by <span style="color:red;">...</span>
+
+:::kclass
+```{r , eval = FALSE, hilang = 'nf'}
+#!/usr/bin/env nextflow
+// git 13.1
+// prepare subset modes (whole genome vs non-diverged regions)
+Channel
+	.from( "whg", "subset_non_diverged")
+	.set{ subset_type_ch }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 13.2
+// load table with differentiation outlier regions
+Channel
+	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
+	.set{ outlier_tab }
+```
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 13.3
+// open genotype data
+Channel
+	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
+	.combine( outlier_tab )
+	.combine( subset_type_ch )
+	.set{ vcf_ch }
+```
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 13.4
+// depending on subset mode, subset vcf
+process subset_vcf_divergence_based {
+	label "L_20g2h_subset_divergence"
+
+	input:
+	set  vcfId, file( vcf ), file( outlier_tab ), val( subset_type ) from vcf_ch
+
+	output:
+	set file( "${subset_type}.vcf.gz" ), file( "${subset_type}.vcf.gz.tbi" ), val( subset_type ) into ( vcf_locations, vcf_all_samples_pca )
+
+	script:
+	"""
+	if [ "${subset_type}" == "subset_non_diverged" ];then
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		SUBSET="--exclude-bed diverged_regions.bed"
+	else
+		SUBSET=""
+	fi
+
+	vcftools --gzvcf ${vcf[0]} \
+		\$SUBSET \
+		--recode \
+		--stdout | bgzip > ${subset_type}.vcf.gz
+	
+	tabix ${subset_type}.vcf.gz
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 13.5
+// prepare location channel for separate pcas
+Channel
+	.from( "bel", "hon", "pan")
+	.set{ locations_ch }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 13.6
+// define location specific sepcies set
+Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
+Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
+Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 13.7
+// attach genotypes to location channel
+locations_ch
+	.combine( vcf_locations )
+	.set{ vcf_location_combo }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 13.8
+// subset vcf by location
+process subset_vcf_by_location {
+	label "L_20g2h_subset_vcf"
+
+	input:
+	set val( loc ), file( vcf ), file( vcfidx ), val( subset_type ) from vcf_location_combo
+
+	output:
+	set val( loc ), file( "*.vcf.gz" ), file( "*.pop" ), val( subset_type ) into ( vcf_loc_pca )
+
+	script:
+	"""
+	vcfsamplenames ${vcf} | \
+		grep ${loc} | \
+		grep -v tor | \
+		grep -v tab > ${loc}.${subset_type}.pop
+	vcftools --gzvcf ${vcf} \
+		--keep ${loc}.${subset_type}.pop \
+		--mac 3 \
+		--recode \
+		--stdout | gzip > ${loc}.${subset_type}.vcf.gz
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// PCA section
+// -----------
+// git 13.9
+// run pca by location
+process pca_location {
+	label "L_20g15h_pca_location"
+	publishDir "../../figures/pca", mode: 'copy' , pattern: "*.pdf"
+	publishDir "../../2_analysis/pca", mode: 'copy' , pattern: "*.gz"
+
+	input:
+	set val( loc ), file( vcf ), file( pop ), val( subset_type ) from vcf_loc_pca
+
+	output:
+	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_loc_out
+
+	script:
+	"""
+	awk '{print \$1"\\t"\$1}' ${loc}.${subset_type}.pop | \
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > ${loc}.${subset_type}.pop.txt
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf} ${loc}.${subset_type}.pop.txt 6
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 13.10
+// run pca for global data set
+process pca_all {
+	label "L_20g15h_pca_all"
+	publishDir "../../figures/pca", mode: 'copy' , pattern: "*.pdf"
+	publishDir "../../2_analysis/pca", mode: 'copy' , pattern: "*.txt.gz"
+	publishDir "../../1_genotyping/4_phased/", mode: 'copy' , pattern: "*.vcf.gz"
+
+	input:
+	set file( vcf ), file( vcfidx ), val( subset_type ) from vcf_all_samples_pca
+
+	output:
+	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
+	file( "hamlets_only.${subset_type}.vcf.gz" ) into vcf_hamlets_only
+	set file( "hamlets_only.${subset_type}.vcf.gz" ), file( "hamlets_only.${subset_type}.pop.txt" ) into vcf_multi_fst
+
+	script:
+	"""
+	# complete PCA, all samples ------------
+	vcfsamplenames ${vcf} | \
+		awk '{print \$1"\\t"\$1}' | \
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > all.${subset_type}.pop.txt
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R ${vcf} all.${subset_type}.pop.txt 6
+
+	# PCA without outgroups ---------------
+	vcfsamplenames ${vcf} | \
+		grep -v "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni\\|flo" > outgroup.${subset_type}.pop
+	vcfsamplenames ${vcf} | \
+		grep "abe\\|gum\\|ind\\|may\\|nig\\|pue\\|ran\\|uni\\|flo" | \
+		awk '{print \$1"\\t"\$1}' | \
+		sed 's/\\t.*\\(...\\)\\(...\\)\$/\\t\\1\\t\\2/g' > hamlets_only.${subset_type}.pop.txt
+	vcftools \
+		--gzvcf ${vcf} \
+		--remove outgroup.${subset_type}.pop \
+		--recode \
+		--stdout | gzip > hamlets_only.${subset_type}.vcf.gz
+	Rscript --vanilla \$BASE_DIR/R/vcf2pca.R hamlets_only.${subset_type}.vcf.gz hamlets_only.${subset_type}.pop.txt 6
+	"""
+}
+
+```
+:::
+
+---

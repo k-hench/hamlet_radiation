@@ -4,7 +4,7 @@
 # ===============================================================
 # This script produces Suppl. Figure X of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
-# by Hench, McMillan and Puebla
+# by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( "2_analysis/summaries/fst_outliers_998.tsv", "2_analysis/geva/", "2_analysis/GxP/bySNP/" , "2_analysis/GxP/50000/")

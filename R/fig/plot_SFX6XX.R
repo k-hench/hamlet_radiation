@@ -4,7 +4,7 @@
 # ===============================================================
 # This script produces Suppl. Figure 6 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
-# by Hench, McMillan and Puebla
+# by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fasttree/', 'no_outgroups.all.whg.SNP.tree', 'all.all.whg.SNP.tree')

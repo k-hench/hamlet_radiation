@@ -8,7 +8,7 @@
 #   2_analysis/GxP/50000/ 200 5 2_analysis/fst/poptree/summary/
 # ===============================================================
 # This script produces Figure 5 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',

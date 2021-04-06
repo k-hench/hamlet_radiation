@@ -9,7 +9,7 @@
 #   ~/work/puebla_lab/stash/pomo/
 # ===============================================================
 # This script produces Figure 5 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',

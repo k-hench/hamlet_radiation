@@ -1,0 +1,482 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include = FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include = FALSE}
+source('R/draw_workflow.R')
+prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'gemma_results',
+                        'phenotype_file', 'fst_glob', "fst_10k_output","fst_50k", 'fst_logs',
+                        'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
+```
+
+# (git 12) Analysis X (<i>F<sub>ST</sub></i> Permutation Test)
+
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/12_analysis_fst_signif
+source ../sh/nextflow_alias.sh
+nf_run_fstsig
+```
+
+## Summary
+
+The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_sign.nf` (located under `$BASE_DIR/nf/12_analysis_fst_signif/`).
+It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+Below is an overview of the steps involved in the analysis.
+(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+
+<div style="max-width:800px; margin:auto;">
+```{r, eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
+                         git = 3, point_types = prod_basic),
+        width_svg = 16, height_svg = 16)
+
+```
+</div>
+
+## Details of `analysis_fst_sign.nf`
+
+### Setup
+
+The nextflow script starts by <span style="color:red;">...</span>
+
+:::kclass
+```{r , eval = FALSE, hilang = 'nf'}
+#!/usr/bin/env nextflow
+// git 12.1
+// open genotype data
+Channel
+	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
+	.into{ vcf_locations; vcf_adapt }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.2
+// prepare location channel
+Channel
+	.from( "bel", "hon", "pan")
+	.set{ locations_ch }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.3
+// prepare subset modes (whole genome vs non-diverged regions)
+Channel
+	.from( "whg", "subset_non_diverged")
+	.into{ subset_type_ch; subset_type_ch2 }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.4
+// load table with differentiation outlier regions
+Channel
+	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
+	.into{ outlier_tab; outlier_tab2 }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.5
+// attach genotypes to location
+locations_ch
+	.combine( vcf_locations )
+	.combine( outlier_tab )
+	.set{ vcf_location_combo }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.6
+// subset vcf by location
+process subset_vcf_by_location {
+	label "L_20g2h_subset_vcf"
+
+	input:
+	set val( loc ), vcfId, file( vcf ), file( outlier_tab ) from vcf_location_combo
+
+	output:
+	set val( loc ), file( "${loc}.vcf.gz" ), file( "${loc}.vcf.gz.tbi" ), file( "${loc}.pop" ), file( outlier_tab ) into ( vcf_loc_pair1, vcf_loc_pair2, vcf_loc_pair3 )
+
+	script:
+	"""
+	vcfsamplenames ${vcf[0]} | \
+		grep ${loc} | \
+		grep -v tor | \
+		grep -v tab > ${loc}.pop
+
+	vcftools --gzvcf ${vcf[0]} \
+		--keep ${loc}.pop \
+		--mac 3 \
+		--recode \
+		--stdout | bgzip > ${loc}.vcf.gz
+	
+	tabix ${loc}.vcf.gz
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.7
+// define location specific sepcies set
+Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
+Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
+Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.8
+// prepare pairwise fsts
+// ------------------------------
+/* (create all possible species pairs depending on location
+   and combine with genotype subset (for the respective location))*/
+// ------------------------------
+/* channel content after joinig:
+  set [0:val(loc), 1:file(vcf), 2:file( vcfidx ), 3:file(pop), 4:file( outlier_tab ), 5:val(spec1), 6:val(spec2)]*/
+// ------------------------------
+bel_pairs_ch = Channel.from( "bel" )
+	.join( vcf_loc_pair1 )
+	.combine(bel_spec1_ch)
+	.combine(bel_spec2_ch)
+	.filter{ it[5] < it[7] }
+	.map{ it[0,1,2,3,4,6,8]}
+hon_pairs_ch = Channel.from( "hon" )
+	.join( vcf_loc_pair2 )
+	.combine(hon_spec1_ch)
+	.combine(hon_spec2_ch)
+	.filter{ it[5] < it[7] }
+	.map{ it[0,1,2,3,4,6,8]}
+pan_pairs_ch = Channel.from( "pan" )
+	.join( vcf_loc_pair3 )
+	.combine(pan_spec1_ch)
+	.combine(pan_spec2_ch)
+	.filter{ it[5] < it[7] }
+	.map{ it[0,1,2,3,4,6,8]}
+bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.9
+// run fst on actual populations
+process fst_run {
+	label 'L_32g1h_fst_run'
+
+	input:
+	set val( loc ), file( vcf ), file( vcfidx ), file( pop ), file( outlier_tab ), val( spec1 ), val( spec2 ), val( subset_type ) from all_fst_pairs_ch.combine( subset_type_ch )
+
+	output:
+	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), file( "*_random_fst_a00.tsv" ) into rand_header_ch
+	set val( "${spec1}${loc}-${spec2}${loc}_${subset_type}" ), val( loc ), val( spec1 ), val( spec2 ), file( "${loc}.${subset_type}.vcf.gz" ), file( "col1.pop" ), file( "prep.pop" ) into rand_body_ch
+
+	script:
+	"""
+	if [ "${subset_type}" == "subset_non_diverged" ];then
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		SUBSET="--exclude-bed diverged_regions.bed"
+	else
+		SUBSET=""
+	fi
+
+	vcftools --gzvcf ${vcf[0]} \
+		\$SUBSET \
+		--recode \
+		--stdout | bgzip > ${loc}.${subset_type}.vcf.gz
+
+	tabix ${loc}.${subset_type}.vcf.gz
+
+	echo -e "0000\treal_pop" > idx.txt
+
+	vcfsamplenames ${loc}.${subset_type}.vcf.gz | \
+		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
+	grep ${spec1} ${pop} > pop1.txt
+	grep ${spec2} ${pop} > pop2.txt
+	
+	vcftools --gzvcf ${loc}.${subset_type}.vcf.gz \
+		--weir-fst-pop pop1.txt \
+		--weir-fst-pop pop2.txt \
+		--stdout 2> fst.log 1> tmp.txt
+
+	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
+	echo -e "idx\\ttype\\tmean_fst\\tweighted_fst" > ${spec1}${loc}-${spec2}${loc}_${subset_type}_random_fst_a00.tsv
+	paste idx.txt fst.tsv >> ${spec1}${loc}-${spec2}${loc}_${subset_type}_random_fst_a00.tsv
+
+	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt idx.txt
+
+	awk '{print \$1}' prep.pop > col1.pop
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.10
+// create indexes for permutation itteration
+Channel
+	.from( ('0'..'9'))
+	.map{ "0" + it } //.into{ sub_pre_ch; sub_pre_ch2 }
+	.into{ singles_ch; tens_ch }
+
+singles_ch
+	.combine(tens_ch)
+	.map{ it[0]+it[1] }
+	.toSortedList()
+	.flatten()
+	.into{ sub_pre_ch; sub_pre_ch2 }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.11
+// for each itteration run fst on 100
+// permutations of population assignment
+process random_bodies {
+	label 'L_32g6h_fst_run'
+
+	input:
+	set val( run ), val( loc ), val( spec1 ), val( spec2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_body_ch.combine(sub_pre_ch)
+
+	output:
+	set val( run ), file("*_random_fst_b${pre}.tsv") into rand_body_out_ch
+
+	script:
+	"""
+	for k in {00..99}; do
+	echo "Iteration_"\$k
+	echo -e "${pre}\$k\trandom" > idx.txt
+
+	awk '{print \$2}' ${prepop} | shuf > col2.pop # premutation happens here
+	paste ${col1} col2.pop > rand.pop
+
+	grep "${spec1}${loc}\$" rand.pop > r_pop1.pop
+	grep "${spec2}${loc}\$" rand.pop > r_pop2.pop
+
+	vcftools --gzvcf ${vcf} \
+		--weir-fst-pop r_pop1.pop \
+		--weir-fst-pop r_pop2.pop \
+		--stdout  2> fst.log 1> tmp.txt
+
+	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
+	paste idx.txt fst.tsv >> ${run}_random_fst_b${pre}.tsv
+
+	rm fst.tsv fst.log rand.pop col2.pop r_pop1.pop r_pop2.pop tmp.txt 
+	done
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.12
+// collect all itterations and compile
+// output for each population pair
+process compile_random_results {
+	label 'L_20g2h_compile_rand'
+	publishDir "../../2_analysis/fst_signif/random", mode: 'copy' 
+
+	input:
+	set val( run ), file( body ), file( head ) from rand_body_out_ch.groupTuple().join(rand_header_ch, remainder: true)
+
+	output:
+	file("${run}_random_fst.tsv.gz") into random_lists_result
+
+	script:
+	"""
+	cat ${head} > ${run}_random_fst.tsv
+	cat ${body} >> ${run}_random_fst.tsv
+	gzip ${run}_random_fst.tsv
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// -----------------------------------------
+// repeat the same procedure for adaptation
+// (permuting location within species)
+
+// git 12.13
+// prepare species channel
+Channel
+	.from( "nig", "pue", "uni")
+	.set{ species_ch }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.14
+// define location set
+Channel.from( [[1, "bel"], [2, "hon"], [3, "pan"]]).into{ locations_ch_1;locations_ch_2 }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.15
+// create location pairs
+locations_ch_1
+	.combine(locations_ch_2)
+	.filter{ it[0] < it[2] }
+	.map{ it[1,3]}
+	.combine( species_ch )
+	.combine( vcf_adapt )
+	.combine( outlier_tab2 )
+	.combine( subset_type_ch2 )
+	.set{ vcf_location_combo_adapt }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.16
+// collapsed analog to git 12.6 & 9
+// subset vcf by species and
+// run fst on actual populations
+process fst_run_adapt {
+	label 'L_32g1h_fst_run'
+
+	input:
+	set val( loc1 ), val( loc2 ), val( spec ), val( vcf_indx) , file( vcf ), file( outlier_tab ), val( subset_type ) from vcf_location_combo_adapt
+
+	output:
+	set val( "${spec}${loc1}-${spec}${loc2}_${subset_type}" ), file( "*_random_fst_a00.tsv" ) into rand_header_adapt_ch
+	set val( "${spec}${loc1}-${spec}${loc2}_${subset_type}" ), val( spec ), val( loc1 ), val( loc2 ), file( "${spec}.${subset_type}.vcf.gz" ), file( "col1.pop" ), file( "prep.pop" ) into rand_body_adapt_ch
+
+	script:
+	"""
+	vcfsamplenames ${vcf[0]} | \
+		grep ${spec} > ${spec}.pop
+
+	if [ "${subset_type}" == "subset_non_diverged" ];then
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		SUBSET="--exclude-bed diverged_regions.bed"
+	else
+		SUBSET=""
+	fi
+
+	vcftools --gzvcf ${vcf[0]} \
+		\$SUBSET \
+		--keep ${spec}.pop \
+		--mac 3 \
+		--recode \
+		--stdout | bgzip > ${spec}.${subset_type}.vcf.gz
+
+	tabix ${spec}.${subset_type}.vcf.gz
+
+	echo -e "0000\treal_pop" > idx.txt
+
+	vcfsamplenames ${spec}.${subset_type}.vcf.gz | \
+		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
+	grep ${loc1} ${spec}.pop > pop1.txt
+	grep ${loc2} ${spec}.pop > pop2.txt
+	
+	vcftools --gzvcf ${spec}.${subset_type}.vcf.gz \
+		--weir-fst-pop pop1.txt \
+		--weir-fst-pop pop2.txt \
+		--stdout 2> fst.log 1> tmp.txt
+
+	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
+	echo -e "idx\\ttype\\tmean_fst\\tweighted_fst" > ${spec}${loc1}-${spec}${loc2}_${subset_type}_random_fst_a00.tsv
+	paste idx.txt fst.tsv >> ${spec}${loc1}-${spec}${loc2}_${subset_type}_random_fst_a00.tsv
+
+	rm fst.tsv fst.log pop1.txt pop2.txt tmp.txt idx.txt
+
+	awk '{print \$1}' prep.pop > col1.pop
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.17
+// for each itteration run fst on 100
+// permutations of location assignment
+process random_bodies_adapt {
+	label 'L_32g6h_fst_run'
+
+	input:
+	set val( run ), val( spec ), val( loc1 ), val( loc2 ), file( vcf ), file( col1 ), file( prepop ), val( pre ) from rand_body_adapt_ch.combine(sub_pre_ch2)
+
+	output:
+	set val( run ), file("*_random_fst_b${pre}.tsv") into rand_body_out_adapt_ch
+
+	script:
+	"""
+	for k in {00..99}; do
+	echo "Iteration_"\$k
+	echo -e "${pre}\$k\trandom" > idx.txt
+
+	awk '{print \$2}' ${prepop} | shuf > col2.pop # premutation happens here
+	paste ${col1} col2.pop > rand.pop
+
+	grep "${spec}${loc1}\$" rand.pop > r_pop1.pop
+	grep "${spec}${loc2}\$" rand.pop > r_pop2.pop
+
+	vcftools --gzvcf ${vcf} \
+		--weir-fst-pop r_pop1.pop \
+		--weir-fst-pop r_pop2.pop \
+		--stdout  2> fst.log 1> tmp.txt
+
+	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
+	paste idx.txt fst.tsv >> ${run}_random_fst_b${pre}.tsv
+
+	rm fst.tsv fst.log rand.pop col2.pop r_pop1.pop r_pop2.pop tmp.txt 
+	done
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 12.18
+// collect all itterations and compile
+// output for each location pair
+process compile_random_results_adapt {
+	label 'L_20g2h_compile_rand'
+	publishDir "../../2_analysis/fst_signif/random/adapt", mode: 'copy' 
+
+	input:
+	set val( run ), file( body ), file( head ) from rand_body_out_adapt_ch.groupTuple().join(rand_header_adapt_ch, remainder: true)
+
+	output:
+	file("${run}_random_fst.tsv.gz") into random_lists_adapt_result
+
+	script:
+	"""
+	cat ${head} > ${run}_random_fst.tsv
+	cat ${body} >> ${run}_random_fst.tsv
+	gzip ${run}_random_fst.tsv
+	"""
+}
+```
+:::
+
+---

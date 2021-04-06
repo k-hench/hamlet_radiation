@@ -3,7 +3,7 @@
 # Rscript --vanilla R/fig/plot_SFY6.R ~/work/puebla_lab/stash/pomo/
 # ===============================================================
 # This script produces Figure 1 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("~/work/puebla_lab/stash/pomo/")

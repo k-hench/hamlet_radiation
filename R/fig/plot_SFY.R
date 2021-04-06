@@ -3,7 +3,7 @@
 # Rscript --vanilla R/fig/plot_SFY.R 2_analysis/fst_signif/random/
 # ===============================================================
 # This script produces Figure 1 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("2_analysis/fst_signif/random/")
