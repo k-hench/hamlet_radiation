@@ -1,0 +1,75 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include=FALSE}
+source('R/draw_workflow.R')
+prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'gemma_results',
+                        'phenotype_file', 'fst_glob', "fst_10k_output","fst_50k", 'fst_logs',
+                        'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
+```
+
+# (<span style="color:red;">git ...</span>) Analysis <span style="color:red;">...</span>
+
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/<span style="color:red;">...</span>_analysis_<span style="color:red;">...</span>
+source ../sh/nextflow_alias.sh
+nf_run_<span style="color:red;">...</span>
+
+
+```
+
+## Summary
+
+The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_.nf` (located under `$BASE_DIR/nf/xx_analysis_/`).
+It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+Below is an overview of the steps involved in the analysis.
+(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+
+<div style="max-width:800px; margin:auto;">
+```{r, eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
+                         git = 3, point_types = prod_basic),
+        width_svg = 16, height_svg = 16)
+
+```
+</div>
+
+## Details of `analysis_.nf`<span style="color:red;">...</span>
+
+### Setup
+
+The nextflow script starts by <span style="color:red;">...</span>
+
+<div class="kclass">
+```{r , eval = FALSE, hilang = 'nf'}
+```
+
+---

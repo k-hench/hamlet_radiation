@@ -257,15 +257,18 @@ plot_tree <- function(tree, angle_in = 0,
      conditional_rotate(rotate = rotate_root, root_node = root_node) %>% 
      open_tree(angle =  open_angle) %>% 
      rotate_tree(angle = angle_in)) +
-    geom_tiplab(offset = diff(xlim) * .07, size = plot_text_size / ggplot2::.pt * .7) +
-    geom_tippoint(size = .4) +
+    geom_tiplab(offset = diff(xlim) * .07, size = plot_text_size / ggplot2::.pt *.7#, 
+                # aes(label = str_c(str_sub(label, -6,-6),str_c(str_sub(label, -3,-3))) %>% 
+                #       str_to_upper())
+                ) +
+    # geom_tippoint(size = .4) +
     scale_color_manual(values  = c(`0` = "black", `1` = color),
                        guide = FALSE) +
     scale_x_continuous(limits = xlim) +
     theme_void()
   
   ggplot() +
-    coord_equal(xlim = c(-.2, 1.05), 
+    coord_equal(xlim = c(-.1, .95), 
                 ylim = c(-.01, .52),
                 expand = 0) +
     # annotation_custom(grob = hypo_trait_img$grob_circle[hypo_trait_img$trait == "Snout"][[1]],

@@ -1,0 +1,333 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+css: highlight.css
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(source = function(x, options) {
+  if (!is.null(options$hilang)) {
+      code_open <- "\n\n<div class=\"sourceCode\">\n<pre class=\"sourceCode\">\n<code class=\"sourceCode\">"
+      code_close <- "\n</code>\n</pre>\n</div>\n"
+      code_body <- highr::hi_andre(x, language = options$hilang, format = "html")
+    stringr::str_c(
+      code_open,
+      knitr:::indent_block(paste(code_body, collapse = '\n'), ""),
+      code_close
+    )
+  } else {
+    stringr::str_c("\n\n```", tolower(options$engine), "\n",
+                   paste(x, collapse = '\n'), "\n```\n\n")
+
+  }
+})
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
+```{r, include = FALSE}
+source('R/draw_workflow.R')
+prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'gemma_results',
+                        'phenotype_file', 'fst_glob', "fst_10k_output","fst_50k", 'fst_logs',
+                        'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
+```
+
+# (git 11) Analysis IX (Allele Age)
+
+This pipeline can be executed as follows:
+
+```sh
+cd $BASE_DIR/nf/11_analysis_allele_age
+source ../sh/nextflow_alias.sh
+nf_run_aa
+```
+
+## Summary
+
+The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_allele_age.nf` (located under `$BASE_DIR/nf/11_analysis_allele_age/`).
+It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+Below is an overview of the steps involved in the analysis.
+(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+
+<div style="max-width:800px; margin:auto;">
+```{r, eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
+                         git = 3, point_types = prod_basic),
+        width_svg = 16, height_svg = 16)
+
+```
+</div>
+
+## Details of `analysis_allele_age.nf`
+
+### Setup
+
+The nextflow script starts by <span style="color:red;">...</span>
+
+:::kclass
+```{r , eval = FALSE, hilang = 'nf'}
+#!/usr/bin/env nextflow
+// git 11.1
+// open genotype data
+Channel
+	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
+	.set{ vcf_ch }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 11.2
+// initialize LGs
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.map{"LG" + it}
+	.combine( vcf_ch )
+	.set{ lg_ch }
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 11.3
+// subset the genotypes by LG
+// and add ancestral allele annotation
+process prepare_vcf {
+	label "L_20g2h_prepare_vcf"
+
+	input:
+	set val( lg ), val( vcfidx ), file( vcf ) from lg_ch
+
+	output:
+	set val( lg ), file( "${lg}_integer.vcf" )  into ( vcf_prep_ch )
+
+	script:
+	"""
+	# subset by LG and add AC info field
+	vcftools \
+	  --gzvcf ${vcf[0]} \
+		--chr ${lg} \
+		--recode \
+		--stdout | \
+		sed 's/\\(##FORMAT=<ID=GT,Number=1,Type=String,Description="Phased Genotype">\\)/\\1\\n##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes, for each ALT allele, in the same order as listed">/' | \
+		bgzip > ${lg}.vcf.gz
+
+	# determine ancestral state based on invariant sites in outgoup
+	zcat ${lg}.vcf.gz | \
+		grep -v "^#" | \
+		awk -v OFS="\\t" \
+		'BEGIN{print "#CHROM","FROM","TO","AA"}
+		{o1=substr(\$107, 1, 1);
+		o2=substr(\$107, 3, 3);
+		o3=substr(\$167, 1, 1);
+		o4=substr(\$167, 3, 3);
+		o5=substr(\$179, 1, 1);
+		o6=substr(\$179, 3, 3);
+		if (o1 == o2 && o3 == o4 && o5 == o6 && o1 == o3 && o1 == o5){
+		aa = \$(4+o1)} else {aa = "."};
+		print \$1,\$2,\$2,aa}' > ${lg}_annotations.bed
+
+	# determine allele frquencies
+	vcftools \
+		--gzvcf ${lg}.vcf.gz \
+		--freq \
+		--stdout | \
+		sed 's/{ALLELE:FREQ}/ALLELE1\\tALLELE2/' > ${lg}_allele_counts.tsv
+
+	# determine ancestral state for variant sites in outgoup based on allele freq
+	Rscript --vanilla \$BASE_DIR/R/major_allele.R ${lg}_allele_counts.tsv ${lg}_annotations.bed
+
+	bgzip ${lg}_annotations_maj.bed
+
+	tabix -s 1 -b 2 -e 3 ${lg}_annotations_maj.bed.gz
+
+	# add ancestral state annotation
+	zcat ${lg}.vcf.gz | \
+		vcf-annotate -a ${lg}_annotations_maj.bed.gz \
+		-d key=INFO,ID=AA,Number=1,Type=String,Description='Ancestral Allele' \
+		-c CHROM,FROM,TO,INFO/AA | \
+		sed 's/LG//g'  \
+		> ${lg}_integer.vcf
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 11.4
+// re-write ancestral state in vcf
+process set_ancestral_states {
+	label 'L_2g15m_ancestral_states'
+	publishDir "../../1_genotyping/5_ancestral_allele", mode: 'copy'
+
+	input:
+	set val( lg ), file( vcf ) from ( vcf_prep_ch )
+
+	output:
+	set val( lg ), file( "${lg}_aa.vcf.gz" ) into ( vcf_aa_ch )
+
+	script:
+	"""
+	java -jar \$SFTWR/jvarkit/dist/vcffilterjdk.jar \
+		-f \$BASE_DIR/js/script.js ${vcf} | \
+		bgzip > ${lg}_aa.vcf.gz
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 11.5
+// filter vcf to remove invariant sites in hamlets
+process create_positions {
+	label 'L_20g2h_create_positions'
+	publishDir "../../2_analysis/sliding_phylo/", mode: 'copy'
+
+	input:
+	set val( lg ), file( vcf ) from ( vcf_aa_ch )
+
+	output:
+	set val( lg ), file( "${lg}_aa_h_variant.vcf.gz" ), file( "${lg}_positions.txt" ) into ( positions_ch )
+
+	script:
+	"""
+	echo -e "20478tabhon\\n28393torpan\\ns_tort_3torpan" > outgr.pop
+
+	# keeping only sites that are variant within hamlets
+	vcftools \
+		--gzvcf ${vcf} \
+		--remove outgr.pop \
+		--recode \
+		--stdout | \
+		vcftools \
+		--gzvcf - \
+		--mac 1 \
+		--recode \
+		--stdout | \
+		bgzip > ${lg}_aa_no_outgroup.vcf.gz
+
+	zcat ${lg}_aa_no_outgroup.vcf.gz | \
+		grep -v "^#" | \
+		cut -f 1,2 | \
+		head -n -1 > ${lg}_positions_prep.txt
+
+	vcftools \
+		--gzvcf ${vcf} \
+		--positions ${lg}_positions_prep.txt \
+		--recode \
+		--stdout | \
+		bgzip > ${lg}_aa_h_variant.vcf.gz
+
+	cut -f 2 ${lg}_positions_prep.txt > ${lg}_positions.txt
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 11.5
+// prepare the age estimation by splitting the vcf
+// (all in one takes too long...)
+process pre_split {
+	label 'L_2g2h_pre_split'
+	publishDir "../../2_analysis/geva/", mode: 'copy'
+
+	input:
+	set val( lg ), file( vcf ), file( pos ) from ( positions_ch )
+
+	output:
+	set val( lg ), file( "pre_positions/pre_*" ), file( "*.bin" ), file( "*.marker.txt" ), file( "*.sample.txt" ) into ( geva_setup_ch )
+	set val( lg ), file( "inner_pos.txt" ), file( vcf ) into ( ccf_vcf_ch )
+
+	script:
+	"""
+	mkdir -p pre_positions
+
+	head -n -1 ${pos} | \
+	 tail -n +2  > inner_pos.txt
+
+	split inner_pos.txt -a 4 -l 25000 -d pre_positions/pre_
+
+	r=\$(awk -v k=${lg} '\$1 == k {print \$4}' \$BASE_DIR/ressources/avg_rho_by_LG.tsv)
+
+	geva_v1beta \
+		--vcf ${vcf} --rec \$r --out ${lg}
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 11.6
+// run geva on vcf subsets
+process run_geva {
+	label 'L_30g15h6x_run_geva'
+
+	input:
+	set val( lg ), file( pos ), file( bin ), file( marker ), file( sample ) from geva_setup_ch.transpose()
+
+	output:
+	set val( lg ), file( "*.sites.txt.gz" ), file( "*.pairs.txt.gz" ) into ( output_split_ch )
+
+	script:
+	"""
+  pref=\$(echo "${pos}" | sed 's=^.*/A==; s=pre_positions/pre_==')
+
+	mkdir -p sub_positions sub_results
+
+	split ${pos} -a 4 -l 250 -d sub_positions/sub_pos_\${pref}_
+
+	r=\$(awk -v k=${lg} '\$1 == k {print \$4}' \$BASE_DIR/ressources/avg_rho_by_LG.tsv)
+
+	for sp in \$(ls sub_positions/sub_pos_\${pref}_*); do
+		run_id=\$(echo \$sp | sed "s=sub_positions/sub_pos_\${pref}_==")
+
+		geva_v1beta \
+			 -t 6 \
+			 -i ${bin} \
+			 -o sub_results/${lg}_\${pref}_\${run_id}\
+			 --positions \$sp \
+			 --Ne 30000 \
+			 --mut 3.7e-08 \
+			 --hmm \$SFTWR/geva/hmm/hmm_initial_probs.txt \$SFTWR/geva/hmm/hmm_emission_probs.txt
+
+		tail -n +2 sub_results/${lg}_\${pref}_\${run_id}.sites.txt >> ${lg}_\${pref}.sites.txt
+		tail -n +2 sub_results/${lg}_\${pref}_\${run_id}.pairs.txt >> ${lg}_\${pref}.pairs.txt
+	done
+
+	gzip ${lg}_\${pref}.sites.txt
+	gzip ${lg}_\${pref}.pairs.txt
+	"""
+}
+```
+
+
+```{r , eval = FALSE, hilang = 'nf'}
+// git 11.7
+// collect results by lg
+process collect_by_lg {
+	label 'L_2g2h_collect'
+	publishDir "../../2_analysis/geva/", mode: 'copy'
+
+	input:
+	set val( lg ), file( sites ), file( pairs ) from output_split_ch.groupTuple()
+
+	output:
+	set val( lg ), file( "*.sites.txt.gz" ), file( "*.pairs.txt.gz" ) into ( output_lg_ch )
+
+	script:
+	"""
+	echo "MarkerID Clock Filtered N_Concordant N_Discordant PostMean PostMode PostMedian" > ${lg}.sites.txt
+	echo "MarkerID Clock SampleID0 Chr0 SampleID1 Chr1 Shared Pass SegmentLHS SegmentRHS Shape Rate" > ${lg}.pairs.txt
+
+	zcat ${sites}  >> ${lg}.sites.txt
+	zcat ${pairs}  >> ${lg}.pairs.txt
+
+	gzip ${lg}.sites.txt
+	gzip ${lg}.pairs.txt
+	"""
+}
+```
+:::
+
+---

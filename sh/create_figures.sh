@@ -1,5 +1,5 @@
 #/usr/bin/bash
-# git 11
+# git 1X
 
 Rscript --vanilla R/fig/plot_F1.R \
    2_analysis/dxy/50k/ 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
