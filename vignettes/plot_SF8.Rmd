@@ -10,8 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(vroom)
+library(furrr)
 library(ggtext)
-args <- c('2_analysis/pi/50k/')
+
+args <- c( '2_analysis/summaries/fst_globals.txt',
+           '2_analysis/fst/50k/',
+           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 ```
 
 ## Summary
@@ -22,14 +27,17 @@ The Figure can be recreated by running the **R** script `plot_SF8.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/
+Rscript --vanilla R/fig/plot_SF8.R \
+  2_analysis/summaries/fst_globals.txt \
+  2_analysis/fst/50k/ \
+  2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 
 ```
 
 ## Details of `plot_SF8.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the packages [**hypoimg**](https://k-hench.github.io/hypoimg) and [**ggtext**](https://wilkelab.org/ggtext/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts).
 
 ### Config
 
@@ -38,20 +46,22 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/
+# Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/ \
+#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
 # This script produces Suppl. Figure 8 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/pi/50k/')
+# args <- c('2_analysis/pi/50k/',
+#           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 # script_name <- "R/fig/plot_SF8.R"
 ```
 
 The next section processes the input from the command line.
 It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+The R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) is loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
@@ -60,9 +70,9 @@ Then we drop all the imported information besides the arguments following the sc
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
+library(vroom)
 library(hypoimg)
-library(ggtext)
-
+library(hypogen)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -76,125 +86,192 @@ args <- process_input(script_name, args)
 ```r
 #> ── Script: scripts/plot_SF8.R ────────────────────────────────────────────
 #> Parameters read:
-#> ★ 1: 2_analysis/pi/50k/
-#> ─────────────────────────────────────────── /current/working/directory ───
+#> ★ 1: 2_analysis/summaries/fst_globals.txt
+#> ★ 2: 2_analysis/fst/50k/
+#> ★ 3: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+#> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
-The path containing the $\pi$ data is received and stored inside a more descriptive variable.
+The directories containing the $F_{ST}$ and $\rho$ data, and the file containing the genome wide $F_{ST}$ averages are
+received and stored in a variable.
 
 ```{r, message = FALSE, warning = FALSE}
 # config -----------------------
-pi_path <- as.character(args[1])
+global_fst_file <- as.character(args[1])
+fst_dir <- as.character(args[2])
+rho_dir <- as.character(args[3])
 ```
 
-This path is then screened for input files.
+Initially, the genome wide average $F_{ST}$ values are loaded.
 
 ```{r, message = FALSE, warning = FALSE}
-# locate pi data files
-files <- dir(pi_path, pattern = '^[a-z]{6}.50k')
+# load genome wide average fst data
+fst_globals <- vroom::vroom(global_fst_file, delim = '\t',
+                            col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
+  separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
+  mutate(run = str_c(pop1,loc,'-',pop2,loc),
+         run = fct_reorder(run,weighted_fst))
 ```
 
-All $\pi$ data files are loaded and compiled into a single data frame.
+Then, the files containing the windowed $F_{ST}$ data are located.
 
 ```{r, message = FALSE, warning = FALSE}
-# load pi data
-data <- str_c(pi_path, files) %>%
-  purrr::map(get_pi) %>%
-  bind_rows()
+# locate sliding window fst data files
+fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
 ```
 
-To be able to indicate the genome wide average $\pi$ in the background of the plot, we summarize the data for each population and store the summary in a new table.
-
+Next, these files are loaded.
 
 ```{r, message = FALSE, warning = FALSE}
-# create table for the indication of genome wide average pi in the plot background
-# (rescale covered pi range to the extent of the genome)
-global_bar <- data %>%
-  # filter to non-overlaping windows only
-  filter( BIN_START %% 50000 == 1) %>%
-  select(N_VARIANTS, PI, spec) %>%
-  group_by(spec) %>%
-  summarise(genome_wide_pi = sum(N_VARIANTS*PI)/sum(N_VARIANTS)) %>%
-  arrange(genome_wide_pi) %>%
-  ungroup() %>%
-  mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
-         scaled_pi = genome_wide_pi/max(genome_wide_pi))
+# load sliding window fst data
+fst_data <- str_c(fst_dir,fst_files) %>%
+  furrr::future_map_dfr(get_fst) %>%
+  mutate(run = factor(run, levels = levels(fst_globals$run)))
 ```
 
-For the hamlet illustrations, we also create a table in which we assign each illustration to the matching population.
+After this, also the recombination data is loaded.
 
 ```{r, message = FALSE, warning = FALSE}
-# prepare plot annotaton images
-grob_tibble <- global_bar$spec %>%
-  purrr::map(fish_plot) %>%
-  bind_rows()
+# load recombination rate data
+rho_data <- vroom::vroom(rho_dir, delim = '\t') %>%
+  select(-BIN_END)
 ```
 
-The genome wide average $\pi$ indicated in the plot background uses a secondary x-axis. 
-As a preparation for this, we create the desired breaks and labels for the secondary axis.
-
+The $F_{ST}$ and $\rho$ data frames are merged based on the genomic position and reduced to non-overlapping windows.
 
 ```{r, message = FALSE, warning = FALSE}
-# prepare plotting elements --------
-# pre-define secondary x-axis breaks
-sc_ax <- scales::cbreaks(c(0,max(global_bar$genome_wide_pi)),
-                         scales::pretty_breaks(4))
-
-# pre-define secondary x-axis labels
-labels <- str_c(c("", sc_ax$breaks[2:6]*1000),
-                c("0", rep("\u00B710^-3",5)))
+# merge fst and recombination data
+combined_data <- fst_data %>%
+  # filter fst data to "non-overlapping" windows
+  filter(BIN_START %% 50000 == 1 ) %>%
+  # merge with recombination data
+  left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START')) %>%
+  # merge with genome wide average fst data
+  left_join(.,fst_globals %>% select(run, weighted_fst)) %>%
+  # add label column
+  mutate(pop1 = str_sub(run,1,3),
+         pop2 = str_sub(run,8,10),
+         loc = str_sub(run,4,6),
+         run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ),
+         run_label = fct_reorder(run_label,weighted_fst))
 ```
 
-
-Instead of ordering the populations by alphabet, we want them to be sorted by genome wide average $\pi$.
-For this we turn the populations into a factor.
+Then, the combined data frame is nested based on the pair wise species comparison and for each comparison, $F_{ST}$ is regressed on $\rho$.
+The summary statistics of these regressions are added as separate columns of the nested data frame.
 
 ```{r, message = FALSE, warning = FALSE}
-# sort pair-wise population comparisons by average genome wide pi
-data <- data %>%
-  mutate(spec = factor(spec, levels = levels(global_bar$spec)))
+# nest data to run linear regression on all runs in one go
+model_data <- combined_data %>%
+  group_by(run) %>%
+  nest() %>%
+  left_join(., fst_globals) %>%
+  mutate(mod =  map(data, function(data){lm(WEIGHTED_FST ~ RHO, data = data)}),
+         pop1 = str_sub(run,1,3),
+         pop2 = str_sub(run,8,10),
+         loc = str_sub(run,4,6),
+         run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" )) %>%
+  bind_cols(., summarise_model(.)) %>%
+  mutate(run_label = factor(run_label, levels = levels(combined_data$run_label)))
 ```
 
-Then we can put together the final plot.
+Now, we can create the individual panels of the figure.
+
+We start with panel __a__:
 
 ```{r, message = FALSE, warning = FALSE}
-# compose final figure
-p <- ggplot()+
-  # general plot structure separated by run
-  facet_wrap( .~spec, as.table = TRUE, ncol = 1, dir = 'v')+
-  # add genome wide average pi in the background
-  geom_rect(data = global_bar %>% mutate(xmax = scaled_pi * hypo_karyotype$GEND[24]),
-            aes(xmin = 0, xmax = xmax, ymin = -Inf, ymax = Inf),
-            color = rgb(1,1,1,0),
-            fill = clr_below)+
-  # add LG borders
-  geom_vline(data = hypogen::hypo_karyotype,aes(xintercept = GEND),color = hypo_clr_lg)+
-  # add pi data points
-  geom_point(data = data, aes(x = gpos, y = PI),
-             size=.2, color = plot_clr) +
-  # add fish images
-  geom_hypo_grob2(data = grob_tibble,
-                  aes(grob = grob, rel_x = .975, rel_y = .5),
-                  angle = 0, height = .8, width = .12)+
-  # set axis layout
-  scale_x_hypo_LG(sec.axis =  sec_axis(~ ./hypo_karyotype$GEND[24],
-                                       breaks = (sc_ax$breaks/max(global_bar$genome_wide_pi)),
-                                       labels = labels,
-                                       name = "Genomic position/ Genome wide *\u03C0*"))+
-  scale_y_continuous(name = "*\u03C0*", breaks = c(0,.006,.012))+
-  # set plot extent
-  coord_cartesian(xlim = c(0, hypo_karyotype$GEND[24]*1.06))+
+# create subplot a (hex-bins)
+p1 <- combined_data %>%
+  ggplot()+
+  # add hex-bin desity layer
+  geom_hex(bins = 30, color = rgb(0,0,0,.3),
+           aes(fill=log10(..count..),
+               x = RHO, y = WEIGHTED_FST))+
+  # add regression line
+  geom_abline(data = model_data,
+              color = rgb(1,1,1,.8),
+              linetype = 2,
+              aes(intercept = intercept, slope = slope)) +
+  # add R^2 label
+  geom_text(data = model_data, x = 0, y = .975,
+            parse = TRUE, hjust = 0, vjust = 1,
+            aes(label = str_c('italic(R)^2:~',round(r.squared,2)))) +
+  # general plot structure (separated by run)
+  facet_wrap(run_label ~., ncol = 5)+
+  # set axis layout and color scheme
+  scale_x_continuous(name = expression(rho))+
+  scale_y_continuous(name = expression(italic(F[ST])),limits = c(-.05,1))+
+  scico::scale_fill_scico(palette = 'berlin') +
+  # customize legend
+  guides(fill = guide_colorbar(direction = 'horizontal',
+                               title.position = 'top',
+                               barheight = unit(7,'pt'),
+                               barwidth = unit(130,'pt')))+
   # general plot layout
-  theme_hypo()+
-  theme(strip.text = element_blank(),
-        legend.position = 'none',
-        axis.title.x = element_markdown(),
-        axis.title.y = element_markdown(),
-        axis.text.x.bottom = element_markdown(colour = 'darkgray'))
+  theme_minimal()+
+  theme(legend.position = c(.8,.08),
+        strip.text = element_markdown())
 ```
 
 <center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 8, fig.height = 8, dev.args = list(type = "cairo")}
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 10, fig.height = 12, dev.args = list(type = "cairo")}
+p1
+```
+</center>
+
+
+Then we plot the slopes of the regression within panel __b__.
+
+```{r, message = FALSE, warning = FALSE}
+# create subplot b (slopes)
+p2 <- model_data %>%
+  ggplot()+
+  geom_point(color = plot_clr,
+             aes(x = weighted_fst, y = slope))+
+  labs(x = expression(genome~wide~weighted~mean~italic(F[ST])),
+       y = expression(slope~(f(italic(F[ST]))==a~rho+b)))+
+  theme_minimal()
+```
+
+<center>
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 5, fig.height = 4, dev.args = list(type = "cairo")}
+p2
+```
+</center>
+
+And finally the $R^2$ values in panel __c__.
+
+```{r, message = FALSE, warning = FALSE}
+# create subplot c (R^2s)
+p3 <- model_data %>%
+  ggplot()+
+  geom_point(color = plot_clr,
+             aes(x = weighted_fst, y = r.squared))+
+  labs(x = expression(genome~wide~weighted~mean~italic(F[ST])),
+       y = expression(italic(R^2)))+
+  theme_minimal()
+```
+
+<center>
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 5, fig.height = 4, dev.args = list(type = "cairo")}
+p3
+```
+</center>
+
+The final figure is created by combining the three sub panels.
+
+```{r, message = FALSE, warning = FALSE}
+# compose final figure
+p <- plot_grid(p1,
+               plot_grid(p2,p3,
+                         nrow = 1,
+                         labels = letters[2:3] %>%
+                           project_case()),
+          ncol = 1,
+          rel_heights = c(1,.3),labels = project_case(c("a")))
+```
+
+<center>
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 10, fig.height = 16, dev.args = list(type = "cairo")}
 p
 ```
 </center>
@@ -203,11 +280,10 @@ Finally, we can export Supplementary Figure 8.
 
 ```{r, eval = FALSE}
 # export final figure
-hypo_save(filename = 'figures/SF8.png',
+hypo_save(filename = 'figures/SF8.pdf',
           plot = p,
-          width = 8,
-          height = 8,
-          type = "cairo",
+          width = 10,
+          height = 16,
           comment = plot_comment)
 ```
 

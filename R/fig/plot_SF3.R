@@ -33,7 +33,7 @@ files <- dir(dxy_path)
 data <- str_c(dxy_path,files) %>%
   purrr::map(get_dxy) %>%
   bind_rows() %>%
-  set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
+  purrr::set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
 
 genoe_wide_avg <- data %>% 
@@ -126,6 +126,4 @@ hypo_save(filename = 'figures/SF3.pdf',
           height = f_width * 1.15 * scl,
           device = cairo_pdf,
           comment = plot_comment)
-
-model_data$adj.r.squared %>% range()
 

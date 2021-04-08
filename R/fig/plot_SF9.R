@@ -2,13 +2,13 @@
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF9.R ~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
 # ===============================================================
-# This script produces Suppl. Figure 10 of the study "Ancestral variation,
+# This script produces Suppl. Figure 9 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe")
-# script_name <- "R/fig/plot_SF10.R"
+# script_name <- "R/fig/plot_SF9.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -76,7 +76,7 @@ p_tree <- (open_tree(
                          offset = -3,fontsize = 3,
                          color = clr_neutral) +
   xlim(c(-.0007,.0092)) +
-  geom_nodepoint(aes(fill = support_class, size = support_class),
+  ggtree::geom_nodepoint(aes(fill = support_class, size = support_class),
                  shape = 21) +
   scale_color_manual(values = c(ungrouped = clr_neutral, 
                                 GenomicOriginsScripts::clr2),
@@ -192,32 +192,3 @@ hypo_save(plot = p_done,
        device = cairo_pdf, 
        bg = "transparent",
        comment = plot_comment)
-
-ggtree(raxml_tree, aes(color = ifelse(isTip,str_sub(label, -6, -4), "ungrouped"))) + geom_node_point(aes(size = as.numeric(label)))  + geom_node_text(aes(label = round(as.numeric(label),2)), size = 3, color = "red")+ scale_color_manual(values = GenomicOriginsScripts::clr2, na.value = rgb(.6,.6,.6)) + theme(legend.position = "none") +scale_x_reverse() +
-ggtree(raxml_tree_rooted, aes(color = ifelse(isTip,str_sub(label, -6, -4), "ungrouped"))) + geom_node_point(aes(size = as.numeric(label)))  + geom_node_text(aes(label = round(as.numeric(label),2)), size = 3, color = "red")+ scale_color_manual(values = GenomicOriginsScripts::clr2, na.value = rgb(.6,.6,.6)) + theme(legend.position = "none") +
-  patchwork::plot_annotation(title = "raxml wgh rooted vs non-rooted")
-
-ggsave("~/Desktop/comp_raxml_topology_frankenstein.pdf",width = 7,height = 10, device = cairo_pdf)
-
-monster <- read.tree("~/Downloads/RAxML_kh_monster_tree")
-monster_root <- root(monster, outgroup = c("28393torpan", "s_tort_3torpan", "20478tabhon" ))
-(ggtree(monster_root, aes(color = ifelse(isTip,str_sub(label, -6, -4), "ungrouped"))) +
-  # geom_node_point(aes(size = as.numeric(label)))  +
-  # geom_node_text(aes(label = round(as.numeric(label),2)), size = 3, color = "red")+
-  scale_color_manual(values = c(ungrouped = rgb(.6,.6,.6),  GenomicOriginsScripts::clr2)) +
-  geom_tiplab(aes(label = str_sub(label, -6,-1)),size = 3, hjust = 1)+
-  # theme_grey() +
-  theme(legend.position = "none") +
-  scale_x_reverse() +
-  ggtree(raxml_tree_rooted, aes(color = ifelse(isTip,str_sub(label, -6, -4), "ungrouped")))+
-  geom_tiplab(aes(label = str_sub(label, -6,-1)),size = 3) +
-  # geom_node_point(aes(size = as.numeric(label)))  +
-  # geom_node_text(aes(label = round(as.numeric(label),2)), size = 3, color = "red")+
-  scale_color_manual(values = GenomicOriginsScripts::clr2, na.value = rgb(.6,.6,.6)) +
-  # theme_grey() + 
-  theme(legend.position = "none") +
-  patchwork::plot_annotation(title = "raxml non-hamlet-frankenstein vs hamlet only") ) %>% 
-  ggdraw() + cowplot::draw_label(label = "branch truncated",color = rgb(0,0,0,.2),size = 40,angle = 45)
-
-
-ggtree() + ggtree::geom_label(aes(x = branch, label = round(branch.length)))

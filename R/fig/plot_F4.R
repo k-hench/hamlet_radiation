@@ -126,7 +126,7 @@ pi_summary_1 <- dxy_data %>%
   group_by(pop1,run) %>%
   summarise(avg_pi = mean(PI_POP1)) %>%
   ungroup() %>%
-  set_names(., nm = c('pop','run','avg_pi'))
+  purrr::set_names(., nm = c('pop','run','avg_pi'))
 
 # the mean genome wide average pi is compiled for all the second populations
 # from the dxy data

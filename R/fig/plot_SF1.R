@@ -1,13 +1,13 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF1.R
+# Rscript --vanilla R/fig/plot_SF1.R 2_analysis/pca/
 # ===============================================================
 # This script produces Suppl. Figure 1 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("2_analysis/fst_signif/random/")
+# args <- c("2_analysis/pca/")
 # script_name <- "R/fig/plot_SF1.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
@@ -25,6 +25,7 @@ plot_comment <- script_name %>%
 args <- process_input(script_name, args)
 
 # config -----------------------
+pca_dir <- as.character(args[1])
 clr_alt <- clr
 clr_alt[["uni"]] <- "lightgray"
 pca_fish_scale <- 1.15
@@ -56,9 +57,9 @@ pca_plot <- function(loc, mode, pc1 = 1, pc2 = 2){
   clr_pca <- c(clr_loc, "black") %>% set_names(nm = c("bel.", "hon.", "pan.", "flo", "all"))
   
   set.seed(42)
-  evs <- str_c("2_analysis/pca/", loc , mode, ".exp_var.txt.gz") %>% 
+  evs <- str_c(pca_dir, loc , mode, ".exp_var.txt.gz") %>% 
     read_tsv()
-  str_c("2_analysis/pca/", loc , mode,".scores.txt.gz") %>% 
+  str_c(pca_dir, loc , mode,".scores.txt.gz") %>% 
     read_tsv() %>% 
     mutate(spec = str_sub(id, -6,-4)) %>%
     ggplot(aes_string(x = str_c("EV0",pc1), y = str_c("EV0",pc2), fill = "spec"))+

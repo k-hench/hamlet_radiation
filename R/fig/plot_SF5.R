@@ -54,7 +54,7 @@ data <- purrr::pmap(tibble(file = str_c(data_path,files),
                            run = run_files),
                     hypo_import_windows) %>%
   bind_rows() %>%
-  set_names(., nm = c('CHROM', 'BIN_START', 'BIN_END', 'N_VARIANTS',
+  purrr::set_names(., nm = c('CHROM', 'BIN_START', 'BIN_END', 'N_VARIANTS',
                       'WEIGHTED_FST', 'MEAN_FST', 'GSTART', 'POS', 'GPOS', 'run')) %>%
   mutate(pop1 = str_sub(run,1,3),
          pop2 = str_sub(run,8,10),

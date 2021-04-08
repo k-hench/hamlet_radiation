@@ -60,46 +60,49 @@ data2 <- data %>%
   select(threshold_value,weighted,n,avg_length,overal_length) %>%
   mutate(avg_length = avg_length/1000,
          overal_length = overal_length/(10^6)) %>%
-  rename(`Number~of~Regions` = 'n',
-         `Average~Region~Length~(kb)` = 'avg_length',
-         `Cummulative~Region~Length~(Mb)` = 'overal_length') %>%
+  rename(`atop(Number~of,Regions)` = 'n',
+         `atop(Average~Region,Length~(kb))` = 'avg_length',
+         `atop(Cummulative~Region,Length~(Mb))` = 'overal_length') %>%
   pivot_longer(names_to = 'variable',values_to = 'Value',3:5) %>%
   mutate(threshold_value = str_c('italic(F[ST])~threshold:~',
                                  threshold_value),
-         variable = factor(variable, levels = c('Number~of~Regions',
-                                                'Average~Region~Length~(kb)',
-                                                'Cummulative~Region~Length~(Mb)')))
+         variable = factor(variable, levels = c('atop(Number~of,Regions)',
+                                                'atop(Average~Region,Length~(kb))',
+                                                'atop(Cummulative~Region,Length~(Mb))')))
 
 # set font size
-fnt_sz <- 10
+base_line_clr <- "black"
 
 # compile plot
-p <-  data2 %>%
+p_done <- data2 %>%
   # select thresholds of interest
-  filter(!(threshold_value %in% (c(0.02,.1,0.3, .4) %>%
+  filter(!(threshold_value %in% (c(0.02,.1,0.2, 0.3, .4) %>%
                                    str_c("italic(F[ST])~threshold:~",.)))) %>%
-  ggplot(aes(x = weighted, y = Value, fill = weighted))+
+  ggplot(aes(x = weighted, y = Value#, fill = weighted
+             )
+         )+
   # add red line for genome extent in lowest row
-  geom_hline(data = tibble(variable = factor(c('Cummulative~Region~Length~(Mb)',
-                                               'Average~Region~Length~(kb)',
-                                               'Number~of~Regions'),
-                                             levels = c('Number~of~Regions',
-                                                        'Average~Region~Length~(kb)',
-                                                        'Cummulative~Region~Length~(Mb)')),
+  geom_hline(data = tibble(variable = factor(c('atop(Cummulative~Region,Length~(Mb))',
+                                               'atop(Average~Region,Length~(kb))',
+                                               'atop(Number~of,Regions)'),
+                                             levels = c('atop(Number~of,Regions)',
+                                                        'atop(Average~Region,Length~(kb))',
+                                                        'atop(Cummulative~Region,Length~(Mb))')),
                            y = c(559649677/(10^6),NA,NA)),
              aes(yintercept = y),
-             color=rgb(1,0,0,.25))+
+             color = rgb(1,0,0,.25))+
   # add data points
-  geom_point(size = 1.75,
-             color = plot_clr, shape = 21)+
+  geom_point(size = plot_size,
+             color = plot_clr#, shape = 21
+             )+
   # define plot stucture
   facet_grid(variable~threshold_value,
              scale='free',
              switch = 'y',
              labeller = label_parsed)+
   # configure scales
-  scale_fill_gradientn(name = expression(weighted~italic(F[ST])),
-                       colours = hypogen::hypo_clr_LGs[1:24] %>% clr_lighten(factor = .3))+
+  # scale_fill_gradientn(name = expression(weighted~italic(F[ST])),
+  #                      colours = hypogen::hypo_clr_LGs[1:24] %>% clr_lighten(factor = .3))+
   scale_x_continuous(name = expression(Whole-genome~differentiation~(weighted~italic(F[ST]))),
                      breaks = c(0,.05,.1),
                      limits = c(-.00025,.10025),
@@ -109,22 +112,31 @@ p <-  data2 %>%
                                label.position = "top",
                                barheight = unit(5,"pt")))+
   # tweak plot apperance
-  theme(axis.title.y = element_blank(),
+  theme_minimal()+
+  theme(axis.text = element_text(size = plot_text_size_small,
+                                 color = rgb(.6,.6,.6)),
+        axis.title.y = element_blank(),
         axis.text.x = element_text(vjust = .5, angle = 0),
         axis.title.x = element_text(vjust = -2),
+        panel.background = element_rect(fill = rgb(.95,.95,.95,.5),
+                                        color = rgb(.9,.9,.9,.5),
+                                        size = .3),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = plot_lwd),
         legend.position = "bottom",
-        strip.text = element_text(size = fnt_sz),
+        strip.text = element_text(size = plot_text_size),
         legend.direction = "horizontal",
         strip.placement = 'outside',
-        axis.title = element_text(size = fnt_sz),
-        legend.title = element_text(size = fnt_sz),
-        strip.background.y = element_blank())
-
+        axis.title = element_text(size = plot_text_size),
+        legend.title = element_text(size = plot_text_size),
+        strip.background.y = element_blank(),
+        plot.background = element_blank())
 # export figure 3
-scl <- .675
 hypo_save(filename = 'figures/F3.pdf',
-          plot = p,
-          width = 16*scl,
-          height = 12*scl,
+          plot = p_done,
+          width = .52 * f_width,
+          height = .52 * f_width,
           device = cairo_pdf,
-          comment = plot_comment)
+          comment = plot_comment,
+          bg = "transparent")
+    

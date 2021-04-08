@@ -8,7 +8,8 @@ rmd_files: ["index.Rmd", "nf_genotyping.Rmd","nf_genotyping_all_basepairs.Rmd",
    "nf_analysis_allele_age.Rmd", "nf_analysis_fst_permutation.Rmd", "nf_analysis_pca.Rmd", "nf_analysis_revpomo.Rmd",
    "create_all_plots.Rmd", "plot_F1.Rmd", "plot_F2.Rmd", "plot_F3.Rmd", "plot_F4.Rmd", "plot_F5.Rmd", "plot_F6.Rmd",
    "plot_SF1.Rmd", "plot_SF2.Rmd", "plot_SF3.Rmd", "plot_SF4.Rmd", "plot_SF5.Rmd",
-   "plot_SF6.Rmd", "plot_SF7.Rmd", "plot_SF8.Rmd", "plot_SF9.Rmd"]
+   "plot_SF6.Rmd", "plot_SF7.Rmd", "plot_SF8.Rmd", "plot_SF9.Rmd", 
+   "plot_SF10.Rmd", "plot_SF11.Rmd", "plot_SF12.Rmd"]
 clean: [packages.bib, bookdown.bbl]
 new_session: yes
 delete_merged_file: True

@@ -1,0 +1,129 @@
+### 5 Hamlet phylogeny
+
+## 5.1 RAxML analysis, floridae-rooted
+
+# 5.1.1 Remove hybrids and Serranus samples from genotype data (SNPs only)
+vcftools --gzvcf chapter2_phased_mac2.vcf.gz --remove samples_155.txt --recode --out hyp155
+
+# 5.1.2 Mask heterozygous genotypes as unknown
+zcat < hyp155.vcf.gz | sed -e s/"1|0"/".|."/g -e s/"0|1"/".|."/g > hyp155_n.vcf
+
+# 5.1.3 Apply missingness, allele count and distance filters
+vcftools --gzvcf hyp155_n.vcf.gz --max-missing 0.33 --mac 4 --thin 5000 --recode --out hyp155_n_0.33_mac4_5kb
+
+# 5.1.4 Convert to fasta format (Perl script available at https://github.com/JinfengChen/vcf-tab-to-fasta)
+vcf-to-tab < hyp155_n_0.33_mac4_5kb.vcf > hyp155_n_0.33_mac4_5kb.tab
+perl ~/apps/vcf-tab-to-fasta/vcf_tab_to_fasta_alignment.pl -i hyp155_n_0.33_mac4_5kb.tab > hyp155_n_0.33_mac4_5kb.fas
+
+# 5.1.5 Infer phylogeny
+# Note: number of invariant sites for Felsenstein correction was calculated as number of variant sites in alignment (105,043) / genome-wide proportion of variant sites (0.05) * genome-wide proportion of invariant sites (0.95)
+raxml-NG --all --msa hyp155_n_0.33_mac4_5kb.fas --model GTR+G+ASC_FELS{1995817} --tree pars{20},rand{20} --bs-trees 100 --threads 24 --worker 8 --seed 123 --prefix hyp155_n_0.33_mac4_5kb
+
+
+## 5.2 RAxML analysis, Serranus-rooted
+
+# 5.1.1 Remove hybrids from genotype data (SNPs only)
+vcftools --gzvcf chapter2_phased_mac2.vcf.gz --remove samples_hybrids.txt --recode --out hyS
+
+# 5.1.2 Mask heterozygous genotypes as unknown
+zcat < hyS.vcf.gz | sed -e s/"1|0"/".|."/g -e s/"0|1"/".|."/g > hyS_n.vcf
+
+# 5.1.3 Apply missingness, allele count and distance filters
+vcftools --gzvcf hyS_n.vcf.gz --max-missing 0.33 --mac 4 --thin 5000 --recode --out hyS_n_0.33_mac4_5kb
+
+# 5.1.4 Convert to fasta format (Perl script available at https://github.com/JinfengChen/vcf-tab-to-fasta)
+vcf-to-tab < hyS_n_0.33_mac4_5kb.vcf > hyS_n_0.33_mac4_5kb.tab
+perl ~/apps/vcf-tab-to-fasta/vcf_tab_to_fasta_alignment.pl -i hyS_n_0.33_mac4_5kb.tab > hyS_n_0.33_mac4_5kb.fas
+
+# 5.1.5 Reconstruct phylogeny
+# Note: number of invariant sites for Felsenstein correction was calculated as number of variant sites in alignment (109,660) / genome-wide proportion of variant sites (0.05) * genome-wide proportion of invariant sites (0.95)
+raxml-NG --all --msa hyS_n_0.33_mac4_5kb.fas --model GTR+G+ASC_FELS{2083540} --tree pars{20},rand{20} --bs-trees 100 --threads 24 --worker 4 --seed 123 --prefix hyS_n_0.33_mac4_5kb
+
+
+## 5.3 PoMo analysis, floridae-rooted (process repeated for 2 randomized datasets, _1 and _2)
+
+# 5.3.1 Generate 1kb windows > github.com/k-hench/chapter2/14_analysis_revpomo
+
+# 5.3.2 Select random windows, with coverage (0.80) and SNP density filters (80th percentile) > snp_density_ed.R
+
+# 5.3.3 Extract selected windows from genotype data (allBP)
+for i in {01..24} ; do vcftools --gzvcf filterd.allBP.LG$i.vcf.gz --bed 5k1_80-80_1.bed --remove-indels --recode --out 5k1_80-80_1.LG$i ; done
+
+# 5.3.4 Remove hybrids and Serranus samples (note that VCF headers were simplified prior to this step)
+vcftools --vcf 5k1_80-80_1h.vcf --remove samples_155.txt --recode --out 5k1_80-80_1h_155
+
+# 5.3.4 Convert to fasta format (Python scripts available at https://github.com/simonhmartin/genomics_general)
+python ~/apps/genomics_general/VCF_processing/parseVCF.py -i 5k1_80-80_1h_155.vcf > 5k1_80-80_1h_155.geno
+python ~/apps/genomics_general/genoToSeq.py -g 5k1_80-80_1h_155.geno -s 5k1_80-80_1h_155.fas -f fasta --splitPhased
+
+# 5.3.5 Reformat sample ids to provide population prefixes for cflib
+sed -e 's/-/_/g' -e 's/>\(.*\)\([a-z]\{6\}\)_\([AB]\)/>\2-\1_\3/g' 5k1_80-80_1h_155.fas > 5k1_80-80_1h_155p.fas
+
+# 5.3.6 Convert to allele frequency format (cflib library available at https://github.com/pomo-dev/cflib)
+FastaToCounts.py 5k1_80-80_1h_155p.fas 5k1_80-80_1h_155pop.cf
+
+# 5.3.7 IQTREE analysis under PoMo model
+iqtree2 -T AUTO -s 5k1_80-80_1h_155pop.cf -m HKY+F+P+N9+G4 -allnni -b 100
+
+
+### 6 Region-specific phylogenies
+
+# Region coordinates
+# chrom   start       end         gid
+# LG04    11540001    11670000    LG04_1
+# LG12    20135001    20300000    LG12_3
+# LG12    22170001    22280000    LG12_4
+
+## 6.1 RAxML analysis, floridae-rooted
+
+# 6.1.1 Extract regions of interest from genotype data (allBP), remove hybrid / Serranus samples and indels; simplify headers
+vcftools --gzvcf filterd.allBP.LG04.vcf.gz --bed lg04_1.bed --remove-indels --remove samples_155.txt --recode --stdout | grep -v '##' > lg04.1_155.vcf   # 113,099 sites
+vcftools --gzvcf filterd.allBP.LG12.vcf.gz --bed lg12_3.bed --remove-indels --remove samples_155.txt --recode --stdout | grep -v '##' > lg12.3_155.vcf   # 146,663 sites
+vcftools --gzvcf filterd.allBP.LG12.vcf.gz --bed lg12_4.bed --remove-indels --remove samples_155.txt --recode --stdout | grep -v '##' > lg12.4_155.vcf   # 97,653 sites
+
+# 6.1.2 Replace unknown character states and asterisks (deletions as encoded by GATK) with "N"
+vcf-to-tab < lg04.1_155.vcf | sed -e 's/\.\/\./N\/N/g' -e 's/[ACGTN\*]\/\*/N\/N/g' > lg04.1_155N.tab
+vcf-to-tab < lg12.3_155.vcf | sed -e 's/\.\/\./N\/N/g' -e 's/[ACGTN\*]\/\*/N\/N/g' > lg12.3_155N.tab
+vcf-to-tab < lg12.4_155.vcf | sed -e 's/\.\/\./N\/N/g' -e 's/[ACGTN\*]\/\*/N\/N/g' > lg12.4_155N.tab
+
+# 6.1.3 Convert to fasta format (Perl script available at https://github.com/JinfengChen/vcf-tab-to-fasta)
+perl ~/apps/vcf-tab-to-fasta/vcf_tab_to_fasta_alignment.pl -i lg04.1_155N.tab > lg04.1_155N.fas
+perl ~/apps/vcf-tab-to-fasta/vcf_tab_to_fasta_alignment.pl -i lg12.3_155N.tab > lg12.3_155N.fas
+perl ~/apps/vcf-tab-to-fasta/vcf_tab_to_fasta_alignment.pl -i lg12.4_155N.tab > lg12.4_155N.fas
+
+6.1.4 Reconstruct phylogenies
+raxml-NG --all --msa lg04.1_155N.fas --model GTR+G --tree pars{10},rand{10} --bs-trees 100 --threads 24 --worker 8 --seed 123 --prefix lg04.1_155N
+raxml-NG --all --msa lg12.3_155N.fas --model GTR+G --tree pars{10},rand{10} --bs-trees 100 --threads 24 --worker 8 --seed 123 --prefix lg12.3_155N
+raxml-NG --all --msa lg12.4_155N.fas --model GTR+G --tree pars{10},rand{10} --bs-trees 100 --threads 24 --worker 8 --seed 123 --prefix lg12.4_155N
+
+
+## 6.2 RAxML analysis, Serranus-rooted: as 6.1 above, but with vcftools --remove samples_hybrids and suffix hyS instead of 155
+
+
+## 6.3 PoMo analysis, floridae-rooted
+
+# 6.3.1 Convert to fasta format (Python scripts available at https://github.com/simonhmartin/genomics_general), picked up from 6.1.1 output
+python ~/apps/genomics_general/VCF_processing/parseVCF.py -i lg04.1_155.vcf > lg04.1_155.geno
+python ~/apps/genomics_general/genoToSeq.py -g lg04.1_155.geno -s lg04.1_155.fas -f fasta --splitPhased
+python ~/apps/genomics_general/VCF_processing/parseVCF.py -i lg12.3_155.vcf > lg12.3_155.geno
+python ~/apps/genomics_general/genoToSeq.py -g lg12.3_155.geno -s lg12.3_155.fas -f fasta --splitPhased
+python ~/apps/genomics_general/VCF_processing/parseVCF.py -i lg12.4_155.vcf > lg12.4_155.geno
+python ~/apps/genomics_general/genoToSeq.py -g lg12.4_155.geno -s lg12.4_155.fas -f fasta --splitPhased
+
+# 6.3.2 Reformat sample ids to provide population prefixes for cflib
+sed -e 's/-/_/g' -e 's/>\(.*\)\([a-z]\{6\}\)_\([AB]\)/>\2-\1_\3/g' lg04.1_155.fas > lg04.1_155_p.fas
+sed -e 's/-/_/g' -e 's/>\(.*\)\([a-z]\{6\}\)_\([AB]\)/>\2-\1_\3/g' lg12.3_155.fas > lg12.3_155_p.fas
+sed -e 's/-/_/g' -e 's/>\(.*\)\([a-z]\{6\}\)_\([AB]\)/>\2-\1_\3/g' lg12.4_155.fas > lg12.4_155_p.fas
+
+# 6.3.3 Convert to allele frequency format (cflib library available at https://github.com/pomo-dev/cflib)
+FastaToCounts.py lg04.1_155_p.fas lg04.1_155_pop.cf
+FastaToCounts.py lg12.3_155_p.fas lg12.3_155_pop.cf
+FastaToCounts.py lg12.4_155_p.fas lg12.4_155_pop.cf
+
+# 6.3.4 IQTREE analysis under PoMo model
+iqtree2 -nt 16 -s lg04.1_155_pop.cf -m HKY+F+P+N9+G4 -b 100 --tbe
+iqtree2 -nt 16 -s lg12.3_155_pop.cf -m HKY+F+P+N9+G4 -b 100 --tbe
+iqtree2 -nt 16 -s lg12.4_155_pop.cf -m HKY+F+P+N9+G4 -b 100 --tbe
+
+
+## 6.4 PoMo analysis, Serranus-rooted: as 6.3 above, but picked up from 6.2 (with vcftools --remove samples_hybrids and suffix hyS instead of 155)
