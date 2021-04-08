@@ -1,21 +1,22 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/
+# Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/ \
+#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
 # This script produces Suppl. Figure 8 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/pi/50k/')
+# args <- c('2_analysis/pi/50k/',
+#           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 # script_name <- "R/fig/plot_SF8.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
+library(vroom)
 library(hypoimg)
 library(hypogen)
-library(ggtext)
-
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -26,18 +27,18 @@ plot_comment <- script_name %>%
 args <- process_input(script_name, args)
 # config -----------------------
 pi_path <- as.character(args[1])
+rho_path <- as.character(args[2])
 
 # locate pi data files
 files <- dir(pi_path, pattern = '^[a-z]{6}.50k')
+
 # load pi data
 data <- str_c(pi_path, files) %>%
   purrr::map(get_pi) %>%
   bind_rows()
 
-# create table for the indication of genome wide average pi in the plot background
-# (rescale covered pi range to the extent of the genome)
+# compute genome wide average pi for the subplot order
 global_bar <- data %>%
-  # filter to non-overlaping windows only
   filter( BIN_START %% 50000 == 1) %>%
   select(N_VARIANTS, PI, spec) %>%
   group_by(spec) %>%
@@ -47,62 +48,61 @@ global_bar <- data %>%
   mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
          scaled_pi = genome_wide_pi/max(genome_wide_pi))
 
-# prepare plot annotaton images
-grob_tibble <- global_bar$spec %>%
-  purrr::map(fish_plot) %>%
+# load recombination data
+rho_data <- vroom(rho_path, delim = '\t') %>%
+  select(-BIN_END)
+
+# merge pi and recombination data
+combined_data <- data %>%
+  # filter pi data to "non-overlapping" windows
+  filter(BIN_START %% 50000 == 1 ) %>%
+  # reorder populations by genome wide average pi
+  mutate(spec = factor(spec, levels = levels(global_bar$spec))) %>%
+  # merge with recombination data
+  left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START'))
+
+# nest data to run linear regression on all runs in one go
+model_data <- combined_data %>%
+  group_by(spec) %>%
+  nest() %>%
+  left_join(., global_bar) %>%
+  mutate(mod =  map(data, ~ lm(.$PI ~ .$RHO))) %>%
+  bind_cols(., summarise_model(.))
+
+# create table with fish annotations
+grob_tibble2 <- global_bar$spec %>%
+  purrr::map(fish_plot2) %>%
   bind_rows()
 
-# prepare plotting elements --------
-# pre-define secondary x-axis breaks
-sc_ax <- scales::cbreaks(c(0,max(global_bar$genome_wide_pi)),
-                         scales::pretty_breaks(4))
-
-# pre-define secondary x-axis labels
-labels <- str_c(c("", sc_ax$breaks[2:6]*1000),
-                c("0", rep("\u00B710^-3",5)))
-
-# sort pair-wise population comparisons by average genome wide pi
-data <- data %>%
-  mutate(spec = factor(spec, levels = levels(global_bar$spec)))
-
 # compose final figure
-p <- ggplot()+
-  # general plot structure separated by run
-  facet_wrap( .~spec, as.table = TRUE, ncol = 1, dir = 'v')+
-  # add genome wide average pi in the background
-  geom_rect(data = global_bar %>% mutate(xmax = scaled_pi * hypo_karyotype$GEND[24]),
-            aes(xmin = 0, xmax = xmax, ymin = -Inf, ymax = Inf),
-            color = rgb(1,1,1,0),
-            fill = clr_below)+
-  # add LG borders
-  geom_vline(data = hypogen::hypo_karyotype,aes(xintercept = GEND),color = hypo_clr_lg)+
-  # add pi data points
-  geom_point(data = data, aes(x = gpos, y = PI),
-             size=.2, color = plot_clr) +
-  # add fish images
-  geom_hypo_grob2(data = grob_tibble,
-                  aes(grob = grob, rel_x = .975, rel_y = .5),
-                  angle = 0, height = .8, width = .12)+
-  # set axis layout
-  scale_x_hypo_LG(sec.axis =  sec_axis(~ ./hypo_karyotype$GEND[24],
-                                       breaks = (sc_ax$breaks/max(global_bar$genome_wide_pi)),
-                                       labels = labels,
-                                       name = "Genomic position/ Genome wide *\u03C0*"))+
-  scale_y_continuous(name = "*\u03C0*", breaks = c(0,.006,.012))+
-  # set plot extent
-  coord_cartesian(xlim = c(0, hypo_karyotype$GEND[24]*1.06))+
+p <- combined_data %>%
+  ggplot()+
+  # add fish annotations
+  geom_hypo_grob2(data = grob_tibble2,
+                  aes(grob = grob, rel_x = .25,rel_y = .75),
+                  angle = 0, height = .5,width = .5)+
+  # add hex-bin desity layer
+  geom_hex(bins = 30,color = rgb(0,0,0,.3),
+           aes(fill=log10(..count..), x = RHO, y = PI))+
+ # general plot structure (separated by run)
+  facet_wrap(spec ~., ncol = 3)+
+  # set axis layout and color scheme
+  scale_x_continuous(name = expression(rho))+
+  scale_y_continuous(name = expression(pi))+
+  scico::scale_fill_scico(palette = 'berlin') +
+  # customize legend
+  guides(fill = guide_colorbar(direction = 'horizontal',
+                               title.position = 'top',
+                               barheight = unit(7,'pt'),
+                               barwidth = unit(130,'pt')))+
   # general plot layout
-  theme_hypo()+
-  theme(strip.text = element_blank(),
-        legend.position = 'none',
-        axis.title.x = element_markdown(),
-        axis.title.y = element_markdown(),
-        axis.text.x.bottom = element_markdown(colour = 'darkgray'))
+  theme_minimal()+
+  theme(legend.position = c(.84,.01),
+        strip.text = element_blank())
 
 # export final figure
-hypo_save(filename = 'figures/SF8.png',
+hypo_save(filename = 'figures/SF8.pdf',
           plot = p,
           width = 8,
-          height = 8,
-          type = "cairo",
+          height = 10,
           comment = plot_comment)

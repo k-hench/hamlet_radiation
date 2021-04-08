@@ -1,22 +1,26 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF5.R 2_analysis/pi/50k/ \
-#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+# Rscript --vanilla R/fig/plot_SF5.R 2_analysis/fst/50k/ \
+#   2_analysis/summaries/fst_outliers_998.tsv \
+#   2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script produces Suppl. Figure 5 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/pi/50k/',
-#           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
+# args <- c('2_analysis/fst/50k/',
+#           '2_analysis/summaries/fst_outliers_998.tsv',
+#           '2_analysis/summaries/fst_globals.txt')
 # script_name <- "R/fig/plot_SF5.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
-library(vroom)
 library(hypoimg)
 library(hypogen)
+library(vroom)
+library(ggtext)
+
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -26,83 +30,96 @@ plot_comment <- script_name %>%
 
 args <- process_input(script_name, args)
 # config -----------------------
-pi_path <- as.character(args[1])
-rho_path <- as.character(args[2])
+data_path <- as.character(args[1])
+outlier_file <- as.character(args[2])
+globals_file <- as.character(args[3])
+# load data -------------------
+# locate fst data files
+files <- dir(data_path,pattern = '.50k.windowed.weir.fst.gz')
 
-# locate pi data files
-files <- dir(pi_path, pattern = '^[a-z]{6}.50k')
+# extract run names from data file names
+run_files <- files %>%
+  str_sub(.,1,11) %>%
+  str_replace(.,pattern = '([a-z]{3})-([a-z]{3})-([a-z]{3})', '\\2\\1-\\3\\1')
 
-# load pi data
-data <- str_c(pi_path, files) %>%
-  purrr::map(get_pi) %>%
-  bind_rows()
+# load genome wide average fst values for each run
+globals <- vroom::vroom(globals_file, delim = '\t',
+                        col_names = c('loc','run','mean','weighted')) %>%
+  separate(run, into = c('pop1','pop2')) %>%
+  mutate(run = str_c(pop1,loc,'-',pop2,loc),
+         run = fct_reorder(run,weighted))
 
-# compute genome wide average pi for the subplot order
-global_bar <- data %>%
-  filter( BIN_START %% 50000 == 1) %>%
-  select(N_VARIANTS, PI, spec) %>%
-  group_by(spec) %>%
-  summarise(genome_wide_pi = sum(N_VARIANTS*PI)/sum(N_VARIANTS)) %>%
-  arrange(genome_wide_pi) %>%
-  ungroup() %>%
-  mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
-         scaled_pi = genome_wide_pi/max(genome_wide_pi))
+# load all windowed fst data and collapse in to a single data frame
+data <- purrr::pmap(tibble(file = str_c(data_path,files),
+                           run = run_files),
+                    hypo_import_windows) %>%
+  bind_rows() %>%
+  set_names(., nm = c('CHROM', 'BIN_START', 'BIN_END', 'N_VARIANTS',
+                      'WEIGHTED_FST', 'MEAN_FST', 'GSTART', 'POS', 'GPOS', 'run')) %>%
+  mutate(pop1 = str_sub(run,1,3),
+         pop2 = str_sub(run,8,10),
+         loc = str_sub(run,4,6),
+         run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ))
 
-# load recombination data
-rho_data <- vroom(rho_path, delim = '\t') %>%
-  select(-BIN_END)
+# create table for the indication of genome wide average fst in the plot background
+# (rescale covered fst range to the extent of the genome)
+global_bar <- globals %>%
+  select(weighted,run) %>%
+  mutate(run = as.character(run)) %>%
+  setNames(.,nm = c('fst','run')) %>%
+  pmap(.,fst_bar_row_run) %>%
+  bind_rows() %>%
+  mutate(pop1 = str_sub(run,1,3),
+         pop2 = str_sub(run,8,10),
+         loc = str_sub(run,4,6),
+         run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ),
+         run_label = fct_reorder(run_label,xmax_org))
 
-# merge pi and recombination data
-combined_data <- data %>%
-  # filter pi data to "non-overlapping" windows
-  filter(BIN_START %% 50000 == 1 ) %>%
-  # reorder populations by genome wide average pi
-  mutate(spec = factor(spec, levels = levels(global_bar$spec))) %>%
-  # merge with recombination data
-  left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START'))
-
-# nest data to run linear regression on all runs in one go
-model_data <- combined_data %>%
-  group_by(spec) %>%
-  nest() %>%
-  left_join(., global_bar) %>%
-  mutate(mod =  map(data, ~ lm(.$PI ~ .$RHO))) %>%
-  bind_cols(., summarise_model(.))
-
-# create table with fish annotations
-grob_tibble2 <- global_bar$spec %>%
-  purrr::map(fish_plot2) %>%
-  bind_rows()
+# pre-calculate secondary x-axis breaks
+sc_ax <- scales::cbreaks(c(0,max(globals$weighted)),
+                         scales::pretty_breaks(4))
 
 # compose final figure
-p <- combined_data %>%
-  ggplot()+
-  # add fish annotations
-  geom_hypo_grob2(data = grob_tibble2,
-                  aes(grob = grob, rel_x = .25,rel_y = .75),
-                  angle = 0, height = .5,width = .5)+
-  # add hex-bin desity layer
-  geom_hex(bins = 30,color = rgb(0,0,0,.3),
-           aes(fill=log10(..count..), x = RHO, y = PI))+
- # general plot structure (separated by run)
-  facet_wrap(spec ~., ncol = 3)+
-  # set axis layout and color scheme
-  scale_x_continuous(name = expression(rho))+
-  scale_y_continuous(name = expression(pi))+
-  scico::scale_fill_scico(palette = 'berlin') +
-  # customize legend
-  guides(fill = guide_colorbar(direction = 'horizontal',
-                               title.position = 'top',
-                               barheight = unit(7,'pt'),
-                               barwidth = unit(130,'pt')))+
+p <- ggplot()+
+  # general plot structure separated by run
+  facet_grid( run_label ~ ., as.table = TRUE) +
+  # add genome wide average fst in the background
+  geom_rect(data = global_bar %>%
+              mutate(xmax = xmax * hypo_karyotype$GEND[24]),
+            aes(xmin = 0, xmax = xmax,
+                ymin = -Inf, ymax = Inf),
+            color = rgb(1,1,1,0),
+            fill = clr_below) +
+  # add LG borders
+  geom_vline(data = hypogen::hypo_karyotype,
+             aes(xintercept = GEND),
+             color = hypo_clr_lg) +
+  # add fst data points
+  geom_point(data = data  %>%
+                      mutate(run_label = factor(run_label,
+                                                levels = levels(global_bar$run_label))),
+              aes(x = GPOS, y = WEIGHTED_FST),
+              size=.2,color = plot_clr) +
+  # axis layout
+  scale_x_hypo_LG(sec.axis =  sec_axis(~ ./hypo_karyotype$GEND[24],
+                                       breaks = (sc_ax$breaks/max(globals$weighted)),
+                                       labels = sprintf("%.2f", sc_ax$breaks),
+                                       name = expression(Genomic~position/~Genome~wide~weighted~italic(F[ST])))) +
+  scale_y_continuous(name = expression(italic('F'[ST])),
+                     limits = c(-.1,1),
+                     breaks = c(0,.5,1)) +
   # general plot layout
-  theme_minimal()+
-  theme(legend.position = c(.84,.01),
-        strip.text = element_blank())
+  theme_hypo() +
+  theme(strip.text.y = element_markdown(angle = 0),
+        strip.background = element_blank(),
+        legend.position = 'none',
+        axis.title.x = element_text(),
+        axis.text.x.bottom = element_text(colour = 'darkgray'))
 
 # export final figure
-hypo_save(filename = 'figures/SF5.pdf',
+hypo_save(filename = 'figures/SF5.png',
           plot = p,
           width = 8,
-          height = 10,
+          height = 12,
+          type = "cairo",
           comment = plot_comment)
