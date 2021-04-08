@@ -77,7 +77,7 @@ Rscript --vanilla R/fig/plot_SF10.R \
   2_analysis/pi/50k/
 
 Rscript --vanilla R/fig/plot_SF11.R \
-  2_analysis/admixture/ 
+  2_analysis/admixture/ \
   metadata/phenotypes.sc
 
 Rscript --vanilla R/fig/plot_SF12.R \
