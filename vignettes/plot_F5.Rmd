@@ -26,7 +26,6 @@ args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
           '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
           '2_analysis/summaries/fst_globals.txt',
           '2_analysis/GxP/50000/', 200, 5,
-          "2_analysis/fst/poptree/summary/",
           "~/work/puebla_lab/stash/pomo/")
 ```
 
@@ -64,7 +63,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 #   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
 #   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
 #   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
-#   2_analysis/GxP/50000/ 200 5 2_analysis/fst/poptree/summary/
+#   2_analysis/GxP/50000/ 200 5 **path/to/pomo/**
 # ===============================================================
 # This script produces Figure 5 of the study "Ancestral variation, hybridization and modularity
 # fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
@@ -76,7 +75,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 #           '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
 #           '2_analysis/summaries/fst_globals.txt',
 #           '2_analysis/GxP/50000/', 200, 5,
-#           "2_analysis/fst/poptree/summary/")
+#           "**path/to/pomo/**")
 # script_name <- "R/fig/plot_F5.R"
 ```
 
@@ -125,7 +124,7 @@ args <- process_input(script_name, args)
 #> ★ 8: 2_analysis/GxP/50000/
 #> ★ 9: 200
 #> ★ 10: 5
-#> ★ 11: 2_analysis/fst/poptree/summary/
+#> ★ 11: **path/to/pomo/**
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
@@ -144,9 +143,7 @@ fst_globals <- as.character(args[7])
 gxp_dir <- as.character(args[8])
 twisst_size <- as.numeric(args[9])
 resolution <- as.numeric(args[10])
-fst_summary_path <- as.character(args[11])
-
-pomo_path <- as.character(args[12])
+pomo_path <- as.character(args[11])
 pomo_trees <- dir(pomo_path, pattern = "155_pop")
 
 source(twisst_functions, local = TRUE)
@@ -235,7 +232,7 @@ After this, we import $F_{ST}$ by first listing all $F_{ST}$ data files and then
 fst_files <- dir(fst_dir, pattern = str_c('.', resolution ,'0k.windowed.weir.fst.gz'))
 # import fst data
 fst_data <- str_c(fst_dir, fst_files) %>%
-  future_map_dfr(get_fst, kb = str_c(resolution ,'0k')) %>%
+  future_map_dfr(get_fst, kb = str_c(resolution, '0k')) %>%
   left_join(dxy_globals) %>%
   left_join(fst_globals) %>%
   mutate(run = refactor(., fst_globals),
@@ -332,21 +329,21 @@ trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_tra
   set_names(nm = gxp_traits %>% sort())
 
 # recolor second bars-layer
-trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7,color = gxp_clr[["Bars"]])
+trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7, color = gxp_clr[["Bars"]])
 ```
 
 Then we prepare the population trees by computing neighbour joining trees based on pair wise $F_{ST}$.
 (This happens within `GenomicOriginsScripts::plot_fst_poptree()`.)
 
-```{r, message = FALSE, warning = FALSE}
-# prepare population tree trait_panels ----------------------
-# load outler region wide average fst data
-tree_list <- outlier_pick %>%
-  purrr::map_dfr(get_fst_summary_data)
-
-# create neighbour-joining trees and plot
-poptree_plot_list <- tree_list %>%
-  purrr::pmap(plot_fst_poptree)
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
+# # prepare population tree trait_panels ----------------------
+# # load outler region wide average fst data
+# tree_list <- outlier_pick %>%
+#   purrr::map_dfr(get_fst_summary_data)
+# 
+# # create neighbour-joining trees and plot
+# poptree_plot_list <- tree_list %>%
+#   purrr::pmap(plot_fst_poptree)
 ```
 
 
@@ -416,14 +413,13 @@ p_single <- outlier_table %>%
                      rel_heights = c(1, .18),
                      labels = letters[1:length(outlier_pick)] %>% project_case(),
                      label_size = plot_text_size)
-# ------------------- vvvvvv --------------------------
 ```
 
-<center>
-```{r, echo = FALSE, fig.width = 14, fig.height = 9.33, dev.args = list(type = "cairo")}
-p_single
+```{r, echo = FALSE, fig.width = 14, fig.height = 9.33, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_single) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .15, .15, .7, .7) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 80, angle = 45)
 ```
-</center>
 
 At this point all that we miss is the figure legend.
 So, for the $F_{ST}$, $d_{XY}$ and genotype $\times$ phenotype color schemes we create two dummy plots from where we can export the legends.
@@ -432,18 +428,37 @@ We combine those two classical color legends into what will become the left colu
 ```{r, message = FALSE, warning = FALSE}
 # compile legend
 # dummy plot for fst legend
-p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_fst) %>% .[[1]]
+p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>% 
+  purrr::pmap(plot_panel_fst) %>% 
+  .[[1]] + guides(color = guide_colorbar(barheight = unit(3, "pt"),
+                                         barwidth = unit(100, "pt"),
+                                         label.position = "top",
+                                         ticks.colour = "black"))
 # dummy plot for  gxp legend
 p_dummy_gxp <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_gxp, trait = 'Bars') %>% .[[1]]
 # fst legend
 p_leg_fst <- (p_dummy_fst+theme(legend.position = 'bottom')) %>% get_legend()
 # gxp legend
 p_leg_gxp <- (p_dummy_gxp+theme(legend.position = 'bottom')) %>% get_legend()
-# create poptree legend
-p_leg_poptree <- (poptree_plot_list[[1]] + theme(legend.position = "bottom")) %>% get_legend()
 # create sub-legend 1
+p_leg_pomo <- ((midpoint(pomo_data$tree[[1]]) %>% 
+    ggtree(layout = "circular") %>% 
+    .$data %>% 
+    mutate(support = as.numeric(label) /100,
+           support_class = cut(support, c(0,.5,.7,.9,1)) %>% 
+             as.character() %>%
+             factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]")))) %>% 
+conditional_highlight(tree = ., 
+          higl_node = 21,
+          highl = FALSE,
+          support_guide = TRUE) +
+  theme(text = element_text(size = plot_text_size),
+        legend.position = "bottom") ) %>%
+  get_legend()
+
 p_leg1 <- cowplot::plot_grid(p_leg_fst,
                              p_leg_gxp,
+                             p_leg_pomo,
                              ncol = 1)
 ```
 
@@ -462,27 +477,15 @@ p_leg2 <- tibble(spec1 = c('indigo', 'indigo','unicolor'),
                      nrow = 1)
 
 # create sub-legend 3
-p_leg_3 <- cowplot::plot_grid(p_leg1,
+p_leg <- cowplot::plot_grid(p_leg1,
                             p_leg2,
-                            nrow = 1, rel_widths = c(.6, 1))
+                            nrow = 1, 
+                            rel_widths = c(.6, 1))
 ```
 
-Lastly, the legend elements from the population trees are added to complete the final legend.
-
-```{r, message = FALSE, warning = FALSE}
-# complete legend
-p_leg <- cowplot::plot_grid(
-  p_leg_poptree,
-  p_leg_3,
-  ncol = 1,
-  rel_heights = c(.2, 1))
-```
-
-<center>
-```{r, echo = FALSE, fig.width = 14, fig.height = 2.1, dev.args = list(type = "cairo")}
+```{r, echo = FALSE, fig.width = 14, fig.height = 2.1, dev.args = list(type = "cairo"), fig.align = "center"}
 p_leg
 ```
-</center>
 
 After adding the legend to the main part, Figure 4 is complete.
 
@@ -493,19 +496,19 @@ p_done <- cowplot::plot_grid(p_single, p_leg,
                              rel_heights = c(1, .17))
 ```
 
-<center>
-```{r, echo = FALSE, fig.width = 14, fig.height = 10.4, dev.args = list(type = "cairo")}
-p_done
+```{r, echo = FALSE, fig.width = 14, fig.height = 10.4, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .15, .15, .7, .7) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 80, angle = 45)
 ```
-</center>
 
 Finally, we can export Figure 5.
 
 ```{r, eval = FALSE}
 # export figure
-scl <- .9
 hypo_save(plot = p_done, filename = 'figures/F5.pdf',
-          width = 14*scl, height = 13*scl,
+          width = f_width, 
+          height = f_width * .93,
           comment = script_name,
           device = cairo_pdf)
 ```

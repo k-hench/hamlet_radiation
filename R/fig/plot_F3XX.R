@@ -74,7 +74,7 @@ data2 <- data %>%
 base_line_clr <- "black"
 
 # compile plot
-p <- data2 %>%
+p_done <- data2 %>%
   # select thresholds of interest
   filter(!(threshold_value %in% (c(0.02,.1,0.2, 0.3, .4) %>%
                                    str_c("italic(F[ST])~threshold:~",.)))) %>%
@@ -133,7 +133,7 @@ p <- data2 %>%
         plot.background = element_blank())
 # export figure 3
 hypo_save(filename = 'figures/F3X_a.pdf',
-          plot = p,
+          plot = p_done,
           width = .52 * f_width,
           height = .52 * f_width,
           device = cairo_pdf,

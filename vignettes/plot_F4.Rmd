@@ -415,29 +415,29 @@ p_done <- ggplot()+
   facet_grid(window~.,scales = 'free',switch = 'y', labeller = label_parsed)+
   # tweak plot appreance
   theme_hypo()+
-  theme(legend.position = 'bottom',
-    axis.title = element_blank(),strip.text = element_text(size = 11),
-    strip.background = element_blank(),
-    strip.placement = 'outside')
+  theme(text = element_text(size = plot_text_size),
+        legend.position = 'bottom',
+        axis.title = element_blank(),
+        strip.text = element_text(size = plot_text_size),
+        strip.background = element_blank(),
+        strip.placement = 'outside')
 ```
 
-<center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 9.35, fig.height = 8.66, dev.args = list(type = "cairo")}
-p_done
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = f_width, fig.height = f_width * .9,, dev.args = list(type = "cairo")}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 80, angle = 45)
 ```
-</center>
 
 The final figure is then exported using `hypo_save()`.
 
 ```r
 # export figure 4
-scl <- .8
 hypo_save(p_done, filename = 'figures/F4.png',
-          width = 297*scl, height = 275*scl,
-          units = 'mm',
+          width = f_width,
+          height = f_width * .9,
           type = "cairo",
           comment = plot_comment)
-
 ```
 
 ---

@@ -414,7 +414,9 @@ pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
 
 
 ```{r, echo = FALSE, fig.width = 3, fig.height = 2.5, fig.align = "center"}
-pcas[[1]]
+ggdraw(pcas[[1]]) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .2, .2, .6, .6) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
 ```
 
 
@@ -536,7 +538,9 @@ p_done <- cowplot::plot_grid(p_combined, p_leg,
 
 
 ```{r, echo = FALSE, fig.width = 6.75, fig.height = 4.5, fig.align = "center"}
-p_done
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .2, .2, .6, .6) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
 ```
 
 

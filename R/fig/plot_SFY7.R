@@ -30,11 +30,15 @@ args <- process_input(script_name, args)
 tree_path <- as.character(args[1])
 trees <- c("lg04.1_155N.raxml.support",
            "lg12.3_155N.raxml.support",
-           "lg12.4_155N.raxml.support")
+           "lg12.4_155N.raxml.support",
+           "lg04.1_hySN.raxml.support",
+           "lg12.3_hySN.raxml.support",
+           "lg12.4_hySN.raxml.support")
 
 import_tree <- function(file){
   tag = file %>% str_remove(".*/") %>%
     str_remove("N.raxml.support")
+  
   tibble(outlier = str_sub(tag, 1, 6) %>% 
            str_to_upper() %>% 
            str_replace("\\.","_"),
@@ -46,10 +50,17 @@ get_tree_data <- function(tree){
     .$data %>% 
     mutate(spec = ifelse(isTip,  str_sub(label, -6, -4), "ungrouped"))
 }
+
+root_manual()
+
 clr_neutral <- rgb(.6, .6, .6)
 data <- str_c(tree_path, trees) %>% 
   map_dfr(import_tree) %>% 
-  mutate(rooted_tree = map(.x = tree, .f = root, outgroup = "PL17_160floflo"),
+  mutate(outgroup = list("PL17_160floflo", "PL17_160floflo", "PL17_160floflo",
+                         c("28393torpan", "s_tort_3torpan", "20478tabhon"),
+                         c("28393torpan", "s_tort_3torpan", "20478tabhon"),
+                         c("28393torpan", "s_tort_3torpan", "20478tabhon")),
+         rooted_tree = map2(.x = tree, .y =  outgroup, .f = function(tree, outgroup){ape::root(phy = tree, outgroup = outgroup)}),
          tree_data = map(.x = rooted_tree, get_tree_data))
 
 plot_tree <- function(tree_data,xlim =  c(-.0005,.00475)){
@@ -143,11 +154,12 @@ ggsave(plot = p_done,
        height = f_width * 1.7 *scl,
        device = cairo_pdf)
 
-plot_tree_clasic <- function(tree_data, trait = "Bars", outlier = NULL){
-ggtree(tree_data, mapping = aes(color = spec)) +
-    annotation_custom(grob = hypo_trait_img$grob_circle[hypo_trait_img$trait == trait][[1]],
-                      xmin = 0, xmax = .001,
-                      ymin = 145, ymax = 155)+
+plot_tree_clasic <- function(tree, trait = "Bars", outlier = NULL){
+  tree_data <- get_tree_data(tree)
+  ggtree(tree_data, mapping = aes(color = spec)) +
+    # annotation_custom(grob = hypo_trait_img$grob_circle[hypo_trait_img$trait == trait][[1]],
+    #                   xmin = 0, xmax = .001,
+    #                   ymin = 145, ymax = 155)+
   geom_tiplab(aes(label = str_sub(label, -6, -1)),
               size = 2, hjust = -.1) +
   geom_tippoint(size = .4) +
@@ -157,7 +169,7 @@ ggtree(tree_data, mapping = aes(color = spec)) +
                  size = .85,
                  shape = 21) + 
   ggtitle(outlier) +
-  scale_x_continuous(limits = c(0,.00485)) +
+  # scale_x_continuous(limits = c(0,.00485)) +
   scale_color_manual(values = c(ungrouped = clr_neutral,
                                 GenomicOriginsScripts::clr2),
                      guide = FALSE) +
@@ -176,13 +188,15 @@ ggtree(tree_data, mapping = aes(color = spec)) +
 }
 
 p_classic <- plot_tree_clasic(data$tree_data[[1]], outlier = data$outlier[[1]], trait = "Snout") +
-  plot_tree_clasic(data$tree_data[[2]],outlier = data$outlier[[2]], trait = "Bars") +
-  plot_tree_clasic(data$tree_data[[3]],outlier = data$outlier[[3]], trait = "Peduncle") +
+  plot_tree_clasic(data$tree_data[[2]], outlier = data$outlier[[2]], trait = "Bars") +
+  plot_tree_clasic(data$tree_data[[3]], outlier = data$outlier[[3]], trait = "Peduncle") +
+  plot_tree_clasic(data$rooted_tree[[4]], outlier = data$outlier[4], trait = "Snout") +
+  plot_tree_clasic(data$rooted_tree[[5]], outlier = data$outlier[[5]], trait = "Bars") +
+  plot_tree_clasic(data$rooted_tree[[6]], outlier = data$outlier[[6]], trait = "Peduncle") +
   plot_annotation(tag_levels = "a") +
-  guide_area() +
   plot_layout(guides = "collect", 
-              nrow = 1,
-              widths = c(1,1,1,.2))
+              nrow = 2,
+              widths = c(1,1,1))
 
 scl <- 1.3
 ggsave(plot = p_classic,

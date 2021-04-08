@@ -172,7 +172,7 @@ fnt_sz <- 10
 base_line_clr <- "black"
 
 # compile plot
-p <-  data2 %>%
+p_done <- data2 %>%
   # select thresholds of interest
   filter(!(threshold_value %in% (c(0.02,.1,0.2, 0.3, .4) %>%
                                    str_c("italic(F[ST])~threshold:~",.)))) %>%
@@ -232,7 +232,9 @@ p <-  data2 %>%
 ```
 
 ```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 3.64, fig.height = 3.64, dev.args = list(type = "cairo"), fig.align = "center"}
-p
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .2, .2, .6, .6) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
 ```
 
 Finally, we can export Figure 3.
