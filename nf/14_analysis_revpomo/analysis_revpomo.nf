@@ -195,6 +195,8 @@ Channel
 
 // git 14.12
 process extract_windows_from_genotypes {
+	publishDir "../../2_analysis/revPoMo/", mode: 'copy' 
+	
 	input:
 	set val( revpomo_run ), file( bed ), file( 155file ) from selected_windows_ch.combine( 155file_ch )
 
@@ -271,7 +273,7 @@ Channel.fromPath("../../ressources/samples_155.txt")
 
 // git 14.15
 process extract_regions {
-	publishDir "../../2_analysis/revpomo/", mode: 'copy' 
+	publishDir "../../2_analysis/revPoMo/outlier_regions/", mode: 'copy' 
 	
 	input:
 	set val( vcfIdx ), file( vcf ), val( outlierId ), file( outlier_file ), file( sample_file ), val( sample_mode ) from vcf_lg_ch.combine( sample_mode_ch )

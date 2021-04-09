@@ -1,13 +1,16 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF9.R ~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
+# Rscript --vanilla R/fig/plot_SF9.R \
+#    2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe \
+#    2_analysis/raxml/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb
 # ===============================================================
 # This script produces Suppl. Figure 9 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe")
+# args <- c("2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe",
+#           "2_analysis/raxml/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb")
 # script_name <- "R/fig/plot_SF9.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
@@ -27,9 +30,10 @@ plot_comment <- script_name %>%
 args <- process_input(script_name, args)
 
 # config -----------------------
-tree_file <- as.character(args[1])
+tree_hypo_file <- as.character(args[1])
+tree_serr_file <- as.character(args[2])
 
-raxml_tree <- read.tree(tree_file) 
+raxml_tree <- read.tree(tree_hypo_file) 
 raxml_tree_rooted <- root(phy = raxml_tree, outgroup="PL17_160floflo")
 clr_neutral <- rgb(.6, .6, .6)
 lyout <- 'circular'
@@ -45,14 +49,12 @@ raxml_tree_rooted_grouped <- groupClade(raxml_tree_rooted,
                                                   284, 278, 268, 230, 242),
                                         group_name =  "clade")
 
-
 clade2spec <- c( `0` = "none", `1` = "ran", `2` = "uni", `3` = "ran", `4` = "may",
                  `5` = "pue", `6` = "ind", `7` = "nig", `8` = "nig", `9` = "ran",
                  `10` = "abe", `11` = "abe", `12` = "gum", `13` = "uni", `14` = "pue",
                  `15` = "uni", `16` = "pue", `17` = "nig")
 
 raxml_data <- ggtree(raxml_tree_rooted_grouped, layout = lyout) %>%
-  # ggtree::rotate(200) %>%
   .$data %>% 
   mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
          support = as.numeric(label),
@@ -96,11 +98,7 @@ p_tree <- (open_tree(
          size = guide_legend(title = "Node Support Class",title.position = "top", ncol = 2)) +
   theme_void() 
 
-
-tree_s <- read.tree("~/work/puebla_lab/stash/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb")
-
-# get_tree_data <- function(tree, lab){ggtree(tree, layout = "circular") %>% .$data %>% select(node, label) %>% set_names(nm = c("node", lab))}
-
+tree_s <- read.tree(tree_serr_file)
 tree_s_rooted <- root(tree_s, outgroup = c("28393torpan", "s_tort_3torpan", "20478tabhon" ))
 tree_s_mid <- phangorn::midpoint(tree_s_rooted)
 
@@ -140,31 +138,31 @@ p_s_tree <- (rotate_tree(open_tree(ggtree(tree_s_data, aes(color = spec),
                     drop = FALSE) +
   theme_void()
 
-y_sep <- .05
-x_shift <- -.03
-p_single <- ggplot() +
-  coord_equal(xlim = c(0, .93), 
-              ylim = c(-.01, .54),
-              expand = 0) +
-  # annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
-  #                   ymin = -.575, ymax = .575,
-  #                   xmin = -.075, xmax = 1.075) +
-  annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
-                    ymin = -.6 + (.5 * y_sep), ymax = .6 + (.5 * y_sep),
-                    xmin = -.1, xmax = 1.1) +
-  annotation_custom(grob = cowplot::get_legend(p_tree), 
-                    ymin = .35, ymax = .54,
-                    xmin = 0, xmax = .2) +
-  theme_void()
-
-scl <- 1.5
-hypo_save(plot = p_single,
-          filename = "figures/SFY3_single.pdf", 
-          width = 7.5 * scl,
-          height = 4 * scl, 
-          device = cairo_pdf, 
-          bg = "transparent",
-          comment = plot_comment)
+# y_sep <- .05
+# x_shift <- -.03
+# p_single <- ggplot() +
+#   coord_equal(xlim = c(0, .93), 
+#               ylim = c(-.01, .54),
+#               expand = 0) +
+#   # annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
+#   #                   ymin = -.575, ymax = .575,
+#   #                   xmin = -.075, xmax = 1.075) +
+#   annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
+#                     ymin = -.6 + (.5 * y_sep), ymax = .6 + (.5 * y_sep),
+#                     xmin = -.1, xmax = 1.1) +
+#   annotation_custom(grob = cowplot::get_legend(p_tree), 
+#                     ymin = .35, ymax = .54,
+#                     xmin = 0, xmax = .2) +
+#   theme_void()
+# 
+# scl <- 1.5
+# hypo_save(plot = p_single,
+#           filename = "figures/SFY3_single.pdf", 
+#           width = 7.5 * scl,
+#           height = 4 * scl, 
+#           device = cairo_pdf, 
+#           bg = "transparent",
+#           comment = plot_comment)
 
 p_done <- ggplot() +
   coord_equal(xlim = c(0, .93), 

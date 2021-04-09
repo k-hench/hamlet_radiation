@@ -32,14 +32,15 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```r
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF9.R path/to/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
+# Rscript --vanilla R/fig/plot_SF9.R ~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
 # ===============================================================
 # This script produces Suppl. Figure 9 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("path/to/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe")
+# args <- c("2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe",
+#           "2_analysis/raxml/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb")
 # script_name <- "R/fig/plot_SF9.R"
 ```
 
@@ -73,7 +74,8 @@ args <- process_input(script_name, args)
 ```r
 #> ── Script: scripts/plot_SF9.R ────────────────────────────────────────────
 #> Parameters read:
-#> ★ 1: /path/to/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
+#> ★ 1: 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
+#> ★ 2: 2_analysis/raxml/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 

@@ -8,13 +8,13 @@
 // Hamlet Phylogeny
 // ---------------
 
-// git 15.1
+// git 13.1
 // Open the SNP data set
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
 	.into{ vcf_hypo_whg_ch; vcf_serr_whg_ch }
 
-// git 15.2
+// git 13.2
 process hypo_whg_genotypes {
 	input:
 	set  vcfId, file( vcf ) from vcf_hypo_whg_ch
@@ -55,7 +55,7 @@ process hypo_whg_genotypes {
 	"""
 }
 
-// git 15.3
+// git 13.3
 process hypo_whg_raxml {
 	publishDir "../../2_analysis/raxml/", mode: 'copy' 
 	
@@ -90,7 +90,7 @@ Channel
 	.fromPath("../../ressources/samples_hybrids.txt")
 	.set{ hybrids_file }
 
-// git 15.5
+// git 13.5
 process serr_whg_genotypes {
 	input:
 	set  vcfId, file( vcf ), file( hybrids ) from vcf_serr_whg_ch.combine( hybrids_file )
@@ -131,7 +131,7 @@ process serr_whg_genotypes {
 	"""
 }
 
-// git 15.6
+// git 13.6
 process serr_whg_raxml {
 	publishDir "../../2_analysis/raxml/", mode: 'copy' 
 	
@@ -162,7 +162,7 @@ process serr_whg_raxml {
 // Region-specific phylogenies
 // ---------------------------
 
-// git 15.7
+// git 13.7
 // bundle allBP files and outlier table
 Channel
   .fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG04.vcf.{gz,gz.tbi}")
@@ -172,14 +172,14 @@ Channel
   .combine(Channel.fromPath("../../ressources/focal_outlier.tsv"))
   .set{ vcf_lg_ch }
 
-// git 15.8
+// git 13.8
 // toggle sample modes (with/without serranus outgroup)
 Channel.fromPath("../../ressources/samples_155.txt")
   .concat(Channel.fromPath("../../ressources/samples_hybrids.txt"))
   .merge(Channel.from("155", "hyS"))
   .set{ sample_mode_ch }
 
-// git 15.9
+// git 13.9
 process extract_regions {
 	input:
 	set val( vcfIdx ), file( vcf ), val( outlierId ), file( outlier_file ), file( sample_file ), val( sample_mode ) from vcf_lg_ch.combine( sample_mode_ch )
@@ -215,7 +215,7 @@ process extract_regions {
 	"""
 }
 
-// git 15.6
+// git 13.6
 process outlier_regions_raxml {
 	publishDir "../../2_analysis/raxml/", mode: 'copy' 
 	
@@ -247,3 +247,7 @@ process outlier_regions_raxml {
 // file samples_hybrids.txt needed
 // file samples_155.txt needed
 // suffix from raml unclear (*.raxml.support vs .raxml.support.bs-tbe)
+// difference between 
+// hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
+// hyp155_n_0.33_mac4_5kb.raxml.support.bs-fbp
+// ?

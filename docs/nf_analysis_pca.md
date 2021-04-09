@@ -10,19 +10,19 @@ css: highlight.css
 
 
 
-# (git 13) Analysis XI (Principal Component Analysis)
+# (git 73) Analysis V (Principal Component Analysis)
 
 This pipeline can be executed as follows:
 
 ```sh
-cd $BASE_DIR/nf/13_analysis_pca
+cd $BASE_DIR/nf/07_analysis_pca
 source ../sh/nextflow_alias.sh
 nf_run_pca
 ```
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_pca.nf` (located under `$BASE_DIR/nf/13_analysis_pca/`).
+The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_pca.nf` (located under `$BASE_DIR/nf/07_analysis_pca/`).
 It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
@@ -42,7 +42,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode">#<span class="hl opt">!/</span>usr<span class="hl opt">/</span>bin<span class="hl opt">/</span>env nextflow
-<span class="hl slc">// git 13.1</span>
+<span class="hl slc">// git 7.1</span>
 <span class="hl slc">// prepare subset modes (whole genome vs non-diverged regions)</span>
 <span class="hl kwa">Channel</span>
 	.from<span class="hl opt">(</span> <span class="hl str">&quot;whg&quot;</span><span class="hl opt">,</span> <span class="hl str">&quot;subset_non_diverged&quot;</span><span class="hl opt">)</span>
@@ -55,7 +55,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// git 13.2</span>
+<code class="sourceCode"><span class="hl slc">// git 7.2</span>
 <span class="hl slc">// load table with differentiation outlier regions</span>
 <span class="hl kwa">Channel</span>
 	.fromPath<span class="hl opt">(</span> <span class="hl str">&quot;../../2_analysis/summaries/fst_outliers_998.tsv&quot;</span> <span class="hl opt">)</span>
@@ -67,7 +67,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// git 13.3</span>
+<code class="sourceCode"><span class="hl slc">// git 7.3</span>
 <span class="hl slc">// open genotype data</span>
 <span class="hl kwa">Channel</span>
 	.fromFilePairs<span class="hl opt">(</span><span class="hl str">&quot;../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}&quot;</span><span class="hl opt">)</span>
@@ -81,7 +81,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// git 13.4</span>
+<code class="sourceCode"><span class="hl slc">// git 7.4</span>
 <span class="hl slc">// depending on subset mode, subset vcf</span>
 <span class="hl kwa">process</span> subset_vcf_divergence_based <span class="hl opt">{</span>
 	<span class="hl kwb">label</span> <span class="hl str">&quot;L_20g2h_subset_divergence&quot;</span>
@@ -117,7 +117,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// git 13.5</span>
+<code class="sourceCode"><span class="hl slc">// git 7.5</span>
 <span class="hl slc">// prepare location channel for separate pcas</span>
 <span class="hl kwa">Channel</span>
 	.from<span class="hl opt">(</span> <span class="hl str">&quot;bel&quot;</span><span class="hl opt">,</span> <span class="hl str">&quot;hon&quot;</span><span class="hl opt">,</span> <span class="hl str">&quot;pan&quot;</span><span class="hl opt">)</span>
@@ -130,7 +130,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// git 13.6</span>
+<code class="sourceCode"><span class="hl slc">// git 7.6</span>
 <span class="hl slc">// define location specific sepcies set</span>
 <span class="hl kwa">Channel</span>.from<span class="hl opt">( [[</span><span class="hl num">1</span><span class="hl opt">,</span> <span class="hl str">&quot;ind&quot;</span><span class="hl opt">], [</span><span class="hl num">2</span><span class="hl opt">,</span> <span class="hl str">&quot;may&quot;</span><span class="hl opt">], [</span><span class="hl num">3</span><span class="hl opt">,</span> <span class="hl str">&quot;nig&quot;</span><span class="hl opt">], [</span><span class="hl num">4</span><span class="hl opt">,</span> <span class="hl str">&quot;pue&quot;</span><span class="hl opt">], [</span><span class="hl num">5</span><span class="hl opt">,</span> <span class="hl str">&quot;uni&quot;</span><span class="hl opt">]] )</span>.into<span class="hl opt">{</span> bel_spec1_ch<span class="hl opt">;</span> bel_spec2_ch <span class="hl opt">}</span>
 <span class="hl kwa">Channel</span>.from<span class="hl opt">( [[</span><span class="hl num">1</span><span class="hl opt">,</span> <span class="hl str">&quot;abe&quot;</span><span class="hl opt">], [</span><span class="hl num">2</span><span class="hl opt">,</span> <span class="hl str">&quot;gum&quot;</span><span class="hl opt">], [</span><span class="hl num">3</span><span class="hl opt">,</span> <span class="hl str">&quot;nig&quot;</span><span class="hl opt">], [</span><span class="hl num">4</span><span class="hl opt">,</span> <span class="hl str">&quot;pue&quot;</span><span class="hl opt">], [</span><span class="hl num">5</span><span class="hl opt">,</span> <span class="hl str">&quot;ran&quot;</span><span class="hl opt">], [</span><span class="hl num">6</span><span class="hl opt">,</span> <span class="hl str">&quot;uni&quot;</span><span class="hl opt">]] )</span>.into<span class="hl opt">{</span> hon_spec1_ch<span class="hl opt">;</span> hon_spec2_ch <span class="hl opt">}</span>
@@ -143,7 +143,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// git 13.7</span>
+<code class="sourceCode"><span class="hl slc">// git 7.7</span>
 <span class="hl slc">// attach genotypes to location channel</span>
 locations_ch
 	.combine<span class="hl opt">(</span> vcf_locations <span class="hl opt">)</span>
@@ -156,7 +156,7 @@ locations_ch
 
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// git 13.8</span>
+<code class="sourceCode"><span class="hl slc">// git 7.8</span>
 <span class="hl slc">// subset vcf by location</span>
 <span class="hl kwa">process</span> subset_vcf_by_location <span class="hl opt">{</span>
 	<span class="hl kwb">label</span> <span class="hl str">&quot;L_20g2h_subset_vcf&quot;</span>
@@ -190,7 +190,7 @@ locations_ch
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// PCA section</span>
 <span class="hl slc">// -----------</span>
-<span class="hl slc">// git 13.9</span>
+<span class="hl slc">// git 7.9</span>
 <span class="hl slc">// run pca by location</span>
 <span class="hl kwa">process</span> pca_location <span class="hl opt">{</span>
 	<span class="hl kwb">label</span> <span class="hl str">&quot;L_20g15h_pca_location&quot;</span>
@@ -218,7 +218,7 @@ locations_ch
 
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// git 13.10</span>
+<code class="sourceCode"><span class="hl slc">// git 7.10</span>
 <span class="hl slc">// run pca for global data set</span>
 <span class="hl kwa">process</span> pca_all <span class="hl opt">{</span>
 	<span class="hl kwb">label</span> <span class="hl str">&quot;L_20g15h_pca_all&quot;</span>

@@ -1,17 +1,17 @@
 #!/usr/bin/env nextflow
-// git 13.1
+// git 7.1
 // prepare subset modes (whole genome vs non-diverged regions)
 Channel
 	.from( "whg", "subset_non_diverged")
 	.set{ subset_type_ch }
 
-// git 13.2
+// git 7.2
 // load table with differentiation outlier regions
 Channel
 	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
 	.set{ outlier_tab }
 
-// git 13.3
+// git 7.3
 // open genotype data
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
@@ -19,7 +19,7 @@ Channel
 	.combine( subset_type_ch )
 	.set{ vcf_ch }
 
-// git 13.4
+// git 7.4
 // depending on subset mode, subset vcf
 process subset_vcf_divergence_based {
 	label "L_20g2h_subset_divergence"
@@ -48,25 +48,25 @@ process subset_vcf_divergence_based {
 	"""
 }
 
-// git 13.5
+// git 7.5
 // prepare location channel for separate pcas
 Channel
 	.from( "bel", "hon", "pan")
 	.set{ locations_ch }
 
-// git 13.6
+// git 7.6
 // define location specific sepcies set
 Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
 Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 
-// git 13.7
+// git 7.7
 // attach genotypes to location channel
 locations_ch
 	.combine( vcf_locations )
 	.set{ vcf_location_combo }
 
-// git 13.8
+// git 7.8
 // subset vcf by location
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
@@ -93,7 +93,7 @@ process subset_vcf_by_location {
 
 // PCA section
 // -----------
-// git 13.9
+// git 7.9
 // run pca by location
 process pca_location {
 	label "L_20g15h_pca_location"
@@ -114,7 +114,7 @@ process pca_location {
 	"""
 }
 
-// git 13.10
+// git 7.10
 // run pca for global data set
 process pca_all {
 	label "L_20g15h_pca_all"

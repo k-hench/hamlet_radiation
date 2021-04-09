@@ -20,7 +20,7 @@ Rscript --vanilla R/fig/plot_F5.R \
   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
-  2_analysis/GxP/50000/ 200 5 2_analysis/fst/poptree/summary/
+  2_analysis/GxP/50000/ 200 5 2_analysis/revPoMo/outlier_regions/
 
 ```
 
@@ -42,7 +42,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 #   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
 #   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
 #   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
-#   2_analysis/GxP/50000/ 200 5 **path/to/pomo/**
+#   2_analysis/GxP/50000/ 200 5 2_analysis/revPoMo/outlier_regions/
 # ===============================================================
 # This script produces Figure 5 of the study "Ancestral variation, hybridization and modularity
 # fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
@@ -54,7 +54,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 #           '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
 #           '2_analysis/summaries/fst_globals.txt',
 #           '2_analysis/GxP/50000/', 200, 5,
-#           "**path/to/pomo/**")
+#           "2_analysis/revPoMo/outlier_regions/")
 # script_name <- "R/fig/plot_F5.R"
 ```
 
@@ -104,7 +104,7 @@ args <- process_input(script_name, args)
 #> ★ 8: 2_analysis/GxP/50000/
 #> ★ 9: 200
 #> ★ 10: 5
-#> ★ 11: **path/to/pomo/**
+#> ★ 11: 2_analysis/revPoMo/outlier_regions/
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 

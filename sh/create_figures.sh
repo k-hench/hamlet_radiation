@@ -1,5 +1,5 @@
 #/usr/bin/bash
-# git 1X
+# git 15
 
 # Main Figures
 
@@ -32,7 +32,7 @@ Rscript --vanilla R/fig/plot_F5.R \
   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
-  2_analysis/GxP/50000/ 200 5 ~/work/puebla_lab/stash/pomo/
+  2_analysis/GxP/50000/ 200 5 2_analysis/revPoMo/outlier_regions/
 
 Rscript --vanilla R/fig/plot_F6.R \
   2_analysis/summaries/fst_outliers_998.tsv \
@@ -71,7 +71,8 @@ Rscript --vanilla R/fig/plot_SF8.R \
   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 
 Rscript --vanilla R/fig/plot_SF9.R \
-  ~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
+  2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe \
+  2_analysis/raxml/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb
 
 Rscript --vanilla R/fig/plot_SF10.R \
   2_analysis/pi/50k/
