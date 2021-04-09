@@ -79,7 +79,7 @@ args <- process_input(script_name, args)
 
 The directory containing the hybridization data is received and stored in a variable.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE}
 # config -----------------------
 dxy_path <- as.character(args[1])
 ```

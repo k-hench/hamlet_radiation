@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench" />
 
 
-<meta name="date" content="2020-06-29" />
+<meta name="date" content="2021-04-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,6 +33,7 @@
   
 
 <link rel="next" href="git-1-genotyping-i-snps-only.html"/>
+<script src="libs/header-attrs-2.7.6/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -50,7 +51,7 @@
 
 
 
-<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
 <script src="libs/d3-5.7.0/d3.min.js"></script>
 <script src="libs/d3-lasso-0.0.5/d3-lasso.min.js"></script>
 <link href="libs/ggiraphjs-0.2.0/styles.css" rel="stylesheet" />
@@ -60,18 +61,17 @@
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -91,7 +91,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -140,164 +140,277 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://github.com/k-hench/chapter2">github repository</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Intro</a><ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Intro</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#analysis"><i class="fa fa-check"></i><b>1.1</b> Analysis</a></li>
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#prerequesites"><i class="fa fa-check"></i><b>1.2</b> Prerequesites</a></li>
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#figures"><i class="fa fa-check"></i><b>1.3</b> Figures</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html"><i class="fa fa-check"></i><b>2</b> (git 1) Genotyping I (SNPs only)</a><ul>
+<li class="chapter" data-level="2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html"><i class="fa fa-check"></i><b>2</b> (git 1) Genotyping I (SNPs only)</a>
+<ul>
 <li class="chapter" data-level="2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#summary"><i class="fa fa-check"></i><b>2.1</b> Summary</a></li>
-<li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a><ul>
+<li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a>
+<ul>
 <li class="chapter" data-level="2.2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#data-preparation"><i class="fa fa-check"></i><b>2.2.1</b> Data preparation</a></li>
 <li class="chapter" data-level="2.2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#genotying"><i class="fa fa-check"></i><b>2.2.2</b> Genotying</a></li>
 <li class="chapter" data-level="2.2.3" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#phasing"><i class="fa fa-check"></i><b>2.2.3</b> Phasing</a></li>
 <li class="chapter" data-level="2.2.4" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#indel-masks"><i class="fa fa-check"></i><b>2.2.4</b> Indel masks</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a><ul>
+<li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a>
+<ul>
 <li class="chapter" data-level="3.1" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#summary-1"><i class="fa fa-check"></i><b>3.1</b> Summary</a></li>
-<li class="chapter" data-level="3.2" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#details-of-genotyping_all_basepairs.nf"><i class="fa fa-check"></i><b>3.2</b> Details of <code>genotyping_all_basepairs.nf</code></a><ul>
+<li class="chapter" data-level="3.2" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#details-of-genotyping_all_basepairs.nf"><i class="fa fa-check"></i><b>3.2</b> Details of <code>genotyping_all_basepairs.nf</code></a>
+<ul>
 <li class="chapter" data-level="3.2.1" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#data-preparation-1"><i class="fa fa-check"></i><b>3.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html"><i class="fa fa-check"></i><b>4</b> (git 3) Analysis I (<i>F<sub>ST</sub></i> &amp; GxP)</a><ul>
+<li class="chapter" data-level="4" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html"><i class="fa fa-check"></i><b>4</b> (git 3) Analysis I (<i>F<sub>ST</sub></i> &amp; GxP)</a>
+<ul>
 <li class="chapter" data-level="4.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#summary-2"><i class="fa fa-check"></i><b>4.1</b> Summary</a></li>
-<li class="chapter" data-level="4.2" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#details-of-analysis_fst_gxp.nf"><i class="fa fa-check"></i><b>4.2</b> Details of <code>analysis_fst_gxp.nf</code></a><ul>
+<li class="chapter" data-level="4.2" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#details-of-analysis_fst_gxp.nf"><i class="fa fa-check"></i><b>4.2</b> Details of <code>analysis_fst_gxp.nf</code></a>
+<ul>
 <li class="chapter" data-level="4.2.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#setup"><i class="fa fa-check"></i><b>4.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a><ul>
+<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a>
+<ul>
 <li class="chapter" data-level="5.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
-<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a><ul>
+<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a>
+<ul>
 <li class="chapter" data-level="5.2.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html"><i class="fa fa-check"></i><b>6</b> (git 5) Analysis III (phylogeny &amp; topology weighting)</a><ul>
+<li class="chapter" data-level="6" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html"><i class="fa fa-check"></i><b>6</b> (git 5) Analysis III (phylogeny &amp; topology weighting)</a>
+<ul>
 <li class="chapter" data-level="6.1" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#summary-4"><i class="fa fa-check"></i><b>6.1</b> Summary</a></li>
-<li class="chapter" data-level="6.2" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#details-of-analysis_fasttree_twisst.nf"><i class="fa fa-check"></i><b>6.2</b> Details of <code>analysis_fasttree_twisst.nf</code></a><ul>
+<li class="chapter" data-level="6.2" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#details-of-analysis_fasttree_twisst.nf"><i class="fa fa-check"></i><b>6.2</b> Details of <code>analysis_fasttree_twisst.nf</code></a>
+<ul>
 <li class="chapter" data-level="6.2.1" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#setup-1"><i class="fa fa-check"></i><b>6.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> (git 6) Analysis IV (rho)</a><ul>
+<li class="chapter" data-level="7" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> (git 6) Analysis IV (rho)</a>
+<ul>
 <li class="chapter" data-level="7.1" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#summary-5"><i class="fa fa-check"></i><b>7.1</b> Summary</a></li>
-<li class="chapter" data-level="7.2" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#details-of-analysis_recombination.nf"><i class="fa fa-check"></i><b>7.2</b> Details of <code>analysis_recombination.nf</code></a><ul>
+<li class="chapter" data-level="7.2" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#details-of-analysis_recombination.nf"><i class="fa fa-check"></i><b>7.2</b> Details of <code>analysis_recombination.nf</code></a>
+<ul>
 <li class="chapter" data-level="7.2.1" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#data-preparation-3"><i class="fa fa-check"></i><b>7.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html"><i class="fa fa-check"></i><b>8</b> (git 7) Analysis V (poptrees)</a><ul>
+<li class="chapter" data-level="8" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html"><i class="fa fa-check"></i><b>8</b> (git 7) Analysis V (poptrees)</a>
+<ul>
 <li class="chapter" data-level="8.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#summary-6"><i class="fa fa-check"></i><b>8.1</b> Summary</a></li>
-<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_fst_poptree.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_fst_poptree.nf</code></a><ul>
+<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_fst_poptree.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_fst_poptree.nf</code></a>
+<ul>
 <li class="chapter" data-level="8.2.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#data-preparation-4"><i class="fa fa-check"></i><b>8.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html"><i class="fa fa-check"></i><b>9</b> (git 8) Analysis VI (Demographic History)</a><ul>
+<li class="chapter" data-level="9" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html"><i class="fa fa-check"></i><b>9</b> (git 8) Analysis VI (Demographic History)</a>
+<ul>
 <li class="chapter" data-level="9.1" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#summary-7"><i class="fa fa-check"></i><b>9.1</b> Summary</a></li>
-<li class="chapter" data-level="9.2" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#details-of-analysis_msmc.nf"><i class="fa fa-check"></i><b>9.2</b> Details of <code>analysis_msmc.nf</code></a><ul>
+<li class="chapter" data-level="9.2" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#details-of-analysis_msmc.nf"><i class="fa fa-check"></i><b>9.2</b> Details of <code>analysis_msmc.nf</code></a>
+<ul>
 <li class="chapter" data-level="9.2.1" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#data-preparation-5"><i class="fa fa-check"></i><b>9.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html"><i class="fa fa-check"></i><b>10</b> (git 9) Analysis VII (hybridization)</a><ul>
+<li class="chapter" data-level="10" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html"><i class="fa fa-check"></i><b>10</b> (git 9) Analysis VII (hybridization)</a>
+<ul>
 <li class="chapter" data-level="10.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#summary-8"><i class="fa fa-check"></i><b>10.1</b> Summary</a></li>
-<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_hybridization.nf"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_hybridization.nf</code></a><ul>
+<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_hybridization.nf"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_hybridization.nf</code></a>
+<ul>
 <li class="chapter" data-level="10.2.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#data-preparation-6"><i class="fa fa-check"></i><b>10.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html"><i class="fa fa-check"></i><b>11</b> (git 10) Analysis VIII (admixture)</a><ul>
+<li class="chapter" data-level="11" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html"><i class="fa fa-check"></i><b>11</b> (git 10) Analysis VIII (admixture)</a>
+<ul>
 <li class="chapter" data-level="11.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#summary-9"><i class="fa fa-check"></i><b>11.1</b> Summary</a></li>
-<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_admixture.nf"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_admixture.nf</code></a><ul>
+<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_admixture.nf"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_admixture.nf</code></a>
+<ul>
 <li class="chapter" data-level="11.2.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#data-preparation-7"><i class="fa fa-check"></i><b>11.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="git-11-visualization.html"><a href="git-11-visualization.html"><i class="fa fa-check"></i><b>12</b> (git 11) Visualization</a></li>
-<li class="chapter" data-level="13" data-path="figure-1.html"><a href="figure-1.html"><i class="fa fa-check"></i><b>13</b> Figure 1</a><ul>
-<li class="chapter" data-level="13.1" data-path="figure-1.html"><a href="figure-1.html#summary-10"><i class="fa fa-check"></i><b>13.1</b> Summary</a></li>
-<li class="chapter" data-level="13.2" data-path="figure-1.html"><a href="figure-1.html#details-of-plot_f1.r"><i class="fa fa-check"></i><b>13.2</b> Details of <code>plot_F1.R</code></a><ul>
-<li class="chapter" data-level="13.2.1" data-path="figure-1.html"><a href="figure-1.html#config"><i class="fa fa-check"></i><b>13.2.1</b> Config</a></li>
-<li class="chapter" data-level="13.2.2" data-path="figure-1.html"><a href="figure-1.html#data-import"><i class="fa fa-check"></i><b>13.2.2</b> Data import</a></li>
-<li class="chapter" data-level="13.2.3" data-path="figure-1.html"><a href="figure-1.html#plotting"><i class="fa fa-check"></i><b>13.2.3</b> Plotting</a></li>
-<li class="chapter" data-level="13.2.4" data-path="figure-1.html"><a href="figure-1.html#table-export"><i class="fa fa-check"></i><b>13.2.4</b> Table export</a></li>
+<li class="chapter" data-level="12" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html"><i class="fa fa-check"></i><b>12</b> (git 11) Analysis IX (Allele Age)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#summary-10"><i class="fa fa-check"></i><b>12.1</b> Summary</a></li>
+<li class="chapter" data-level="12.2" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#details-of-analysis_allele_age.nf"><i class="fa fa-check"></i><b>12.2</b> Details of <code>analysis_allele_age.nf</code></a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#setup-2"><i class="fa fa-check"></i><b>12.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="figure-2.html"><a href="figure-2.html"><i class="fa fa-check"></i><b>14</b> Figure 2</a><ul>
-<li class="chapter" data-level="14.1" data-path="figure-2.html"><a href="figure-2.html#summary-11"><i class="fa fa-check"></i><b>14.1</b> Summary</a></li>
-<li class="chapter" data-level="14.2" data-path="figure-2.html"><a href="figure-2.html#details-of-plot_f2.r"><i class="fa fa-check"></i><b>14.2</b> Details of <code>plot_F2.R</code></a><ul>
-<li class="chapter" data-level="14.2.1" data-path="figure-2.html"><a href="figure-2.html#config-1"><i class="fa fa-check"></i><b>14.2.1</b> Config</a></li>
+<li class="chapter" data-level="13" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html"><i class="fa fa-check"></i><b>13</b> (git 12) Analysis X (<i>F<sub>ST</sub></i> Permutation Test)</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#summary-11"><i class="fa fa-check"></i><b>13.1</b> Summary</a></li>
+<li class="chapter" data-level="13.2" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#details-of-analysis_fst_sign.nf"><i class="fa fa-check"></i><b>13.2</b> Details of <code>analysis_fst_sign.nf</code></a>
+<ul>
+<li class="chapter" data-level="13.2.1" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#setup-3"><i class="fa fa-check"></i><b>13.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="15" data-path="figure-3.html"><a href="figure-3.html"><i class="fa fa-check"></i><b>15</b> Figure 3</a><ul>
-<li class="chapter" data-level="15.1" data-path="figure-3.html"><a href="figure-3.html#summary-12"><i class="fa fa-check"></i><b>15.1</b> Summary</a></li>
-<li class="chapter" data-level="15.2" data-path="figure-3.html"><a href="figure-3.html#details-of-plot_f3.r"><i class="fa fa-check"></i><b>15.2</b> Details of <code>plot_F3.R</code></a><ul>
-<li class="chapter" data-level="15.2.1" data-path="figure-3.html"><a href="figure-3.html#config-2"><i class="fa fa-check"></i><b>15.2.1</b> Config</a></li>
+<li class="chapter" data-level="14" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html"><i class="fa fa-check"></i><b>14</b> (git 13) Analysis XI (Principal Component Analysis)</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html#summary-12"><i class="fa fa-check"></i><b>14.1</b> Summary</a></li>
+<li class="chapter" data-level="14.2" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html#details-of-analysis_pca.nf"><i class="fa fa-check"></i><b>14.2</b> Details of <code>analysis_pca.nf</code></a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html#setup-4"><i class="fa fa-check"></i><b>14.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="16" data-path="figure-4.html"><a href="figure-4.html"><i class="fa fa-check"></i><b>16</b> Figure 4</a><ul>
-<li class="chapter" data-level="16.1" data-path="figure-4.html"><a href="figure-4.html#summary-13"><i class="fa fa-check"></i><b>16.1</b> Summary</a></li>
-<li class="chapter" data-level="16.2" data-path="figure-4.html"><a href="figure-4.html#details-of-plot_f4.r"><i class="fa fa-check"></i><b>16.2</b> Details of <code>plot_F4.R</code></a><ul>
-<li class="chapter" data-level="16.2.1" data-path="figure-4.html"><a href="figure-4.html#config-3"><i class="fa fa-check"></i><b>16.2.1</b> Config</a></li>
-<li class="chapter" data-level="16.2.2" data-path="figure-4.html"><a href="figure-4.html#data-import-1"><i class="fa fa-check"></i><b>16.2.2</b> Data import</a></li>
-<li class="chapter" data-level="16.2.3" data-path="figure-4.html"><a href="figure-4.html#plotting-1"><i class="fa fa-check"></i><b>16.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="15" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html"><i class="fa fa-check"></i><b>15</b> (git 14) Analysis XI (revPoMo Phylogenies)</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html#summary-13"><i class="fa fa-check"></i><b>15.1</b> Summary</a></li>
+<li class="chapter" data-level="15.2" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html#details-of-analysis_revpomo.nf"><i class="fa fa-check"></i><b>15.2</b> Details of <code>analysis_revpomo.nf</code></a>
+<ul>
+<li class="chapter" data-level="15.2.1" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html#setup-5"><i class="fa fa-check"></i><b>15.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="17" data-path="figure-5.html"><a href="figure-5.html"><i class="fa fa-check"></i><b>17</b> Figure 5</a><ul>
-<li class="chapter" data-level="17.1" data-path="figure-5.html"><a href="figure-5.html#summary-14"><i class="fa fa-check"></i><b>17.1</b> Summary</a></li>
-<li class="chapter" data-level="17.2" data-path="figure-5.html"><a href="figure-5.html#details-of-plot_f5.r"><i class="fa fa-check"></i><b>17.2</b> Details of <code>plot_F5.R</code></a><ul>
-<li class="chapter" data-level="17.2.1" data-path="figure-5.html"><a href="figure-5.html#config-4"><i class="fa fa-check"></i><b>17.2.1</b> Config</a></li>
-<li class="chapter" data-level="17.2.2" data-path="figure-5.html"><a href="figure-5.html#data-import-2"><i class="fa fa-check"></i><b>17.2.2</b> Data import</a></li>
-<li class="chapter" data-level="17.2.3" data-path="figure-5.html"><a href="figure-5.html#plotting-2"><i class="fa fa-check"></i><b>17.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="16" data-path="git-1x-visualization.html"><a href="git-1x-visualization.html"><i class="fa fa-check"></i><b>16</b> (<span style="color:red;">git 1X</span>) Visualization</a></li>
+<li class="chapter" data-level="17" data-path="figure-1.html"><a href="figure-1.html"><i class="fa fa-check"></i><b>17</b> Figure 1</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="figure-1.html"><a href="figure-1.html#summary-14"><i class="fa fa-check"></i><b>17.1</b> Summary</a></li>
+<li class="chapter" data-level="17.2" data-path="figure-1.html"><a href="figure-1.html#details-of-plot_f1.r"><i class="fa fa-check"></i><b>17.2</b> Details of <code>plot_F1.R</code></a>
+<ul>
+<li class="chapter" data-level="17.2.1" data-path="figure-1.html"><a href="figure-1.html#config"><i class="fa fa-check"></i><b>17.2.1</b> Config</a></li>
+<li class="chapter" data-level="17.2.2" data-path="figure-1.html"><a href="figure-1.html#data-import"><i class="fa fa-check"></i><b>17.2.2</b> Data import</a></li>
+<li class="chapter" data-level="17.2.3" data-path="figure-1.html"><a href="figure-1.html#plotting"><i class="fa fa-check"></i><b>17.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="17.2.4" data-path="figure-1.html"><a href="figure-1.html#table-export"><i class="fa fa-check"></i><b>17.2.4</b> Table export</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="18" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html"><i class="fa fa-check"></i><b>18</b> Supplementary Figure 1</a><ul>
-<li class="chapter" data-level="18.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#summary-15"><i class="fa fa-check"></i><b>18.1</b> Summary</a></li>
-<li class="chapter" data-level="18.2" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#details-of-plot_sf1.r"><i class="fa fa-check"></i><b>18.2</b> Details of <code>plot_SF1.R</code></a><ul>
-<li class="chapter" data-level="18.2.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#config-5"><i class="fa fa-check"></i><b>18.2.1</b> Config</a></li>
+<li class="chapter" data-level="18" data-path="figure-2.html"><a href="figure-2.html"><i class="fa fa-check"></i><b>18</b> Figure 2</a>
+<ul>
+<li class="chapter" data-level="18.1" data-path="figure-2.html"><a href="figure-2.html#summary-15"><i class="fa fa-check"></i><b>18.1</b> Summary</a></li>
+<li class="chapter" data-level="18.2" data-path="figure-2.html"><a href="figure-2.html#details-of-plot_f2.r"><i class="fa fa-check"></i><b>18.2</b> Details of <code>plot_F2.R</code></a>
+<ul>
+<li class="chapter" data-level="18.2.1" data-path="figure-2.html"><a href="figure-2.html#config-1"><i class="fa fa-check"></i><b>18.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="19" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html"><i class="fa fa-check"></i><b>19</b> Supplementary Figure 2</a><ul>
-<li class="chapter" data-level="19.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#summary-16"><i class="fa fa-check"></i><b>19.1</b> Summary</a></li>
-<li class="chapter" data-level="19.2" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#details-of-plot_sf2.r"><i class="fa fa-check"></i><b>19.2</b> Details of <code>plot_SF2.R</code></a><ul>
-<li class="chapter" data-level="19.2.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#config-6"><i class="fa fa-check"></i><b>19.2.1</b> Config</a></li>
+<li class="chapter" data-level="19" data-path="figure-3.html"><a href="figure-3.html"><i class="fa fa-check"></i><b>19</b> Figure 3</a>
+<ul>
+<li class="chapter" data-level="19.1" data-path="figure-3.html"><a href="figure-3.html#summary-16"><i class="fa fa-check"></i><b>19.1</b> Summary</a></li>
+<li class="chapter" data-level="19.2" data-path="figure-3.html"><a href="figure-3.html#details-of-plot_f3.r"><i class="fa fa-check"></i><b>19.2</b> Details of <code>plot_F3.R</code></a>
+<ul>
+<li class="chapter" data-level="19.2.1" data-path="figure-3.html"><a href="figure-3.html#config-2"><i class="fa fa-check"></i><b>19.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="20" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html"><i class="fa fa-check"></i><b>20</b> Supplementary Figure 3</a><ul>
-<li class="chapter" data-level="20.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#summary-17"><i class="fa fa-check"></i><b>20.1</b> Summary</a></li>
-<li class="chapter" data-level="20.2" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#details-of-plot_sf3.r"><i class="fa fa-check"></i><b>20.2</b> Details of <code>plot_SF3.R</code></a><ul>
-<li class="chapter" data-level="20.2.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#config-7"><i class="fa fa-check"></i><b>20.2.1</b> Config</a></li>
+<li class="chapter" data-level="20" data-path="figure-4.html"><a href="figure-4.html"><i class="fa fa-check"></i><b>20</b> Figure 4</a>
+<ul>
+<li class="chapter" data-level="20.1" data-path="figure-4.html"><a href="figure-4.html#summary-17"><i class="fa fa-check"></i><b>20.1</b> Summary</a></li>
+<li class="chapter" data-level="20.2" data-path="figure-4.html"><a href="figure-4.html#details-of-plot_f4.r"><i class="fa fa-check"></i><b>20.2</b> Details of <code>plot_F4.R</code></a>
+<ul>
+<li class="chapter" data-level="20.2.1" data-path="figure-4.html"><a href="figure-4.html#config-3"><i class="fa fa-check"></i><b>20.2.1</b> Config</a></li>
+<li class="chapter" data-level="20.2.2" data-path="figure-4.html"><a href="figure-4.html#data-import-1"><i class="fa fa-check"></i><b>20.2.2</b> Data import</a></li>
+<li class="chapter" data-level="20.2.3" data-path="figure-4.html"><a href="figure-4.html#plotting-1"><i class="fa fa-check"></i><b>20.2.3</b> Plotting</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="21" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html"><i class="fa fa-check"></i><b>21</b> Supplementary Figure 4</a><ul>
-<li class="chapter" data-level="21.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#summary-18"><i class="fa fa-check"></i><b>21.1</b> Summary</a></li>
-<li class="chapter" data-level="21.2" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#details-of-plot_sf4.r"><i class="fa fa-check"></i><b>21.2</b> Details of <code>plot_SF4.R</code></a><ul>
-<li class="chapter" data-level="21.2.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#config-8"><i class="fa fa-check"></i><b>21.2.1</b> Config</a></li>
+<li class="chapter" data-level="21" data-path="figure-5.html"><a href="figure-5.html"><i class="fa fa-check"></i><b>21</b> Figure 5</a>
+<ul>
+<li class="chapter" data-level="21.1" data-path="figure-5.html"><a href="figure-5.html#summary-18"><i class="fa fa-check"></i><b>21.1</b> Summary</a></li>
+<li class="chapter" data-level="21.2" data-path="figure-5.html"><a href="figure-5.html#details-of-plot_f5.r"><i class="fa fa-check"></i><b>21.2</b> Details of <code>plot_F5.R</code></a>
+<ul>
+<li class="chapter" data-level="21.2.1" data-path="figure-5.html"><a href="figure-5.html#config-4"><i class="fa fa-check"></i><b>21.2.1</b> Config</a></li>
+<li class="chapter" data-level="21.2.2" data-path="figure-5.html"><a href="figure-5.html#data-import-2"><i class="fa fa-check"></i><b>21.2.2</b> Data import</a></li>
+<li class="chapter" data-level="21.2.3" data-path="figure-5.html"><a href="figure-5.html#plotting-2"><i class="fa fa-check"></i><b>21.2.3</b> Plotting</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="22" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html"><i class="fa fa-check"></i><b>22</b> Supplementary Figure 5</a><ul>
-<li class="chapter" data-level="22.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#summary-19"><i class="fa fa-check"></i><b>22.1</b> Summary</a></li>
-<li class="chapter" data-level="22.2" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#details-of-plot_sf5.r"><i class="fa fa-check"></i><b>22.2</b> Details of <code>plot_SF5.R</code></a><ul>
-<li class="chapter" data-level="22.2.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#config-9"><i class="fa fa-check"></i><b>22.2.1</b> Config</a></li>
+<li class="chapter" data-level="22" data-path="figure-6.html"><a href="figure-6.html"><i class="fa fa-check"></i><b>22</b> Figure 6</a>
+<ul>
+<li class="chapter" data-level="22.1" data-path="figure-6.html"><a href="figure-6.html#summary-19"><i class="fa fa-check"></i><b>22.1</b> Summary</a></li>
+<li class="chapter" data-level="22.2" data-path="figure-6.html"><a href="figure-6.html#details-of-plot_f6.r"><i class="fa fa-check"></i><b>22.2</b> Details of <code>plot_F6.R</code></a>
+<ul>
+<li class="chapter" data-level="22.2.1" data-path="figure-6.html"><a href="figure-6.html#config-5"><i class="fa fa-check"></i><b>22.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="23" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html"><i class="fa fa-check"></i><b>23</b> Supplementary Figure 6</a><ul>
-<li class="chapter" data-level="23.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#summary-20"><i class="fa fa-check"></i><b>23.1</b> Summary</a></li>
-<li class="chapter" data-level="23.2" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#details-of-plot_sf6.r"><i class="fa fa-check"></i><b>23.2</b> Details of <code>plot_SF6.R</code></a><ul>
-<li class="chapter" data-level="23.2.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#config-10"><i class="fa fa-check"></i><b>23.2.1</b> Config</a></li>
+<li class="chapter" data-level="23" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html"><i class="fa fa-check"></i><b>23</b> Supplementary Figure 1</a>
+<ul>
+<li class="chapter" data-level="23.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#summary-20"><i class="fa fa-check"></i><b>23.1</b> Summary</a></li>
+<li class="chapter" data-level="23.2" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#details-of-plot_sf1.r"><i class="fa fa-check"></i><b>23.2</b> Details of <code>plot_SF1.R</code></a>
+<ul>
+<li class="chapter" data-level="23.2.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#config-6"><i class="fa fa-check"></i><b>23.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="24" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html"><i class="fa fa-check"></i><b>24</b> Supplementary Figure 7</a><ul>
-<li class="chapter" data-level="24.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#summary-21"><i class="fa fa-check"></i><b>24.1</b> Summary</a></li>
-<li class="chapter" data-level="24.2" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#details-of-plot_sf7.r"><i class="fa fa-check"></i><b>24.2</b> Details of <code>plot_SF7.R</code></a><ul>
-<li class="chapter" data-level="24.2.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#config-11"><i class="fa fa-check"></i><b>24.2.1</b> Config</a></li>
+<li class="chapter" data-level="24" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html"><i class="fa fa-check"></i><b>24</b> Supplementary Figure 2</a>
+<ul>
+<li class="chapter" data-level="24.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#summary-21"><i class="fa fa-check"></i><b>24.1</b> Summary</a></li>
+<li class="chapter" data-level="24.2" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#details-of-plot_sf2.r"><i class="fa fa-check"></i><b>24.2</b> Details of <code>plot_SF2.R</code></a>
+<ul>
+<li class="chapter" data-level="24.2.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#config-7"><i class="fa fa-check"></i><b>24.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="25" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html"><i class="fa fa-check"></i><b>25</b> Supplementary Figure 8</a><ul>
-<li class="chapter" data-level="25.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#summary-22"><i class="fa fa-check"></i><b>25.1</b> Summary</a></li>
-<li class="chapter" data-level="25.2" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#details-of-plot_sf8.r"><i class="fa fa-check"></i><b>25.2</b> Details of <code>plot_SF8.R</code></a><ul>
-<li class="chapter" data-level="25.2.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#config-12"><i class="fa fa-check"></i><b>25.2.1</b> Config</a></li>
+<li class="chapter" data-level="25" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html"><i class="fa fa-check"></i><b>25</b> Supplementary Figure 3</a>
+<ul>
+<li class="chapter" data-level="25.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#summary-22"><i class="fa fa-check"></i><b>25.1</b> Summary</a></li>
+<li class="chapter" data-level="25.2" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#details-of-plot_sf3.r"><i class="fa fa-check"></i><b>25.2</b> Details of <code>plot_SF3.R</code></a>
+<ul>
+<li class="chapter" data-level="25.2.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#config-8"><i class="fa fa-check"></i><b>25.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="26" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html"><i class="fa fa-check"></i><b>26</b> Supplementary Figure 9</a><ul>
-<li class="chapter" data-level="26.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#summary-23"><i class="fa fa-check"></i><b>26.1</b> Summary</a></li>
-<li class="chapter" data-level="26.2" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#details-of-plot_sf9.r"><i class="fa fa-check"></i><b>26.2</b> Details of <code>plot_SF9.R</code></a><ul>
-<li class="chapter" data-level="26.2.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#config-13"><i class="fa fa-check"></i><b>26.2.1</b> Config</a></li>
+<li class="chapter" data-level="26" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html"><i class="fa fa-check"></i><b>26</b> Supplementary Figure 4</a>
+<ul>
+<li class="chapter" data-level="26.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#summary-23"><i class="fa fa-check"></i><b>26.1</b> Summary</a></li>
+<li class="chapter" data-level="26.2" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#details-of-plot_sf4.r"><i class="fa fa-check"></i><b>26.2</b> Details of <code>plot_SF4.R</code></a>
+<ul>
+<li class="chapter" data-level="26.2.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#config-9"><i class="fa fa-check"></i><b>26.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="27" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html"><i class="fa fa-check"></i><b>27</b> Supplementary Figure 5</a>
+<ul>
+<li class="chapter" data-level="27.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#summary-24"><i class="fa fa-check"></i><b>27.1</b> Summary</a></li>
+<li class="chapter" data-level="27.2" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#details-of-plot_sf5.r"><i class="fa fa-check"></i><b>27.2</b> Details of <code>plot_SF5.R</code></a>
+<ul>
+<li class="chapter" data-level="27.2.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#config-10"><i class="fa fa-check"></i><b>27.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="28" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html"><i class="fa fa-check"></i><b>28</b> Supplementary Figure 6</a>
+<ul>
+<li class="chapter" data-level="28.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#summary-25"><i class="fa fa-check"></i><b>28.1</b> Summary</a></li>
+<li class="chapter" data-level="28.2" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#details-of-plot_sf6.r"><i class="fa fa-check"></i><b>28.2</b> Details of <code>plot_SF6.R</code></a>
+<ul>
+<li class="chapter" data-level="28.2.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#config-11"><i class="fa fa-check"></i><b>28.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="29" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html"><i class="fa fa-check"></i><b>29</b> Supplementary Figure 7</a>
+<ul>
+<li class="chapter" data-level="29.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#summary-26"><i class="fa fa-check"></i><b>29.1</b> Summary</a></li>
+<li class="chapter" data-level="29.2" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#details-of-plot_sf7.r"><i class="fa fa-check"></i><b>29.2</b> Details of <code>plot_SF7.R</code></a>
+<ul>
+<li class="chapter" data-level="29.2.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#config-12"><i class="fa fa-check"></i><b>29.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="30" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html"><i class="fa fa-check"></i><b>30</b> Supplementary Figure 8</a>
+<ul>
+<li class="chapter" data-level="30.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#summary-27"><i class="fa fa-check"></i><b>30.1</b> Summary</a></li>
+<li class="chapter" data-level="30.2" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#details-of-plot_sf8.r"><i class="fa fa-check"></i><b>30.2</b> Details of <code>plot_SF8.R</code></a>
+<ul>
+<li class="chapter" data-level="30.2.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#config-13"><i class="fa fa-check"></i><b>30.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="31" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html"><i class="fa fa-check"></i><b>31</b> Supplementary Figure 9</a>
+<ul>
+<li class="chapter" data-level="31.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#summary-28"><i class="fa fa-check"></i><b>31.1</b> Summary</a></li>
+<li class="chapter" data-level="31.2" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#details-of-plot_sf9.r"><i class="fa fa-check"></i><b>31.2</b> Details of <code>plot_SF9.R</code></a>
+<ul>
+<li class="chapter" data-level="31.2.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#config-14"><i class="fa fa-check"></i><b>31.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="32" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html"><i class="fa fa-check"></i><b>32</b> Supplementary Figure 10</a>
+<ul>
+<li class="chapter" data-level="32.1" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#summary-29"><i class="fa fa-check"></i><b>32.1</b> Summary</a></li>
+<li class="chapter" data-level="32.2" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#details-of-plot_sf10.r"><i class="fa fa-check"></i><b>32.2</b> Details of <code>plot_SF10.R</code></a>
+<ul>
+<li class="chapter" data-level="32.2.1" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#config-15"><i class="fa fa-check"></i><b>32.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="33" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html"><i class="fa fa-check"></i><b>33</b> Supplementary Figure 11</a>
+<ul>
+<li class="chapter" data-level="33.1" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#summary-30"><i class="fa fa-check"></i><b>33.1</b> Summary</a></li>
+<li class="chapter" data-level="33.2" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#details-of-plot_sf11.r"><i class="fa fa-check"></i><b>33.2</b> Details of <code>plot_SF11.R</code></a>
+<ul>
+<li class="chapter" data-level="33.2.1" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#config-16"><i class="fa fa-check"></i><b>33.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="34" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html"><i class="fa fa-check"></i><b>34</b> Supplementary Figure 12</a>
+<ul>
+<li class="chapter" data-level="34.1" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#summary-31"><i class="fa fa-check"></i><b>34.1</b> Summary</a></li>
+<li class="chapter" data-level="34.2" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#details-of-plot_sf12.r"><i class="fa fa-check"></i><b>34.2</b> Details of <code>plot_SF12.R</code></a>
+<ul>
+<li class="chapter" data-level="34.2.1" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#config-17"><i class="fa fa-check"></i><b>34.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -325,17 +438,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1 class="title">Script repository</h1>
 <h2 class="subtitle"><em>(Hench <em>et al.</em> supplement)</em></h2>
 <p class="author"><em>Kosmas Hench</em></p>
-<p class="date"><em>2020-06-29</em></p>
+<p class="date"><em>2021-04-09</em></p>
 </div>
-<div id="intro" class="section level1">
+<div id="intro" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Intro</h1>
-<p><a href="https://github.com/k-hench/chapter2">This repository</a> contains the complete workflow used in the paper “<em>Ancestral variation, hybridization and modularity fuel a marine radiation</em>”.
+<p><a href="https://github.com/k-hench/chapter2">This repository</a> contains the complete workflow used in the paper “<em>Ancestral variation, hybridization and modularity fuel a marine radiation</em>.”
 The individual chapters of this documentation follow the separate main steps of the workflow, which each refer to an individual prefix in the <em>git x.x</em> references of the papers method section.
 The individual steps partly depend on each other - especially git 1 - git 3 should be executed in order and before the other steps.</p>
 <!--<div style="max-width:800px; margin:auto;">
 <img src="index_files/figure-html/unnamed-chunk-1-1.png" width="864" />
 </div> --->
-<div id="analysis" class="section level2">
+<div id="analysis" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Analysis</h2>
 <p>A documentation of the data preparation and the data analysis (git 1.x - 10.x) can be found at:</p>
 <ul>
@@ -351,7 +464,7 @@ The individual steps partly depend on each other - especially git 1 - git 3 shou
 <li>git 10.x: <a href="git-10-analysis-viii-admixture.html">Analysis (admixture)</a></li>
 </ul>
 </div>
-<div id="prerequesites" class="section level2">
+<div id="prerequesites" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Prerequesites</h2>
 <p>All scripts assume two variables to be set within the bash environment:</p>
 <ul>
@@ -361,11 +474,11 @@ The individual steps partly depend on each other - especially git 1 - git 3 shou
 <p>The analysis is controlled using the workflow manager <a href="https://www.nextflow.io/"><code>nextflow</code></a> and uses slightly different configurations across the individual pipelines. The exact commands used to execute the analysis during the development of the publication are stored within the aliases set within <code>sh/nextflow_alias.sh</code>.</p>
 <p>Furthermore, external dependencies need to be downloaded and deployed at the expected places (s. README.md at the <code>ressources</code> folder).</p>
 </div>
-<div id="figures" class="section level2">
+<div id="figures" class="section level2" number="1.3">
 <h2><span class="header-section-number">1.3</span> Figures</h2>
 <p>The creation of the figures is bundled in a single script (git 11) which can be executed once all <code>nextflow</code> scripts have successfully run.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="index.html#cb1-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb1-2"><a href="index.html#cb1-2"></a><span class="fu">bash</span> sh/create_figures.sh</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> sh/create_figures.sh</span></code></pre></div>
 <p>This is basically just a collection that will run all scripts located under <code>$BASE_DIR/R/fig</code>.
 Under this location, you will find one <code>R</code> script per figure (and suppl. figure).
 So if you are only interested in a single figure - that is the place to start looking.</p>

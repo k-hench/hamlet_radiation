@@ -5,10 +5,11 @@ editor_options:
 ---
 # Supplementary Figure 5
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
 library(GenomicOriginsScripts)
+library(hypogen)
 library(hypoimg)
 library(vroom)
 library(ggtext)

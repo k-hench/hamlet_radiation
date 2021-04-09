@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>14 Figure 2 | Script repository</title>
+  <title>18 Figure 2 | Script repository</title>
   <meta name="description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, McMillan an Puebla" />
   <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="14 Figure 2 | Script repository" />
+  <meta property="og:title" content="18 Figure 2 | Script repository" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="k-hench/bookdown" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="14 Figure 2 | Script repository" />
+  <meta name="twitter:title" content="18 Figure 2 | Script repository" />
   
   <meta name="twitter:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, McMillan an Puebla" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench" />
 
 
-<meta name="date" content="2020-06-29" />
+<meta name="date" content="2021-04-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,6 +33,7 @@
   
 <link rel="prev" href="figure-1.html"/>
 <link rel="next" href="figure-3.html"/>
+<script src="libs/header-attrs-2.7.6/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -50,7 +51,7 @@
 
 
 
-<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
 <script src="libs/d3-5.7.0/d3.min.js"></script>
 <script src="libs/d3-lasso-0.0.5/d3-lasso.min.js"></script>
 <link href="libs/ggiraphjs-0.2.0/styles.css" rel="stylesheet" />
@@ -60,18 +61,17 @@
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -91,7 +91,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -140,164 +140,277 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://github.com/k-hench/chapter2">github repository</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Intro</a><ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Intro</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#analysis"><i class="fa fa-check"></i><b>1.1</b> Analysis</a></li>
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#prerequesites"><i class="fa fa-check"></i><b>1.2</b> Prerequesites</a></li>
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#figures"><i class="fa fa-check"></i><b>1.3</b> Figures</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html"><i class="fa fa-check"></i><b>2</b> (git 1) Genotyping I (SNPs only)</a><ul>
+<li class="chapter" data-level="2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html"><i class="fa fa-check"></i><b>2</b> (git 1) Genotyping I (SNPs only)</a>
+<ul>
 <li class="chapter" data-level="2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#summary"><i class="fa fa-check"></i><b>2.1</b> Summary</a></li>
-<li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a><ul>
+<li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a>
+<ul>
 <li class="chapter" data-level="2.2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#data-preparation"><i class="fa fa-check"></i><b>2.2.1</b> Data preparation</a></li>
 <li class="chapter" data-level="2.2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#genotying"><i class="fa fa-check"></i><b>2.2.2</b> Genotying</a></li>
 <li class="chapter" data-level="2.2.3" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#phasing"><i class="fa fa-check"></i><b>2.2.3</b> Phasing</a></li>
 <li class="chapter" data-level="2.2.4" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#indel-masks"><i class="fa fa-check"></i><b>2.2.4</b> Indel masks</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a><ul>
+<li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a>
+<ul>
 <li class="chapter" data-level="3.1" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#summary-1"><i class="fa fa-check"></i><b>3.1</b> Summary</a></li>
-<li class="chapter" data-level="3.2" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#details-of-genotyping_all_basepairs.nf"><i class="fa fa-check"></i><b>3.2</b> Details of <code>genotyping_all_basepairs.nf</code></a><ul>
+<li class="chapter" data-level="3.2" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#details-of-genotyping_all_basepairs.nf"><i class="fa fa-check"></i><b>3.2</b> Details of <code>genotyping_all_basepairs.nf</code></a>
+<ul>
 <li class="chapter" data-level="3.2.1" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#data-preparation-1"><i class="fa fa-check"></i><b>3.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html"><i class="fa fa-check"></i><b>4</b> (git 3) Analysis I (<i>F<sub>ST</sub></i> &amp; GxP)</a><ul>
+<li class="chapter" data-level="4" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html"><i class="fa fa-check"></i><b>4</b> (git 3) Analysis I (<i>F<sub>ST</sub></i> &amp; GxP)</a>
+<ul>
 <li class="chapter" data-level="4.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#summary-2"><i class="fa fa-check"></i><b>4.1</b> Summary</a></li>
-<li class="chapter" data-level="4.2" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#details-of-analysis_fst_gxp.nf"><i class="fa fa-check"></i><b>4.2</b> Details of <code>analysis_fst_gxp.nf</code></a><ul>
+<li class="chapter" data-level="4.2" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#details-of-analysis_fst_gxp.nf"><i class="fa fa-check"></i><b>4.2</b> Details of <code>analysis_fst_gxp.nf</code></a>
+<ul>
 <li class="chapter" data-level="4.2.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#setup"><i class="fa fa-check"></i><b>4.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a><ul>
+<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a>
+<ul>
 <li class="chapter" data-level="5.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
-<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a><ul>
+<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a>
+<ul>
 <li class="chapter" data-level="5.2.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html"><i class="fa fa-check"></i><b>6</b> (git 5) Analysis III (phylogeny &amp; topology weighting)</a><ul>
+<li class="chapter" data-level="6" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html"><i class="fa fa-check"></i><b>6</b> (git 5) Analysis III (phylogeny &amp; topology weighting)</a>
+<ul>
 <li class="chapter" data-level="6.1" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#summary-4"><i class="fa fa-check"></i><b>6.1</b> Summary</a></li>
-<li class="chapter" data-level="6.2" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#details-of-analysis_fasttree_twisst.nf"><i class="fa fa-check"></i><b>6.2</b> Details of <code>analysis_fasttree_twisst.nf</code></a><ul>
+<li class="chapter" data-level="6.2" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#details-of-analysis_fasttree_twisst.nf"><i class="fa fa-check"></i><b>6.2</b> Details of <code>analysis_fasttree_twisst.nf</code></a>
+<ul>
 <li class="chapter" data-level="6.2.1" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#setup-1"><i class="fa fa-check"></i><b>6.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> (git 6) Analysis IV (rho)</a><ul>
+<li class="chapter" data-level="7" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> (git 6) Analysis IV (rho)</a>
+<ul>
 <li class="chapter" data-level="7.1" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#summary-5"><i class="fa fa-check"></i><b>7.1</b> Summary</a></li>
-<li class="chapter" data-level="7.2" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#details-of-analysis_recombination.nf"><i class="fa fa-check"></i><b>7.2</b> Details of <code>analysis_recombination.nf</code></a><ul>
+<li class="chapter" data-level="7.2" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#details-of-analysis_recombination.nf"><i class="fa fa-check"></i><b>7.2</b> Details of <code>analysis_recombination.nf</code></a>
+<ul>
 <li class="chapter" data-level="7.2.1" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#data-preparation-3"><i class="fa fa-check"></i><b>7.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html"><i class="fa fa-check"></i><b>8</b> (git 7) Analysis V (poptrees)</a><ul>
+<li class="chapter" data-level="8" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html"><i class="fa fa-check"></i><b>8</b> (git 7) Analysis V (poptrees)</a>
+<ul>
 <li class="chapter" data-level="8.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#summary-6"><i class="fa fa-check"></i><b>8.1</b> Summary</a></li>
-<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_fst_poptree.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_fst_poptree.nf</code></a><ul>
+<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_fst_poptree.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_fst_poptree.nf</code></a>
+<ul>
 <li class="chapter" data-level="8.2.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#data-preparation-4"><i class="fa fa-check"></i><b>8.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html"><i class="fa fa-check"></i><b>9</b> (git 8) Analysis VI (Demographic History)</a><ul>
+<li class="chapter" data-level="9" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html"><i class="fa fa-check"></i><b>9</b> (git 8) Analysis VI (Demographic History)</a>
+<ul>
 <li class="chapter" data-level="9.1" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#summary-7"><i class="fa fa-check"></i><b>9.1</b> Summary</a></li>
-<li class="chapter" data-level="9.2" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#details-of-analysis_msmc.nf"><i class="fa fa-check"></i><b>9.2</b> Details of <code>analysis_msmc.nf</code></a><ul>
+<li class="chapter" data-level="9.2" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#details-of-analysis_msmc.nf"><i class="fa fa-check"></i><b>9.2</b> Details of <code>analysis_msmc.nf</code></a>
+<ul>
 <li class="chapter" data-level="9.2.1" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#data-preparation-5"><i class="fa fa-check"></i><b>9.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html"><i class="fa fa-check"></i><b>10</b> (git 9) Analysis VII (hybridization)</a><ul>
+<li class="chapter" data-level="10" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html"><i class="fa fa-check"></i><b>10</b> (git 9) Analysis VII (hybridization)</a>
+<ul>
 <li class="chapter" data-level="10.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#summary-8"><i class="fa fa-check"></i><b>10.1</b> Summary</a></li>
-<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_hybridization.nf"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_hybridization.nf</code></a><ul>
+<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_hybridization.nf"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_hybridization.nf</code></a>
+<ul>
 <li class="chapter" data-level="10.2.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#data-preparation-6"><i class="fa fa-check"></i><b>10.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html"><i class="fa fa-check"></i><b>11</b> (git 10) Analysis VIII (admixture)</a><ul>
+<li class="chapter" data-level="11" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html"><i class="fa fa-check"></i><b>11</b> (git 10) Analysis VIII (admixture)</a>
+<ul>
 <li class="chapter" data-level="11.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#summary-9"><i class="fa fa-check"></i><b>11.1</b> Summary</a></li>
-<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_admixture.nf"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_admixture.nf</code></a><ul>
+<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_admixture.nf"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_admixture.nf</code></a>
+<ul>
 <li class="chapter" data-level="11.2.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#data-preparation-7"><i class="fa fa-check"></i><b>11.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="git-11-visualization.html"><a href="git-11-visualization.html"><i class="fa fa-check"></i><b>12</b> (git 11) Visualization</a></li>
-<li class="chapter" data-level="13" data-path="figure-1.html"><a href="figure-1.html"><i class="fa fa-check"></i><b>13</b> Figure 1</a><ul>
-<li class="chapter" data-level="13.1" data-path="figure-1.html"><a href="figure-1.html#summary-10"><i class="fa fa-check"></i><b>13.1</b> Summary</a></li>
-<li class="chapter" data-level="13.2" data-path="figure-1.html"><a href="figure-1.html#details-of-plot_f1.r"><i class="fa fa-check"></i><b>13.2</b> Details of <code>plot_F1.R</code></a><ul>
-<li class="chapter" data-level="13.2.1" data-path="figure-1.html"><a href="figure-1.html#config"><i class="fa fa-check"></i><b>13.2.1</b> Config</a></li>
-<li class="chapter" data-level="13.2.2" data-path="figure-1.html"><a href="figure-1.html#data-import"><i class="fa fa-check"></i><b>13.2.2</b> Data import</a></li>
-<li class="chapter" data-level="13.2.3" data-path="figure-1.html"><a href="figure-1.html#plotting"><i class="fa fa-check"></i><b>13.2.3</b> Plotting</a></li>
-<li class="chapter" data-level="13.2.4" data-path="figure-1.html"><a href="figure-1.html#table-export"><i class="fa fa-check"></i><b>13.2.4</b> Table export</a></li>
+<li class="chapter" data-level="12" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html"><i class="fa fa-check"></i><b>12</b> (git 11) Analysis IX (Allele Age)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#summary-10"><i class="fa fa-check"></i><b>12.1</b> Summary</a></li>
+<li class="chapter" data-level="12.2" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#details-of-analysis_allele_age.nf"><i class="fa fa-check"></i><b>12.2</b> Details of <code>analysis_allele_age.nf</code></a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#setup-2"><i class="fa fa-check"></i><b>12.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="figure-2.html"><a href="figure-2.html"><i class="fa fa-check"></i><b>14</b> Figure 2</a><ul>
-<li class="chapter" data-level="14.1" data-path="figure-2.html"><a href="figure-2.html#summary-11"><i class="fa fa-check"></i><b>14.1</b> Summary</a></li>
-<li class="chapter" data-level="14.2" data-path="figure-2.html"><a href="figure-2.html#details-of-plot_f2.r"><i class="fa fa-check"></i><b>14.2</b> Details of <code>plot_F2.R</code></a><ul>
-<li class="chapter" data-level="14.2.1" data-path="figure-2.html"><a href="figure-2.html#config-1"><i class="fa fa-check"></i><b>14.2.1</b> Config</a></li>
+<li class="chapter" data-level="13" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html"><i class="fa fa-check"></i><b>13</b> (git 12) Analysis X (<i>F<sub>ST</sub></i> Permutation Test)</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#summary-11"><i class="fa fa-check"></i><b>13.1</b> Summary</a></li>
+<li class="chapter" data-level="13.2" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#details-of-analysis_fst_sign.nf"><i class="fa fa-check"></i><b>13.2</b> Details of <code>analysis_fst_sign.nf</code></a>
+<ul>
+<li class="chapter" data-level="13.2.1" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#setup-3"><i class="fa fa-check"></i><b>13.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="15" data-path="figure-3.html"><a href="figure-3.html"><i class="fa fa-check"></i><b>15</b> Figure 3</a><ul>
-<li class="chapter" data-level="15.1" data-path="figure-3.html"><a href="figure-3.html#summary-12"><i class="fa fa-check"></i><b>15.1</b> Summary</a></li>
-<li class="chapter" data-level="15.2" data-path="figure-3.html"><a href="figure-3.html#details-of-plot_f3.r"><i class="fa fa-check"></i><b>15.2</b> Details of <code>plot_F3.R</code></a><ul>
-<li class="chapter" data-level="15.2.1" data-path="figure-3.html"><a href="figure-3.html#config-2"><i class="fa fa-check"></i><b>15.2.1</b> Config</a></li>
+<li class="chapter" data-level="14" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html"><i class="fa fa-check"></i><b>14</b> (git 13) Analysis XI (Principal Component Analysis)</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html#summary-12"><i class="fa fa-check"></i><b>14.1</b> Summary</a></li>
+<li class="chapter" data-level="14.2" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html#details-of-analysis_pca.nf"><i class="fa fa-check"></i><b>14.2</b> Details of <code>analysis_pca.nf</code></a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html#setup-4"><i class="fa fa-check"></i><b>14.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="16" data-path="figure-4.html"><a href="figure-4.html"><i class="fa fa-check"></i><b>16</b> Figure 4</a><ul>
-<li class="chapter" data-level="16.1" data-path="figure-4.html"><a href="figure-4.html#summary-13"><i class="fa fa-check"></i><b>16.1</b> Summary</a></li>
-<li class="chapter" data-level="16.2" data-path="figure-4.html"><a href="figure-4.html#details-of-plot_f4.r"><i class="fa fa-check"></i><b>16.2</b> Details of <code>plot_F4.R</code></a><ul>
-<li class="chapter" data-level="16.2.1" data-path="figure-4.html"><a href="figure-4.html#config-3"><i class="fa fa-check"></i><b>16.2.1</b> Config</a></li>
-<li class="chapter" data-level="16.2.2" data-path="figure-4.html"><a href="figure-4.html#data-import-1"><i class="fa fa-check"></i><b>16.2.2</b> Data import</a></li>
-<li class="chapter" data-level="16.2.3" data-path="figure-4.html"><a href="figure-4.html#plotting-1"><i class="fa fa-check"></i><b>16.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="15" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html"><i class="fa fa-check"></i><b>15</b> (git 14) Analysis XI (revPoMo Phylogenies)</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html#summary-13"><i class="fa fa-check"></i><b>15.1</b> Summary</a></li>
+<li class="chapter" data-level="15.2" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html#details-of-analysis_revpomo.nf"><i class="fa fa-check"></i><b>15.2</b> Details of <code>analysis_revpomo.nf</code></a>
+<ul>
+<li class="chapter" data-level="15.2.1" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html#setup-5"><i class="fa fa-check"></i><b>15.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="17" data-path="figure-5.html"><a href="figure-5.html"><i class="fa fa-check"></i><b>17</b> Figure 5</a><ul>
-<li class="chapter" data-level="17.1" data-path="figure-5.html"><a href="figure-5.html#summary-14"><i class="fa fa-check"></i><b>17.1</b> Summary</a></li>
-<li class="chapter" data-level="17.2" data-path="figure-5.html"><a href="figure-5.html#details-of-plot_f5.r"><i class="fa fa-check"></i><b>17.2</b> Details of <code>plot_F5.R</code></a><ul>
-<li class="chapter" data-level="17.2.1" data-path="figure-5.html"><a href="figure-5.html#config-4"><i class="fa fa-check"></i><b>17.2.1</b> Config</a></li>
-<li class="chapter" data-level="17.2.2" data-path="figure-5.html"><a href="figure-5.html#data-import-2"><i class="fa fa-check"></i><b>17.2.2</b> Data import</a></li>
-<li class="chapter" data-level="17.2.3" data-path="figure-5.html"><a href="figure-5.html#plotting-2"><i class="fa fa-check"></i><b>17.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="16" data-path="git-1x-visualization.html"><a href="git-1x-visualization.html"><i class="fa fa-check"></i><b>16</b> (<span style="color:red;">git 1X</span>) Visualization</a></li>
+<li class="chapter" data-level="17" data-path="figure-1.html"><a href="figure-1.html"><i class="fa fa-check"></i><b>17</b> Figure 1</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="figure-1.html"><a href="figure-1.html#summary-14"><i class="fa fa-check"></i><b>17.1</b> Summary</a></li>
+<li class="chapter" data-level="17.2" data-path="figure-1.html"><a href="figure-1.html#details-of-plot_f1.r"><i class="fa fa-check"></i><b>17.2</b> Details of <code>plot_F1.R</code></a>
+<ul>
+<li class="chapter" data-level="17.2.1" data-path="figure-1.html"><a href="figure-1.html#config"><i class="fa fa-check"></i><b>17.2.1</b> Config</a></li>
+<li class="chapter" data-level="17.2.2" data-path="figure-1.html"><a href="figure-1.html#data-import"><i class="fa fa-check"></i><b>17.2.2</b> Data import</a></li>
+<li class="chapter" data-level="17.2.3" data-path="figure-1.html"><a href="figure-1.html#plotting"><i class="fa fa-check"></i><b>17.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="17.2.4" data-path="figure-1.html"><a href="figure-1.html#table-export"><i class="fa fa-check"></i><b>17.2.4</b> Table export</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="18" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html"><i class="fa fa-check"></i><b>18</b> Supplementary Figure 1</a><ul>
-<li class="chapter" data-level="18.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#summary-15"><i class="fa fa-check"></i><b>18.1</b> Summary</a></li>
-<li class="chapter" data-level="18.2" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#details-of-plot_sf1.r"><i class="fa fa-check"></i><b>18.2</b> Details of <code>plot_SF1.R</code></a><ul>
-<li class="chapter" data-level="18.2.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#config-5"><i class="fa fa-check"></i><b>18.2.1</b> Config</a></li>
+<li class="chapter" data-level="18" data-path="figure-2.html"><a href="figure-2.html"><i class="fa fa-check"></i><b>18</b> Figure 2</a>
+<ul>
+<li class="chapter" data-level="18.1" data-path="figure-2.html"><a href="figure-2.html#summary-15"><i class="fa fa-check"></i><b>18.1</b> Summary</a></li>
+<li class="chapter" data-level="18.2" data-path="figure-2.html"><a href="figure-2.html#details-of-plot_f2.r"><i class="fa fa-check"></i><b>18.2</b> Details of <code>plot_F2.R</code></a>
+<ul>
+<li class="chapter" data-level="18.2.1" data-path="figure-2.html"><a href="figure-2.html#config-1"><i class="fa fa-check"></i><b>18.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="19" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html"><i class="fa fa-check"></i><b>19</b> Supplementary Figure 2</a><ul>
-<li class="chapter" data-level="19.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#summary-16"><i class="fa fa-check"></i><b>19.1</b> Summary</a></li>
-<li class="chapter" data-level="19.2" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#details-of-plot_sf2.r"><i class="fa fa-check"></i><b>19.2</b> Details of <code>plot_SF2.R</code></a><ul>
-<li class="chapter" data-level="19.2.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#config-6"><i class="fa fa-check"></i><b>19.2.1</b> Config</a></li>
+<li class="chapter" data-level="19" data-path="figure-3.html"><a href="figure-3.html"><i class="fa fa-check"></i><b>19</b> Figure 3</a>
+<ul>
+<li class="chapter" data-level="19.1" data-path="figure-3.html"><a href="figure-3.html#summary-16"><i class="fa fa-check"></i><b>19.1</b> Summary</a></li>
+<li class="chapter" data-level="19.2" data-path="figure-3.html"><a href="figure-3.html#details-of-plot_f3.r"><i class="fa fa-check"></i><b>19.2</b> Details of <code>plot_F3.R</code></a>
+<ul>
+<li class="chapter" data-level="19.2.1" data-path="figure-3.html"><a href="figure-3.html#config-2"><i class="fa fa-check"></i><b>19.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="20" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html"><i class="fa fa-check"></i><b>20</b> Supplementary Figure 3</a><ul>
-<li class="chapter" data-level="20.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#summary-17"><i class="fa fa-check"></i><b>20.1</b> Summary</a></li>
-<li class="chapter" data-level="20.2" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#details-of-plot_sf3.r"><i class="fa fa-check"></i><b>20.2</b> Details of <code>plot_SF3.R</code></a><ul>
-<li class="chapter" data-level="20.2.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#config-7"><i class="fa fa-check"></i><b>20.2.1</b> Config</a></li>
+<li class="chapter" data-level="20" data-path="figure-4.html"><a href="figure-4.html"><i class="fa fa-check"></i><b>20</b> Figure 4</a>
+<ul>
+<li class="chapter" data-level="20.1" data-path="figure-4.html"><a href="figure-4.html#summary-17"><i class="fa fa-check"></i><b>20.1</b> Summary</a></li>
+<li class="chapter" data-level="20.2" data-path="figure-4.html"><a href="figure-4.html#details-of-plot_f4.r"><i class="fa fa-check"></i><b>20.2</b> Details of <code>plot_F4.R</code></a>
+<ul>
+<li class="chapter" data-level="20.2.1" data-path="figure-4.html"><a href="figure-4.html#config-3"><i class="fa fa-check"></i><b>20.2.1</b> Config</a></li>
+<li class="chapter" data-level="20.2.2" data-path="figure-4.html"><a href="figure-4.html#data-import-1"><i class="fa fa-check"></i><b>20.2.2</b> Data import</a></li>
+<li class="chapter" data-level="20.2.3" data-path="figure-4.html"><a href="figure-4.html#plotting-1"><i class="fa fa-check"></i><b>20.2.3</b> Plotting</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="21" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html"><i class="fa fa-check"></i><b>21</b> Supplementary Figure 4</a><ul>
-<li class="chapter" data-level="21.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#summary-18"><i class="fa fa-check"></i><b>21.1</b> Summary</a></li>
-<li class="chapter" data-level="21.2" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#details-of-plot_sf4.r"><i class="fa fa-check"></i><b>21.2</b> Details of <code>plot_SF4.R</code></a><ul>
-<li class="chapter" data-level="21.2.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#config-8"><i class="fa fa-check"></i><b>21.2.1</b> Config</a></li>
+<li class="chapter" data-level="21" data-path="figure-5.html"><a href="figure-5.html"><i class="fa fa-check"></i><b>21</b> Figure 5</a>
+<ul>
+<li class="chapter" data-level="21.1" data-path="figure-5.html"><a href="figure-5.html#summary-18"><i class="fa fa-check"></i><b>21.1</b> Summary</a></li>
+<li class="chapter" data-level="21.2" data-path="figure-5.html"><a href="figure-5.html#details-of-plot_f5.r"><i class="fa fa-check"></i><b>21.2</b> Details of <code>plot_F5.R</code></a>
+<ul>
+<li class="chapter" data-level="21.2.1" data-path="figure-5.html"><a href="figure-5.html#config-4"><i class="fa fa-check"></i><b>21.2.1</b> Config</a></li>
+<li class="chapter" data-level="21.2.2" data-path="figure-5.html"><a href="figure-5.html#data-import-2"><i class="fa fa-check"></i><b>21.2.2</b> Data import</a></li>
+<li class="chapter" data-level="21.2.3" data-path="figure-5.html"><a href="figure-5.html#plotting-2"><i class="fa fa-check"></i><b>21.2.3</b> Plotting</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="22" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html"><i class="fa fa-check"></i><b>22</b> Supplementary Figure 5</a><ul>
-<li class="chapter" data-level="22.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#summary-19"><i class="fa fa-check"></i><b>22.1</b> Summary</a></li>
-<li class="chapter" data-level="22.2" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#details-of-plot_sf5.r"><i class="fa fa-check"></i><b>22.2</b> Details of <code>plot_SF5.R</code></a><ul>
-<li class="chapter" data-level="22.2.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#config-9"><i class="fa fa-check"></i><b>22.2.1</b> Config</a></li>
+<li class="chapter" data-level="22" data-path="figure-6.html"><a href="figure-6.html"><i class="fa fa-check"></i><b>22</b> Figure 6</a>
+<ul>
+<li class="chapter" data-level="22.1" data-path="figure-6.html"><a href="figure-6.html#summary-19"><i class="fa fa-check"></i><b>22.1</b> Summary</a></li>
+<li class="chapter" data-level="22.2" data-path="figure-6.html"><a href="figure-6.html#details-of-plot_f6.r"><i class="fa fa-check"></i><b>22.2</b> Details of <code>plot_F6.R</code></a>
+<ul>
+<li class="chapter" data-level="22.2.1" data-path="figure-6.html"><a href="figure-6.html#config-5"><i class="fa fa-check"></i><b>22.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="23" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html"><i class="fa fa-check"></i><b>23</b> Supplementary Figure 6</a><ul>
-<li class="chapter" data-level="23.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#summary-20"><i class="fa fa-check"></i><b>23.1</b> Summary</a></li>
-<li class="chapter" data-level="23.2" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#details-of-plot_sf6.r"><i class="fa fa-check"></i><b>23.2</b> Details of <code>plot_SF6.R</code></a><ul>
-<li class="chapter" data-level="23.2.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#config-10"><i class="fa fa-check"></i><b>23.2.1</b> Config</a></li>
+<li class="chapter" data-level="23" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html"><i class="fa fa-check"></i><b>23</b> Supplementary Figure 1</a>
+<ul>
+<li class="chapter" data-level="23.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#summary-20"><i class="fa fa-check"></i><b>23.1</b> Summary</a></li>
+<li class="chapter" data-level="23.2" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#details-of-plot_sf1.r"><i class="fa fa-check"></i><b>23.2</b> Details of <code>plot_SF1.R</code></a>
+<ul>
+<li class="chapter" data-level="23.2.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#config-6"><i class="fa fa-check"></i><b>23.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="24" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html"><i class="fa fa-check"></i><b>24</b> Supplementary Figure 7</a><ul>
-<li class="chapter" data-level="24.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#summary-21"><i class="fa fa-check"></i><b>24.1</b> Summary</a></li>
-<li class="chapter" data-level="24.2" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#details-of-plot_sf7.r"><i class="fa fa-check"></i><b>24.2</b> Details of <code>plot_SF7.R</code></a><ul>
-<li class="chapter" data-level="24.2.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#config-11"><i class="fa fa-check"></i><b>24.2.1</b> Config</a></li>
+<li class="chapter" data-level="24" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html"><i class="fa fa-check"></i><b>24</b> Supplementary Figure 2</a>
+<ul>
+<li class="chapter" data-level="24.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#summary-21"><i class="fa fa-check"></i><b>24.1</b> Summary</a></li>
+<li class="chapter" data-level="24.2" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#details-of-plot_sf2.r"><i class="fa fa-check"></i><b>24.2</b> Details of <code>plot_SF2.R</code></a>
+<ul>
+<li class="chapter" data-level="24.2.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#config-7"><i class="fa fa-check"></i><b>24.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="25" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html"><i class="fa fa-check"></i><b>25</b> Supplementary Figure 8</a><ul>
-<li class="chapter" data-level="25.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#summary-22"><i class="fa fa-check"></i><b>25.1</b> Summary</a></li>
-<li class="chapter" data-level="25.2" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#details-of-plot_sf8.r"><i class="fa fa-check"></i><b>25.2</b> Details of <code>plot_SF8.R</code></a><ul>
-<li class="chapter" data-level="25.2.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#config-12"><i class="fa fa-check"></i><b>25.2.1</b> Config</a></li>
+<li class="chapter" data-level="25" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html"><i class="fa fa-check"></i><b>25</b> Supplementary Figure 3</a>
+<ul>
+<li class="chapter" data-level="25.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#summary-22"><i class="fa fa-check"></i><b>25.1</b> Summary</a></li>
+<li class="chapter" data-level="25.2" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#details-of-plot_sf3.r"><i class="fa fa-check"></i><b>25.2</b> Details of <code>plot_SF3.R</code></a>
+<ul>
+<li class="chapter" data-level="25.2.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#config-8"><i class="fa fa-check"></i><b>25.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="26" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html"><i class="fa fa-check"></i><b>26</b> Supplementary Figure 9</a><ul>
-<li class="chapter" data-level="26.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#summary-23"><i class="fa fa-check"></i><b>26.1</b> Summary</a></li>
-<li class="chapter" data-level="26.2" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#details-of-plot_sf9.r"><i class="fa fa-check"></i><b>26.2</b> Details of <code>plot_SF9.R</code></a><ul>
-<li class="chapter" data-level="26.2.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#config-13"><i class="fa fa-check"></i><b>26.2.1</b> Config</a></li>
+<li class="chapter" data-level="26" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html"><i class="fa fa-check"></i><b>26</b> Supplementary Figure 4</a>
+<ul>
+<li class="chapter" data-level="26.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#summary-23"><i class="fa fa-check"></i><b>26.1</b> Summary</a></li>
+<li class="chapter" data-level="26.2" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#details-of-plot_sf4.r"><i class="fa fa-check"></i><b>26.2</b> Details of <code>plot_SF4.R</code></a>
+<ul>
+<li class="chapter" data-level="26.2.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#config-9"><i class="fa fa-check"></i><b>26.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="27" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html"><i class="fa fa-check"></i><b>27</b> Supplementary Figure 5</a>
+<ul>
+<li class="chapter" data-level="27.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#summary-24"><i class="fa fa-check"></i><b>27.1</b> Summary</a></li>
+<li class="chapter" data-level="27.2" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#details-of-plot_sf5.r"><i class="fa fa-check"></i><b>27.2</b> Details of <code>plot_SF5.R</code></a>
+<ul>
+<li class="chapter" data-level="27.2.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#config-10"><i class="fa fa-check"></i><b>27.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="28" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html"><i class="fa fa-check"></i><b>28</b> Supplementary Figure 6</a>
+<ul>
+<li class="chapter" data-level="28.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#summary-25"><i class="fa fa-check"></i><b>28.1</b> Summary</a></li>
+<li class="chapter" data-level="28.2" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#details-of-plot_sf6.r"><i class="fa fa-check"></i><b>28.2</b> Details of <code>plot_SF6.R</code></a>
+<ul>
+<li class="chapter" data-level="28.2.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#config-11"><i class="fa fa-check"></i><b>28.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="29" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html"><i class="fa fa-check"></i><b>29</b> Supplementary Figure 7</a>
+<ul>
+<li class="chapter" data-level="29.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#summary-26"><i class="fa fa-check"></i><b>29.1</b> Summary</a></li>
+<li class="chapter" data-level="29.2" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#details-of-plot_sf7.r"><i class="fa fa-check"></i><b>29.2</b> Details of <code>plot_SF7.R</code></a>
+<ul>
+<li class="chapter" data-level="29.2.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#config-12"><i class="fa fa-check"></i><b>29.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="30" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html"><i class="fa fa-check"></i><b>30</b> Supplementary Figure 8</a>
+<ul>
+<li class="chapter" data-level="30.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#summary-27"><i class="fa fa-check"></i><b>30.1</b> Summary</a></li>
+<li class="chapter" data-level="30.2" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#details-of-plot_sf8.r"><i class="fa fa-check"></i><b>30.2</b> Details of <code>plot_SF8.R</code></a>
+<ul>
+<li class="chapter" data-level="30.2.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#config-13"><i class="fa fa-check"></i><b>30.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="31" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html"><i class="fa fa-check"></i><b>31</b> Supplementary Figure 9</a>
+<ul>
+<li class="chapter" data-level="31.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#summary-28"><i class="fa fa-check"></i><b>31.1</b> Summary</a></li>
+<li class="chapter" data-level="31.2" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#details-of-plot_sf9.r"><i class="fa fa-check"></i><b>31.2</b> Details of <code>plot_SF9.R</code></a>
+<ul>
+<li class="chapter" data-level="31.2.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#config-14"><i class="fa fa-check"></i><b>31.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="32" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html"><i class="fa fa-check"></i><b>32</b> Supplementary Figure 10</a>
+<ul>
+<li class="chapter" data-level="32.1" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#summary-29"><i class="fa fa-check"></i><b>32.1</b> Summary</a></li>
+<li class="chapter" data-level="32.2" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#details-of-plot_sf10.r"><i class="fa fa-check"></i><b>32.2</b> Details of <code>plot_SF10.R</code></a>
+<ul>
+<li class="chapter" data-level="32.2.1" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#config-15"><i class="fa fa-check"></i><b>32.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="33" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html"><i class="fa fa-check"></i><b>33</b> Supplementary Figure 11</a>
+<ul>
+<li class="chapter" data-level="33.1" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#summary-30"><i class="fa fa-check"></i><b>33.1</b> Summary</a></li>
+<li class="chapter" data-level="33.2" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#details-of-plot_sf11.r"><i class="fa fa-check"></i><b>33.2</b> Details of <code>plot_SF11.R</code></a>
+<ul>
+<li class="chapter" data-level="33.2.1" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#config-16"><i class="fa fa-check"></i><b>33.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="34" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html"><i class="fa fa-check"></i><b>34</b> Supplementary Figure 12</a>
+<ul>
+<li class="chapter" data-level="34.1" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#summary-31"><i class="fa fa-check"></i><b>34.1</b> Summary</a></li>
+<li class="chapter" data-level="34.2" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#details-of-plot_sf12.r"><i class="fa fa-check"></i><b>34.2</b> Details of <code>plot_SF12.R</code></a>
+<ul>
+<li class="chapter" data-level="34.2.1" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#config-17"><i class="fa fa-check"></i><b>34.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -321,201 +434,219 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="figure-2" class="section level1">
-<h1><span class="header-section-number">14</span> Figure 2</h1>
-<div id="summary-11" class="section level2">
-<h2><span class="header-section-number">14.1</span> Summary</h2>
+<div id="figure-2" class="section level1" number="18">
+<h1><span class="header-section-number">18</span> Figure 2</h1>
+<div id="summary-15" class="section level2" number="18.1">
+<h2><span class="header-section-number">18.1</span> Summary</h2>
 <p>This is the accessory documentation of Figure 2.
 The Figure can be recreated by running the <strong>R</strong> script <code>plot_F2.R</code>:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb33-1"><a href="figure-2.html#cb33-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb33-2"><a href="figure-2.html#cb33-2"></a></span>
-<span id="cb33-3"><a href="figure-2.html#cb33-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F2.R \</span>
-<span id="cb33-4"><a href="figure-2.html#cb33-4"></a>   2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \</span>
-<span id="cb33-5"><a href="figure-2.html#cb33-5"></a>   2_analysis/msmc/setup/msmc_grouping.txt 2_analysis/msmc/setup/msmc_cc_grouping.txt \</span>
-<span id="cb33-6"><a href="figure-2.html#cb33-6"></a>   2_analysis/summaries/fst_globals.txt</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb50-1"><a href="figure-2.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb50-2"><a href="figure-2.html#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="figure-2.html#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F2.R <span class="kw">\</span></span>
+<span id="cb50-4"><a href="figure-2.html#cb50-4" aria-hidden="true" tabindex="-1"></a>   <span class="ex">2_analysis/msmc/output/</span> 2_analysis/cross_coalescence/output/ <span class="kw">\</span></span>
+<span id="cb50-5"><a href="figure-2.html#cb50-5" aria-hidden="true" tabindex="-1"></a>   <span class="ex">2_analysis/msmc/setup/msmc_grouping.txt</span> 2_analysis/msmc/setup/msmc_cc_grouping.txt <span class="kw">\</span></span>
+<span id="cb50-6"><a href="figure-2.html#cb50-6" aria-hidden="true" tabindex="-1"></a>   <span class="ex">2_analysis/summaries/fst_globals.txt</span></span></code></pre></div>
 </div>
-<div id="details-of-plot_f2.r" class="section level2">
-<h2><span class="header-section-number">14.2</span> Details of <code>plot_F2.R</code></h2>
+<div id="details-of-plot_f2.r" class="section level2" number="18.2">
+<h2><span class="header-section-number">18.2</span> Details of <code>plot_F2.R</code></h2>
 <p>In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory <strong>R</strong> packages <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>, as well as on the <strong>R</strong> packages <a href="https://k-hench.github.io/hypoimg"><strong>hypoimg</strong></a> and <a href="https://patchwork.data-imaginist.com/"><strong>patchwork</strong></a>.</p>
-<div id="config-1" class="section level3">
-<h3><span class="header-section-number">14.2.1</span> Config</h3>
+<div id="config-1" class="section level3" number="18.2.1">
+<h3><span class="header-section-number">18.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="figure-2.html#cb34-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
-<span id="cb34-2"><a href="figure-2.html#cb34-2"></a><span class="co"># run from terminal:</span></span>
-<span id="cb34-3"><a href="figure-2.html#cb34-3"></a><span class="co"># Rscript --vanilla R/fig/plot_F2.R \</span></span>
-<span id="cb34-4"><a href="figure-2.html#cb34-4"></a><span class="co">#    2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \</span></span>
-<span id="cb34-5"><a href="figure-2.html#cb34-5"></a><span class="co">#    2_analysis/msmc/setup/msmc_grouping.txt 2_analysis/msmc/setup/msmc_cc_grouping.txt \</span></span>
-<span id="cb34-6"><a href="figure-2.html#cb34-6"></a><span class="co">#    2_analysis/summaries/fst_globals.txt</span></span>
-<span id="cb34-7"><a href="figure-2.html#cb34-7"></a><span class="co"># ===============================================================</span></span>
-<span id="cb34-8"><a href="figure-2.html#cb34-8"></a><span class="co"># This script produces Figure 2 of the study &quot;Ancestral variation, hybridization and modularity</span></span>
-<span id="cb34-9"><a href="figure-2.html#cb34-9"></a><span class="co"># fuel a marine radiation&quot; by Hench, McMillan and Puebla</span></span>
-<span id="cb34-10"><a href="figure-2.html#cb34-10"></a><span class="co"># ---------------------------------------------------------------</span></span>
-<span id="cb34-11"><a href="figure-2.html#cb34-11"></a><span class="co"># ===============================================================</span></span>
-<span id="cb34-12"><a href="figure-2.html#cb34-12"></a><span class="co"># args &lt;- c(&#39;2_analysis/msmc/output/&#39;, &#39;2_analysis/cross_coalescence/output/&#39;,</span></span>
-<span id="cb34-13"><a href="figure-2.html#cb34-13"></a><span class="co"># &#39;2_analysis/msmc/setup/msmc_grouping.txt&#39;, &#39;2_analysis/msmc/setup/msmc_cc_grouping.txt&#39;,</span></span>
-<span id="cb34-14"><a href="figure-2.html#cb34-14"></a><span class="co"># &#39;2_analysis/summaries/fst_globals.txt&#39;)</span></span>
-<span id="cb34-15"><a href="figure-2.html#cb34-15"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_F2.R&quot;</span></span>
-<span id="cb34-16"><a href="figure-2.html#cb34-16"></a><span class="co"># ----------------------------------------</span></span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="figure-2.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb51-2"><a href="figure-2.html#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co"># run from terminal:</span></span>
+<span id="cb51-3"><a href="figure-2.html#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Rscript --vanilla R/fig/plot_F2.R \</span></span>
+<span id="cb51-4"><a href="figure-2.html#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \</span></span>
+<span id="cb51-5"><a href="figure-2.html#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    2_analysis/msmc/setup/msmc_grouping.txt 2_analysis/msmc/setup/msmc_cc_grouping.txt \</span></span>
+<span id="cb51-6"><a href="figure-2.html#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co">#    2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb51-7"><a href="figure-2.html#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
+<span id="cb51-8"><a href="figure-2.html#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This script produces Figure 2 of the study &quot;Ancestral variation, hybridization and modularity</span></span>
+<span id="cb51-9"><a href="figure-2.html#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="co"># fuel a marine radiation&quot; by Hench, Helmkampf, McMillan and Puebla</span></span>
+<span id="cb51-10"><a href="figure-2.html#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------------</span></span>
+<span id="cb51-11"><a href="figure-2.html#cb51-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
+<span id="cb51-12"><a href="figure-2.html#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="co"># args &lt;- c(&#39;2_analysis/msmc/output/&#39;, &#39;2_analysis/cross_coalescence/output/&#39;,</span></span>
+<span id="cb51-13"><a href="figure-2.html#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;2_analysis/msmc/setup/msmc_grouping.txt&#39;, &#39;2_analysis/msmc/setup/msmc_cc_grouping.txt&#39;,</span></span>
+<span id="cb51-14"><a href="figure-2.html#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;2_analysis/summaries/fst_globals.txt&#39;)</span></span>
+<span id="cb51-15"><a href="figure-2.html#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_F2.R&quot;</span></span>
+<span id="cb51-16"><a href="figure-2.html#cb51-16" aria-hidden="true" tabindex="-1"></a><span class="co"># ----------------------------------------</span></span></code></pre></div>
 <p>The next section processes the input from the command line (supposedly…).
 It stores the arguments in the vector <code>args</code>.
 The <strong>R</strong> packages <strong>GenomicOriginsScripts</strong> and <strong>patchwork</strong> are loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="figure-2.html#cb35-1"></a>args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb35-2"><a href="figure-2.html#cb35-2"></a><span class="co"># setup -----------------------</span></span>
-<span id="cb35-3"><a href="figure-2.html#cb35-3"></a><span class="kw">library</span>(GenomicOriginsScripts)</span>
-<span id="cb35-4"><a href="figure-2.html#cb35-4"></a><span class="kw">library</span>(hypoimg)</span>
-<span id="cb35-5"><a href="figure-2.html#cb35-5"></a><span class="kw">library</span>(patchwork)</span>
-<span id="cb35-6"><a href="figure-2.html#cb35-6"></a></span>
-<span id="cb35-7"><a href="figure-2.html#cb35-7"></a><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
-<span id="cb35-8"><a href="figure-2.html#cb35-8"></a>script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span></span>
-<span id="cb35-9"><a href="figure-2.html#cb35-9"></a><span class="st">  </span><span class="kw">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</span>
-<span id="cb35-10"><a href="figure-2.html#cb35-10"></a></span>
-<span id="cb35-11"><a href="figure-2.html#cb35-11"></a>plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span></span>
-<span id="cb35-12"><a href="figure-2.html#cb35-12"></a><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="kw">getwd</span>(),<span class="st">&#39;/&#39;</span>,.)</span>
-<span id="cb35-13"><a href="figure-2.html#cb35-13"></a></span>
-<span id="cb35-14"><a href="figure-2.html#cb35-14"></a>args &lt;-<span class="st"> </span><span class="kw">process_input</span>(script_name, args)</span></code></pre></div>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="figure-2.html#cb36-1"></a><span class="co">#&gt; ── Script: scripts/plot_F2.R ────────────────────────────────────────────</span></span>
-<span id="cb36-2"><a href="figure-2.html#cb36-2"></a><span class="co">#&gt; Parameters read:</span></span>
-<span id="cb36-3"><a href="figure-2.html#cb36-3"></a><span class="co">#&gt; ★ 1: 2_analysis/msmc/output/</span></span>
-<span id="cb36-4"><a href="figure-2.html#cb36-4"></a><span class="co">#&gt; ★ 2: 2_analysis/cross_coalescence/output/</span></span>
-<span id="cb36-5"><a href="figure-2.html#cb36-5"></a><span class="co">#&gt; ★ 3: 2_analysis/msmc/setup/msmc_grouping.txt</span></span>
-<span id="cb36-6"><a href="figure-2.html#cb36-6"></a><span class="co">#&gt; ★ 4: 2_analysis/msmc/setup/msmc_cc_grouping.txt</span></span>
-<span id="cb36-7"><a href="figure-2.html#cb36-7"></a><span class="co">#&gt; ★ 5: 2_analysis/summaries/fst_globals.txt</span></span>
-<span id="cb36-8"><a href="figure-2.html#cb36-8"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="figure-2.html#cb52-1" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb52-2"><a href="figure-2.html#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="co"># setup -----------------------</span></span>
+<span id="cb52-3"><a href="figure-2.html#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicOriginsScripts)</span>
+<span id="cb52-4"><a href="figure-2.html#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypoimg)</span>
+<span id="cb52-5"><a href="figure-2.html#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb52-6"><a href="figure-2.html#cb52-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-7"><a href="figure-2.html#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb52-8"><a href="figure-2.html#cb52-8" aria-hidden="true" tabindex="-1"></a>script_name <span class="ot">&lt;-</span> args[<span class="dv">5</span>] <span class="sc">%&gt;%</span></span>
+<span id="cb52-9"><a href="figure-2.html#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</span>
+<span id="cb52-10"><a href="figure-2.html#cb52-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-11"><a href="figure-2.html#cb52-11" aria-hidden="true" tabindex="-1"></a>plot_comment <span class="ot">&lt;-</span> script_name <span class="sc">%&gt;%</span></span>
+<span id="cb52-12"><a href="figure-2.html#cb52-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="fu">getwd</span>(),<span class="st">&#39;/&#39;</span>,.)</span>
+<span id="cb52-13"><a href="figure-2.html#cb52-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-14"><a href="figure-2.html#cb52-14" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">process_input</span>(script_name, args)</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="figure-2.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ── Script: scripts/plot_F2.R ────────────────────────────────────────────</span></span>
+<span id="cb53-2"><a href="figure-2.html#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters read:</span></span>
+<span id="cb53-3"><a href="figure-2.html#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 1: 2_analysis/msmc/output/</span></span>
+<span id="cb53-4"><a href="figure-2.html#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 2: 2_analysis/cross_coalescence/output/</span></span>
+<span id="cb53-5"><a href="figure-2.html#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 3: 2_analysis/msmc/setup/msmc_grouping.txt</span></span>
+<span id="cb53-6"><a href="figure-2.html#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 4: 2_analysis/msmc/setup/msmc_cc_grouping.txt</span></span>
+<span id="cb53-7"><a href="figure-2.html#cb53-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 5: 2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb53-8"><a href="figure-2.html#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
 <p>The directories for the demographic inference and the cross-coalescence data are received and stored in respective variables.
 Also, the files containing the groupings for demographic inference and cross-coalescence as well as the reference file for the genome wide <span class="math inline">\(F_{ST}\)</span> values are received.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="figure-2.html#cb37-1"></a><span class="co"># config -----------------------</span></span>
-<span id="cb37-2"><a href="figure-2.html#cb37-2"></a>msmc_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</span>
-<span id="cb37-3"><a href="figure-2.html#cb37-3"></a>cc_path &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">2</span>])</span>
-<span id="cb37-4"><a href="figure-2.html#cb37-4"></a>msmc_group_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">3</span>])</span>
-<span id="cb37-5"><a href="figure-2.html#cb37-5"></a>cc_group_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">4</span>])</span>
-<span id="cb37-6"><a href="figure-2.html#cb37-6"></a>fst_globals_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">5</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="figure-2.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config -----------------------</span></span>
+<span id="cb54-2"><a href="figure-2.html#cb54-2" aria-hidden="true" tabindex="-1"></a>msmc_path <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">1</span>])</span>
+<span id="cb54-3"><a href="figure-2.html#cb54-3" aria-hidden="true" tabindex="-1"></a>cc_path <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">2</span>])</span>
+<span id="cb54-4"><a href="figure-2.html#cb54-4" aria-hidden="true" tabindex="-1"></a>msmc_group_file <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">3</span>])</span>
+<span id="cb54-5"><a href="figure-2.html#cb54-5" aria-hidden="true" tabindex="-1"></a>cc_group_file <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">4</span>])</span>
+<span id="cb54-6"><a href="figure-2.html#cb54-6" aria-hidden="true" tabindex="-1"></a>fst_globals_file <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">5</span>])</span></code></pre></div>
 <p>The <strong>msmc</strong> sample groupings are imported and the <span class="math inline">\(F_{ST}\)</span> values loaded.</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="figure-2.html#cb38-1"></a><span class="co"># actual script =========================================================</span></span>
-<span id="cb38-2"><a href="figure-2.html#cb38-2"></a>msmc_groups &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(msmc_group_file)</span>
-<span id="cb38-3"><a href="figure-2.html#cb38-3"></a>cc_groups &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(cc_group_file)</span>
-<span id="cb38-4"><a href="figure-2.html#cb38-4"></a>fst_globals &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(fst_globals_file,<span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>,</span>
-<span id="cb38-5"><a href="figure-2.html#cb38-5"></a>                            <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&#39;loc&#39;</span>,<span class="st">&#39;run_prep&#39;</span>,<span class="st">&#39;mean_fst&#39;</span>,<span class="st">&#39;weighted_fst&#39;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb38-6"><a href="figure-2.html#cb38-6"></a><span class="st">  </span><span class="kw">separate</span>(run_prep,<span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&#39;pop1&#39;</span>,<span class="st">&#39;pop2&#39;</span>),<span class="dt">sep =</span> <span class="st">&#39;-&#39;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb38-7"><a href="figure-2.html#cb38-7"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">str_c</span>(pop1,loc,<span class="st">&#39;-&#39;</span>,pop2,loc),</span>
-<span id="cb38-8"><a href="figure-2.html#cb38-8"></a>         <span class="dt">run =</span> <span class="kw">fct_reorder</span>(run,weighted_fst))</span></code></pre></div>
-<p>Next, the filenames of all <strong>msmc</strong> results are collected.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="figure-2.html#cb39-1"></a><span class="co"># locate cross-coalescence results</span></span>
-<span id="cb39-2"><a href="figure-2.html#cb39-2"></a>msmc_files &lt;-<span class="st"> </span><span class="kw">dir</span>(msmc_path, <span class="dt">pattern =</span> <span class="st">&#39;.final.txt.gz&#39;</span>)</span>
-<span id="cb39-3"><a href="figure-2.html#cb39-3"></a>cc_files &lt;-<span class="st"> </span><span class="kw">dir</span>(cc_path, <span class="dt">pattern =</span> <span class="st">&#39;.final.txt.gz&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="figure-2.html#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># actual script =========================================================</span></span>
+<span id="cb55-2"><a href="figure-2.html#cb55-2" aria-hidden="true" tabindex="-1"></a>msmc_groups <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(msmc_group_file)</span>
+<span id="cb55-3"><a href="figure-2.html#cb55-3" aria-hidden="true" tabindex="-1"></a>cc_groups <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(cc_group_file)</span>
+<span id="cb55-4"><a href="figure-2.html#cb55-4" aria-hidden="true" tabindex="-1"></a>fst_globals <span class="ot">&lt;-</span> vroom<span class="sc">::</span><span class="fu">vroom</span>(fst_globals_file,<span class="at">delim =</span> <span class="st">&#39;</span><span class="sc">\t</span><span class="st">&#39;</span>,</span>
+<span id="cb55-5"><a href="figure-2.html#cb55-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">&#39;loc&#39;</span>,<span class="st">&#39;run_prep&#39;</span>,<span class="st">&#39;mean_fst&#39;</span>,<span class="st">&#39;weighted_fst&#39;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb55-6"><a href="figure-2.html#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(run_prep,<span class="at">into =</span> <span class="fu">c</span>(<span class="st">&#39;pop1&#39;</span>,<span class="st">&#39;pop2&#39;</span>),<span class="at">sep =</span> <span class="st">&#39;-&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb55-7"><a href="figure-2.html#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">run =</span> <span class="fu">str_c</span>(pop1,loc,<span class="st">&#39;-&#39;</span>,pop2,loc),</span>
+<span id="cb55-8"><a href="figure-2.html#cb55-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">run =</span> <span class="fu">fct_reorder</span>(run,weighted_fst))</span></code></pre></div>
+<p>Next, the file names of all <strong>msmc</strong> results are collected.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="figure-2.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># locate cross-coalescence results</span></span>
+<span id="cb56-2"><a href="figure-2.html#cb56-2" aria-hidden="true" tabindex="-1"></a>msmc_files <span class="ot">&lt;-</span> <span class="fu">dir</span>(msmc_path, <span class="at">pattern =</span> <span class="st">&#39;.final.txt.gz&#39;</span>)</span>
+<span id="cb56-3"><a href="figure-2.html#cb56-3" aria-hidden="true" tabindex="-1"></a>cc_files <span class="ot">&lt;-</span> <span class="fu">dir</span>(cc_path, <span class="at">pattern =</span> <span class="st">&#39;.final.txt.gz&#39;</span>)</span></code></pre></div>
 <p>Separately, all the demographic inference and cross-coalescence data are read in an compiled into two data sets.</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="figure-2.html#cb40-1"></a><span class="co"># import effective population size data</span></span>
-<span id="cb40-2"><a href="figure-2.html#cb40-2"></a>msmc_data &lt;-<span class="st"> </span>msmc_files <span class="op">%&gt;%</span></span>
-<span id="cb40-3"><a href="figure-2.html#cb40-3"></a><span class="st">  </span><span class="kw">map_dfr</span>(<span class="dt">.f =</span> get_msmc, <span class="dt">msmc_path =</span> msmc_path)</span>
-<span id="cb40-4"><a href="figure-2.html#cb40-4"></a></span>
-<span id="cb40-5"><a href="figure-2.html#cb40-5"></a><span class="co"># import cross-coalescence data</span></span>
-<span id="cb40-6"><a href="figure-2.html#cb40-6"></a>cc_data &lt;-<span class="st"> </span>cc_files <span class="op">%&gt;%</span></span>
-<span id="cb40-7"><a href="figure-2.html#cb40-7"></a><span class="st">  </span><span class="kw">map_dfr</span>(get_cc, <span class="dt">cc_groups =</span> cc_groups, <span class="dt">cc_path =</span> cc_path) <span class="op">%&gt;%</span></span>
-<span id="cb40-8"><a href="figure-2.html#cb40-8"></a><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">run =</span> <span class="kw">factor</span>(run, <span class="dt">levels =</span> <span class="kw">levels</span>(fst_globals<span class="op">$</span>run)))</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="figure-2.html#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import effective population size data</span></span>
+<span id="cb57-2"><a href="figure-2.html#cb57-2" aria-hidden="true" tabindex="-1"></a>msmc_data <span class="ot">&lt;-</span> msmc_files <span class="sc">%&gt;%</span></span>
+<span id="cb57-3"><a href="figure-2.html#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="at">.f =</span> get_msmc, <span class="at">msmc_path =</span> msmc_path)</span>
+<span id="cb57-4"><a href="figure-2.html#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="figure-2.html#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="co"># import cross-coalescence data</span></span>
+<span id="cb57-6"><a href="figure-2.html#cb57-6" aria-hidden="true" tabindex="-1"></a>cc_data <span class="ot">&lt;-</span> cc_files <span class="sc">%&gt;%</span></span>
+<span id="cb57-7"><a href="figure-2.html#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(get_cc, <span class="at">cc_groups =</span> cc_groups, <span class="at">cc_path =</span> cc_path) <span class="sc">%&gt;%</span></span>
+<span id="cb57-8"><a href="figure-2.html#cb57-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">run =</span> <span class="fu">factor</span>(run, <span class="at">levels =</span> <span class="fu">levels</span>(fst_globals<span class="sc">$</span>run)))</span></code></pre></div>
 <p>The default color scheme is adjusted (to keep <em>H. unicolor</em> visible) and the tick color for the plots is defined.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="figure-2.html#cb41-1"></a><span class="co"># color adjustments for line plots (replace white by gray)</span></span>
-<span id="cb41-2"><a href="figure-2.html#cb41-2"></a>clr_alt &lt;-<span class="st"> </span>clr</span>
-<span id="cb41-3"><a href="figure-2.html#cb41-3"></a>clr_alt[<span class="st">&#39;uni&#39;</span>] &lt;-<span class="st"> </span><span class="kw">rgb</span>(.<span class="dv">8</span>,.<span class="dv">8</span>,.<span class="dv">8</span>)</span>
-<span id="cb41-4"><a href="figure-2.html#cb41-4"></a>clr_ticks &lt;-<span class="st"> &#39;lightgray&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="figure-2.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># color adjustments for line plots (replace white by gray)</span></span>
+<span id="cb58-2"><a href="figure-2.html#cb58-2" aria-hidden="true" tabindex="-1"></a>clr_alt <span class="ot">&lt;-</span> clr</span>
+<span id="cb58-3"><a href="figure-2.html#cb58-3" aria-hidden="true" tabindex="-1"></a>clr_alt[<span class="st">&#39;uni&#39;</span>] <span class="ot">&lt;-</span> <span class="fu">rgb</span>(.<span class="dv">8</span>,.<span class="dv">8</span>,.<span class="dv">8</span>)</span>
+<span id="cb58-4"><a href="figure-2.html#cb58-4" aria-hidden="true" tabindex="-1"></a>clr_ticks <span class="ot">&lt;-</span> <span class="st">&#39;lightgray&#39;</span></span></code></pre></div>
 <p>The first panel containing the demographic history is created.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="figure-2.html#cb42-1"></a>p_msmc &lt;-<span class="st"> </span>msmc_data <span class="op">%&gt;%</span></span>
-<span id="cb42-2"><a href="figure-2.html#cb42-2"></a><span class="st">  </span><span class="co"># remove the two first and last time segments</span></span>
-<span id="cb42-3"><a href="figure-2.html#cb42-3"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>time_index <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">2</span>,<span class="dv">29</span><span class="op">:</span><span class="dv">31</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb42-4"><a href="figure-2.html#cb42-4"></a><span class="st">  </span><span class="kw">ggplot</span>( <span class="kw">aes</span>(<span class="dt">x=</span>YBP, <span class="dt">y=</span>Ne, <span class="dt">group =</span> run_nr, <span class="dt">colour =</span> spec)) <span class="op">+</span></span>
-<span id="cb42-5"><a href="figure-2.html#cb42-5"></a><span class="st">  </span><span class="co"># add guides for the logarithmic axes</span></span>
-<span id="cb42-6"><a href="figure-2.html#cb42-6"></a><span class="st">  </span><span class="kw">annotation_logticks</span>(<span class="dt">sides=</span><span class="st">&quot;tl&quot;</span>, <span class="dt">color =</span> clr_ticks) <span class="op">+</span></span>
-<span id="cb42-7"><a href="figure-2.html#cb42-7"></a><span class="st">  </span><span class="co"># add the msmc data as lines</span></span>
-<span id="cb42-8"><a href="figure-2.html#cb42-8"></a><span class="st">  </span><span class="kw">geom_line</span>()<span class="op">+</span></span>
-<span id="cb42-9"><a href="figure-2.html#cb42-9"></a><span class="st">  </span><span class="co"># set the color scheme</span></span>
-<span id="cb42-10"><a href="figure-2.html#cb42-10"></a><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="st">&#39;Species&#39;</span>,</span>
-<span id="cb42-11"><a href="figure-2.html#cb42-11"></a>                     <span class="dt">values =</span> clr_alt, <span class="dt">label =</span> sp_labs) <span class="op">+</span></span>
-<span id="cb42-12"><a href="figure-2.html#cb42-12"></a><span class="st">  </span><span class="co"># format the x axis</span></span>
-<span id="cb42-13"><a href="figure-2.html#cb42-13"></a><span class="st">  </span><span class="kw">scale_x_log10</span>(<span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),</span>
-<span id="cb42-14"><a href="figure-2.html#cb42-14"></a>                <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">10</span><span class="op">^</span><span class="dv">3</span>, <span class="dv">10</span><span class="op">^</span><span class="dv">4</span>, <span class="dv">10</span><span class="op">^</span><span class="dv">5</span>),</span>
-<span id="cb42-15"><a href="figure-2.html#cb42-15"></a>                <span class="dt">position =</span> <span class="st">&#39;top&#39;</span>,</span>
-<span id="cb42-16"><a href="figure-2.html#cb42-16"></a>                <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;1-3 kya&quot;</span>, <span class="st">&quot;10-30 kya&quot;</span>, <span class="st">&quot;100-300 kya&quot;</span>),</span>
-<span id="cb42-17"><a href="figure-2.html#cb42-17"></a>                <span class="dt">name =</span> <span class="st">&quot;Years Before Present&quot;</span>) <span class="op">+</span></span>
-<span id="cb42-18"><a href="figure-2.html#cb42-18"></a><span class="st">  </span><span class="co"># format the y axis</span></span>
-<span id="cb42-19"><a href="figure-2.html#cb42-19"></a><span class="st">  </span><span class="kw">scale_y_log10</span>(<span class="dt">labels =</span> scales<span class="op">::</span><span class="kw">trans_format</span>(<span class="st">&quot;log10&quot;</span>, scales<span class="op">::</span><span class="kw">math_format</span>(<span class="dv">10</span><span class="op">^</span>.x)),</span>
-<span id="cb42-20"><a href="figure-2.html#cb42-20"></a>                <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">10</span><span class="op">^</span><span class="dv">3</span>,<span class="dv">10</span><span class="op">^</span><span class="dv">4</span>,<span class="dv">10</span><span class="op">^</span><span class="dv">5</span>,<span class="dv">10</span><span class="op">^</span><span class="dv">6</span>)) <span class="op">+</span></span>
-<span id="cb42-21"><a href="figure-2.html#cb42-21"></a><span class="st">  </span><span class="co"># format the color legend</span></span>
-<span id="cb42-22"><a href="figure-2.html#cb42-22"></a><span class="st">  </span><span class="kw">guides</span>(<span class="dt">colour =</span> <span class="kw">guide_legend</span>(<span class="dt">title.position =</span> <span class="st">&quot;top&quot;</span>,</span>
-<span id="cb42-23"><a href="figure-2.html#cb42-23"></a>                               <span class="dt">override.aes =</span> <span class="kw">list</span>(<span class="dt">alpha =</span> <span class="dv">1</span>, <span class="dt">size=</span><span class="dv">1</span>),</span>
-<span id="cb42-24"><a href="figure-2.html#cb42-24"></a>                               <span class="dt">nrow =</span> <span class="dv">2</span>, <span class="dt">byrow=</span><span class="ot">TRUE</span>)) <span class="op">+</span></span>
-<span id="cb42-25"><a href="figure-2.html#cb42-25"></a><span class="st">  </span><span class="co"># set the axis titles</span></span>
-<span id="cb42-26"><a href="figure-2.html#cb42-26"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;Generations Before Present&quot;</span>,</span>
-<span id="cb42-27"><a href="figure-2.html#cb42-27"></a>       <span class="dt">y =</span> <span class="kw">expression</span>(Effective<span class="op">~</span>Population<span class="op">~</span>Size<span class="op">~</span>(<span class="kw">italic</span>(N[e])))) <span class="op">+</span></span>
-<span id="cb42-28"><a href="figure-2.html#cb42-28"></a><span class="st">  </span><span class="co"># set plot range</span></span>
-<span id="cb42-29"><a href="figure-2.html#cb42-29"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">250</span>, <span class="dv">5</span><span class="op">*</span><span class="dv">10</span><span class="op">^</span><span class="dv">5</span>)) <span class="op">+</span></span>
-<span id="cb42-30"><a href="figure-2.html#cb42-30"></a><span class="st">  </span><span class="co"># tune plot appreance</span></span>
-<span id="cb42-31"><a href="figure-2.html#cb42-31"></a><span class="st">  </span><span class="kw">theme_minimal</span>()<span class="op">+</span></span>
-<span id="cb42-32"><a href="figure-2.html#cb42-32"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks =</span> <span class="kw">element_line</span>(<span class="dt">colour =</span> clr_ticks),</span>
-<span id="cb42-33"><a href="figure-2.html#cb42-33"></a>        <span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="dv">1</span>,.<span class="dv">03</span>),</span>
-<span id="cb42-34"><a href="figure-2.html#cb42-34"></a>        <span class="dt">legend.justification =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),</span>
-<span id="cb42-35"><a href="figure-2.html#cb42-35"></a>        <span class="dt">legend.text.align =</span> <span class="dv">0</span>,</span>
-<span id="cb42-36"><a href="figure-2.html#cb42-36"></a>        <span class="dt">panel.grid.major.x =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb42-37"><a href="figure-2.html#cb42-37"></a>        <span class="dt">panel.grid.minor.y =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb42-38"><a href="figure-2.html#cb42-38"></a>        <span class="dt">title =</span> <span class="kw">element_text</span>(<span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>),</span>
-<span id="cb42-39"><a href="figure-2.html#cb42-39"></a>        <span class="dt">axis.title =</span> <span class="kw">element_text</span>(<span class="dt">face =</span> <span class="st">&#39;plain&#39;</span>),</span>
-<span id="cb42-40"><a href="figure-2.html#cb42-40"></a>        <span class="dt">axis.text.x =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb42-41"><a href="figure-2.html#cb42-41"></a>        <span class="dt">axis.title.x =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb42-42"><a href="figure-2.html#cb42-42"></a>        <span class="dt">legend.title =</span> <span class="kw">element_text</span>(<span class="dt">face =</span> <span class="st">&#39;plain&#39;</span>))</span></code></pre></div>
-<center>
-<img src="plot_F2_files/figure-html/unnamed-chunk-9-1.png" width="1065.6" />
-</center>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="figure-2.html#cb59-1" aria-hidden="true" tabindex="-1"></a>p_msmc <span class="ot">&lt;-</span> msmc_data <span class="sc">%&gt;%</span></span>
+<span id="cb59-2"><a href="figure-2.html#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the two first and last time segments</span></span>
+<span id="cb59-3"><a href="figure-2.html#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>time_index <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">29</span><span class="sc">:</span><span class="dv">31</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb59-4"><a href="figure-2.html#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>( <span class="fu">aes</span>(<span class="at">x=</span>YBP, <span class="at">y=</span>Ne, <span class="at">group =</span> run_nr, <span class="at">colour =</span> spec)) <span class="sc">+</span></span>
+<span id="cb59-5"><a href="figure-2.html#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add guides for the logarithmic axes</span></span>
+<span id="cb59-6"><a href="figure-2.html#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides=</span><span class="st">&quot;tl&quot;</span>, <span class="at">color =</span> clr_ticks, <span class="at">size =</span> plot_lwd) <span class="sc">+</span></span>
+<span id="cb59-7"><a href="figure-2.html#cb59-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add the msmc data as lines</span></span>
+<span id="cb59-8"><a href="figure-2.html#cb59-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> .<span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb59-9"><a href="figure-2.html#cb59-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set the color scheme</span></span>
+<span id="cb59-10"><a href="figure-2.html#cb59-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="cn">NULL</span>,</span>
+<span id="cb59-11"><a href="figure-2.html#cb59-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">values =</span> clr_alt, <span class="at">label =</span> sp_labs) <span class="sc">+</span></span>
+<span id="cb59-12"><a href="figure-2.html#cb59-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the x axis</span></span>
+<span id="cb59-13"><a href="figure-2.html#cb59-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),</span>
+<span id="cb59-14"><a href="figure-2.html#cb59-14" aria-hidden="true" tabindex="-1"></a>                <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">10</span><span class="sc">^</span><span class="dv">3</span>, <span class="dv">10</span><span class="sc">^</span><span class="dv">4</span>, <span class="dv">10</span><span class="sc">^</span><span class="dv">5</span>),</span>
+<span id="cb59-15"><a href="figure-2.html#cb59-15" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="st">&#39;top&#39;</span>,</span>
+<span id="cb59-16"><a href="figure-2.html#cb59-16" aria-hidden="true" tabindex="-1"></a>                <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">trans_format</span>(<span class="st">&quot;log10&quot;</span>, scales<span class="sc">::</span><span class="fu">math_format</span>(<span class="dv">10</span><span class="sc">^</span>.x))</span>
+<span id="cb59-17"><a href="figure-2.html#cb59-17" aria-hidden="true" tabindex="-1"></a>                <span class="co">#labels = c(&quot;1-3 kya&quot;, &quot;10-30 kya&quot;, &quot;100-300 kya&quot;),</span></span>
+<span id="cb59-18"><a href="figure-2.html#cb59-18" aria-hidden="true" tabindex="-1"></a>                <span class="co">#name = &quot;Years Before Present&quot;</span></span>
+<span id="cb59-19"><a href="figure-2.html#cb59-19" aria-hidden="true" tabindex="-1"></a>                ) <span class="sc">+</span></span>
+<span id="cb59-20"><a href="figure-2.html#cb59-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the y axis</span></span>
+<span id="cb59-21"><a href="figure-2.html#cb59-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">trans_format</span>(<span class="st">&quot;log10&quot;</span>, scales<span class="sc">::</span><span class="fu">math_format</span>(<span class="dv">10</span><span class="sc">^</span>.x)),</span>
+<span id="cb59-22"><a href="figure-2.html#cb59-22" aria-hidden="true" tabindex="-1"></a>                <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">10</span><span class="sc">^</span><span class="dv">3</span>,<span class="dv">10</span><span class="sc">^</span><span class="dv">4</span>,<span class="dv">10</span><span class="sc">^</span><span class="dv">5</span>,<span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>)) <span class="sc">+</span></span>
+<span id="cb59-23"><a href="figure-2.html#cb59-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the color legend</span></span>
+<span id="cb59-24"><a href="figure-2.html#cb59-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">title.position =</span> <span class="st">&quot;top&quot;</span>,</span>
+<span id="cb59-25"><a href="figure-2.html#cb59-25" aria-hidden="true" tabindex="-1"></a>                               <span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">size=</span><span class="dv">1</span>),</span>
+<span id="cb59-26"><a href="figure-2.html#cb59-26" aria-hidden="true" tabindex="-1"></a>                               <span class="at">nrow =</span> <span class="dv">3</span>,</span>
+<span id="cb59-27"><a href="figure-2.html#cb59-27" aria-hidden="true" tabindex="-1"></a>                               <span class="at">keywidth =</span> <span class="fu">unit</span>(<span class="dv">7</span>, <span class="st">&quot;pt&quot;</span>),</span>
+<span id="cb59-28"><a href="figure-2.html#cb59-28" aria-hidden="true" tabindex="-1"></a>                               <span class="at">byrow =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span></span>
+<span id="cb59-29"><a href="figure-2.html#cb59-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set the axis titles</span></span>
+<span id="cb59-30"><a href="figure-2.html#cb59-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Generations Before Present&quot;</span>,</span>
+<span id="cb59-31"><a href="figure-2.html#cb59-31" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">expression</span>(Effective<span class="sc">~</span>Population<span class="sc">~</span>Size<span class="sc">~</span>(<span class="fu">italic</span>(N[e])))) <span class="sc">+</span></span>
+<span id="cb59-32"><a href="figure-2.html#cb59-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set plot range</span></span>
+<span id="cb59-33"><a href="figure-2.html#cb59-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">250</span>, <span class="dv">5</span><span class="sc">*</span><span class="dv">10</span><span class="sc">^</span><span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb59-34"><a href="figure-2.html#cb59-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tune plot appreance</span></span>
+<span id="cb59-35"><a href="figure-2.html#cb59-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb59-36"><a href="figure-2.html#cb59-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size),</span>
+<span id="cb59-37"><a href="figure-2.html#cb59-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> clr_ticks),</span>
+<span id="cb59-38"><a href="figure-2.html#cb59-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">1.05</span>,<span class="sc">-</span>.<span class="dv">175</span>),</span>
+<span id="cb59-39"><a href="figure-2.html#cb59-39" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),</span>
+<span id="cb59-40"><a href="figure-2.html#cb59-40" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text.align =</span> <span class="dv">0</span>,</span>
+<span id="cb59-41"><a href="figure-2.html#cb59-41" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb59-42"><a href="figure-2.html#cb59-42" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb59-43"><a href="figure-2.html#cb59-43" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;bold&#39;</span>),</span>
+<span id="cb59-44"><a href="figure-2.html#cb59-44" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.spacing.y =</span> <span class="fu">unit</span>(<span class="sc">-</span><span class="dv">5</span>,<span class="st">&quot;pt&quot;</span>),</span>
+<span id="cb59-45"><a href="figure-2.html#cb59-45" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.spacing.x =</span> <span class="fu">unit</span>(<span class="dv">3</span>, <span class="st">&quot;pt&quot;</span>),</span>
+<span id="cb59-46"><a href="figure-2.html#cb59-46" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;plain&#39;</span>),</span>
+<span id="cb59-47"><a href="figure-2.html#cb59-47" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   axis.text.x = element_blank(),</span></span>
+<span id="cb59-48"><a href="figure-2.html#cb59-48" aria-hidden="true" tabindex="-1"></a><span class="co">#        axis.title.x = element_blank(),</span></span>
+<span id="cb59-49"><a href="figure-2.html#cb59-49" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;plain&#39;</span>))</span></code></pre></div>
+<p><img src="plot_F2_files/figure-html/unnamed-chunk-9-1.png" width="329.28" style="display: block; margin: auto;" /></p>
 <p>The second panel containing the cross-coalescence is created.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="figure-2.html#cb43-1"></a>p_cc &lt;-<span class="st"> </span>cc_data <span class="op">%&gt;%</span></span>
-<span id="cb43-2"><a href="figure-2.html#cb43-2"></a><span class="st">  </span><span class="co"># remove the two first and last time segments</span></span>
-<span id="cb43-3"><a href="figure-2.html#cb43-3"></a><span class="st">  </span><span class="kw">filter</span>( <span class="op">!</span>time_index <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">2</span>,<span class="dv">29</span><span class="op">:</span><span class="dv">31</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb43-4"><a href="figure-2.html#cb43-4"></a><span class="st">  </span><span class="kw">arrange</span>(run_nr) <span class="op">%&gt;%</span></span>
-<span id="cb43-5"><a href="figure-2.html#cb43-5"></a><span class="st">  </span><span class="co"># attach fst data</span></span>
-<span id="cb43-6"><a href="figure-2.html#cb43-6"></a><span class="st">  </span><span class="kw">left_join</span>(fst_globals <span class="op">%&gt;%</span></span>
-<span id="cb43-7"><a href="figure-2.html#cb43-7"></a><span class="st">              </span><span class="kw">select</span>(run, weighted_fst)) <span class="op">%&gt;%</span></span>
-<span id="cb43-8"><a href="figure-2.html#cb43-8"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> YBP, <span class="dt">y =</span> Cross_coal, <span class="dt">group =</span> run_nr, <span class="dt">color =</span> weighted_fst)) <span class="op">+</span></span>
-<span id="cb43-9"><a href="figure-2.html#cb43-9"></a><span class="st">  </span><span class="co"># add guides for the logarithmic axis</span></span>
-<span id="cb43-10"><a href="figure-2.html#cb43-10"></a><span class="st">  </span><span class="kw">annotation_logticks</span>(<span class="dt">sides=</span><span class="st">&quot;b&quot;</span>, <span class="dt">color =</span> clr_ticks) <span class="op">+</span></span>
-<span id="cb43-11"><a href="figure-2.html#cb43-11"></a><span class="st">  </span><span class="co"># add the msmc data as lines</span></span>
-<span id="cb43-12"><a href="figure-2.html#cb43-12"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">alpha =</span> <span class="fl">0.2</span>)<span class="op">+</span></span>
-<span id="cb43-13"><a href="figure-2.html#cb43-13"></a><span class="st">  </span><span class="co"># set the color scheme</span></span>
-<span id="cb43-14"><a href="figure-2.html#cb43-14"></a><span class="st">  </span><span class="kw">scale_color_gradientn</span>(<span class="dt">name =</span> <span class="kw">expression</span>(Global<span class="op">~</span>weighted<span class="op">~</span><span class="kw">italic</span>(F[ST])),</span>
-<span id="cb43-15"><a href="figure-2.html#cb43-15"></a>                        <span class="dt">colours =</span> hypogen<span class="op">::</span>hypo_clr_LGs[<span class="dv">1</span><span class="op">:</span><span class="dv">24</span>])<span class="op">+</span></span>
-<span id="cb43-16"><a href="figure-2.html#cb43-16"></a><span class="st">  </span><span class="co"># format the x axis</span></span>
-<span id="cb43-17"><a href="figure-2.html#cb43-17"></a><span class="st">  </span><span class="kw">scale_x_log10</span>(<span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),</span>
-<span id="cb43-18"><a href="figure-2.html#cb43-18"></a>                <span class="dt">labels =</span> scales<span class="op">::</span><span class="kw">trans_format</span>(<span class="st">&quot;log10&quot;</span>, scales<span class="op">::</span><span class="kw">math_format</span>(<span class="dv">10</span><span class="op">^</span>.x))) <span class="op">+</span></span>
-<span id="cb43-19"><a href="figure-2.html#cb43-19"></a><span class="st">  </span><span class="co"># set the axis titles</span></span>
-<span id="cb43-20"><a href="figure-2.html#cb43-20"></a><span class="st">  </span><span class="kw">guides</span>(<span class="dt">color =</span> <span class="kw">guide_colorbar</span>(<span class="dt">barheight =</span> <span class="kw">unit</span>(<span class="dv">7</span>, <span class="st">&#39;pt&#39;</span>),</span>
-<span id="cb43-21"><a href="figure-2.html#cb43-21"></a>                                <span class="dt">barwidth =</span> <span class="kw">unit</span>(<span class="dv">150</span>, <span class="st">&#39;pt&#39;</span>),</span>
-<span id="cb43-22"><a href="figure-2.html#cb43-22"></a>                                <span class="dt">title.position =</span> <span class="st">&#39;top&#39;</span>))<span class="op">+</span></span>
-<span id="cb43-23"><a href="figure-2.html#cb43-23"></a><span class="st">  </span><span class="co"># set the axis titles</span></span>
-<span id="cb43-24"><a href="figure-2.html#cb43-24"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Generations Before Present&quot;</span>,</span>
-<span id="cb43-25"><a href="figure-2.html#cb43-25"></a>       <span class="dt">y =</span> <span class="st">&#39;Cross-coalescence Rate&#39;</span>) <span class="op">+</span></span>
-<span id="cb43-26"><a href="figure-2.html#cb43-26"></a><span class="st">  </span><span class="co"># set plot range</span></span>
-<span id="cb43-27"><a href="figure-2.html#cb43-27"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">250</span>, <span class="dv">5</span><span class="op">*</span><span class="dv">10</span><span class="op">^</span><span class="dv">5</span>)) <span class="op">+</span></span>
-<span id="cb43-28"><a href="figure-2.html#cb43-28"></a><span class="st">  </span><span class="co"># tune plot appreance</span></span>
-<span id="cb43-29"><a href="figure-2.html#cb43-29"></a><span class="st">  </span><span class="kw">theme_minimal</span>()<span class="op">+</span></span>
-<span id="cb43-30"><a href="figure-2.html#cb43-30"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks =</span> <span class="kw">element_line</span>(<span class="dt">colour =</span> clr_ticks),</span>
-<span id="cb43-31"><a href="figure-2.html#cb43-31"></a>        <span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="dv">1</span>,.<span class="dv">03</span>),</span>
-<span id="cb43-32"><a href="figure-2.html#cb43-32"></a>        <span class="dt">legend.direction =</span> <span class="st">&#39;horizontal&#39;</span>,</span>
-<span id="cb43-33"><a href="figure-2.html#cb43-33"></a>        <span class="dt">legend.justification =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),</span>
-<span id="cb43-34"><a href="figure-2.html#cb43-34"></a>        <span class="dt">panel.grid.major.x =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb43-35"><a href="figure-2.html#cb43-35"></a>        <span class="dt">panel.grid.minor.y =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb43-36"><a href="figure-2.html#cb43-36"></a>        <span class="dt">title =</span> <span class="kw">element_text</span>(<span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>),</span>
-<span id="cb43-37"><a href="figure-2.html#cb43-37"></a>        <span class="dt">axis.title =</span> <span class="kw">element_text</span>(<span class="dt">face =</span> <span class="st">&#39;plain&#39;</span>),</span>
-<span id="cb43-38"><a href="figure-2.html#cb43-38"></a>        <span class="dt">legend.title =</span> <span class="kw">element_text</span>(<span class="dt">face =</span> <span class="st">&#39;plain&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="figure-2.html#cb60-1" aria-hidden="true" tabindex="-1"></a>p_cc <span class="ot">&lt;-</span> cc_data <span class="sc">%&gt;%</span></span>
+<span id="cb60-2"><a href="figure-2.html#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the two first and last time segments</span></span>
+<span id="cb60-3"><a href="figure-2.html#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( <span class="sc">!</span>time_index <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">29</span><span class="sc">:</span><span class="dv">31</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb60-4"><a href="figure-2.html#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(run_nr) <span class="sc">%&gt;%</span></span>
+<span id="cb60-5"><a href="figure-2.html#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># attach fst data</span></span>
+<span id="cb60-6"><a href="figure-2.html#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(fst_globals <span class="sc">%&gt;%</span></span>
+<span id="cb60-7"><a href="figure-2.html#cb60-7" aria-hidden="true" tabindex="-1"></a>              <span class="fu">select</span>(run, weighted_fst)) <span class="sc">%&gt;%</span></span>
+<span id="cb60-8"><a href="figure-2.html#cb60-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> YBP, <span class="at">y =</span> Cross_coal, <span class="at">group =</span> run_nr, <span class="at">color =</span> weighted_fst)) <span class="sc">+</span></span>
+<span id="cb60-9"><a href="figure-2.html#cb60-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add guides for the logarithmic axis</span></span>
+<span id="cb60-10"><a href="figure-2.html#cb60-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides=</span><span class="st">&quot;b&quot;</span>, <span class="at">color =</span> clr_ticks, <span class="at">size =</span> plot_lwd) <span class="sc">+</span></span>
+<span id="cb60-11"><a href="figure-2.html#cb60-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add the msmc data as lines</span></span>
+<span id="cb60-12"><a href="figure-2.html#cb60-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">size =</span> .<span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb60-13"><a href="figure-2.html#cb60-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set the color scheme</span></span>
+<span id="cb60-14"><a href="figure-2.html#cb60-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradientn</span>(<span class="at">name =</span> <span class="fu">expression</span>(Global<span class="sc">~</span>weighted<span class="sc">~</span><span class="fu">italic</span>(F[ST])),</span>
+<span id="cb60-15"><a href="figure-2.html#cb60-15" aria-hidden="true" tabindex="-1"></a>                        <span class="at">colours =</span> hypogen<span class="sc">::</span>hypo_clr_LGs[<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>])<span class="sc">+</span></span>
+<span id="cb60-16"><a href="figure-2.html#cb60-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the x axis</span></span>
+<span id="cb60-17"><a href="figure-2.html#cb60-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),</span>
+<span id="cb60-18"><a href="figure-2.html#cb60-18" aria-hidden="true" tabindex="-1"></a>                <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">trans_format</span>(<span class="st">&quot;log10&quot;</span>, scales<span class="sc">::</span><span class="fu">math_format</span>(<span class="dv">10</span><span class="sc">^</span>.x))) <span class="sc">+</span></span>
+<span id="cb60-19"><a href="figure-2.html#cb60-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set the axis titles</span></span>
+<span id="cb60-20"><a href="figure-2.html#cb60-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="fu">guide_colorbar</span>(<span class="at">barheight =</span> <span class="fu">unit</span>(<span class="dv">3</span>, <span class="st">&#39;pt&#39;</span>),</span>
+<span id="cb60-21"><a href="figure-2.html#cb60-21" aria-hidden="true" tabindex="-1"></a>                                <span class="at">barwidth =</span> <span class="fu">unit</span>(<span class="dv">110</span>, <span class="st">&#39;pt&#39;</span>),</span>
+<span id="cb60-22"><a href="figure-2.html#cb60-22" aria-hidden="true" tabindex="-1"></a>                                <span class="at">title.position =</span> <span class="st">&#39;top&#39;</span></span>
+<span id="cb60-23"><a href="figure-2.html#cb60-23" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb60-24"><a href="figure-2.html#cb60-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set the axis titles</span></span>
+<span id="cb60-25"><a href="figure-2.html#cb60-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Generations Before Present&quot;</span>,</span>
+<span id="cb60-26"><a href="figure-2.html#cb60-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&#39;Cross-coalescence Rate&#39;</span>) <span class="sc">+</span></span>
+<span id="cb60-27"><a href="figure-2.html#cb60-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set plot range</span></span>
+<span id="cb60-28"><a href="figure-2.html#cb60-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">250</span>, <span class="dv">5</span><span class="sc">*</span><span class="dv">10</span><span class="sc">^</span><span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb60-29"><a href="figure-2.html#cb60-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tune plot appreance</span></span>
+<span id="cb60-30"><a href="figure-2.html#cb60-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb60-31"><a href="figure-2.html#cb60-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size),</span>
+<span id="cb60-32"><a href="figure-2.html#cb60-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> clr_ticks),</span>
+<span id="cb60-33"><a href="figure-2.html#cb60-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="dv">1</span>,.<span class="dv">03</span>),</span>
+<span id="cb60-34"><a href="figure-2.html#cb60-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.direction =</span> <span class="st">&#39;horizontal&#39;</span>,</span>
+<span id="cb60-35"><a href="figure-2.html#cb60-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),</span>
+<span id="cb60-36"><a href="figure-2.html#cb60-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb60-37"><a href="figure-2.html#cb60-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb60-38"><a href="figure-2.html#cb60-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;bold&#39;</span>),</span>
+<span id="cb60-39"><a href="figure-2.html#cb60-39" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;plain&#39;</span>),</span>
+<span id="cb60-40"><a href="figure-2.html#cb60-40" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb60-41"><a href="figure-2.html#cb60-41" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb60-42"><a href="figure-2.html#cb60-42" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;plain&#39;</span>))</span></code></pre></div>
 <p>Then, the figure is composed from both panels.</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="figure-2.html#cb44-1"></a><span class="co"># combine panels a and b</span></span>
-<span id="cb44-2"><a href="figure-2.html#cb44-2"></a>p_done &lt;-<span class="st"> </span>p_msmc <span class="op">/</span><span class="st"> </span>p_cc <span class="op">+</span><span class="st"> </span><span class="kw">plot_annotation</span>(<span class="dt">tag_levels =</span> <span class="kw">c</span>(<span class="st">&#39;a&#39;</span>))</span></code></pre></div>
-<center>
-<img src="plot_F2_files/figure-html/unnamed-chunk-12-1.png" width="1065.6" />
-</center>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="figure-2.html#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine panels a and b</span></span>
+<span id="cb61-2"><a href="figure-2.html#cb61-2" aria-hidden="true" tabindex="-1"></a>p_done <span class="ot">&lt;-</span> p_msmc <span class="sc">/</span> </span>
+<span id="cb61-3"><a href="figure-2.html#cb61-3" aria-hidden="true" tabindex="-1"></a>  p_cc  <span class="sc">+</span></span>
+<span id="cb61-4"><a href="figure-2.html#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">tag_levels =</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>)) <span class="sc">&amp;</span> </span>
+<span id="cb61-5"><a href="figure-2.html#cb61-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="co">#legend.position = &quot;bottom&quot;, </span></span>
+<span id="cb61-6"><a href="figure-2.html#cb61-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size_small),</span>
+<span id="cb61-7"><a href="figure-2.html#cb61-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">0</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">l =</span> <span class="dv">0</span>, <span class="at">unit =</span> <span class="st">&quot;pt&quot;</span>),</span>
+<span id="cb61-8"><a href="figure-2.html#cb61-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">size =</span> plot_lwd),</span>
+<span id="cb61-9"><a href="figure-2.html#cb61-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb61-10"><a href="figure-2.html#cb61-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb61-11"><a href="figure-2.html#cb61-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<p><img src="plot_F2_files/figure-html/unnamed-chunk-12-1.png" width="329.28" style="display: block; margin: auto;" /></p>
 <p>Finally, we can export Figure 2.</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="figure-2.html#cb45-1"></a><span class="co"># export figure 2</span></span>
-<span id="cb45-2"><a href="figure-2.html#cb45-2"></a><span class="kw">hypo_save</span>(<span class="dt">plot =</span> p_done, <span class="dt">filename =</span> <span class="st">&#39;figures/F2.pdf&#39;</span>,</span>
-<span id="cb45-3"><a href="figure-2.html#cb45-3"></a>          <span class="dt">width =</span> <span class="dv">10</span>, <span class="dt">height =</span> <span class="dv">7</span>,</span>
-<span id="cb45-4"><a href="figure-2.html#cb45-4"></a>          <span class="dt">comment =</span> plot_comment,</span>
-<span id="cb45-5"><a href="figure-2.html#cb45-5"></a>          <span class="dt">device =</span> cairo_pdf)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="figure-2.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># export figure 2</span></span>
+<span id="cb62-2"><a href="figure-2.html#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hypo_save</span>(<span class="at">plot =</span> p_done, <span class="at">filename =</span> <span class="st">&#39;figures/F2.pdf&#39;</span>,</span>
+<span id="cb62-3"><a href="figure-2.html#cb62-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> f_width_half,</span>
+<span id="cb62-4"><a href="figure-2.html#cb62-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> f_width_half <span class="sc">*</span> .<span class="dv">95</span>,</span>
+<span id="cb62-5"><a href="figure-2.html#cb62-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">comment =</span> plot_comment,</span>
+<span id="cb62-6"><a href="figure-2.html#cb62-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">bg =</span> <span class="st">&quot;transparent&quot;</span>,</span>
+<span id="cb62-7"><a href="figure-2.html#cb62-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">device =</span> cairo_pdf)</span></code></pre></div>
 <hr />
 
 </div>

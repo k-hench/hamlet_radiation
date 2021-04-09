@@ -163,3 +163,168 @@ process compile_window_stats {
 	data %>% write_tsv("window_stats.tsv.gz")
 	"""
 }
+
+// ----------------------- DISCLAIMER ----------------------
+// from this point on, the following steps were not actually
+// run using nexflow, but manged manually
+// ---------------------------------------------------------
+
+// git 14.9
+Channel
+	.from{ 1, 2 }
+	.set{ revpomo_run_ch }
+
+// git 14.10
+process select_random_windows {
+	input:
+	set file( window_stats ), val( revpomo_run ) from final_ch.combine( revpomo_run_ch )
+
+	output:
+	set val( revpomo_run ), file( "5k1_80-80_${revpomo_run}.bed" ) into selected_windows_ch
+
+	script:
+	"""
+	Rscript --vanilla \$BASE_DIR/R/snp_density_ci.R ${window_stats} 5k1_80-80_${revpomo_run}.bed
+	"""
+}
+
+// git 14.11
+Channel
+	.fromPath("../../ressources/samples_155.txt")
+	.set{ 155file_ch }
+
+// git 14.12
+process extract_windows_from_genotypes {
+	input:
+	set val( revpomo_run ), file( bed ), file( 155file ) from selected_windows_ch.combine( 155file_ch )
+
+	// output:
+
+	script:
+	"""
+	for i in {01..24} ; do 
+		vcftools \
+			--gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG\$i.vcf.gz \
+			--bed ${bed} \
+			--remove-indels \
+			--recode \
+			--out 5k1_80-80_${revpomo_run}.LG\$i;
+	done
+
+	## ---------------- ##
+	#  vcfs now merged?  #
+	## ---------------- ##
+
+	vcftools \
+		--vcf 5k1_80-80_1h.vcf \
+		--remove ${155file} \
+		--recode \
+		--out 5k1_80-80_${revpomo_run}h_155
+
+	# 5.3.4 Convert to fasta format (Python scripts available at https://github.com/simonhmartin/genomics_general)
+	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py -i 5k1_80-80_${revpomo_run}h_155.vcf > 5k1_80-80_${revpomo_run}h_155.geno
+
+	python \$SFTWR/genomics_general/genoToSeq.py \
+		-g 5k1_80-80_${revpomo_run}h_155.geno \
+		-s 5k1_80-80_${revpomo_run}h_155.fas \
+		-f fasta \
+		--splitPhased
+	
+	# 5.3.5 Reformat sample ids to provide population prefixes for cflib
+	sed -e 's/-/_/g' -e 's/>\(.*\)\([a-z]\{6\}\)_\([AB]\)/>\2-\1_\3/g' 5k1_80-80_${revpomo_run}h_155.fas > 5k1_80-80_${revpomo_run}h_155p.fas
+
+	# 5.3.6 Convert to allele frequency format
+	# (cflib library available at https://github.com/pomo-dev/cflib)
+	\$SFTWR/cflib/FastaToCounts.py 5k1_80-80_${revpomo_run}h_155p.fas 5k1_80-80_${revpomo_run}h_155pop.cf
+
+	# 5.3.7 IQTREE analysis under PoMo model
+	iqtree2 \
+		-T AUTO \
+		-s 5k1_80-80_${revpomo_run}h_155pop.cf \
+		-m HKY+F+P+N9+G4 \
+		-allnni \
+		-b 100
+
+	### I have never seen these output files I think
+	"""
+}
+
+// Region-specific phylogenies
+// ---------------------------
+
+// git 14.13
+// bundle allBP files and outlier table
+Channel
+  .fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG04.vcf.{gz,gz.tbi}")
+  .concat(Channel.fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG12.vcf.{gz,gz.tbi}"))
+  .concat(Channel.fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG12.vcf.{gz,gz.tbi}"))
+  .merge(Channel.from("LG04_1", "LG12_3", "LG12_4"))
+  .combine(Channel.fromPath("../../ressources/focal_outlier.tsv"))
+  .set{ vcf_lg_ch }
+
+// git 14.14
+// toggle sample modes (with/without serranus outgroup)
+Channel.fromPath("../../ressources/samples_155.txt")
+  .concat(Channel.fromPath("../../ressources/samples_hybrids.txt"))
+  .merge(Channel.from("155", "hyS"))
+  .set{ sample_mode_ch }
+
+// git 14.15
+process extract_regions {
+	publishDir "../../2_analysis/revpomo/", mode: 'copy' 
+	
+	input:
+	set val( vcfIdx ), file( vcf ), val( outlierId ), file( outlier_file ), file( sample_file ), val( sample_mode ) from vcf_lg_ch.combine( sample_mode_ch )
+
+	output:
+	file( "*_pop.cf.treefile" ) into pomo_results_ch
+
+	script:
+	"""
+	# 6.1.1 Extract regions of interest from genotype data (allBP),
+	# remove hybrid / Serranus samples and indels; simplify headers
+
+	head -n 1 ${outlier_file} | cut -f 1-3 > outlier.bed
+	grep ${outlierId} ${outlier_file} | cut -f 1-3 >> outlier.bed
+
+	OUT_ALT=\$(echo ${outlierId} | tr '[:upper:]' '[:lower:]' | sed 's/_/./')
+
+	vcftools --gzvcf \
+	  ${vcf[0]} \
+	  --bed outlier.bed \
+	  --remove-indels \
+	  --remove ${sample_file} \
+	  --recode \
+	  --stdout | \
+	  grep -v '##' > \${OUT_ALT}_${sample_mode}.vcf   # 113,099 / 146,663 / 97,653 sites
+
+	# 6.3.1 Convert to fasta format (Python scripts available at https://github.com/simonhmartin/genomics_general), picked up from 6.1.1 output
+	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py -i \${OUT_ALT}_${sample_mode}.vcf > \${OUT_ALT}_${sample_mode}.geno
+
+	python \$SFTWR/genomics_general/genoToSeq.py \
+		-g \${OUT_ALT}_${sample_mode}.geno \
+		-s \${OUT_ALT}_${sample_mode}.fas \
+		-f fasta \
+		--splitPhased
+	
+	# 6.3.2 Reformat sample ids to provide population prefixes for cflib
+	sed -e 's/-/_/g' -e 's/>\(.*\)\([a-z]\{6\}\)_\([AB]\)/>\2-\1_\3/g' \${OUT_ALT}_${sample_mode}.fas > \${OUT_ALT}_${sample_mode}_p.fas
+
+	# 6.3.3 Convert to allele frequency format (cflib library available at https://github.com/pomo-dev/cflib)
+	\$SFTWR/cflib/FastaToCounts.py \${OUT_ALT}_${sample_mode}_p.fas \${OUT_ALT}_${sample_mode}_pop.cf
+
+	# 6.3.4 IQTREE analysis under PoMo model
+	iqtree2 \
+		-nt 16 \
+		-s \${OUT_ALT}_${sample_mode}_pop.cf \
+		-m HKY+F+P+N9+G4 \
+		-b 100 \
+		--tbe
+	"""
+}
+
+// revpomo open questions
+// --------------------
+// file snp_density_ed.R needed
+// what does "VCF headers were simplified" mean (# 5.3.4)
+// revpomo whg never seen

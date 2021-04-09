@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>15 Figure 3 | Script repository</title>
+  <title>19 Figure 3 | Script repository</title>
   <meta name="description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, McMillan an Puebla" />
   <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="15 Figure 3 | Script repository" />
+  <meta property="og:title" content="19 Figure 3 | Script repository" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="k-hench/bookdown" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="15 Figure 3 | Script repository" />
+  <meta name="twitter:title" content="19 Figure 3 | Script repository" />
   
   <meta name="twitter:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, McMillan an Puebla" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench" />
 
 
-<meta name="date" content="2020-06-29" />
+<meta name="date" content="2021-04-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,6 +33,7 @@
   
 <link rel="prev" href="figure-2.html"/>
 <link rel="next" href="figure-4.html"/>
+<script src="libs/header-attrs-2.7.6/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -50,7 +51,7 @@
 
 
 
-<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
 <script src="libs/d3-5.7.0/d3.min.js"></script>
 <script src="libs/d3-lasso-0.0.5/d3-lasso.min.js"></script>
 <link href="libs/ggiraphjs-0.2.0/styles.css" rel="stylesheet" />
@@ -60,18 +61,17 @@
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -91,7 +91,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -140,164 +140,277 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://github.com/k-hench/chapter2">github repository</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Intro</a><ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Intro</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#analysis"><i class="fa fa-check"></i><b>1.1</b> Analysis</a></li>
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#prerequesites"><i class="fa fa-check"></i><b>1.2</b> Prerequesites</a></li>
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#figures"><i class="fa fa-check"></i><b>1.3</b> Figures</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html"><i class="fa fa-check"></i><b>2</b> (git 1) Genotyping I (SNPs only)</a><ul>
+<li class="chapter" data-level="2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html"><i class="fa fa-check"></i><b>2</b> (git 1) Genotyping I (SNPs only)</a>
+<ul>
 <li class="chapter" data-level="2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#summary"><i class="fa fa-check"></i><b>2.1</b> Summary</a></li>
-<li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a><ul>
+<li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a>
+<ul>
 <li class="chapter" data-level="2.2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#data-preparation"><i class="fa fa-check"></i><b>2.2.1</b> Data preparation</a></li>
 <li class="chapter" data-level="2.2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#genotying"><i class="fa fa-check"></i><b>2.2.2</b> Genotying</a></li>
 <li class="chapter" data-level="2.2.3" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#phasing"><i class="fa fa-check"></i><b>2.2.3</b> Phasing</a></li>
 <li class="chapter" data-level="2.2.4" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#indel-masks"><i class="fa fa-check"></i><b>2.2.4</b> Indel masks</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a><ul>
+<li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a>
+<ul>
 <li class="chapter" data-level="3.1" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#summary-1"><i class="fa fa-check"></i><b>3.1</b> Summary</a></li>
-<li class="chapter" data-level="3.2" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#details-of-genotyping_all_basepairs.nf"><i class="fa fa-check"></i><b>3.2</b> Details of <code>genotyping_all_basepairs.nf</code></a><ul>
+<li class="chapter" data-level="3.2" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#details-of-genotyping_all_basepairs.nf"><i class="fa fa-check"></i><b>3.2</b> Details of <code>genotyping_all_basepairs.nf</code></a>
+<ul>
 <li class="chapter" data-level="3.2.1" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#data-preparation-1"><i class="fa fa-check"></i><b>3.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html"><i class="fa fa-check"></i><b>4</b> (git 3) Analysis I (<i>F<sub>ST</sub></i> &amp; GxP)</a><ul>
+<li class="chapter" data-level="4" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html"><i class="fa fa-check"></i><b>4</b> (git 3) Analysis I (<i>F<sub>ST</sub></i> &amp; GxP)</a>
+<ul>
 <li class="chapter" data-level="4.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#summary-2"><i class="fa fa-check"></i><b>4.1</b> Summary</a></li>
-<li class="chapter" data-level="4.2" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#details-of-analysis_fst_gxp.nf"><i class="fa fa-check"></i><b>4.2</b> Details of <code>analysis_fst_gxp.nf</code></a><ul>
+<li class="chapter" data-level="4.2" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#details-of-analysis_fst_gxp.nf"><i class="fa fa-check"></i><b>4.2</b> Details of <code>analysis_fst_gxp.nf</code></a>
+<ul>
 <li class="chapter" data-level="4.2.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#setup"><i class="fa fa-check"></i><b>4.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a><ul>
+<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a>
+<ul>
 <li class="chapter" data-level="5.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
-<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a><ul>
+<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a>
+<ul>
 <li class="chapter" data-level="5.2.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html"><i class="fa fa-check"></i><b>6</b> (git 5) Analysis III (phylogeny &amp; topology weighting)</a><ul>
+<li class="chapter" data-level="6" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html"><i class="fa fa-check"></i><b>6</b> (git 5) Analysis III (phylogeny &amp; topology weighting)</a>
+<ul>
 <li class="chapter" data-level="6.1" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#summary-4"><i class="fa fa-check"></i><b>6.1</b> Summary</a></li>
-<li class="chapter" data-level="6.2" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#details-of-analysis_fasttree_twisst.nf"><i class="fa fa-check"></i><b>6.2</b> Details of <code>analysis_fasttree_twisst.nf</code></a><ul>
+<li class="chapter" data-level="6.2" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#details-of-analysis_fasttree_twisst.nf"><i class="fa fa-check"></i><b>6.2</b> Details of <code>analysis_fasttree_twisst.nf</code></a>
+<ul>
 <li class="chapter" data-level="6.2.1" data-path="git-5-analysis-iii-phylogeny-topology-weighting.html"><a href="git-5-analysis-iii-phylogeny-topology-weighting.html#setup-1"><i class="fa fa-check"></i><b>6.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> (git 6) Analysis IV (rho)</a><ul>
+<li class="chapter" data-level="7" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> (git 6) Analysis IV (rho)</a>
+<ul>
 <li class="chapter" data-level="7.1" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#summary-5"><i class="fa fa-check"></i><b>7.1</b> Summary</a></li>
-<li class="chapter" data-level="7.2" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#details-of-analysis_recombination.nf"><i class="fa fa-check"></i><b>7.2</b> Details of <code>analysis_recombination.nf</code></a><ul>
+<li class="chapter" data-level="7.2" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#details-of-analysis_recombination.nf"><i class="fa fa-check"></i><b>7.2</b> Details of <code>analysis_recombination.nf</code></a>
+<ul>
 <li class="chapter" data-level="7.2.1" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#data-preparation-3"><i class="fa fa-check"></i><b>7.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html"><i class="fa fa-check"></i><b>8</b> (git 7) Analysis V (poptrees)</a><ul>
+<li class="chapter" data-level="8" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html"><i class="fa fa-check"></i><b>8</b> (git 7) Analysis V (poptrees)</a>
+<ul>
 <li class="chapter" data-level="8.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#summary-6"><i class="fa fa-check"></i><b>8.1</b> Summary</a></li>
-<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_fst_poptree.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_fst_poptree.nf</code></a><ul>
+<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#details-of-analysis_fst_poptree.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_fst_poptree.nf</code></a>
+<ul>
 <li class="chapter" data-level="8.2.1" data-path="git-7-analysis-v-poptrees.html"><a href="git-7-analysis-v-poptrees.html#data-preparation-4"><i class="fa fa-check"></i><b>8.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html"><i class="fa fa-check"></i><b>9</b> (git 8) Analysis VI (Demographic History)</a><ul>
+<li class="chapter" data-level="9" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html"><i class="fa fa-check"></i><b>9</b> (git 8) Analysis VI (Demographic History)</a>
+<ul>
 <li class="chapter" data-level="9.1" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#summary-7"><i class="fa fa-check"></i><b>9.1</b> Summary</a></li>
-<li class="chapter" data-level="9.2" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#details-of-analysis_msmc.nf"><i class="fa fa-check"></i><b>9.2</b> Details of <code>analysis_msmc.nf</code></a><ul>
+<li class="chapter" data-level="9.2" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#details-of-analysis_msmc.nf"><i class="fa fa-check"></i><b>9.2</b> Details of <code>analysis_msmc.nf</code></a>
+<ul>
 <li class="chapter" data-level="9.2.1" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#data-preparation-5"><i class="fa fa-check"></i><b>9.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html"><i class="fa fa-check"></i><b>10</b> (git 9) Analysis VII (hybridization)</a><ul>
+<li class="chapter" data-level="10" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html"><i class="fa fa-check"></i><b>10</b> (git 9) Analysis VII (hybridization)</a>
+<ul>
 <li class="chapter" data-level="10.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#summary-8"><i class="fa fa-check"></i><b>10.1</b> Summary</a></li>
-<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_hybridization.nf"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_hybridization.nf</code></a><ul>
+<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_hybridization.nf"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_hybridization.nf</code></a>
+<ul>
 <li class="chapter" data-level="10.2.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#data-preparation-6"><i class="fa fa-check"></i><b>10.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html"><i class="fa fa-check"></i><b>11</b> (git 10) Analysis VIII (admixture)</a><ul>
+<li class="chapter" data-level="11" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html"><i class="fa fa-check"></i><b>11</b> (git 10) Analysis VIII (admixture)</a>
+<ul>
 <li class="chapter" data-level="11.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#summary-9"><i class="fa fa-check"></i><b>11.1</b> Summary</a></li>
-<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_admixture.nf"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_admixture.nf</code></a><ul>
+<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_admixture.nf"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_admixture.nf</code></a>
+<ul>
 <li class="chapter" data-level="11.2.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#data-preparation-7"><i class="fa fa-check"></i><b>11.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="git-11-visualization.html"><a href="git-11-visualization.html"><i class="fa fa-check"></i><b>12</b> (git 11) Visualization</a></li>
-<li class="chapter" data-level="13" data-path="figure-1.html"><a href="figure-1.html"><i class="fa fa-check"></i><b>13</b> Figure 1</a><ul>
-<li class="chapter" data-level="13.1" data-path="figure-1.html"><a href="figure-1.html#summary-10"><i class="fa fa-check"></i><b>13.1</b> Summary</a></li>
-<li class="chapter" data-level="13.2" data-path="figure-1.html"><a href="figure-1.html#details-of-plot_f1.r"><i class="fa fa-check"></i><b>13.2</b> Details of <code>plot_F1.R</code></a><ul>
-<li class="chapter" data-level="13.2.1" data-path="figure-1.html"><a href="figure-1.html#config"><i class="fa fa-check"></i><b>13.2.1</b> Config</a></li>
-<li class="chapter" data-level="13.2.2" data-path="figure-1.html"><a href="figure-1.html#data-import"><i class="fa fa-check"></i><b>13.2.2</b> Data import</a></li>
-<li class="chapter" data-level="13.2.3" data-path="figure-1.html"><a href="figure-1.html#plotting"><i class="fa fa-check"></i><b>13.2.3</b> Plotting</a></li>
-<li class="chapter" data-level="13.2.4" data-path="figure-1.html"><a href="figure-1.html#table-export"><i class="fa fa-check"></i><b>13.2.4</b> Table export</a></li>
+<li class="chapter" data-level="12" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html"><i class="fa fa-check"></i><b>12</b> (git 11) Analysis IX (Allele Age)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#summary-10"><i class="fa fa-check"></i><b>12.1</b> Summary</a></li>
+<li class="chapter" data-level="12.2" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#details-of-analysis_allele_age.nf"><i class="fa fa-check"></i><b>12.2</b> Details of <code>analysis_allele_age.nf</code></a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#setup-2"><i class="fa fa-check"></i><b>12.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="figure-2.html"><a href="figure-2.html"><i class="fa fa-check"></i><b>14</b> Figure 2</a><ul>
-<li class="chapter" data-level="14.1" data-path="figure-2.html"><a href="figure-2.html#summary-11"><i class="fa fa-check"></i><b>14.1</b> Summary</a></li>
-<li class="chapter" data-level="14.2" data-path="figure-2.html"><a href="figure-2.html#details-of-plot_f2.r"><i class="fa fa-check"></i><b>14.2</b> Details of <code>plot_F2.R</code></a><ul>
-<li class="chapter" data-level="14.2.1" data-path="figure-2.html"><a href="figure-2.html#config-1"><i class="fa fa-check"></i><b>14.2.1</b> Config</a></li>
+<li class="chapter" data-level="13" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html"><i class="fa fa-check"></i><b>13</b> (git 12) Analysis X (<i>F<sub>ST</sub></i> Permutation Test)</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#summary-11"><i class="fa fa-check"></i><b>13.1</b> Summary</a></li>
+<li class="chapter" data-level="13.2" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#details-of-analysis_fst_sign.nf"><i class="fa fa-check"></i><b>13.2</b> Details of <code>analysis_fst_sign.nf</code></a>
+<ul>
+<li class="chapter" data-level="13.2.1" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#setup-3"><i class="fa fa-check"></i><b>13.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="15" data-path="figure-3.html"><a href="figure-3.html"><i class="fa fa-check"></i><b>15</b> Figure 3</a><ul>
-<li class="chapter" data-level="15.1" data-path="figure-3.html"><a href="figure-3.html#summary-12"><i class="fa fa-check"></i><b>15.1</b> Summary</a></li>
-<li class="chapter" data-level="15.2" data-path="figure-3.html"><a href="figure-3.html#details-of-plot_f3.r"><i class="fa fa-check"></i><b>15.2</b> Details of <code>plot_F3.R</code></a><ul>
-<li class="chapter" data-level="15.2.1" data-path="figure-3.html"><a href="figure-3.html#config-2"><i class="fa fa-check"></i><b>15.2.1</b> Config</a></li>
+<li class="chapter" data-level="14" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html"><i class="fa fa-check"></i><b>14</b> (git 13) Analysis XI (Principal Component Analysis)</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html#summary-12"><i class="fa fa-check"></i><b>14.1</b> Summary</a></li>
+<li class="chapter" data-level="14.2" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html#details-of-analysis_pca.nf"><i class="fa fa-check"></i><b>14.2</b> Details of <code>analysis_pca.nf</code></a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="git-13-analysis-xi-principal-component-analysis.html"><a href="git-13-analysis-xi-principal-component-analysis.html#setup-4"><i class="fa fa-check"></i><b>14.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="16" data-path="figure-4.html"><a href="figure-4.html"><i class="fa fa-check"></i><b>16</b> Figure 4</a><ul>
-<li class="chapter" data-level="16.1" data-path="figure-4.html"><a href="figure-4.html#summary-13"><i class="fa fa-check"></i><b>16.1</b> Summary</a></li>
-<li class="chapter" data-level="16.2" data-path="figure-4.html"><a href="figure-4.html#details-of-plot_f4.r"><i class="fa fa-check"></i><b>16.2</b> Details of <code>plot_F4.R</code></a><ul>
-<li class="chapter" data-level="16.2.1" data-path="figure-4.html"><a href="figure-4.html#config-3"><i class="fa fa-check"></i><b>16.2.1</b> Config</a></li>
-<li class="chapter" data-level="16.2.2" data-path="figure-4.html"><a href="figure-4.html#data-import-1"><i class="fa fa-check"></i><b>16.2.2</b> Data import</a></li>
-<li class="chapter" data-level="16.2.3" data-path="figure-4.html"><a href="figure-4.html#plotting-1"><i class="fa fa-check"></i><b>16.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="15" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html"><i class="fa fa-check"></i><b>15</b> (git 14) Analysis XI (revPoMo Phylogenies)</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html#summary-13"><i class="fa fa-check"></i><b>15.1</b> Summary</a></li>
+<li class="chapter" data-level="15.2" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html#details-of-analysis_revpomo.nf"><i class="fa fa-check"></i><b>15.2</b> Details of <code>analysis_revpomo.nf</code></a>
+<ul>
+<li class="chapter" data-level="15.2.1" data-path="git-14-analysis-xi-revpomo-phylogenies.html"><a href="git-14-analysis-xi-revpomo-phylogenies.html#setup-5"><i class="fa fa-check"></i><b>15.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="17" data-path="figure-5.html"><a href="figure-5.html"><i class="fa fa-check"></i><b>17</b> Figure 5</a><ul>
-<li class="chapter" data-level="17.1" data-path="figure-5.html"><a href="figure-5.html#summary-14"><i class="fa fa-check"></i><b>17.1</b> Summary</a></li>
-<li class="chapter" data-level="17.2" data-path="figure-5.html"><a href="figure-5.html#details-of-plot_f5.r"><i class="fa fa-check"></i><b>17.2</b> Details of <code>plot_F5.R</code></a><ul>
-<li class="chapter" data-level="17.2.1" data-path="figure-5.html"><a href="figure-5.html#config-4"><i class="fa fa-check"></i><b>17.2.1</b> Config</a></li>
-<li class="chapter" data-level="17.2.2" data-path="figure-5.html"><a href="figure-5.html#data-import-2"><i class="fa fa-check"></i><b>17.2.2</b> Data import</a></li>
-<li class="chapter" data-level="17.2.3" data-path="figure-5.html"><a href="figure-5.html#plotting-2"><i class="fa fa-check"></i><b>17.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="16" data-path="git-1x-visualization.html"><a href="git-1x-visualization.html"><i class="fa fa-check"></i><b>16</b> (<span style="color:red;">git 1X</span>) Visualization</a></li>
+<li class="chapter" data-level="17" data-path="figure-1.html"><a href="figure-1.html"><i class="fa fa-check"></i><b>17</b> Figure 1</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="figure-1.html"><a href="figure-1.html#summary-14"><i class="fa fa-check"></i><b>17.1</b> Summary</a></li>
+<li class="chapter" data-level="17.2" data-path="figure-1.html"><a href="figure-1.html#details-of-plot_f1.r"><i class="fa fa-check"></i><b>17.2</b> Details of <code>plot_F1.R</code></a>
+<ul>
+<li class="chapter" data-level="17.2.1" data-path="figure-1.html"><a href="figure-1.html#config"><i class="fa fa-check"></i><b>17.2.1</b> Config</a></li>
+<li class="chapter" data-level="17.2.2" data-path="figure-1.html"><a href="figure-1.html#data-import"><i class="fa fa-check"></i><b>17.2.2</b> Data import</a></li>
+<li class="chapter" data-level="17.2.3" data-path="figure-1.html"><a href="figure-1.html#plotting"><i class="fa fa-check"></i><b>17.2.3</b> Plotting</a></li>
+<li class="chapter" data-level="17.2.4" data-path="figure-1.html"><a href="figure-1.html#table-export"><i class="fa fa-check"></i><b>17.2.4</b> Table export</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="18" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html"><i class="fa fa-check"></i><b>18</b> Supplementary Figure 1</a><ul>
-<li class="chapter" data-level="18.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#summary-15"><i class="fa fa-check"></i><b>18.1</b> Summary</a></li>
-<li class="chapter" data-level="18.2" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#details-of-plot_sf1.r"><i class="fa fa-check"></i><b>18.2</b> Details of <code>plot_SF1.R</code></a><ul>
-<li class="chapter" data-level="18.2.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#config-5"><i class="fa fa-check"></i><b>18.2.1</b> Config</a></li>
+<li class="chapter" data-level="18" data-path="figure-2.html"><a href="figure-2.html"><i class="fa fa-check"></i><b>18</b> Figure 2</a>
+<ul>
+<li class="chapter" data-level="18.1" data-path="figure-2.html"><a href="figure-2.html#summary-15"><i class="fa fa-check"></i><b>18.1</b> Summary</a></li>
+<li class="chapter" data-level="18.2" data-path="figure-2.html"><a href="figure-2.html#details-of-plot_f2.r"><i class="fa fa-check"></i><b>18.2</b> Details of <code>plot_F2.R</code></a>
+<ul>
+<li class="chapter" data-level="18.2.1" data-path="figure-2.html"><a href="figure-2.html#config-1"><i class="fa fa-check"></i><b>18.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="19" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html"><i class="fa fa-check"></i><b>19</b> Supplementary Figure 2</a><ul>
-<li class="chapter" data-level="19.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#summary-16"><i class="fa fa-check"></i><b>19.1</b> Summary</a></li>
-<li class="chapter" data-level="19.2" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#details-of-plot_sf2.r"><i class="fa fa-check"></i><b>19.2</b> Details of <code>plot_SF2.R</code></a><ul>
-<li class="chapter" data-level="19.2.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#config-6"><i class="fa fa-check"></i><b>19.2.1</b> Config</a></li>
+<li class="chapter" data-level="19" data-path="figure-3.html"><a href="figure-3.html"><i class="fa fa-check"></i><b>19</b> Figure 3</a>
+<ul>
+<li class="chapter" data-level="19.1" data-path="figure-3.html"><a href="figure-3.html#summary-16"><i class="fa fa-check"></i><b>19.1</b> Summary</a></li>
+<li class="chapter" data-level="19.2" data-path="figure-3.html"><a href="figure-3.html#details-of-plot_f3.r"><i class="fa fa-check"></i><b>19.2</b> Details of <code>plot_F3.R</code></a>
+<ul>
+<li class="chapter" data-level="19.2.1" data-path="figure-3.html"><a href="figure-3.html#config-2"><i class="fa fa-check"></i><b>19.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="20" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html"><i class="fa fa-check"></i><b>20</b> Supplementary Figure 3</a><ul>
-<li class="chapter" data-level="20.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#summary-17"><i class="fa fa-check"></i><b>20.1</b> Summary</a></li>
-<li class="chapter" data-level="20.2" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#details-of-plot_sf3.r"><i class="fa fa-check"></i><b>20.2</b> Details of <code>plot_SF3.R</code></a><ul>
-<li class="chapter" data-level="20.2.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#config-7"><i class="fa fa-check"></i><b>20.2.1</b> Config</a></li>
+<li class="chapter" data-level="20" data-path="figure-4.html"><a href="figure-4.html"><i class="fa fa-check"></i><b>20</b> Figure 4</a>
+<ul>
+<li class="chapter" data-level="20.1" data-path="figure-4.html"><a href="figure-4.html#summary-17"><i class="fa fa-check"></i><b>20.1</b> Summary</a></li>
+<li class="chapter" data-level="20.2" data-path="figure-4.html"><a href="figure-4.html#details-of-plot_f4.r"><i class="fa fa-check"></i><b>20.2</b> Details of <code>plot_F4.R</code></a>
+<ul>
+<li class="chapter" data-level="20.2.1" data-path="figure-4.html"><a href="figure-4.html#config-3"><i class="fa fa-check"></i><b>20.2.1</b> Config</a></li>
+<li class="chapter" data-level="20.2.2" data-path="figure-4.html"><a href="figure-4.html#data-import-1"><i class="fa fa-check"></i><b>20.2.2</b> Data import</a></li>
+<li class="chapter" data-level="20.2.3" data-path="figure-4.html"><a href="figure-4.html#plotting-1"><i class="fa fa-check"></i><b>20.2.3</b> Plotting</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="21" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html"><i class="fa fa-check"></i><b>21</b> Supplementary Figure 4</a><ul>
-<li class="chapter" data-level="21.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#summary-18"><i class="fa fa-check"></i><b>21.1</b> Summary</a></li>
-<li class="chapter" data-level="21.2" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#details-of-plot_sf4.r"><i class="fa fa-check"></i><b>21.2</b> Details of <code>plot_SF4.R</code></a><ul>
-<li class="chapter" data-level="21.2.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#config-8"><i class="fa fa-check"></i><b>21.2.1</b> Config</a></li>
+<li class="chapter" data-level="21" data-path="figure-5.html"><a href="figure-5.html"><i class="fa fa-check"></i><b>21</b> Figure 5</a>
+<ul>
+<li class="chapter" data-level="21.1" data-path="figure-5.html"><a href="figure-5.html#summary-18"><i class="fa fa-check"></i><b>21.1</b> Summary</a></li>
+<li class="chapter" data-level="21.2" data-path="figure-5.html"><a href="figure-5.html#details-of-plot_f5.r"><i class="fa fa-check"></i><b>21.2</b> Details of <code>plot_F5.R</code></a>
+<ul>
+<li class="chapter" data-level="21.2.1" data-path="figure-5.html"><a href="figure-5.html#config-4"><i class="fa fa-check"></i><b>21.2.1</b> Config</a></li>
+<li class="chapter" data-level="21.2.2" data-path="figure-5.html"><a href="figure-5.html#data-import-2"><i class="fa fa-check"></i><b>21.2.2</b> Data import</a></li>
+<li class="chapter" data-level="21.2.3" data-path="figure-5.html"><a href="figure-5.html#plotting-2"><i class="fa fa-check"></i><b>21.2.3</b> Plotting</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="22" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html"><i class="fa fa-check"></i><b>22</b> Supplementary Figure 5</a><ul>
-<li class="chapter" data-level="22.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#summary-19"><i class="fa fa-check"></i><b>22.1</b> Summary</a></li>
-<li class="chapter" data-level="22.2" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#details-of-plot_sf5.r"><i class="fa fa-check"></i><b>22.2</b> Details of <code>plot_SF5.R</code></a><ul>
-<li class="chapter" data-level="22.2.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#config-9"><i class="fa fa-check"></i><b>22.2.1</b> Config</a></li>
+<li class="chapter" data-level="22" data-path="figure-6.html"><a href="figure-6.html"><i class="fa fa-check"></i><b>22</b> Figure 6</a>
+<ul>
+<li class="chapter" data-level="22.1" data-path="figure-6.html"><a href="figure-6.html#summary-19"><i class="fa fa-check"></i><b>22.1</b> Summary</a></li>
+<li class="chapter" data-level="22.2" data-path="figure-6.html"><a href="figure-6.html#details-of-plot_f6.r"><i class="fa fa-check"></i><b>22.2</b> Details of <code>plot_F6.R</code></a>
+<ul>
+<li class="chapter" data-level="22.2.1" data-path="figure-6.html"><a href="figure-6.html#config-5"><i class="fa fa-check"></i><b>22.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="23" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html"><i class="fa fa-check"></i><b>23</b> Supplementary Figure 6</a><ul>
-<li class="chapter" data-level="23.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#summary-20"><i class="fa fa-check"></i><b>23.1</b> Summary</a></li>
-<li class="chapter" data-level="23.2" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#details-of-plot_sf6.r"><i class="fa fa-check"></i><b>23.2</b> Details of <code>plot_SF6.R</code></a><ul>
-<li class="chapter" data-level="23.2.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#config-10"><i class="fa fa-check"></i><b>23.2.1</b> Config</a></li>
+<li class="chapter" data-level="23" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html"><i class="fa fa-check"></i><b>23</b> Supplementary Figure 1</a>
+<ul>
+<li class="chapter" data-level="23.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#summary-20"><i class="fa fa-check"></i><b>23.1</b> Summary</a></li>
+<li class="chapter" data-level="23.2" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#details-of-plot_sf1.r"><i class="fa fa-check"></i><b>23.2</b> Details of <code>plot_SF1.R</code></a>
+<ul>
+<li class="chapter" data-level="23.2.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#config-6"><i class="fa fa-check"></i><b>23.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="24" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html"><i class="fa fa-check"></i><b>24</b> Supplementary Figure 7</a><ul>
-<li class="chapter" data-level="24.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#summary-21"><i class="fa fa-check"></i><b>24.1</b> Summary</a></li>
-<li class="chapter" data-level="24.2" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#details-of-plot_sf7.r"><i class="fa fa-check"></i><b>24.2</b> Details of <code>plot_SF7.R</code></a><ul>
-<li class="chapter" data-level="24.2.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#config-11"><i class="fa fa-check"></i><b>24.2.1</b> Config</a></li>
+<li class="chapter" data-level="24" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html"><i class="fa fa-check"></i><b>24</b> Supplementary Figure 2</a>
+<ul>
+<li class="chapter" data-level="24.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#summary-21"><i class="fa fa-check"></i><b>24.1</b> Summary</a></li>
+<li class="chapter" data-level="24.2" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#details-of-plot_sf2.r"><i class="fa fa-check"></i><b>24.2</b> Details of <code>plot_SF2.R</code></a>
+<ul>
+<li class="chapter" data-level="24.2.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#config-7"><i class="fa fa-check"></i><b>24.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="25" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html"><i class="fa fa-check"></i><b>25</b> Supplementary Figure 8</a><ul>
-<li class="chapter" data-level="25.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#summary-22"><i class="fa fa-check"></i><b>25.1</b> Summary</a></li>
-<li class="chapter" data-level="25.2" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#details-of-plot_sf8.r"><i class="fa fa-check"></i><b>25.2</b> Details of <code>plot_SF8.R</code></a><ul>
-<li class="chapter" data-level="25.2.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#config-12"><i class="fa fa-check"></i><b>25.2.1</b> Config</a></li>
+<li class="chapter" data-level="25" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html"><i class="fa fa-check"></i><b>25</b> Supplementary Figure 3</a>
+<ul>
+<li class="chapter" data-level="25.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#summary-22"><i class="fa fa-check"></i><b>25.1</b> Summary</a></li>
+<li class="chapter" data-level="25.2" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#details-of-plot_sf3.r"><i class="fa fa-check"></i><b>25.2</b> Details of <code>plot_SF3.R</code></a>
+<ul>
+<li class="chapter" data-level="25.2.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#config-8"><i class="fa fa-check"></i><b>25.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="26" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html"><i class="fa fa-check"></i><b>26</b> Supplementary Figure 9</a><ul>
-<li class="chapter" data-level="26.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#summary-23"><i class="fa fa-check"></i><b>26.1</b> Summary</a></li>
-<li class="chapter" data-level="26.2" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#details-of-plot_sf9.r"><i class="fa fa-check"></i><b>26.2</b> Details of <code>plot_SF9.R</code></a><ul>
-<li class="chapter" data-level="26.2.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#config-13"><i class="fa fa-check"></i><b>26.2.1</b> Config</a></li>
+<li class="chapter" data-level="26" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html"><i class="fa fa-check"></i><b>26</b> Supplementary Figure 4</a>
+<ul>
+<li class="chapter" data-level="26.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#summary-23"><i class="fa fa-check"></i><b>26.1</b> Summary</a></li>
+<li class="chapter" data-level="26.2" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#details-of-plot_sf4.r"><i class="fa fa-check"></i><b>26.2</b> Details of <code>plot_SF4.R</code></a>
+<ul>
+<li class="chapter" data-level="26.2.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#config-9"><i class="fa fa-check"></i><b>26.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="27" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html"><i class="fa fa-check"></i><b>27</b> Supplementary Figure 5</a>
+<ul>
+<li class="chapter" data-level="27.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#summary-24"><i class="fa fa-check"></i><b>27.1</b> Summary</a></li>
+<li class="chapter" data-level="27.2" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#details-of-plot_sf5.r"><i class="fa fa-check"></i><b>27.2</b> Details of <code>plot_SF5.R</code></a>
+<ul>
+<li class="chapter" data-level="27.2.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#config-10"><i class="fa fa-check"></i><b>27.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="28" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html"><i class="fa fa-check"></i><b>28</b> Supplementary Figure 6</a>
+<ul>
+<li class="chapter" data-level="28.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#summary-25"><i class="fa fa-check"></i><b>28.1</b> Summary</a></li>
+<li class="chapter" data-level="28.2" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#details-of-plot_sf6.r"><i class="fa fa-check"></i><b>28.2</b> Details of <code>plot_SF6.R</code></a>
+<ul>
+<li class="chapter" data-level="28.2.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#config-11"><i class="fa fa-check"></i><b>28.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="29" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html"><i class="fa fa-check"></i><b>29</b> Supplementary Figure 7</a>
+<ul>
+<li class="chapter" data-level="29.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#summary-26"><i class="fa fa-check"></i><b>29.1</b> Summary</a></li>
+<li class="chapter" data-level="29.2" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#details-of-plot_sf7.r"><i class="fa fa-check"></i><b>29.2</b> Details of <code>plot_SF7.R</code></a>
+<ul>
+<li class="chapter" data-level="29.2.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#config-12"><i class="fa fa-check"></i><b>29.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="30" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html"><i class="fa fa-check"></i><b>30</b> Supplementary Figure 8</a>
+<ul>
+<li class="chapter" data-level="30.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#summary-27"><i class="fa fa-check"></i><b>30.1</b> Summary</a></li>
+<li class="chapter" data-level="30.2" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#details-of-plot_sf8.r"><i class="fa fa-check"></i><b>30.2</b> Details of <code>plot_SF8.R</code></a>
+<ul>
+<li class="chapter" data-level="30.2.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#config-13"><i class="fa fa-check"></i><b>30.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="31" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html"><i class="fa fa-check"></i><b>31</b> Supplementary Figure 9</a>
+<ul>
+<li class="chapter" data-level="31.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#summary-28"><i class="fa fa-check"></i><b>31.1</b> Summary</a></li>
+<li class="chapter" data-level="31.2" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#details-of-plot_sf9.r"><i class="fa fa-check"></i><b>31.2</b> Details of <code>plot_SF9.R</code></a>
+<ul>
+<li class="chapter" data-level="31.2.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#config-14"><i class="fa fa-check"></i><b>31.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="32" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html"><i class="fa fa-check"></i><b>32</b> Supplementary Figure 10</a>
+<ul>
+<li class="chapter" data-level="32.1" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#summary-29"><i class="fa fa-check"></i><b>32.1</b> Summary</a></li>
+<li class="chapter" data-level="32.2" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#details-of-plot_sf10.r"><i class="fa fa-check"></i><b>32.2</b> Details of <code>plot_SF10.R</code></a>
+<ul>
+<li class="chapter" data-level="32.2.1" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#config-15"><i class="fa fa-check"></i><b>32.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="33" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html"><i class="fa fa-check"></i><b>33</b> Supplementary Figure 11</a>
+<ul>
+<li class="chapter" data-level="33.1" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#summary-30"><i class="fa fa-check"></i><b>33.1</b> Summary</a></li>
+<li class="chapter" data-level="33.2" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#details-of-plot_sf11.r"><i class="fa fa-check"></i><b>33.2</b> Details of <code>plot_SF11.R</code></a>
+<ul>
+<li class="chapter" data-level="33.2.1" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#config-16"><i class="fa fa-check"></i><b>33.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="34" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html"><i class="fa fa-check"></i><b>34</b> Supplementary Figure 12</a>
+<ul>
+<li class="chapter" data-level="34.1" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#summary-31"><i class="fa fa-check"></i><b>34.1</b> Summary</a></li>
+<li class="chapter" data-level="34.2" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#details-of-plot_sf12.r"><i class="fa fa-check"></i><b>34.2</b> Details of <code>plot_SF12.R</code></a>
+<ul>
+<li class="chapter" data-level="34.2.1" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#config-17"><i class="fa fa-check"></i><b>34.2.1</b> Config</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -321,165 +434,177 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="figure-3" class="section level1">
-<h1><span class="header-section-number">15</span> Figure 3</h1>
-<div id="summary-12" class="section level2">
-<h2><span class="header-section-number">15.1</span> Summary</h2>
+<div id="figure-3" class="section level1" number="19">
+<h1><span class="header-section-number">19</span> Figure 3</h1>
+<div id="summary-16" class="section level2" number="19.1">
+<h2><span class="header-section-number">19.1</span> Summary</h2>
 <p>This is the accessory documentation of Figure 3.
 It should be possible to recreate the figure by running the <strong>R</strong> script <code>plot_F3.R</code>:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb46-1"><a href="figure-3.html#cb46-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb46-2"><a href="figure-3.html#cb46-2"></a></span>
-<span id="cb46-3"><a href="figure-3.html#cb46-3"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F3.R \</span>
-<span id="cb46-4"><a href="figure-3.html#cb46-4"></a>   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb63-1"><a href="figure-3.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb63-2"><a href="figure-3.html#cb63-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-3"><a href="figure-3.html#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F3.R <span class="kw">\</span></span>
+<span id="cb63-4"><a href="figure-3.html#cb63-4" aria-hidden="true" tabindex="-1"></a>   <span class="ex">2_analysis/fst/50k/</span> 2_analysis/summaries/fst_globals.txt</span></code></pre></div>
 </div>
-<div id="details-of-plot_f3.r" class="section level2">
-<h2><span class="header-section-number">15.2</span> Details of <code>plot_F3.R</code></h2>
+<div id="details-of-plot_f3.r" class="section level2" number="19.2">
+<h2><span class="header-section-number">19.2</span> Details of <code>plot_F3.R</code></h2>
 <p>In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory <strong>R</strong> packages <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a> and on the <strong>R</strong> packages <a href="https://k-hench.github.io/hypoimg"><strong>hypoimg</strong></a>, <a href="https://vroom.r-lib.org/"><strong>vroom</strong></a> and <a href="https://ggforce.data-imaginist.com/"><strong>ggforce</strong></a>.</p>
-<div id="config-2" class="section level3">
-<h3><span class="header-section-number">15.2.1</span> Config</h3>
+<div id="config-2" class="section level3" number="19.2.1">
+<h3><span class="header-section-number">19.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
 The R packages are loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="figure-3.html#cb47-1"></a>args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb47-2"><a href="figure-3.html#cb47-2"></a><span class="co"># setup -----------------------</span></span>
-<span id="cb47-3"><a href="figure-3.html#cb47-3"></a><span class="kw">library</span>(GenomicOriginsScripts)</span>
-<span id="cb47-4"><a href="figure-3.html#cb47-4"></a><span class="kw">library</span>(ggforce)</span>
-<span id="cb47-5"><a href="figure-3.html#cb47-5"></a><span class="kw">library</span>(hypoimg)</span>
-<span id="cb47-6"><a href="figure-3.html#cb47-6"></a><span class="kw">library</span>(vroom)</span>
-<span id="cb47-7"><a href="figure-3.html#cb47-7"></a></span>
-<span id="cb47-8"><a href="figure-3.html#cb47-8"></a><span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
-<span id="cb47-9"><a href="figure-3.html#cb47-9"></a>script_name &lt;-<span class="st"> </span>args[<span class="dv">5</span>] <span class="op">%&gt;%</span></span>
-<span id="cb47-10"><a href="figure-3.html#cb47-10"></a><span class="st">  </span><span class="kw">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</span>
-<span id="cb47-11"><a href="figure-3.html#cb47-11"></a></span>
-<span id="cb47-12"><a href="figure-3.html#cb47-12"></a>plot_comment &lt;-<span class="st"> </span>script_name <span class="op">%&gt;%</span></span>
-<span id="cb47-13"><a href="figure-3.html#cb47-13"></a><span class="st">  </span><span class="kw">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="kw">getwd</span>(),<span class="st">&#39;/&#39;</span>,.)</span>
-<span id="cb47-14"><a href="figure-3.html#cb47-14"></a></span>
-<span id="cb47-15"><a href="figure-3.html#cb47-15"></a>args &lt;-<span class="st"> </span><span class="kw">process_input</span>(script_name, args)</span></code></pre></div>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="figure-3.html#cb48-1"></a><span class="co">#&gt; ── Script: scripts/plot_F3.R ────────────────────────────────────────────</span></span>
-<span id="cb48-2"><a href="figure-3.html#cb48-2"></a><span class="co">#&gt; Parameters read:</span></span>
-<span id="cb48-3"><a href="figure-3.html#cb48-3"></a><span class="co">#&gt; ★ 1: 2_analysis/fst/50k/</span></span>
-<span id="cb48-4"><a href="figure-3.html#cb48-4"></a><span class="co">#&gt; ★ 2: 2_analysis/summaries/fst_globals.txt</span></span>
-<span id="cb48-5"><a href="figure-3.html#cb48-5"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="figure-3.html#cb64-1" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb64-2"><a href="figure-3.html#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="co"># setup -----------------------</span></span>
+<span id="cb64-3"><a href="figure-3.html#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicOriginsScripts)</span>
+<span id="cb64-4"><a href="figure-3.html#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggforce)</span>
+<span id="cb64-5"><a href="figure-3.html#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypoimg)</span>
+<span id="cb64-6"><a href="figure-3.html#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypogen)</span>
+<span id="cb64-7"><a href="figure-3.html#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vroom)</span>
+<span id="cb64-8"><a href="figure-3.html#cb64-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-9"><a href="figure-3.html#cb64-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb64-10"><a href="figure-3.html#cb64-10" aria-hidden="true" tabindex="-1"></a>script_name <span class="ot">&lt;-</span> args[<span class="dv">5</span>] <span class="sc">%&gt;%</span></span>
+<span id="cb64-11"><a href="figure-3.html#cb64-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(.,<span class="st">&#39;--file=&#39;</span>)</span>
+<span id="cb64-12"><a href="figure-3.html#cb64-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-13"><a href="figure-3.html#cb64-13" aria-hidden="true" tabindex="-1"></a>plot_comment <span class="ot">&lt;-</span> script_name <span class="sc">%&gt;%</span></span>
+<span id="cb64-14"><a href="figure-3.html#cb64-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>,<span class="fu">getwd</span>(),<span class="st">&#39;/&#39;</span>,.)</span>
+<span id="cb64-15"><a href="figure-3.html#cb64-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-16"><a href="figure-3.html#cb64-16" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">process_input</span>(script_name, args)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="figure-3.html#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ── Script: scripts/plot_F3.R ────────────────────────────────────────────</span></span>
+<span id="cb65-2"><a href="figure-3.html#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters read:</span></span>
+<span id="cb65-3"><a href="figure-3.html#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 1: 2_analysis/fst/50k/</span></span>
+<span id="cb65-4"><a href="figure-3.html#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 2: 2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb65-5"><a href="figure-3.html#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ─────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
 <p>The directory containing the sliding window <span class="math inline">\(F_{ST}\)</span> data and the and
 the file with the genome wide average <span class="math inline">\(F_{ST}\)</span> for all the species
 comparisons are received from the command line input.</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="figure-3.html#cb49-1"></a><span class="co"># config -----------------------</span></span>
-<span id="cb49-2"><a href="figure-3.html#cb49-2"></a>data_dir &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">1</span>])</span>
-<span id="cb49-3"><a href="figure-3.html#cb49-3"></a>globals_file &lt;-<span class="st"> </span><span class="kw">as.character</span>(args[<span class="dv">2</span>])</span>
-<span id="cb49-4"><a href="figure-3.html#cb49-4"></a><span class="co"># script -----------------------</span></span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="figure-3.html#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config -----------------------</span></span>
+<span id="cb66-2"><a href="figure-3.html#cb66-2" aria-hidden="true" tabindex="-1"></a>data_dir <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">1</span>])</span>
+<span id="cb66-3"><a href="figure-3.html#cb66-3" aria-hidden="true" tabindex="-1"></a>globals_file <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">2</span>])</span>
+<span id="cb66-4"><a href="figure-3.html#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="co"># script -----------------------</span></span></code></pre></div>
 <p>Then, the data folder is scanned for windowed <span class="math inline">\(F_{ST}\)</span> data with an
 window size of 50 kb.</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="figure-3.html#cb50-1"></a><span class="co"># locate data files</span></span>
-<span id="cb50-2"><a href="figure-3.html#cb50-2"></a>files &lt;-<span class="st"> </span><span class="kw">dir</span>(<span class="dt">path =</span> data_dir, <span class="dt">pattern =</span> <span class="st">&#39;.50k.windowed.weir.fst.gz&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="figure-3.html#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># locate data files</span></span>
+<span id="cb67-2"><a href="figure-3.html#cb67-2" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">dir</span>(<span class="at">path =</span> data_dir, <span class="at">pattern =</span> <span class="st">&#39;.50k.windowed.weir.fst.gz&#39;</span>)</span></code></pre></div>
 <p>Next, the genome wide average <span class="math inline">\(F_{ST}\)</span> data is loaded.</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="figure-3.html#cb51-1"></a><span class="co"># load genome wide average fst data</span></span>
-<span id="cb51-2"><a href="figure-3.html#cb51-2"></a>globals &lt;-<span class="st"> </span>vroom<span class="op">::</span><span class="kw">vroom</span>(globals_file, <span class="dt">delim =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>,</span>
-<span id="cb51-3"><a href="figure-3.html#cb51-3"></a>                        <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&#39;loc&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;weighted&#39;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb51-4"><a href="figure-3.html#cb51-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">str_c</span>(loc,<span class="st">&#39;-&#39;</span>,run) <span class="op">%&gt;%</span></span>
-<span id="cb51-5"><a href="figure-3.html#cb51-5"></a><span class="st">           </span><span class="kw">reformat_run_name</span>()</span>
-<span id="cb51-6"><a href="figure-3.html#cb51-6"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="figure-3.html#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load genome wide average fst data</span></span>
+<span id="cb68-2"><a href="figure-3.html#cb68-2" aria-hidden="true" tabindex="-1"></a>globals <span class="ot">&lt;-</span> vroom<span class="sc">::</span><span class="fu">vroom</span>(globals_file, <span class="at">delim =</span> <span class="st">&#39;</span><span class="sc">\t</span><span class="st">&#39;</span>,</span>
+<span id="cb68-3"><a href="figure-3.html#cb68-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">&#39;loc&#39;</span>,<span class="st">&#39;run&#39;</span>,<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;weighted&#39;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb68-4"><a href="figure-3.html#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">run =</span> <span class="fu">str_c</span>(loc,<span class="st">&#39;-&#39;</span>,run) <span class="sc">%&gt;%</span></span>
+<span id="cb68-5"><a href="figure-3.html#cb68-5" aria-hidden="true" tabindex="-1"></a>           <span class="fu">reformat_run_name</span>()</span>
+<span id="cb68-6"><a href="figure-3.html#cb68-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p>The package <a href="https://k-hench.github.io/GenomicOriginsScripts"><strong>GenomicOriginsScripts</strong></a>
 contains the function <code>get_fst_fixed</code> to import <span class="math inline">\(F_{ST}\)</span> data and compute the
 number, average length and cumulative length of regions exceeding a given <span class="math inline">\(F_{ST}\)</span>
 threshold.</p>
 <p>Here, we prepare a table of a series of thresholds and all pair wise species comparisons
 as a configuration table for the following import with <code>get_fst_fixed</code>.</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="figure-3.html#cb52-1"></a><span class="co"># prepare data import settings within a data table (tibble)</span></span>
-<span id="cb52-2"><a href="figure-3.html#cb52-2"></a>import_table &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">file =</span> <span class="kw">str_c</span>(data_dir,files),</span>
-<span id="cb52-3"><a href="figure-3.html#cb52-3"></a>                     <span class="dt">fst_threshold =</span> <span class="kw">c</span>(.<span class="dv">5</span>,.<span class="dv">4</span>,.<span class="dv">3</span>,.<span class="dv">2</span>,.<span class="dv">1</span>,.<span class="dv">05</span>,.<span class="dv">02</span>,.<span class="dv">01</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb52-4"><a href="figure-3.html#cb52-4"></a><span class="st">  </span><span class="kw">cross_df</span>() <span class="op">%&gt;%</span></span>
-<span id="cb52-5"><a href="figure-3.html#cb52-5"></a><span class="st">  </span><span class="kw">mutate</span>( <span class="dt">run =</span>  file <span class="op">%&gt;%</span></span>
-<span id="cb52-6"><a href="figure-3.html#cb52-6"></a><span class="st">            </span><span class="kw">str_remove</span>(<span class="st">&#39;^.*/&#39;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb52-7"><a href="figure-3.html#cb52-7"></a><span class="st">            </span><span class="kw">str_sub</span>(.,<span class="dv">1</span>,<span class="dv">11</span>) <span class="op">%&gt;%</span></span>
-<span id="cb52-8"><a href="figure-3.html#cb52-8"></a><span class="st">            </span><span class="kw">reformat_run_name</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="figure-3.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare data import settings within a data table (tibble)</span></span>
+<span id="cb69-2"><a href="figure-3.html#cb69-2" aria-hidden="true" tabindex="-1"></a>import_table <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">file =</span> <span class="fu">str_c</span>(data_dir,files),</span>
+<span id="cb69-3"><a href="figure-3.html#cb69-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fst_threshold =</span> <span class="fu">c</span>(.<span class="dv">5</span>,.<span class="dv">4</span>,.<span class="dv">3</span>,.<span class="dv">2</span>,.<span class="dv">1</span>,.<span class="dv">05</span>,.<span class="dv">02</span>,.<span class="dv">01</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb69-4"><a href="figure-3.html#cb69-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cross_df</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb69-5"><a href="figure-3.html#cb69-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">run =</span>  file <span class="sc">%&gt;%</span></span>
+<span id="cb69-6"><a href="figure-3.html#cb69-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">str_remove</span>(<span class="st">&#39;^.*/&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb69-7"><a href="figure-3.html#cb69-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">str_sub</span>(.,<span class="dv">1</span>,<span class="dv">11</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb69-8"><a href="figure-3.html#cb69-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">reformat_run_name</span>())</span></code></pre></div>
 <p>Using the configuration table, the <span class="math inline">\(F_{ST}\)</span> data are loaded, and the
 threshold-specific stats are computed.</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="figure-3.html#cb53-1"></a><span class="co"># load data and compute statistics based on fixed fst treshold</span></span>
-<span id="cb53-2"><a href="figure-3.html#cb53-2"></a>data &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">pmap_dfr</span>(import_table,get_fst_fixed) <span class="op">%&gt;%</span></span>
-<span id="cb53-3"><a href="figure-3.html#cb53-3"></a><span class="st">  </span><span class="kw">left_join</span>(globals) <span class="op">%&gt;%</span></span>
-<span id="cb53-4"><a href="figure-3.html#cb53-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">run =</span> <span class="kw">fct_reorder</span>(run, weighted))</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="figure-3.html#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load data and compute statistics based on fixed fst treshold</span></span>
+<span id="cb70-2"><a href="figure-3.html#cb70-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">pmap_dfr</span>(import_table, get_fst_fixed) <span class="sc">%&gt;%</span></span>
+<span id="cb70-3"><a href="figure-3.html#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(globals) <span class="sc">%&gt;%</span></span>
+<span id="cb70-4"><a href="figure-3.html#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">run =</span> <span class="fu">fct_reorder</span>(run, weighted))</span></code></pre></div>
 <p>To simplify the figure, a subset of the original thresholds are selected
 and some columns are renamed for clean figure labels.</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="figure-3.html#cb54-1"></a><span class="co"># pre-format labels</span></span>
-<span id="cb54-2"><a href="figure-3.html#cb54-2"></a>data2 &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></span>
-<span id="cb54-3"><a href="figure-3.html#cb54-3"></a><span class="st">  </span><span class="kw">select</span>(threshold_value,weighted,n,avg_length,overal_length) <span class="op">%&gt;%</span></span>
-<span id="cb54-4"><a href="figure-3.html#cb54-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">avg_length =</span> avg_length<span class="op">/</span><span class="dv">1000</span>,</span>
-<span id="cb54-5"><a href="figure-3.html#cb54-5"></a>         <span class="dt">overal_length =</span> overal_length<span class="op">/</span>(<span class="dv">10</span><span class="op">^</span><span class="dv">6</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb54-6"><a href="figure-3.html#cb54-6"></a><span class="st">  </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">Number~of~Regions</span><span class="st">`</span> =<span class="st"> &#39;n&#39;</span>,</span>
-<span id="cb54-7"><a href="figure-3.html#cb54-7"></a>         <span class="st">`</span><span class="dt">Average~Region~Length~(kb)</span><span class="st">`</span> =<span class="st"> &#39;avg_length&#39;</span>,</span>
-<span id="cb54-8"><a href="figure-3.html#cb54-8"></a>         <span class="st">`</span><span class="dt">Cummulative~Region~Length~(Mb)</span><span class="st">`</span> =<span class="st"> &#39;overal_length&#39;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb54-9"><a href="figure-3.html#cb54-9"></a><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="dt">names_to =</span> <span class="st">&#39;variable&#39;</span>,<span class="dt">values_to =</span> <span class="st">&#39;Value&#39;</span>,<span class="dv">3</span><span class="op">:</span><span class="dv">5</span>) <span class="op">%&gt;%</span></span>
-<span id="cb54-10"><a href="figure-3.html#cb54-10"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">threshold_value =</span> <span class="kw">str_c</span>(<span class="st">&#39;italic(F[ST])~threshold:~&#39;</span>,</span>
-<span id="cb54-11"><a href="figure-3.html#cb54-11"></a>                                 threshold_value),</span>
-<span id="cb54-12"><a href="figure-3.html#cb54-12"></a>         <span class="dt">variable =</span> <span class="kw">factor</span>(variable, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;Number~of~Regions&#39;</span>,</span>
-<span id="cb54-13"><a href="figure-3.html#cb54-13"></a>                                                <span class="st">&#39;Average~Region~Length~(kb)&#39;</span>,</span>
-<span id="cb54-14"><a href="figure-3.html#cb54-14"></a>                                                <span class="st">&#39;Cummulative~Region~Length~(Mb)&#39;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="figure-3.html#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pre-format labels</span></span>
+<span id="cb71-2"><a href="figure-3.html#cb71-2" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb71-3"><a href="figure-3.html#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(threshold_value,weighted,n,avg_length,overal_length) <span class="sc">%&gt;%</span></span>
+<span id="cb71-4"><a href="figure-3.html#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">avg_length =</span> avg_length<span class="sc">/</span><span class="dv">1000</span>,</span>
+<span id="cb71-5"><a href="figure-3.html#cb71-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">overal_length =</span> overal_length<span class="sc">/</span>(<span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb71-6"><a href="figure-3.html#cb71-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">atop(Number~of,Regions)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&#39;n&#39;</span>,</span>
+<span id="cb71-7"><a href="figure-3.html#cb71-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">atop(Average~Region,Length~(kb))</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&#39;avg_length&#39;</span>,</span>
+<span id="cb71-8"><a href="figure-3.html#cb71-8" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">atop(Cummulative~Region,Length~(Mb))</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&#39;overal_length&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb71-9"><a href="figure-3.html#cb71-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">names_to =</span> <span class="st">&#39;variable&#39;</span>,<span class="at">values_to =</span> <span class="st">&#39;Value&#39;</span>,<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb71-10"><a href="figure-3.html#cb71-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">threshold_value =</span> <span class="fu">str_c</span>(<span class="st">&#39;italic(F[ST])~threshold:~&#39;</span>,</span>
+<span id="cb71-11"><a href="figure-3.html#cb71-11" aria-hidden="true" tabindex="-1"></a>                                 threshold_value),</span>
+<span id="cb71-12"><a href="figure-3.html#cb71-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">variable =</span> <span class="fu">factor</span>(variable, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;atop(Number~of,Regions)&#39;</span>,</span>
+<span id="cb71-13"><a href="figure-3.html#cb71-13" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">&#39;atop(Average~Region,Length~(kb))&#39;</span>,</span>
+<span id="cb71-14"><a href="figure-3.html#cb71-14" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">&#39;atop(Cummulative~Region,Length~(Mb))&#39;</span>)))</span></code></pre></div>
 <p>Then we set the font size and create the figure.</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="figure-3.html#cb55-1"></a><span class="co"># set font size</span></span>
-<span id="cb55-2"><a href="figure-3.html#cb55-2"></a>fnt_sz &lt;-<span class="st"> </span><span class="dv">10</span></span>
-<span id="cb55-3"><a href="figure-3.html#cb55-3"></a></span>
-<span id="cb55-4"><a href="figure-3.html#cb55-4"></a><span class="co"># compile plot</span></span>
-<span id="cb55-5"><a href="figure-3.html#cb55-5"></a>p &lt;-<span class="st">  </span>data2 <span class="op">%&gt;%</span></span>
-<span id="cb55-6"><a href="figure-3.html#cb55-6"></a><span class="st">  </span><span class="co"># select thresholds of interest</span></span>
-<span id="cb55-7"><a href="figure-3.html#cb55-7"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(threshold_value <span class="op">%in%</span><span class="st"> </span>(<span class="kw">c</span>(<span class="fl">0.02</span>,.<span class="dv">1</span>,<span class="fl">0.3</span>, <span class="fl">.4</span>) <span class="op">%&gt;%</span></span>
-<span id="cb55-8"><a href="figure-3.html#cb55-8"></a><span class="st">                                   </span><span class="kw">str_c</span>(<span class="st">&quot;italic(F[ST])~threshold:~&quot;</span>,.)))) <span class="op">%&gt;%</span></span>
-<span id="cb55-9"><a href="figure-3.html#cb55-9"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> weighted, <span class="dt">y =</span> Value, <span class="dt">fill =</span> weighted))<span class="op">+</span></span>
-<span id="cb55-10"><a href="figure-3.html#cb55-10"></a><span class="st">  </span><span class="co"># add red line for genome extent in lowest row</span></span>
-<span id="cb55-11"><a href="figure-3.html#cb55-11"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">data =</span> <span class="kw">tibble</span>(<span class="dt">variable =</span> <span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&#39;Cummulative~Region~Length~(Mb)&#39;</span>,</span>
-<span id="cb55-12"><a href="figure-3.html#cb55-12"></a>                                               <span class="st">&#39;Average~Region~Length~(kb)&#39;</span>,</span>
-<span id="cb55-13"><a href="figure-3.html#cb55-13"></a>                                               <span class="st">&#39;Number~of~Regions&#39;</span>),</span>
-<span id="cb55-14"><a href="figure-3.html#cb55-14"></a>                                             <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;Number~of~Regions&#39;</span>,</span>
-<span id="cb55-15"><a href="figure-3.html#cb55-15"></a>                                                        <span class="st">&#39;Average~Region~Length~(kb)&#39;</span>,</span>
-<span id="cb55-16"><a href="figure-3.html#cb55-16"></a>                                                        <span class="st">&#39;Cummulative~Region~Length~(Mb)&#39;</span>)),</span>
-<span id="cb55-17"><a href="figure-3.html#cb55-17"></a>                           <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">559649677</span><span class="op">/</span>(<span class="dv">10</span><span class="op">^</span><span class="dv">6</span>),<span class="ot">NA</span>,<span class="ot">NA</span>)),</span>
-<span id="cb55-18"><a href="figure-3.html#cb55-18"></a>             <span class="kw">aes</span>(<span class="dt">yintercept =</span> y),</span>
-<span id="cb55-19"><a href="figure-3.html#cb55-19"></a>             <span class="dt">color=</span><span class="kw">rgb</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,.<span class="dv">25</span>))<span class="op">+</span></span>
-<span id="cb55-20"><a href="figure-3.html#cb55-20"></a><span class="st">  </span><span class="co"># add data points</span></span>
-<span id="cb55-21"><a href="figure-3.html#cb55-21"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="fl">1.75</span>,</span>
-<span id="cb55-22"><a href="figure-3.html#cb55-22"></a>             <span class="dt">color =</span> plot_clr, <span class="dt">shape =</span> <span class="dv">21</span>)<span class="op">+</span></span>
-<span id="cb55-23"><a href="figure-3.html#cb55-23"></a><span class="st">  </span><span class="co"># define plot stucture</span></span>
-<span id="cb55-24"><a href="figure-3.html#cb55-24"></a><span class="st">  </span><span class="kw">facet_grid</span>(variable<span class="op">~</span>threshold_value,</span>
-<span id="cb55-25"><a href="figure-3.html#cb55-25"></a>             <span class="dt">scale=</span><span class="st">&#39;free&#39;</span>,</span>
-<span id="cb55-26"><a href="figure-3.html#cb55-26"></a>             <span class="dt">switch =</span> <span class="st">&#39;y&#39;</span>,</span>
-<span id="cb55-27"><a href="figure-3.html#cb55-27"></a>             <span class="dt">labeller =</span> label_parsed)<span class="op">+</span></span>
-<span id="cb55-28"><a href="figure-3.html#cb55-28"></a><span class="st">  </span><span class="co"># configure scales</span></span>
-<span id="cb55-29"><a href="figure-3.html#cb55-29"></a><span class="st">  </span><span class="kw">scale_fill_gradientn</span>(<span class="dt">name =</span> <span class="kw">expression</span>(weighted<span class="op">~</span><span class="kw">italic</span>(F[ST])),</span>
-<span id="cb55-30"><a href="figure-3.html#cb55-30"></a>                       <span class="dt">colours =</span> hypogen<span class="op">::</span>hypo_clr_LGs[<span class="dv">1</span><span class="op">:</span><span class="dv">24</span>] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">clr_lighten</span>(<span class="dt">factor =</span> <span class="fl">.3</span>))<span class="op">+</span></span>
-<span id="cb55-31"><a href="figure-3.html#cb55-31"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">name =</span> <span class="kw">expression</span>(Whole<span class="op">-</span>genome<span class="op">~</span>differentiation<span class="op">~</span>(weighted<span class="op">~</span><span class="kw">italic</span>(F[ST]))),</span>
-<span id="cb55-32"><a href="figure-3.html#cb55-32"></a>                     <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">05</span>,.<span class="dv">1</span>),</span>
-<span id="cb55-33"><a href="figure-3.html#cb55-33"></a>                     <span class="dt">limits =</span> <span class="kw">c</span>(<span class="op">-</span>.<span class="dv">00025</span>,.<span class="dv">10025</span>),</span>
-<span id="cb55-34"><a href="figure-3.html#cb55-34"></a>                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;0.05&quot;</span>, <span class="st">&quot;0.1&quot;</span>))<span class="op">+</span></span>
-<span id="cb55-35"><a href="figure-3.html#cb55-35"></a><span class="st">  </span><span class="co"># configure legend</span></span>
-<span id="cb55-36"><a href="figure-3.html#cb55-36"></a><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill =</span> <span class="kw">guide_colorbar</span>(<span class="dt">barwidth =</span> <span class="kw">unit</span>(<span class="dv">150</span>, <span class="st">&quot;pt&quot;</span>),</span>
-<span id="cb55-37"><a href="figure-3.html#cb55-37"></a>                               <span class="dt">label.position =</span> <span class="st">&quot;top&quot;</span>,</span>
-<span id="cb55-38"><a href="figure-3.html#cb55-38"></a>                               <span class="dt">barheight =</span> <span class="kw">unit</span>(<span class="dv">5</span>,<span class="st">&quot;pt&quot;</span>)))<span class="op">+</span></span>
-<span id="cb55-39"><a href="figure-3.html#cb55-39"></a><span class="st">  </span><span class="co"># tweak plot apperance</span></span>
-<span id="cb55-40"><a href="figure-3.html#cb55-40"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.y =</span> <span class="kw">element_blank</span>(),</span>
-<span id="cb55-41"><a href="figure-3.html#cb55-41"></a>        <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">vjust =</span> <span class="fl">.5</span>, <span class="dt">angle =</span> <span class="dv">0</span>),</span>
-<span id="cb55-42"><a href="figure-3.html#cb55-42"></a>        <span class="dt">axis.title.x =</span> <span class="kw">element_text</span>(<span class="dt">vjust =</span> <span class="dv">-2</span>),</span>
-<span id="cb55-43"><a href="figure-3.html#cb55-43"></a>        <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb55-44"><a href="figure-3.html#cb55-44"></a>        <span class="dt">strip.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> fnt_sz),</span>
-<span id="cb55-45"><a href="figure-3.html#cb55-45"></a>        <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>,</span>
-<span id="cb55-46"><a href="figure-3.html#cb55-46"></a>        <span class="dt">strip.placement =</span> <span class="st">&#39;outside&#39;</span>,</span>
-<span id="cb55-47"><a href="figure-3.html#cb55-47"></a>        <span class="dt">axis.title =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> fnt_sz),</span>
-<span id="cb55-48"><a href="figure-3.html#cb55-48"></a>        <span class="dt">legend.title =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> fnt_sz),</span>
-<span id="cb55-49"><a href="figure-3.html#cb55-49"></a>        <span class="dt">strip.background.y =</span> <span class="kw">element_blank</span>())</span></code></pre></div>
-<center>
-<img src="plot_F3_files/figure-html/unnamed-chunk-10-1.png" width="1036.8" />
-</center>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="figure-3.html#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set font size</span></span>
+<span id="cb72-2"><a href="figure-3.html#cb72-2" aria-hidden="true" tabindex="-1"></a>fnt_sz <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb72-3"><a href="figure-3.html#cb72-3" aria-hidden="true" tabindex="-1"></a>base_line_clr <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span></span>
+<span id="cb72-4"><a href="figure-3.html#cb72-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-5"><a href="figure-3.html#cb72-5" aria-hidden="true" tabindex="-1"></a><span class="co"># compile plot</span></span>
+<span id="cb72-6"><a href="figure-3.html#cb72-6" aria-hidden="true" tabindex="-1"></a>p_done <span class="ot">&lt;-</span> data2 <span class="sc">%&gt;%</span></span>
+<span id="cb72-7"><a href="figure-3.html#cb72-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># select thresholds of interest</span></span>
+<span id="cb72-8"><a href="figure-3.html#cb72-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(threshold_value <span class="sc">%in%</span> (<span class="fu">c</span>(<span class="fl">0.02</span>,.<span class="dv">1</span>,<span class="fl">0.2</span>, <span class="fl">0.3</span>, .<span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb72-9"><a href="figure-3.html#cb72-9" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">str_c</span>(<span class="st">&quot;italic(F[ST])~threshold:~&quot;</span>,.)))) <span class="sc">%&gt;%</span></span>
+<span id="cb72-10"><a href="figure-3.html#cb72-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> weighted, <span class="at">y =</span> Value<span class="co">#, fill = weighted</span></span>
+<span id="cb72-11"><a href="figure-3.html#cb72-11" aria-hidden="true" tabindex="-1"></a>             )</span>
+<span id="cb72-12"><a href="figure-3.html#cb72-12" aria-hidden="true" tabindex="-1"></a>         )<span class="sc">+</span></span>
+<span id="cb72-13"><a href="figure-3.html#cb72-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add red line for genome extent in lowest row</span></span>
+<span id="cb72-14"><a href="figure-3.html#cb72-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> <span class="fu">tibble</span>(<span class="at">variable =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&#39;atop(Cummulative~Region,Length~(Mb))&#39;</span>,</span>
+<span id="cb72-15"><a href="figure-3.html#cb72-15" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">&#39;atop(Average~Region,Length~(kb))&#39;</span>,</span>
+<span id="cb72-16"><a href="figure-3.html#cb72-16" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">&#39;atop(Number~of,Regions)&#39;</span>),</span>
+<span id="cb72-17"><a href="figure-3.html#cb72-17" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;atop(Number~of,Regions)&#39;</span>,</span>
+<span id="cb72-18"><a href="figure-3.html#cb72-18" aria-hidden="true" tabindex="-1"></a>                                                        <span class="st">&#39;atop(Average~Region,Length~(kb))&#39;</span>,</span>
+<span id="cb72-19"><a href="figure-3.html#cb72-19" aria-hidden="true" tabindex="-1"></a>                                                        <span class="st">&#39;atop(Cummulative~Region,Length~(Mb))&#39;</span>)),</span>
+<span id="cb72-20"><a href="figure-3.html#cb72-20" aria-hidden="true" tabindex="-1"></a>                           <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">559649677</span><span class="sc">/</span>(<span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>),<span class="cn">NA</span>,<span class="cn">NA</span>)),</span>
+<span id="cb72-21"><a href="figure-3.html#cb72-21" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">yintercept =</span> y),</span>
+<span id="cb72-22"><a href="figure-3.html#cb72-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">rgb</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,.<span class="dv">25</span>))<span class="sc">+</span></span>
+<span id="cb72-23"><a href="figure-3.html#cb72-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add data points</span></span>
+<span id="cb72-24"><a href="figure-3.html#cb72-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> plot_size,</span>
+<span id="cb72-25"><a href="figure-3.html#cb72-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> plot_clr<span class="co">#, shape = 21</span></span>
+<span id="cb72-26"><a href="figure-3.html#cb72-26" aria-hidden="true" tabindex="-1"></a>             )<span class="sc">+</span></span>
+<span id="cb72-27"><a href="figure-3.html#cb72-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># define plot stucture</span></span>
+<span id="cb72-28"><a href="figure-3.html#cb72-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(variable<span class="sc">~</span>threshold_value,</span>
+<span id="cb72-29"><a href="figure-3.html#cb72-29" aria-hidden="true" tabindex="-1"></a>             <span class="at">scale=</span><span class="st">&#39;free&#39;</span>,</span>
+<span id="cb72-30"><a href="figure-3.html#cb72-30" aria-hidden="true" tabindex="-1"></a>             <span class="at">switch =</span> <span class="st">&#39;y&#39;</span>,</span>
+<span id="cb72-31"><a href="figure-3.html#cb72-31" aria-hidden="true" tabindex="-1"></a>             <span class="at">labeller =</span> label_parsed)<span class="sc">+</span></span>
+<span id="cb72-32"><a href="figure-3.html#cb72-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># configure scales</span></span>
+<span id="cb72-33"><a href="figure-3.html#cb72-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># scale_fill_gradientn(name = expression(weighted~italic(F[ST])),</span></span>
+<span id="cb72-34"><a href="figure-3.html#cb72-34" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                      colours = hypogen::hypo_clr_LGs[1:24] %&gt;% clr_lighten(factor = .3))+</span></span>
+<span id="cb72-35"><a href="figure-3.html#cb72-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="fu">expression</span>(Whole<span class="sc">-</span>genome<span class="sc">~</span>differentiation<span class="sc">~</span>(weighted<span class="sc">~</span><span class="fu">italic</span>(F[ST]))),</span>
+<span id="cb72-36"><a href="figure-3.html#cb72-36" aria-hidden="true" tabindex="-1"></a>                     <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>,.<span class="dv">05</span>,.<span class="dv">1</span>),</span>
+<span id="cb72-37"><a href="figure-3.html#cb72-37" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">00025</span>,.<span class="dv">10025</span>),</span>
+<span id="cb72-38"><a href="figure-3.html#cb72-38" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;0.05&quot;</span>, <span class="st">&quot;0.1&quot;</span>))<span class="sc">+</span></span>
+<span id="cb72-39"><a href="figure-3.html#cb72-39" aria-hidden="true" tabindex="-1"></a>  <span class="co"># configure legend</span></span>
+<span id="cb72-40"><a href="figure-3.html#cb72-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_colorbar</span>(<span class="at">barwidth =</span> <span class="fu">unit</span>(<span class="dv">150</span>, <span class="st">&quot;pt&quot;</span>),</span>
+<span id="cb72-41"><a href="figure-3.html#cb72-41" aria-hidden="true" tabindex="-1"></a>                               <span class="at">label.position =</span> <span class="st">&quot;top&quot;</span>,</span>
+<span id="cb72-42"><a href="figure-3.html#cb72-42" aria-hidden="true" tabindex="-1"></a>                               <span class="at">barheight =</span> <span class="fu">unit</span>(<span class="dv">5</span>,<span class="st">&quot;pt&quot;</span>)))<span class="sc">+</span></span>
+<span id="cb72-43"><a href="figure-3.html#cb72-43" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tweak plot apperance</span></span>
+<span id="cb72-44"><a href="figure-3.html#cb72-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb72-45"><a href="figure-3.html#cb72-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size_small,</span>
+<span id="cb72-46"><a href="figure-3.html#cb72-46" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">color =</span> <span class="fu">rgb</span>(.<span class="dv">6</span>,.<span class="dv">6</span>,.<span class="dv">6</span>)),</span>
+<span id="cb72-47"><a href="figure-3.html#cb72-47" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb72-48"><a href="figure-3.html#cb72-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">vjust =</span> .<span class="dv">5</span>, <span class="at">angle =</span> <span class="dv">0</span>),</span>
+<span id="cb72-49"><a href="figure-3.html#cb72-49" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">vjust =</span> <span class="sc">-</span><span class="dv">2</span>),</span>
+<span id="cb72-50"><a href="figure-3.html#cb72-50" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="fu">rgb</span>(.<span class="dv">95</span>,.<span class="dv">95</span>,.<span class="dv">95</span>,.<span class="dv">5</span>),</span>
+<span id="cb72-51"><a href="figure-3.html#cb72-51" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">color =</span> <span class="fu">rgb</span>(.<span class="dv">9</span>,.<span class="dv">9</span>,.<span class="dv">9</span>,.<span class="dv">5</span>),</span>
+<span id="cb72-52"><a href="figure-3.html#cb72-52" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">size =</span> .<span class="dv">3</span>),</span>
+<span id="cb72-53"><a href="figure-3.html#cb72-53" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb72-54"><a href="figure-3.html#cb72-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">size =</span> plot_lwd),</span>
+<span id="cb72-55"><a href="figure-3.html#cb72-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb72-56"><a href="figure-3.html#cb72-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size),</span>
+<span id="cb72-57"><a href="figure-3.html#cb72-57" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>,</span>
+<span id="cb72-58"><a href="figure-3.html#cb72-58" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.placement =</span> <span class="st">&#39;outside&#39;</span>,</span>
+<span id="cb72-59"><a href="figure-3.html#cb72-59" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size),</span>
+<span id="cb72-60"><a href="figure-3.html#cb72-60" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size),</span>
+<span id="cb72-61"><a href="figure-3.html#cb72-61" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb72-62"><a href="figure-3.html#cb72-62" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.background =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<p><img src="plot_F3_files/figure-html/unnamed-chunk-10-1.png" width="349.44" style="display: block; margin: auto;" /></p>
 <p>Finally, we can export Figure 3.</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="figure-3.html#cb56-1"></a><span class="co"># export figure 3</span></span>
-<span id="cb56-2"><a href="figure-3.html#cb56-2"></a>scl &lt;-<span class="st"> </span><span class="fl">.675</span></span>
-<span id="cb56-3"><a href="figure-3.html#cb56-3"></a><span class="kw">hypo_save</span>(<span class="dt">filename =</span> <span class="st">&#39;figures/F3.pdf&#39;</span>,</span>
-<span id="cb56-4"><a href="figure-3.html#cb56-4"></a>          <span class="dt">plot =</span> p,</span>
-<span id="cb56-5"><a href="figure-3.html#cb56-5"></a>          <span class="dt">width =</span> <span class="dv">16</span><span class="op">*</span>scl,</span>
-<span id="cb56-6"><a href="figure-3.html#cb56-6"></a>          <span class="dt">height =</span> <span class="dv">12</span><span class="op">*</span>scl,</span>
-<span id="cb56-7"><a href="figure-3.html#cb56-7"></a>          <span class="dt">device =</span> cairo_pdf,</span>
-<span id="cb56-8"><a href="figure-3.html#cb56-8"></a>          <span class="dt">comment =</span> plot_comment)</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="figure-3.html#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># export figure 3</span></span>
+<span id="cb73-2"><a href="figure-3.html#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hypo_save</span>(<span class="at">filename =</span> <span class="st">&#39;figures/F3.pdf&#39;</span>,</span>
+<span id="cb73-3"><a href="figure-3.html#cb73-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">plot =</span> p,</span>
+<span id="cb73-4"><a href="figure-3.html#cb73-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> .<span class="dv">52</span> <span class="sc">*</span> f_width,</span>
+<span id="cb73-5"><a href="figure-3.html#cb73-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> .<span class="dv">52</span> <span class="sc">*</span> f_width,</span>
+<span id="cb73-6"><a href="figure-3.html#cb73-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">device =</span> cairo_pdf,</span>
+<span id="cb73-7"><a href="figure-3.html#cb73-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">comment =</span> plot_comment,</span>
+<span id="cb73-8"><a href="figure-3.html#cb73-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">bg =</span> <span class="st">&quot;transparent&quot;</span>)</span></code></pre></div>
 <hr />
 
 </div>

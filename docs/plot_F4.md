@@ -45,7 +45,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 #    2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script produces Figure 4 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/','2_analysis/fst/50k/multi_fst.50k.tsv.gz',
@@ -69,7 +69,7 @@ args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
-
+library(hypogen)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -242,7 +242,7 @@ pi_summary_1 <- dxy_data %>%
   group_by(pop1,run) %>%
   summarise(avg_pi = mean(PI_POP1)) %>%
   ungroup() %>%
-  set_names(., nm = c('pop','run','avg_pi'))
+  purrr::set_names(., nm = c('pop','run','avg_pi'))
 
 # the mean genome wide average pi is compiled for all the second populations
 # from the dxy data
@@ -251,7 +251,7 @@ pi_summary <- dxy_data %>%
   group_by(pop2,run) %>%
   summarise(avg_pi = mean(PI_POP2)) %>%
   ungroup() %>%
-  set_names(., nm = c('pop','run','avg_pi')) %>%
+  purrr::set_names(., nm = c('pop','run','avg_pi')) %>%
   bind_rows(pi_summary_1)  %>%
   group_by(pop) %>%
   summarise(n = length(pop),
@@ -284,10 +284,10 @@ select_pi_pops <- pi_summary %>%
 # all pair-wise runs is calculated for each window
 pi_data_select <- dxy_data %>%
   select(GPOS, PI_POP1, pop1 )%>%
-  set_names(., nm = c('GPOS','pi','pop')) %>%
+  purrr::set_names(., nm = c('GPOS','pi','pop')) %>%
   bind_rows(.,dxy_data %>%
               select(GPOS, PI_POP2, pop2 )%>%
-              set_names(., nm = c('GPOS','pi','pop'))) %>%
+              purrr::set_names(., nm = c('GPOS','pi','pop'))) %>%
   group_by(GPOS,pop) %>%
   summarise(n = length(pop),
             mean_pi = mean(pi),
@@ -325,8 +325,8 @@ twisst_data <- tibble(loc = c('bel','hon'),
   select(GPOS, topo3,topo_rel,window,weight)
 
 # the "null-weighting" is computed for both locations
-twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~italic(w)[bel]'),
-                                 str_c('bold(',project_case('g'),'):~italic(w)[hon]')),
+twisst_null <- tibble(window = c(str_c('bold(', project_case('f'),'):~italic(w)[bel]'),
+                                 str_c('bold(', project_case('g'),'):~italic(w)[hon]')),
                       weight = c(1/15, 1/105))
 ```
 
@@ -420,27 +420,25 @@ p_done <- ggplot()+
   facet_grid(window~.,scales = 'free',switch = 'y', labeller = label_parsed)+
   # tweak plot appreance
   theme_hypo()+
-  theme(legend.position = 'bottom',
-    axis.title = element_blank(),strip.text = element_text(size = 11),
-    strip.background = element_blank(),
-    strip.placement = 'outside')
+  theme(text = element_text(size = plot_text_size),
+        legend.position = 'bottom',
+        axis.title = element_blank(),
+        strip.text = element_text(size = plot_text_size),
+        strip.background = element_blank(),
+        strip.placement = 'outside')
 ```
 
-<center>
-<img src="plot_F4_files/figure-html/unnamed-chunk-17-1.png" width="897.6" />
-</center>
+<img src="plot_F4_files/figure-html/unnamed-chunk-17-1.png" width="672" />
 
 The final figure is then exported using `hypo_save()`.
 
 ```r
 # export figure 4
-scl <- .8
 hypo_save(p_done, filename = 'figures/F4.png',
-          width = 297*scl, height = 275*scl,
-          units = 'mm',
+          width = f_width,
+          height = f_width * .9,
           type = "cairo",
           comment = plot_comment)
-
 ```
 
 ---

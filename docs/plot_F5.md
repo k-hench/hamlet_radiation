@@ -42,10 +42,10 @@ The scripts start with a header that contains copy & paste templates to execute 
 #   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
 #   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
 #   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
-#   2_analysis/GxP/50000/ 200 5 2_analysis/fst/poptree/summary/
+#   2_analysis/GxP/50000/ 200 5 **path/to/pomo/**
 # ===============================================================
 # This script produces Figure 5 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, McMillan and Puebla
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
@@ -54,7 +54,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 #           '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
 #           '2_analysis/summaries/fst_globals.txt',
 #           '2_analysis/GxP/50000/', 200, 5,
-#           "2_analysis/fst/poptree/summary/")
+#           "**path/to/pomo/**")
 # script_name <- "R/fig/plot_F5.R"
 ```
 
@@ -71,10 +71,16 @@ args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(furrr)
 library(ggraph)
 library(tidygraph)
 library(ggtext)
+library(ape)
+library(ggtree)
+library(patchwork)
+library(ggplotify)
+library(phangorn)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -98,7 +104,7 @@ args <- process_input(script_name, args)
 #> ★ 8: 2_analysis/GxP/50000/
 #> ★ 9: 200
 #> ★ 10: 5
-#> ★ 11: 2_analysis/fst/poptree/summary/
+#> ★ 11: **path/to/pomo/**
 #> ─────────────────────────────────────────── /current/working/directory ──
 ```
 
@@ -118,7 +124,9 @@ fst_globals <- as.character(args[7])
 gxp_dir <- as.character(args[8])
 twisst_size <- as.numeric(args[9])
 resolution <- as.numeric(args[10])
-fst_summary_path <- as.character(args[11])
+pomo_path <- as.character(args[11])
+pomo_trees <- dir(pomo_path, pattern = "155_pop")
+
 source(twisst_functions, local = TRUE)
 ```
 
@@ -131,7 +139,6 @@ We also load the R packages **ape** and **igraph** that will help us working wit
 plan(multiprocess)
 window_buffer <- 2.5*10^5
 #-------------------
-library(ape)
 library(igraph)
 ```
 
@@ -157,7 +164,7 @@ dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.', resolution ,'0kb-'
 
 # import dxy data
 dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
-  purrr::pmap_dfr(get_dxy, kb = str_c(resolution ,'0kb'))
+  purrr::pmap_dfr(get_dxy, kb = str_c(resolution, '0kb'))
 ```
 
 Next we iterate the genotype $\times$ phenotype import function over the trait names *Bars*, *Snout* and *Peduncle*.
@@ -188,7 +195,7 @@ Next, we compute the average genome wide $d_{XY}$ and load the average genome wi
 
 
 ```r
-# copute genome wide average dxy
+# compute genome wide average dxy
 dxy_globals <- dxy_data %>%
   filter(BIN_START %% ( resolution * 10000 ) == 1 ) %>%
   group_by( run ) %>%
@@ -209,10 +216,10 @@ After this, we import $F_{ST}$ by first listing all $F_{ST}$ data files and then
 
 ```r
 # locate fst data files
-fst_files <- dir(fst_dir ,pattern = str_c('.', resolution ,'0k.windowed.weir.fst.gz'))
+fst_files <- dir(fst_dir, pattern = str_c('.', resolution ,'0k.windowed.weir.fst.gz'))
 # import fst data
 fst_data <- str_c(fst_dir, fst_files) %>%
-  future_map_dfr(get_fst, kb = str_c(resolution ,'0k')) %>%
+  future_map_dfr(get_fst, kb = str_c(resolution, '0k')) %>%
   left_join(dxy_globals) %>%
   left_join(fst_globals) %>%
   mutate(run = refactor(., fst_globals),
@@ -271,7 +278,7 @@ These are the ones, that later will be labeled in the annotation panel.
 
 ```r
 # select genes to label
-cool_genes <-  c('arl3','kif16b','cdx1','hmcn2',
+cool_genes <- c('arl3','kif16b','cdx1','hmcn2',
                  'sox10','smarca4',
                  'rorb',
                  'alox12b','egr1',
@@ -316,7 +323,7 @@ trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_tra
   set_names(nm = gxp_traits %>% sort())
 
 # recolor second bars-layer
-trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7,color = gxp_clr[["Bars"]])
+trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7, color = gxp_clr[["Bars"]])
 ```
 
 Then we prepare the population trees by computing neighbour joining trees based on pair wise $F_{ST}$.
@@ -324,14 +331,66 @@ Then we prepare the population trees by computing neighbour joining trees based 
 
 
 ```r
-# prepare population tree trait_panels ----------------------
-# load outler region wide average fst data
-tree_list <- outlier_pick %>%
-  purrr::map_dfr(get_fst_summary_data)
+# # prepare population tree trait_panels ----------------------
+# # load outler region wide average fst data
+# tree_list <- outlier_pick %>%
+#   purrr::map_dfr(get_fst_summary_data)
+# 
+# # create neighbour-joining trees and plot
+# poptree_plot_list <- tree_list %>%
+#   purrr::pmap(plot_fst_poptree)
+```
 
-# create neighbour-joining trees and plot
-poptree_plot_list <-  tree_list %>%
-  purrr::pmap(plot_fst_poptree)
+
+
+```r
+pomo_data <- str_c(pomo_path, pomo_trees) %>% 
+  purrr::map_dfr(import_tree) %>% 
+  mutate(rooted_tree = map2(.x = tree,.y = type, .f = root_hamlets))
+
+p_pomo1 <- pomo_data$tree[[1]] %>% 
+  midpoint() %>%
+  ggtree::ggtree(layout = "circular") %>%
+  .$data %>%
+  dplyr::mutate(support = as.numeric(label) /100,
+                support_class = cut(support, c(0,.5,.7,.9,1)) %>%
+                  as.character() %>%
+                  factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))) %>%
+  plot_tree(higl_node = 21,
+            angle_in = 168,
+            color = twisst_clr[["Blue"]], 
+            xlim = c(-.015, .1),
+            open_angle = 168)
+
+p_pomo2 <- pomo_data$tree[[2]] %>% 
+  midpoint() %>%
+  ggtree::ggtree(layout = "circular") %>%
+  .$data %>%
+  dplyr::mutate(support = as.numeric(label) /100,
+                support_class = cut(support, c(0,.5,.7,.9,1)) %>%
+                  as.character() %>%
+                  factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))) %>%
+  plot_tree(higl_node = 27,
+            color = twisst_clr[["Bars"]], 
+            xlim = c(-.015,.065),
+            angle_in = 168,
+            open_angle = 168)
+
+p_pomo3 <- pomo_data$tree[[3]] %>% 
+  midpoint() %>%
+  ggtree::ggtree(layout = "circular") %>%
+  .$data %>%
+  dplyr::mutate(support = as.numeric(label) /100,
+                support_class = cut(support, c(0,.5,.7,.9,1)) %>%
+                  as.character() %>%
+                  factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))) %>%
+  plot_tree(higl_node = 28,
+            color = twisst_clr[["Butter"]], 
+            xlim = c(-.01, .053),
+            angle_in = 168,
+            open_angle = 168)
+
+plot_list <- list(p_pomo1, p_pomo2, p_pomo3)
 ```
 
 Then, we iterate the main plotting function over all selected $F_{ST}$ outlier windows and combine the resulting plots into a multi panel plot.
@@ -343,18 +402,17 @@ p_single <- outlier_table %>%
   filter(outlier_id %in% outlier_pick) %>%
   left_join(region_label_tibbles) %>%
   mutate(outlier_nr = row_number(),
-         text = ifelse(outlier_nr == 1,TRUE,FALSE),
+         text = ifelse(outlier_nr == 1, TRUE, FALSE),
          trait = c('Snout', 'Bars', 'Peduncle')) %>%
-  pmap(plot_curtain, cool_genes = cool_genes) %>%
-  c(., poptree_plot_list) %>%
+  pmap(plot_curtain, cool_genes = cool_genes, data_tables = data_tables) %>%
+   c(., plot_list) %>%
   cowplot::plot_grid(plotlist = ., nrow = 2,
-                     rel_heights = c(1, .17),
-                     labels = letters[1:length(outlier_pick)] %>% project_case())
+                     rel_heights = c(1, .18),
+                     labels = letters[1:length(outlier_pick)] %>% project_case(),
+                     label_size = plot_text_size)
 ```
 
-<center>
-<img src="plot_F5_files/figure-html/unnamed-chunk-19-1.png" width="1344" />
-</center>
+<img src="plot_F5_files/figure-html/unnamed-chunk-20-1.png" width="1344" style="display: block; margin: auto;" />
 
 At this point all that we miss is the figure legend.
 So, for the $F_{ST}$, $d_{XY}$ and genotype $\times$ phenotype color schemes we create two dummy plots from where we can export the legends.
@@ -364,18 +422,37 @@ We combine those two classical color legends into what will become the left colu
 ```r
 # compile legend
 # dummy plot for fst legend
-p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_fst) %>% .[[1]]
+p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>% 
+  purrr::pmap(plot_panel_fst) %>% 
+  .[[1]] + guides(color = guide_colorbar(barheight = unit(3, "pt"),
+                                         barwidth = unit(100, "pt"),
+                                         label.position = "top",
+                                         ticks.colour = "black"))
 # dummy plot for  gxp legend
 p_dummy_gxp <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_gxp, trait = 'Bars') %>% .[[1]]
 # fst legend
 p_leg_fst <- (p_dummy_fst+theme(legend.position = 'bottom')) %>% get_legend()
 # gxp legend
 p_leg_gxp <- (p_dummy_gxp+theme(legend.position = 'bottom')) %>% get_legend()
-# create poptree legend
-p_leg_poptree <- (poptree_plot_list[[1]] + theme(legend.position = "bottom")) %>% get_legend()
 # create sub-legend 1
+p_leg_pomo <- ((midpoint(pomo_data$tree[[1]]) %>% 
+    ggtree(layout = "circular") %>% 
+    .$data %>% 
+    mutate(support = as.numeric(label) /100,
+           support_class = cut(support, c(0,.5,.7,.9,1)) %>% 
+             as.character() %>%
+             factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]")))) %>% 
+conditional_highlight(tree = ., 
+          higl_node = 21,
+          highl = FALSE,
+          support_guide = TRUE) +
+  theme(text = element_text(size = plot_text_size),
+        legend.position = "bottom") ) %>%
+  get_legend()
+
 p_leg1 <- cowplot::plot_grid(p_leg_fst,
                              p_leg_gxp,
+                             p_leg_pomo,
                              ncol = 1)
 ```
 
@@ -395,26 +472,13 @@ p_leg2 <- tibble(spec1 = c('indigo', 'indigo','unicolor'),
                      nrow = 1)
 
 # create sub-legend 3
-p_leg_3 <- cowplot::plot_grid(p_leg1,
+p_leg <- cowplot::plot_grid(p_leg1,
                             p_leg2,
-                            nrow = 1, rel_widths = c(.6, 1))
+                            nrow = 1, 
+                            rel_widths = c(.6, 1))
 ```
 
-Lastly, the legend elements from the population trees are added to complete the final legend.
-
-
-```r
-# complete legend
-p_leg <- cowplot::plot_grid(
-  p_leg_poptree,
-  p_leg_3,
-  ncol = 1,
-  rel_heights = c(.2, 1))
-```
-
-<center>
-<img src="plot_F5_files/figure-html/unnamed-chunk-23-1.png" width="1344" />
-</center>
+<img src="plot_F5_files/figure-html/unnamed-chunk-23-1.png" width="1344" style="display: block; margin: auto;" />
 
 After adding the legend to the main part, Figure 4 is complete.
 
@@ -426,18 +490,16 @@ p_done <- cowplot::plot_grid(p_single, p_leg,
                              rel_heights = c(1, .17))
 ```
 
-<center>
-<img src="plot_F5_files/figure-html/unnamed-chunk-25-1.png" width="1344" />
-</center>
+<img src="plot_F5_files/figure-html/unnamed-chunk-25-1.png" width="1344" style="display: block; margin: auto;" />
 
 Finally, we can export Figure 5.
 
 
 ```r
 # export figure
-scl <- .9
 hypo_save(plot = p_done, filename = 'figures/F5.pdf',
-          width = 14*scl, height = 13*scl,
+          width = f_width, 
+          height = f_width * .93,
           comment = script_name,
           device = cairo_pdf)
 ```

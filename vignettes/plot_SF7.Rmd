@@ -5,11 +5,12 @@ editor_options:
 ---
 # Supplementary Figure 7
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(ggtext)
 args <- c('2_analysis/dxy/50k/')
 ```
@@ -102,7 +103,7 @@ In the next step, all $d_{XY}$ files are read and the data is compiled into a si
 data <- str_c(dxy_path,files) %>%
   purrr::map(get_dxy) %>%
   bind_rows() %>%
-  set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
+  purrr::set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
 ```
 
