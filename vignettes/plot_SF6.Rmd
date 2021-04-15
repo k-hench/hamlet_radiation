@@ -87,11 +87,11 @@ cli::rule(right = getwd())
 ```
 
 ```r
-#> ── Script: scripts/plot_SF6.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF6.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/pi/50k/
 #> ★ 2: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
 The paths containing the $\pi$ and $\rho$ data are received and stored inside more descriptive variables.

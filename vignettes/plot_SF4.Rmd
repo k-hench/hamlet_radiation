@@ -84,10 +84,10 @@ cli::rule(right = getwd())
 ```
 
 ```r
-#> ── Script: scripts/plot_SF4.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF4.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/newhyb/nh_input/NH.Results/
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
 The directory containing the hybridization data is received and stored in a variable.

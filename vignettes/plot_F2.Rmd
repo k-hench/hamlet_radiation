@@ -85,14 +85,14 @@ args <- process_input(script_name, args)
 
 
 ```r
-#> ── Script: scripts/plot_F2.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_F2.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/msmc/output/
 #> ★ 2: 2_analysis/cross_coalescence/output/
 #> ★ 3: 2_analysis/msmc/setup/msmc_grouping.txt
 #> ★ 4: 2_analysis/msmc/setup/msmc_cc_grouping.txt
 #> ★ 5: 2_analysis/summaries/fst_globals.txt
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
 The directories for the demographic inference and the cross-coalescence data are received and stored in respective variables.

@@ -90,7 +90,7 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_F4.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_F4.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/dxy/50k/
 #> ★ 2: 2_analysis/fst/50k/multi_fst.50k.tsv.gz
@@ -101,7 +101,7 @@ args <- process_input(script_name, args)
 #> ★ 7: ressources/plugin/trees/
 #> ★ 8: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 #> ★ 9: 2_analysis/summaries/fst_globals.txt
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
 The directories for the different data types are received and stored in respective variables.

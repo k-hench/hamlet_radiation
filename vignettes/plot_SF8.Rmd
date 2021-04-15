@@ -84,12 +84,12 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_SF8.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF8.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/summaries/fst_globals.txt
 #> ★ 2: 2_analysis/fst/50k/
 #> ★ 3: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
 The directories containing the $F_{ST}$ and $\rho$ data, and the file containing the genome wide $F_{ST}$ averages are

@@ -96,12 +96,12 @@ cli::rule(right = getwd())
 ```
 
 ```r
-#> ── Script: scripts/plot_F6.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_F6.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/twisst/weights/
 #> ★ 2: ressources/plugin/trees/
 #> ★ 3: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
 ```{r, message = FALSE, warning = FALSE, fig.align = "center"}

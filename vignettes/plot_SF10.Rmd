@@ -76,10 +76,10 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_SF10.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF10.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/pi/50k/
-#> ─────────────────────────────────────────── /current/working/directory ───
+#> ────────────────────────────────────────── /current/working/directory ───
 ```
 
 The path containing the $\pi$ data is received and stored inside a more descriptive variable.

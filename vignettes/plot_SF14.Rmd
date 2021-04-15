@@ -3,7 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Supplementary Figure 12
+# Supplementary Figure 14
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -16,17 +16,17 @@ args <- c('2_analysis/GxP/50000/')
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure 12.
-The Figure can be recreated by running the **R** script `plot_SF12.R`:
+This is the accessory documentation of Supplementary Figure 14.
+The Figure can be recreated by running the **R** script `plot_SF14.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF12.R 2_analysis/GxP/50000/
+Rscript --vanilla R/fig/plot_SF14.R 2_analysis/GxP/50000/
 
 ```
 
-## Details of `plot_SF12.R`
+## Details of `plot_SF14.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg).
@@ -38,15 +38,15 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF12.R 2_analysis/GxP/50000/
+# Rscript --vanilla R/fig/plot_SF14.R 2_analysis/GxP/50000/
 # ===============================================================
-# This script produces Suppl. Figure 12 of the study "Ancestral variation,
+# This script produces Suppl. Figure 14 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/GxP/50000/')
-# script_name <- "R/fig/plot_SF12.R"
+# script_name <- "R/fig/plot_SF14.R"
 ```
 
 The next section processes the input from the command line.
@@ -74,7 +74,7 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_SF12.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF14.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/GxP/50000/
 #> ─────────────────────────────────────────── /current/working/directory ──
@@ -133,11 +133,11 @@ p
 ```
 </center>
 
-Finally, we can export Supplementary Figure 12.
+Finally, we can export Supplementary Figure 14.
 
 ```{r, eval = FALSE}
 # export final figure
-hypo_save(filename = "figures/SF12.png",
+hypo_save(filename = "figures/SF14.png",
        plot = p,
        width = 11,
        height = 7,

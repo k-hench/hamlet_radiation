@@ -78,13 +78,25 @@ Rscript --vanilla R/fig/plot_SF10.R \
   2_analysis/pi/50k/
 
 Rscript --vanilla R/fig/plot_SF11.R \
+  2_analysis/raxml/lg04.1_155N.raxml.support \
+  2_analysis/raxml/lg12.3_155N.raxml.support \
+  2_analysis/raxml/lg12.4_155N.raxml.support
+
+Rscript --vanilla R/fig/plot_SF12.R \
+  2_analysis/raxml/lg04.1_hySN.raxml.support \
+  2_analysis/raxml/lg12.3_hySN.raxml.support \
+  2_analysis/raxml/lg12.4_hySN.raxml.support
+
+Rscript --vanilla R/fig/plot_SF13.R \
   2_analysis/admixture/ \
   metadata/phenotypes.sc
 
-Rscript --vanilla R/fig/plot_SF12.R \
+Rscript --vanilla R/fig/plot_SF14.R \
 2_analysis/GxP/50000/
 
-Rscript --vanilla R/fig/plot_SF13.R \
+Rscript --vanilla R/fig/plot_SF15.R \
   2_analysis/fst_signif/random/
 
+Rscript --vanilla R/fig/plot_SF16.R \
+  2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support
 # ==================
