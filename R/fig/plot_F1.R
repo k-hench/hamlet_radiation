@@ -330,11 +330,68 @@ pca_plot <- function(loc){
 
 pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
 
+
+networx <- tibble( loc = c('bel','hon', 'pan'),
+                   n = c(5, 6, 3),
+                   label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
+                                str_c(c('abe','gum','nig','pue','ran','uni'),'hon'),
+                                str_c(c('nig','pue','uni'),'pan')),
+                   weight = c(1,1.45,1)) %>%
+  purrr::pmap_dfr(network_layout) %>%
+  mutate(edges = map(edges, function(x){x %>% left_join(fst_data_gather %>% filter(popstat == "weighted-fst") %>% select(run, median, mean)) }))
+
+
+plot_network <- function(loc, nodes, edges, asp = 0.8, sep = 0, node_lab_shift = 0){
+  loc_edge <- c(bel = .68, hon = .66, pan = .82) -.03
+  clr_prep <- (scales::colour_ramp(c("black",
+                                     clr_loc[loc])))(c(0.4, 1))
+  clrs <- colorRampPalette(clr_prep)(max(edges$idx))
+  p <- nodes %>% ggplot(aes(x, y)) + 
+    coord_fixed(ratio = asp) + 
+    geom_segment(data = edges,
+                 aes(xend = xend, yend = yend),#, size = median), 
+                 size = .1,
+                 color = clr_loc[loc]) +#, size = plot_lwd)
+    # scale_size(limits = c(0, 1), range = c(.1, 4))+
+    scale_size(limits = c(0, 1), range = c(.1, 2))+
+    scale_color_manual(values = clr)
+  for (k in nodes$idx) {
+    p <- p + plot_fish_lwd(short = str_sub(nodes$label[k], 1,  3),
+                           x = nodes$x[k], y = nodes$y[k], height = .7, width = .7)
+  }
+  p + geom_label(data = edges, aes(x = xmid_shift + sign(xmid_shift) * sep,
+                                   y = ymid_shift + sign(ymid_shift) * sep * asp,
+                                   label = run_ord),
+                 color = clr_loc[loc],
+                 label.padding = unit(1, "pt"),
+                 label.size = 0,
+                 size = plot_text_size * .5 /ggplot2::.pt) +
+    scale_fill_manual(values = clr_loc,
+                      guide = FALSE) +
+    scale_x_continuous(limits = c(-1.3, 1.3),
+                       expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0.1)) +
+    theme_void()
+}
+
+plot_list <- networx %>%
+  purrr::pmap(plot_network, node_lab_shift = .2)
+
+p_net <- cowplot::plot_grid(
+  # grid::textGrob('Belize', gp = gpar(fontsize = plot_text_size,)),
+  # grid::textGrob('Honduras', gp = gpar(fontsize = plot_text_size)),
+  # grid::textGrob('Panama', gp = gpar(fontsize = plot_text_size)),
+  plot_list[[1]] + theme(legend.position = "none"), plot_list[[2]] + theme(legend.position = "none"), plot_list[[3]] + theme(legend.position = "none"),
+  ncol = 3#, 
+  #rel_heights = c(.1,1)
+) %>% cowplot::as_grob()
+
 fst_sig_attach <- read_tsv(fst_permutation_file) %>% 
+  filter( subset_type == "whg" ) %>% 
   mutate(loc = str_sub(run, -3, -1)) %>%
   group_by(loc) %>% 
   mutate(loc_n = 28,#length(loc),
-         fdr_correction_factor =  sum(1 / 1:length(loc)),
+         fdr_correction_factor =  sum(1 / 1:loc_n),
          fdr_alpha = .05 / fdr_correction_factor,
          is_sig = p_perm > fdr_alpha) %>% 
   ungroup()
@@ -358,7 +415,8 @@ p2 <- fst_data_gather %>%
                    yend = median),
                lwd = plot_lwd)+
   geom_point(aes(x = x, y = mean, shape = is_sig, fill = after_scale(color)),
-             size = .8)+
+             size = .8) + 
+  annotation_custom(p_net, ymin = .15, xmax = 25) +
   scale_x_continuous(name = "Pair of sympatric species",
                      breaks = 1:28) +
   scale_y_continuous(#breaks = c(0,.05,.1,.15),
@@ -404,85 +462,6 @@ p_leg <- fish_tib %>%
   scale_fill_manual(values = clr, guide = FALSE) +
   theme_void()
 
-p_combined <- ((wrap_elements(plot = p_tree +
-             theme(axis.title = element_blank(),
-                   text = element_text(size = plot_text_size)
-                   # plot.margin = unit(c(0, 0, 0,0), "pt"),
-                   # plot.background = element_rect(fill = "green")
-                   ),
-             clip = FALSE) +
-             p2) /
-  (pcas %>% wrap_plots())+
-  plot_layout(heights = c(1,.75)) +
-  plot_annotation(tag_levels = 'a') &
-  theme(text = element_text(size = plot_text_size),
-        plot.background = element_rect(fill = "transparent",
-                                       color = "transparent"))) 
-
-p_done <- cowplot::plot_grid(p_combined, p_leg, ncol = 1, rel_heights = c(1,.06))
-
-scl <- .75
-hypo_save(p_done, filename = 'figures/F1_redesign.pdf',
-          width = 9 * scl,
-          height = 6.5 * scl,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
-
-networx <- tibble( loc = c('bel','hon', 'pan'),
-                   n = c(5, 6, 3),
-                   label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
-                                str_c(c('abe','gum','nig','pue','ran','uni'),'hon'),
-                                str_c(c('nig','pue','uni'),'pan')),
-                   weight = c(1,1.45,1)) %>%
-  purrr::pmap_dfr(network_layout) %>%
-  mutate(edges = map(edges, function(x){x %>% left_join(fst_data_gather %>% filter(popstat == "weighted-fst") %>% select(run, median, mean)) }))
-
-
-plot_network <- function(loc, nodes, edges, asp = 0.8, sep = 0, node_lab_shift = 0){
-  loc_edge <- c(bel = .68, hon = .66, pan = .82) -.03
-  clr_prep <- (scales::colour_ramp(c("black",
-                                     clr_loc[loc])))(c(0.4, 1))
-  clrs <- colorRampPalette(clr_prep)(max(edges$idx))
-  p <- nodes %>% ggplot(aes(x, y)) + 
-    coord_fixed(ratio = asp) + 
-  geom_segment(data = edges,
-               aes(xend = xend, yend = yend),#, size = median), 
-               size = .1,
-               color = clr_loc[loc]) +#, size = plot_lwd)
-    # scale_size(limits = c(0, 1), range = c(.1, 4))+
-    scale_size(limits = c(0, 1), range = c(.1, 2))+
-    scale_color_manual(values = clr)
-  for (k in nodes$idx) {
-    p <- p + plot_fish_lwd(short = str_sub(nodes$label[k], 1,  3),
-                       x = nodes$x[k], y = nodes$y[k], height = .7, width = .7)
-  }
-  p + geom_label(data = edges, aes(x = xmid_shift + sign(xmid_shift) * sep,
-                                   y = ymid_shift + sign(ymid_shift) * sep * asp,
-                                   label = run_ord),
-                 color = clr_loc[loc],
-                 label.padding = unit(1, "pt"),
-                 label.size = 0,
-                 size = plot_text_size * .5 /ggplot2::.pt) +
-    scale_fill_manual(values = clr_loc,
-                      guide = FALSE) +
-    scale_x_continuous(limits = c(-1.3, 1.3),
-                       expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0.1)) +
-    theme_void()
-}
-
-plot_list <- networx %>%
-  purrr::pmap(plot_network, node_lab_shift = .2)
-
-p_net <- cowplot::plot_grid(
-  # grid::textGrob('Belize', gp = gpar(fontsize = plot_text_size,)),
-  # grid::textGrob('Honduras', gp = gpar(fontsize = plot_text_size)),
-  # grid::textGrob('Panama', gp = gpar(fontsize = plot_text_size)),
-  plot_list[[1]] + theme(legend.position = "none"), plot_list[[2]] + theme(legend.position = "none"), plot_list[[3]] + theme(legend.position = "none"),
-  ncol = 3#, 
-  #rel_heights = c(.1,1)
-) %>% cowplot::as_grob()
 
 p_combined <- ((wrap_elements(plot = p_tree +
                                 theme(axis.title = element_blank(),
@@ -492,7 +471,7 @@ p_combined <- ((wrap_elements(plot = p_tree +
                                 ),
                               clip = FALSE) +
                   # wrap_plots(p_net, p2,ncol = 1,heights = c(.8,1))
-                 p2 + annotation_custom(p_net, ymin = .15, xmax = 25)
+                 p2 
                 ) /
                  (pcas %>% wrap_plots()) +
                  plot_layout(heights = c(1,.75)) +
@@ -503,6 +482,7 @@ p_combined <- ((wrap_elements(plot = p_tree +
 
 p_done <- cowplot::plot_grid(p_combined, p_leg, ncol = 1, rel_heights = c(1,.06))
 
+scl <- .75
 hypo_save(p_done, filename = 'figures/F1.pdf',
           width = 9 * scl,
           height = 6 * scl,

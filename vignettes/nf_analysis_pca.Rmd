@@ -29,9 +29,7 @@ knitr::opts_knit$set(root.dir = '../')
 
 ```{r, include = FALSE}
 source('R/draw_workflow.R')
-prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'gemma_results',
-                        'phenotype_file', 'fst_glob', "fst_10k_output","fst_50k", 'fst_logs',
-                        'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
+prod_pca <- tibbler(c('vcf_hamlets_only', 'vcf_multi_fst', 'pca_all_out', 'pca_loc_out'))
 ```
 
 # (git 73) Analysis V (Principal Component Analysis)
@@ -46,17 +44,20 @@ nf_run_pca
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_pca.nf` (located under `$BASE_DIR/nf/07_analysis_pca/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+The PCAs are produced within the [**nextflow**](https://www.nextflow.io/) script `analysis_pca.nf` (located under `$BASE_DIR/nf/07_analysis_pca/`).
+It takes the *SNPs only* data set and runs the PCAs (for all samples and within locations) both for the whole genome and for the highly differentiated regions excluded.
 Below is an overview of the steps involved in the analysis.
-(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+(The <span style="color:#4DAF4A">green dots</span> indicate the input files, <span style="color:#E41A1C">red dots</span> depict output that is exported for further use.)
 
 <div style="max-width:800px; margin:auto;">
-```{r, eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
-                         git = 3, point_types = prod_basic),
-        width_svg = 16, height_svg = 16)
-
+```{r, eval = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_pca.dot',
+                         git = 7,
+                         point_types = prod_pca,
+                         green_dot = c("p2", "p1"),
+                         red_dot = c( "p26", "p22")),
+        width_svg = 9, 
+        height_svg = 7)
 ```
 </div>
 
@@ -64,7 +65,7 @@ girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by setting the channel for data subset options.
 
 :::kclass
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -76,6 +77,7 @@ Channel
 	.set{ subset_type_ch }
 ```
 
+Also, the file with the genomic coordinates of the outlier regions is loaded.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.2
@@ -84,6 +86,8 @@ Channel
 	.fromPath( "../../2_analysis/summaries/fst_outliers_998.tsv" )
 	.set{ outlier_tab }
 ```
+
+Then it combines the genotype file with the subset type and the outlier location file.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.3
@@ -94,6 +98,8 @@ Channel
 	.combine( subset_type_ch )
 	.set{ vcf_ch }
 ```
+
+Depending on subset type, the outlier regions are excluded from the genotypes.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.4
@@ -126,6 +132,7 @@ process subset_vcf_divergence_based {
 }
 ```
 
+The locations channel is set...
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.5
@@ -135,27 +142,20 @@ Channel
 	.set{ locations_ch }
 ```
 
+...and combined with the genotypes.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 7.6
-// define location specific sepcies set
-Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
-Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
-Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
-```
-
-
-```{r , eval = FALSE, hilang = 'nf'}
-// git 7.7
 // attach genotypes to location channel
 locations_ch
 	.combine( vcf_locations )
 	.set{ vcf_location_combo }
 ```
 
+Then, the genotypes are subset by location.
 
 ```{r , eval = FALSE, hilang = 'nf'}
-// git 7.8
+// git 7.7
 // subset vcf by location
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
@@ -181,11 +181,12 @@ process subset_vcf_by_location {
 }
 ```
 
+Finally, the PCAs are run within the different locations...
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // PCA section
 // -----------
-// git 7.9
+// git 7.8
 // run pca by location
 process pca_location {
 	label "L_20g15h_pca_location"
@@ -207,9 +208,10 @@ process pca_location {
 }
 ```
 
+...and for the entire data set.
 
 ```{r , eval = FALSE, hilang = 'nf'}
-// git 7.10
+// git 7.9
 // run pca for global data set
 process pca_all {
 	label "L_20g15h_pca_all"

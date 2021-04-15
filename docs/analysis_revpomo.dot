@@ -1,0 +1,62 @@
+digraph "analysis_revpomo" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p0 -> p3 [label="vcf_snps_ch"];
+
+p1 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p1 -> p2;
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p2 -> p4 [label="lg_ch"];
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p3 -> p4;
+
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p5 [label="subset_snps_by_lg"];
+p4 -> p5;
+
+p5 [label="subset_snps_by_lg"];
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p5 -> p8 [label="vcf_snps_lg_ch"];
+
+p6 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p6 -> p8 [label="vcf_allbp_ch"];
+
+p7 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p7 -> p11 [label="windows_ch"];
+
+p8 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="concat"];
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p8 -> p9;
+
+p9 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="map"];
+p10 [label="filter_vcf_missingnes"];
+p9 -> p10;
+
+p10 [label="filter_vcf_missingnes"];
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p10 -> p11 [label="vcf_snps_filterd_ch"];
+
+p11 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p12 [label="compute_coverage"];
+p11 -> p12;
+
+p12 [label="compute_coverage"];
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p12 -> p13 [label="coverage_ch"];
+
+p13 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
+p14 [label="compile_window_stats"];
+p13 -> p14;
+
+p14 [label="compile_window_stats"];
+p15 [shape=point];
+p14 -> p15 [label="final_ch"];
+
+}

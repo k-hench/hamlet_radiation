@@ -122,7 +122,7 @@ p_done <- data %>%
   scale_color_manual(values = c(whg = "#4D4D4D", 
                                 subset_non_diverged = "#A2A2A2"),
                      guide = FALSE) +
-  labs( y = "Density (<span style='color:#4D4D4D'>whg</span> / <span style='color:#A2A2A2'>diverged regions excluded</span>)",
+  labs( y = "Density (<span style='color:#4D4D4D'>whg</span> / <span style='color:#A2A2A2'>differentiated regions excluded</span>)",
         x = "Weighted Average <i>F<sub>ST</sub></i>") +
   facet_wrap(run ~ ., ncol = 4, dir = "v") +
   theme_minimal() +
@@ -131,9 +131,6 @@ p_done <- data %>%
         axis.title.y = element_markdown(),
         axis.title.x = element_markdown())
 
-p_done <- ggdraw() + draw_plot(p_done) + 
-  draw_label("Draft (10^3)", color = rgb(0,0,0,.2), size = 100, angle = 45)
-
 scl <- 1.4
 hypo_save(p_done, filename = 'figures/SF13.pdf',
           width = f_width * scl,
@@ -141,3 +138,30 @@ hypo_save(p_done, filename = 'figures/SF13.pdf',
           device = cairo_pdf,
           comment = plot_comment,
           bg = "transparent")
+
+data_export <- data_grouped %>%
+  select(run, real_pop, subset_type, percentile) %>%
+  mutate(pre = run,
+         p_perm = 1 - as.numeric(percentile)) %>%
+  separate(pre, into = c("p2", "p1"))
+
+write_tsv(x = data_export, file = "2_analysis/summaries/fst_permutation_summary.tsv")
+
+data_export %>% 
+  mutate(loc = str_sub(run, -3, -1)) %>%
+  group_by(loc) %>% 
+  mutate(loc_n = 28,
+         fdr_correction_factor =  sum(1 / 1:loc_n[[1]]),
+         fdr_alpha = .05 / fdr_correction_factor,
+         is_sig = p_perm > fdr_alpha) %>% 
+  ungroup() %>% 
+  select(run,real_pop, p_perm, loc_n, subset_type, fdr_correction_factor, fdr_alpha) %>% 
+  mutate(`050` = .05/ fdr_correction_factor,
+         `010` = .01/ fdr_correction_factor,
+         `001` = .001/ fdr_correction_factor,
+         sig = ifelse(p_perm < `001`, "***", ifelse(p_perm < `010`, "**", ifelse(p_perm < `050`, "*", "-")))) %>% 
+arrange(as.character(run)) %>% 
+filter(grepl( "bel", run),
+       subset_type == "whg") %>% 
+  select(run, subset_type, sig,real_pop, p_perm) %>% 
+  mutate(p_perm = round(p_perm * 100,2 ))

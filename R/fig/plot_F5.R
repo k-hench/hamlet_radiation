@@ -184,12 +184,13 @@ pomo_data <- str_c(pomo_path, pomo_trees) %>%
 
 p_pomo1 <- pomo_data$tree[[1]] %>% 
   midpoint() %>%
-  ggtree::ggtree(layout = "circular") %>%
+  ggtree::ggtree(layout = "circular") %>% 
+  rotate(node = 18) %>%
   .$data %>%
-  dplyr::mutate(support = as.numeric(label) /100,
-                support_class = cut(support, c(0,.5,.7,.9,1)) %>%
+  dplyr::mutate(support = as.numeric(label),
+                support_class = cut(support, c(0, 50, 70, 90, 100)) %>%
                   as.character() %>%
-                  factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))) %>%
+                  factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))) %>%
   plot_tree(higl_node = 21,
             angle_in = 168,
             color = twisst_clr[["Blue"]], 
@@ -200,10 +201,10 @@ p_pomo2 <- pomo_data$tree[[2]] %>%
   midpoint() %>%
   ggtree::ggtree(layout = "circular") %>%
   .$data %>%
-  dplyr::mutate(support = as.numeric(label) /100,
-                support_class = cut(support, c(0,.5,.7,.9,1)) %>%
+  dplyr::mutate(support = as.numeric(label),
+                support_class = cut(support, c(0, 50, 70, 90, 100)) %>%
                   as.character() %>%
-                  factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))) %>%
+                  factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))) %>%
   plot_tree(higl_node = 27,
             color = twisst_clr[["Bars"]], 
             xlim = c(-.015,.065),
@@ -214,10 +215,10 @@ p_pomo3 <- pomo_data$tree[[3]] %>%
   midpoint() %>%
   ggtree::ggtree(layout = "circular") %>%
   .$data %>%
-  dplyr::mutate(support = as.numeric(label) /100,
-                support_class = cut(support, c(0,.5,.7,.9,1)) %>%
+  dplyr::mutate(support = as.numeric(label),
+                support_class = cut(support, c(0, 50, 70, 90, 100)) %>%
                   as.character() %>%
-                  factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))) %>%
+                  factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))) %>%
   plot_tree(higl_node = 28,
             color = twisst_clr[["Butter"]], 
             xlim = c(-.01, .053),
@@ -258,10 +259,10 @@ p_leg_gxp <- (p_dummy_gxp+theme(legend.position = 'bottom')) %>% get_legend()
 p_leg_pomo <- ((midpoint(pomo_data$tree[[1]]) %>% 
                   ggtree(layout = "circular") %>% 
                   .$data %>% 
-                  mutate(support = as.numeric(label) /100,
-                         support_class = cut(support, c(0,.5,.7,.9,1)) %>% 
+                  mutate(support = as.numeric(label),
+                         support_class = cut(support, c(0,50,70,90,100)) %>% 
                            as.character() %>%
-                           factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]")))) %>% 
+                           factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]")))) %>% 
                  conditional_highlight(tree = ., 
                                        higl_node = 21,
                                        highl = FALSE,
@@ -296,9 +297,11 @@ p_done <- cowplot::plot_grid(p_single, p_leg,
                              ncol = 1,
                              rel_heights = c(1, .17))
 # export figure
-hypo_save(plot = p_done, filename = 'figures/F5.pdf',
+hypo_save(plot = p_done,
+          filename = 'figures/F5.pdf',
           width = f_width, 
           height = f_width * .93,
           comment = script_name,
-          device = cairo_pdf)
+          device = cairo_pdf,
+          bg = "transparent")
   

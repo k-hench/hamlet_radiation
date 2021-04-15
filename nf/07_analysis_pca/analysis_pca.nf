@@ -55,18 +55,12 @@ Channel
 	.set{ locations_ch }
 
 // git 7.6
-// define location specific sepcies set
-Channel.from( [[1, "ind"], [2, "may"], [3, "nig"], [4, "pue"], [5, "uni"]] ).into{ bel_spec1_ch; bel_spec2_ch }
-Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "uni"]] ).into{ hon_spec1_ch; hon_spec2_ch }
-Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
-
-// git 7.7
 // attach genotypes to location channel
 locations_ch
 	.combine( vcf_locations )
 	.set{ vcf_location_combo }
 
-// git 7.8
+// git 7.7
 // subset vcf by location
 process subset_vcf_by_location {
 	label "L_20g2h_subset_vcf"
@@ -93,7 +87,7 @@ process subset_vcf_by_location {
 
 // PCA section
 // -----------
-// git 7.9
+// git 7.8
 // run pca by location
 process pca_location {
 	label "L_20g15h_pca_location"
@@ -114,7 +108,7 @@ process pca_location {
 	"""
 }
 
-// git 7.10
+// git 7.9
 // run pca for global data set
 process pca_all {
 	label "L_20g15h_pca_all"
@@ -127,8 +121,6 @@ process pca_all {
 
 	output:
 	set file( "*.prime_pca.pdf" ), file( "*.pca.pdf" ), file( "*.exp_var.txt.gz" ), file( "*.scores.txt.gz" ) into pca_all_out
-	file( "hamlets_only.${subset_type}.vcf.gz" ) into vcf_hamlets_only
-	set file( "hamlets_only.${subset_type}.vcf.gz" ), file( "hamlets_only.${subset_type}.pop.txt" ) into vcf_multi_fst
 
 	script:
 	"""

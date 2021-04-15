@@ -1,57 +1,57 @@
-run	real_pop	percentile	p2	p1	p_perm
-indbel-maybel	0.095897	1.000000	indbel	maybel	0
-indbel-nigbel	0.082762	1.000000	indbel	nigbel	0
-indbel-unibel	0.070086	1.000000	indbel	unibel	0
-indbel-puebel	0.065274	1.000000	indbel	puebel	0
-gumhon-unihon	0.051592	1.000000	gumhon	unihon	0
-gumhon-ranhon	0.049567	1.000000	gumhon	ranhon	0
-gumhon-puehon	0.049524	1.000000	gumhon	puehon	0
-gumhon-nighon	0.048451	1.000000	gumhon	nighon	0
-abehon-gumhon	0.044455	1.000000	abehon	gumhon	0
-maybel-nigbel	0.041363	1.000000	maybel	nigbel	0
-nigpan-unipan	0.035516	1.000000	nigpan	unipan	0
-maybel-puebel	0.028117	1.000000	maybel	puebel	0
-nigpan-puepan	0.027995	1.000000	nigpan	puepan	0
-puepan-unipan	0.012774	1.000000	puepan	unipan	0
-maybel-unibel	0.030692	0.999000	maybel	unibel	0.0010000000000000009
-nigbel-puebel	0.017008	0.999000	nigbel	puebel	0.0010000000000000009
-nigbel-unibel	0.015483	0.999000	nigbel	unibel	0.0010000000000000009
-ranhon-unihon	0.0075491	0.997000	ranhon	unihon	0.0030000000000000027
-abehon-unihon	0.0056853	0.994000	abehon	unihon	0.006000000000000005
-puehon-ranhon	0.0047692	0.988000	puehon	ranhon	0.01200000000000001
-nighon-ranhon	0.0049906	0.982000	nighon	ranhon	0.018000000000000016
-nighon-unihon	0.0050249	0.978000	nighon	unihon	0.02200000000000002
-abehon-ranhon	0.0039099	0.968000	abehon	ranhon	0.03200000000000003
-puehon-unihon	0.0029258	0.963000	puehon	unihon	0.03700000000000003
-abehon-nighon	0.0033385	0.958000	abehon	nighon	0.04200000000000004
-abehon-puehon	0.0029727	0.955000	abehon	puehon	0.04500000000000004
-nighon-puehon	0.0032668	0.953000	nighon	puehon	0.04700000000000004
-puebel-unibel	0.0047055	0.940000	puebel	unibel	0.06000000000000005
-indbel-maybel	0.094915	1.000000	indbel	maybel	0
-indbel-nigbel	0.0821	1.000000	indbel	nigbel	0
-indbel-unibel	0.069394	1.000000	indbel	unibel	0
-indbel-puebel	0.064472	1.000000	indbel	puebel	0
-gumhon-unihon	0.051028	1.000000	gumhon	unihon	0
-gumhon-ranhon	0.049076	1.000000	gumhon	ranhon	0
-gumhon-puehon	0.048967	1.000000	gumhon	puehon	0
-gumhon-nighon	0.048091	1.000000	gumhon	nighon	0
-abehon-gumhon	0.043985	1.000000	abehon	gumhon	0
-maybel-nigbel	0.040682	1.000000	maybel	nigbel	0
-nigpan-unipan	0.034922	1.000000	nigpan	unipan	0
-maybel-unibel	0.029859	1.000000	maybel	unibel	0
-nigpan-puepan	0.027634	1.000000	nigpan	puepan	0
-maybel-puebel	0.027461	1.000000	maybel	puebel	0
-puepan-unipan	0.01229	1.000000	puepan	unipan	0
-nigbel-puebel	0.016534	0.998000	nigbel	puebel	0.0020000000000000018
-ranhon-unihon	0.0068091	0.996000	ranhon	unihon	0.0040000000000000036
-nigbel-unibel	0.015036	0.994000	nigbel	unibel	0.006000000000000005
-abehon-unihon	0.0053031	0.992000	abehon	unihon	0.008000000000000007
-nighon-ranhon	0.0047645	0.987000	nighon	ranhon	0.013000000000000012
-nighon-unihon	0.0046108	0.978000	nighon	unihon	0.02200000000000002
-puehon-ranhon	0.0041444	0.972000	puehon	ranhon	0.028000000000000025
-abehon-ranhon	0.0036855	0.972000	abehon	ranhon	0.028000000000000025
-abehon-nighon	0.003246	0.951000	abehon	nighon	0.049000000000000044
-nighon-puehon	0.0029105	0.947000	nighon	puehon	0.05300000000000005
-abehon-puehon	0.0026316	0.933000	abehon	puehon	0.06699999999999995
-puehon-unihon	0.0026694	0.931000	puehon	unihon	0.06899999999999995
-puebel-unibel	0.0043019	0.914000	puebel	unibel	0.08599999999999997
+run	real_pop	subset_type	percentile	p2	p1	p_perm
+indbel-maybel	0.095897	whg	1.000000	indbel	maybel	0
+indbel-nigbel	0.082762	whg	1.000000	indbel	nigbel	0
+indbel-unibel	0.070086	whg	1.000000	indbel	unibel	0
+indbel-puebel	0.065274	whg	1.000000	indbel	puebel	0
+gumhon-unihon	0.051592	whg	1.000000	gumhon	unihon	0
+gumhon-ranhon	0.049567	whg	1.000000	gumhon	ranhon	0
+gumhon-puehon	0.049524	whg	1.000000	gumhon	puehon	0
+gumhon-nighon	0.048451	whg	1.000000	gumhon	nighon	0
+abehon-gumhon	0.044455	whg	1.000000	abehon	gumhon	0
+maybel-nigbel	0.041363	whg	1.000000	maybel	nigbel	0
+nigpan-unipan	0.035516	whg	1.000000	nigpan	unipan	0
+maybel-unibel	0.030692	whg	1.000000	maybel	unibel	0
+nigpan-puepan	0.027995	whg	1.000000	nigpan	puepan	0
+maybel-puebel	0.028117	whg	0.999900	maybel	puebel	9.999999999998899e-5
+puepan-unipan	0.012774	whg	0.999700	puepan	unipan	2.9999999999996696e-4
+nigbel-puebel	0.017008	whg	0.997900	nigbel	puebel	0.0020999999999999908
+nigbel-unibel	0.015483	whg	0.997200	nigbel	unibel	0.0028000000000000247
+ranhon-unihon	0.0075491	whg	0.994800	ranhon	unihon	0.005199999999999982
+abehon-unihon	0.0056853	whg	0.989900	abehon	unihon	0.010099999999999998
+nighon-ranhon	0.0049906	whg	0.987800	nighon	ranhon	0.012199999999999989
+puehon-ranhon	0.0047692	whg	0.986800	puehon	ranhon	0.01319999999999999
+nighon-unihon	0.0050249	whg	0.982900	nighon	unihon	0.017100000000000004
+abehon-ranhon	0.0039099	whg	0.966000	abehon	ranhon	0.03400000000000003
+nighon-puehon	0.0032668	whg	0.952300	nighon	puehon	0.047699999999999965
+abehon-nighon	0.0033385	whg	0.950700	abehon	nighon	0.04930000000000001
+abehon-puehon	0.0029727	whg	0.948900	abehon	puehon	0.051100000000000034
+puehon-unihon	0.0029258	whg	0.945400	puehon	unihon	0.05459999999999998
+puebel-unibel	0.0047055	whg	0.921200	puebel	unibel	0.07879999999999998
+indbel-maybel	0.094915	subset_non_diverged	1.000000	indbel	maybel	0
+indbel-nigbel	0.0821	subset_non_diverged	1.000000	indbel	nigbel	0
+indbel-unibel	0.069394	subset_non_diverged	1.000000	indbel	unibel	0
+indbel-puebel	0.064472	subset_non_diverged	1.000000	indbel	puebel	0
+gumhon-unihon	0.051028	subset_non_diverged	1.000000	gumhon	unihon	0
+gumhon-ranhon	0.049076	subset_non_diverged	1.000000	gumhon	ranhon	0
+gumhon-puehon	0.048967	subset_non_diverged	1.000000	gumhon	puehon	0
+gumhon-nighon	0.048091	subset_non_diverged	1.000000	gumhon	nighon	0
+abehon-gumhon	0.043985	subset_non_diverged	1.000000	abehon	gumhon	0
+maybel-nigbel	0.040682	subset_non_diverged	1.000000	maybel	nigbel	0
+nigpan-unipan	0.034922	subset_non_diverged	1.000000	nigpan	unipan	0
+nigpan-puepan	0.027634	subset_non_diverged	1.000000	nigpan	puepan	0
+maybel-puebel	0.027461	subset_non_diverged	1.000000	maybel	puebel	0
+maybel-unibel	0.029859	subset_non_diverged	0.999800	maybel	unibel	1.9999999999997797e-4
+puepan-unipan	0.01229	subset_non_diverged	0.999700	puepan	unipan	2.9999999999996696e-4
+nigbel-puebel	0.016534	subset_non_diverged	0.999300	nigbel	puebel	7.000000000000339e-4
+nigbel-unibel	0.015036	subset_non_diverged	0.996300	nigbel	unibel	0.0037000000000000366
+ranhon-unihon	0.0068091	subset_non_diverged	0.993700	ranhon	unihon	0.006299999999999972
+abehon-unihon	0.0053031	subset_non_diverged	0.986400	abehon	unihon	0.013599999999999945
+nighon-ranhon	0.0047645	subset_non_diverged	0.986000	nighon	ranhon	0.014000000000000012
+nighon-unihon	0.0046108	subset_non_diverged	0.973700	nighon	unihon	0.02629999999999999
+puehon-ranhon	0.0041444	subset_non_diverged	0.969800	puehon	ranhon	0.030200000000000005
+abehon-ranhon	0.0036855	subset_non_diverged	0.960300	abehon	ranhon	0.03969999999999996
+abehon-nighon	0.003246	subset_non_diverged	0.958100	abehon	nighon	0.04190000000000005
+nighon-puehon	0.0029105	subset_non_diverged	0.945200	nighon	puehon	0.05479999999999996
+puehon-unihon	0.0026694	subset_non_diverged	0.937200	puehon	unihon	0.06279999999999997
+abehon-puehon	0.0026316	subset_non_diverged	0.936100	abehon	puehon	0.06389999999999996
+puebel-unibel	0.0043019	subset_non_diverged	0.916400	puebel	unibel	0.08360000000000001

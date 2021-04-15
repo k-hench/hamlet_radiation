@@ -7,7 +7,9 @@ library(cowplot)
 clr <- RColorBrewer::brewer.pal(5, 'Set1')[c(3, 1)] %>% set_names(nm = c("start", 'product'))
 
 read_dot <- function(file,
-                     point_types = tibble(label = 'dummy', type = 'dummy')){
+                     point_types = tibble(label = 'dummy', type = 'dummy'),
+                     green_dot = c('p0'),
+                     red_dot = c('p0')){
   raw_lines <- read_lines(file) %>%
     tibble(line = .) %>%
     filter(grepl('^p', line)) %>%
@@ -24,7 +26,8 @@ read_dot <- function(file,
     count() %>%
     ungroup() %>%
     left_join(., point_types, by = "label") %>%
-    mutate(type = type %>% ifelse(point == 'p0',"start",.))
+    mutate(type =  ifelse(point %in% green_dot, "start",
+                                  ifelse(point %in% red_dot, "product", type)))
   
   edges <- raw_lines %>%
     filter(grepl('->', line)) %>%
@@ -38,7 +41,8 @@ read_dot <- function(file,
 
 dot_plot <- function(file, git,  point_types = tibble(label = 'dummy', type = 'dummy'),...){
   dot_data <- read_dot(file = file, 
-                       point_types = point_types)
+                       point_types = point_types,
+                       ...)
   
   g <- tbl_graph(nodes = dot_data$nodes, edges = dot_data$edges) %>%
     ggraph(layout = 'kk')+
@@ -47,7 +51,7 @@ dot_plot <- function(file, git,  point_types = tibble(label = 'dummy', type = 'd
                                      gp = grid::gpar(fontsize = 300,
                                                      fontface = 'bold',
                                                      col = '#E0e0e0')))+
-    geom_edge_link(aes(label = label,color = type), 
+    geom_edge_link(aes(label = label, color = type), 
                    angle_calc = 'along',
                    label_dodge = unit(2.5, 'mm'), 
                    start_cap = circle(8, 'pt'),

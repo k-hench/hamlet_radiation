@@ -1,0 +1,51 @@
+digraph "analysis_pca" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p0 -> p4 [label="subset_type_ch"];
+
+p1 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p1 -> p3 [label="outlier_tab"];
+
+p2 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromFilePairs"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p2 -> p3;
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p3 -> p4;
+
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p5 [label="subset_vcf_divergence_based"];
+p4 -> p5 [label="vcf_ch"];
+
+p5 [label="subset_vcf_divergence_based"];
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p5 -> p19 [label="vcf_locations"];
+
+p5 [label="subset_vcf_divergence_based"];
+p23 [label="pca_all"];
+p5 -> p23 [label="vcf_all_samples_pca"];
+
+p6 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.from"];
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p6 -> p19 [label="locations_ch"];
+
+
+p19 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="combine"];
+p20 [label="subset_vcf_by_location"];
+p19 -> p20 [label="vcf_location_combo"];
+
+p20 [label="subset_vcf_by_location"];
+p21 [label="pca_location"];
+p20 -> p21 [label="vcf_loc_pca"];
+
+p21 [label="pca_location"];
+p22 [shape=point];
+p21 -> p22 [label="pca_loc_out"];
+
+p23 [label="pca_all"];
+p26 [shape=point];
+p23 -> p26 [label="pca_all_out"];
+
+}
