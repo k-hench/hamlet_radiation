@@ -1,14 +1,14 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFz1.R 2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support
+# Rscript --vanilla R/fig/plot_SF16.R 2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support
 # ===============================================================
-# This script produces Suppl. Figure 9 of the study "Ancestral variation,
+# This script produces Suppl. Figure 16 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support")
-# script_name <- "R/fig/plot_SF9.R"
+# script_name <- "R/fig/plot_SF16.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -97,7 +97,7 @@ p_single <- ggplot() +
 
 scl <- 1.5
 hypo_save(plot = p_single,
-          filename = "figures/SFz1.pdf",
+          filename = "figures/SF16.pdf",
           width = 7.5 * scl,
           height = 4 * scl,
           device = cairo_pdf,
