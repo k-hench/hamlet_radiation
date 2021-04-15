@@ -1,8 +1,5 @@
 #!/usr/bin/env nextflow
 
-// Region-specific phylogenies
-// ---------------------------
-
 // git 14.1
 // bundle allBP files and outlier table
 Channel
@@ -21,6 +18,7 @@ Channel.fromPath("../../ressources/samples_155.txt")
   .set{ sample_mode_ch }
 
 // git 14.3
+// subset genotypes to outlier region
 process extract_regions {
 
 	input:
@@ -46,11 +44,12 @@ process extract_regions {
 	  --remove ${sample_file} \
 	  --recode \
 	  --stdout | \
-	  grep -v '##' > \${OUT_ALT}_${sample_mode}.vcf   # 113,099 / 146,663 / 97,653 sites
+	  grep -v '##' > \${OUT_ALT}_${sample_mode}.vcf
 	"""
 }
 
 // git 14.4
+// run pomo/ iqtree
 process run_pomo {
 	publishDir "../../2_analysis/revPoMo/outlier_regions/", mode: 'copy' 
 	
@@ -89,9 +88,8 @@ process run_pomo {
 	"""
 }
 
-// Region-specific phylogenies
-// ---------------------------
 // git 14.5
+// convert genotypes to fasta for raxml
 process conversion_raxml {
 	input:
 	set file( vcf ), val( outlierId ), val( sample_mode ) from vcf_pomo_ch
@@ -113,6 +111,7 @@ process conversion_raxml {
 }
 
 // git 14.6
+// run raxml
 process run_raxml {
 	publishDir "../../2_analysis/raxml/", mode: 'copy' 
 	
