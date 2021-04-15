@@ -1,5 +1,10 @@
 #!/usr/bin/env nextflow
 
+// ----------------------- DISCLAIMER ----------------------
+// this pipeline was not actually run using nexflow,
+// but manged manually
+// ---------------------------------------------------------
+
 // git 14.1
 // bundle allBP files and outlier table
 Channel
