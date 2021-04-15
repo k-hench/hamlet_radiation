@@ -70,7 +70,7 @@ process serr_whg_raxml {
 	file( fas ) from raxml_serr_genotypes_ch
 
 	output:
-	file( "hyS_n_0.33_mac4_5kb.raxml.support.bs-tbe" ) into raxml_serr_whg_ch
+	file( "hyS_n_0.33_mac4_5kb.raxml.support" ) into raxml_serr_whg_ch
 
 	script:
 	"""
