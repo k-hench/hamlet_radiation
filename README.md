@@ -41,7 +41,7 @@ In case you are looking for specific parts referenced in the *Materials and Meth
 - *git 14*: [`nf/14_analysis_phylo_regions/analysis_phylo_regions.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/14_analysis_phylo_regions/analysis_phylo_regions.nf)
 - *git 15*: [`sh/create_figures.sh`](https://github.com/k-hench/hamlet_radiation/blob/master/sh/create_figures.sh)
 
-Again, please refer to the [docs]() for a more in depth documentation.
+Again, please refer to the [docs](https://k-hench.github.io/hamlet_radiation/) for a more in depth documentation.
 
 ---
 
