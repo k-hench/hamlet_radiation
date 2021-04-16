@@ -19,6 +19,7 @@ This depends on several non-CRAN R-packages, so to be able to install the packag
 # installing non-CRAN dependencies
 install.packages("remotes")
 remotes::install_bioc("rtracklayer")
+remotes::install_github("YuLab-SMU/ggtree")
 remotes::install_github("k-hench/hypogen")
 remotes::install_github("k-hench/hypoimg")
 # installing GenomicOriginsScripts
