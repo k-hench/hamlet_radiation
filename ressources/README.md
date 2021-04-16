@@ -78,6 +78,8 @@ These files are not tracked to minimize the repository size but the following st
 │   └── scripts
 │       └── ...
 ├── README.md
+├── samples_155.txt
+├── samples_hybrids.txt
 ├── vcf2gp.spid
 ├── vcf2nh.spid
 └── windows_1kb.bed.gz
