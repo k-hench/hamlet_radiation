@@ -2,8 +2,11 @@
 
 // ----------------------- DISCLAIMER ----------------------
 // this pipeline was not actually run using nexflow,
-// but manged manually
+// but managed manually
 // ---------------------------------------------------------
+
+// Hamlet phylogeny
+// ----------------
 
 // git 13.1
 // open the SNP data set
@@ -12,7 +15,7 @@ Channel
 	.into{ vcf_hypo_whg_ch; vcf_serr_whg_ch }
 
 // RAxML analysis, Serranus-rooted
-// ------------------------------
+// -------------------------------
 // git 13.2
 // open the sample-list (excluding hybrid samples)
 Channel
@@ -62,7 +65,7 @@ process serr_whg_genotypes {
 }
 
 // git 13.4
-// run raxml including outgroup
+// run raxml (Serranus-rooted)
 process serr_whg_raxml {
 	publishDir "../../2_analysis/raxml/", mode: 'copy' 
 	
@@ -90,10 +93,10 @@ process serr_whg_raxml {
 	"""
 }
 
-// Hamlet Phylogeny
-// ---------------
+// RAxML analysis, floridae-rooted
+// -------------------------------
 // git 13.5
-// open the sample-list (excluding hybrid samples and Serranids)
+// open the sample-list (excluding hybrid and Serranus samples)
 Channel
 	.fromPath("../../ressources/samples_155.txt")
 	.set{ hamlet_file }
@@ -109,7 +112,7 @@ process hypo_whg_genotypes {
 
 	script:
 	"""
-	# Remove hybrids and Serranus samples from genotype data (SNPs only)
+	# Remove hybrid and Serranus samples from genotype data (SNPs only)
 	vcftools \
 	  --gzvcf ${vcf[0]} \
 	  --remove ${hamlets} \
@@ -141,7 +144,7 @@ process hypo_whg_genotypes {
 }
 
 // git 13.7
-// run raxml excluding outgroup
+// run raxml (floridae-rooted)
 process hypo_whg_raxml {
 	publishDir "../../2_analysis/raxml/", mode: 'copy' 
 	
