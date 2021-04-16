@@ -2,8 +2,11 @@
 
 // ----------------------- DISCLAIMER ----------------------
 // this pipeline was not actually run using nexflow,
-// but manged manually
+// but managed manually
 // ---------------------------------------------------------
+
+// Region-specific phylogenies
+// ---------------------------
 
 // git 14.1
 // bundle allBP files and outlier table
@@ -16,7 +19,7 @@ Channel
   .set{ vcf_lg_ch }
 
 // git 14.2
-// toggle sample modes (with/ without Serranus outgroup)
+// toggle sample modes (with / without Serranus outgroup)
 Channel.fromPath("../../ressources/samples_155.txt")
   .concat(Channel.fromPath("../../ressources/samples_hybrids.txt"))
   .merge(Channel.from("155", "hyS"))
@@ -54,7 +57,7 @@ process extract_regions {
 }
 
 // git 14.4
-// run pomo/ iqtree
+// run iqtree under pomo model
 process run_pomo {
 	publishDir "../../2_analysis/revPoMo/outlier_regions/", mode: 'copy' 
 	
@@ -88,8 +91,7 @@ process run_pomo {
 		-nt 16 \
 		-s \${OUT_ALT}_${sample_mode}_pop.cf \
 		-m HKY+F+P+N9+G4 \
-		-b 100 \
-		--tbe
+		-b 100
 	"""
 }
 
