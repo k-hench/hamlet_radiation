@@ -174,7 +174,7 @@ process subset_vcf_hamlets_only {
 
 ### <i>F<sub>ST</sub></i>
 
-Using this subset, we compute the global differentiation among all hamlet populations.
+Using this subsets, we compute the global differentiation among all hamlet populations.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // ----------- Fst section -----------
@@ -358,7 +358,7 @@ process fst_globals {
 
 ### GxP
 
-The software use for the GxP association uses genotypes in `plink` file format, so the first step was to convert the input.
+The software used for the GxP association ([gemma](https://github.com/genetics-statistics/GEMMA)) uses genotypes in `plink` file format, so the first step was to convert the input.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // ----------- G x P section -----------
@@ -426,7 +426,7 @@ Channel
 	.set{ phenotypes_raw }
 ```
 
-For historic reasons, we perform a PCA on the phenotypes and report the extended phenotype data including the scoring on PC1 & PC2.
+As a legacy of the early analysis, we perform a PCA on the phenotypes and report the extended phenotype data including the scoring on PC1 & PC2.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 3.14
@@ -456,7 +456,7 @@ We set up all the traits for which we want to perform a GxP association.
 // git 3.15
 // setup GxP traits
 Channel
-	.from("Bars", "Snout", "Peduncle") //,  "Lines", "Blue", "Yellow", "Orange", "Tail_transparent","PC1", "PC2", "PC_d1", "abe", "gum", "ind", "may", "nig", "pue", "ran", "uni", "blue2" )
+	.from("Bars", "Snout", "Peduncle")
 	.set{ traits_ch }
 ```
 

@@ -40,7 +40,8 @@ tree_file_lg12_4 <- as.character(args[3])
 trees <- c(tree_file_lg04_1, tree_file_lg12_3, tree_file_lg12_4) %>% 
   map(.f = function(file){
     read.tree(file) %>%
-      root(phy = ., outgroup = c("28393torpan", "s_tort_3torpan", "20478tabhon" ))}
+      root(phy = ., outgroup = c("28393torpan", "s_tort_3torpan", "20478tabhon" )) %>% 
+    midpoint()}
   )
 
 clr_neutral <- rgb(.6, .6, .6)

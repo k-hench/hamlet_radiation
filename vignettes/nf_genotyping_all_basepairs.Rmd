@@ -45,7 +45,7 @@ nf_run_allbp
 ## Summary
 
 The genotyping procedure is controlled by the [**nextflow**](https://www.nextflow.io/) script `genotyping_all_basepairs.nf` (located under `$BASE_DIR/nf/02_genotyping_all_basepairs/`).
-Based on an intermediate step from `genotyping.nf`, this script produces a data set that includes _all callable sites_  - that is SNPs as well a invariant sites that are covered by sequence.
+Based on an intermediate step from `genotyping.nf` ([git 1.10](git-1-genotyping-i-snps-only.html)), this script produces a data set that includes _all callable sites_  - that is SNPs as well a invariant sites that are covered by sequence.
 Below is an overview of the steps involved in the genotyping process.
 (The <span style="color:#4DAF4A">green dot</span> indicates the data input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 

@@ -330,7 +330,7 @@ process phenotye_pca {
 // git 3.15
 // setup GxP traits
 Channel
-	.from("Bars", "Snout", "Peduncle") //,  "Lines", "Blue", "Yellow", "Orange", "Tail_transparent","PC1", "PC2", "PC_d1", "abe", "gum", "ind", "may", "nig", "pue", "ran", "uni", "blue2" )
+	.from("Bars", "Snout", "Peduncle")
 	.set{ traits_ch }
 
 // git 3.16

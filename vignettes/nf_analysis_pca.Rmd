@@ -32,7 +32,7 @@ source('R/draw_workflow.R')
 prod_pca <- tibbler(c('vcf_hamlets_only', 'vcf_multi_fst', 'pca_all_out', 'pca_loc_out'))
 ```
 
-# (git 73) Analysis V (Principal Component Analysis)
+# (git 7) Analysis V (Principal Component Analysis)
 
 This pipeline can be executed as follows:
 

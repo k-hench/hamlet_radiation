@@ -39,9 +39,9 @@ lab2spec <- function(label){
 
 tree_s <- read.tree(tree_serr_file)
 tree_s_rooted <- root(tree_s, outgroup = c("28393torpan", "s_tort_3torpan", "20478tabhon" ))
-# tree_s_mid <- phangorn::midtree_s_rootedpoint(tree_s_rooted)
+tree_s_mid <- phangorn::midpoint(tree_s_rooted)
 
-tree_s_data <- open_tree(ggtree(tree_s_rooted, layout = "circular"), 180) %>% 
+tree_s_data <- open_tree(ggtree(tree_s_mid, layout = "circular"), 180) %>% 
   .$data %>% 
   mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
          support = as.numeric(label),

@@ -34,7 +34,7 @@ prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'ge
                         'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
 ```
 
-# (git 13) Analysis  XI (raxML Phylogenies)
+# (git 13) Analysis  XI (Whole Genome Phylogenies)
 
 This pipeline can be executed as follows:
 

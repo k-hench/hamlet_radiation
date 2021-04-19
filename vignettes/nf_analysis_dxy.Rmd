@@ -61,7 +61,7 @@ girafe( ggobj = dot_plot(file = 'docs/analysis_dxy.dot', git = 4, point_types = 
 
 ### Data preparation
 
-The nextflow script starts by opening the genotype data and feeding it into three different streams (one for _d<sub>XY</sub>_ and one for $\pi$).
+The nextflow script starts by opening the genotype data and feeding it into two different streams (one for _d<sub>XY</sub>_ and one for $\pi$).
 
 <div class="kclass">
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -426,7 +426,7 @@ process receive_random_tuple {
 ### $\pi$
 
 Estimating the diversity is quite straight forward:
-We take the prepared, population identifier, the data set and the window resolutions and run `VCFtools` on each combination.
+We take the prepared population identifier, the data set and the window resolutions and run `VCFtools` on each combination.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // ---------------------------------------------------------------

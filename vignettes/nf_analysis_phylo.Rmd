@@ -31,7 +31,7 @@ source('R/draw_workflow.R')
 prod_phylo <- tibbler(c('twisst_output','fasttree_mito_output', 'fasttree_whg_output','fasttree_output'))
 ```
 
-# (git 5) Analysis III (phylogeny & topology weighting)
+# (git 5) Analysis III (topology weighting)
 
 This pipeline can be executed as follows:
 
@@ -43,7 +43,7 @@ nf_run_phylo
 
 ## Summary
 
-The whole genome phylogeny and the topology weighting are prepared within the [**nextflow**](https://www.nextflow.io/) script `analysis_fasttree_twisst.nf` (located under `$BASE_DIR/nf/05_analysis_fasttree_twisst/`), which runs on the _SNPs only_ data set.
+A supersede version of the whole genome phylogeny and the topology weighting are prepared within the [**nextflow**](https://www.nextflow.io/) script `analysis_fasttree_twisst.nf` (located under `$BASE_DIR/nf/05_analysis_fasttree_twisst/`), which runs on the _SNPs only_ data set.
 Below is an overview of the steps involved in the process.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
