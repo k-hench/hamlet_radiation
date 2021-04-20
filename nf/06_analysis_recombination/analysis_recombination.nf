@@ -93,7 +93,7 @@ process fasteprr_s2 {
 	set val( idx ), file( step1 ) from step_2_run_ch
 
 	output:
-	set val( idx ), file( "step2_run${idx}" ) into step_2_out_ch
+	set val( idx ), file( "step2_run${idx}" ) into ( step_2_indxs, step_2_files )
 
 	script:
 	"""
@@ -103,10 +103,6 @@ process fasteprr_s2 {
 }
 
 // git 6.8
-// clone step 2 output
-step_2_out_ch.into{ step_2_indxs; step_2_files }
-
-// git 6.9
 // collect step 2 output
 process fasteprr_s2_summary {
 	label 'L_loc_fasteprr_s2_summmary'
@@ -128,7 +124,7 @@ process fasteprr_s2_summary {
 	"""
 }
 
-// git 6.10
+// git 6.9
 // run fasteprr step 3
 process fasteprr_s3 {
 	label 'L_32g4h_fasteprr_s3'
@@ -147,7 +143,7 @@ process fasteprr_s3 {
 	"""
 }
 
-// git 6.11
+// git 6.10
 // reformat overall fasteprr output
 process fasteprr_s3_summary {
 	label 'L_loc_fasteprr_s3_summmary'

@@ -29,9 +29,8 @@ knitr::opts_knit$set(root.dir = '../')
 
 ```{r, include = FALSE}
 source('R/draw_workflow.R')
-prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'gemma_results',
-                        'phenotype_file', 'fst_glob', "fst_10k_output","fst_50k", 'fst_logs',
-                        'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
+prod_fstsig <- tibbler(c('random_lists_result',
+                        'random_lists_adapt_result'))
 ```
 
 # (git 12) Analysis X (<i>F<sub>ST</sub></i> Permutation Test)
@@ -46,16 +45,19 @@ nf_run_fstsig
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_sign.nf` (located under `$BASE_DIR/nf/12_analysis_fst_signif/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+<i>F<sub>ST</sub></i> significance is assesed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_sign.nf` (located under `$BASE_DIR/nf/12_analysis_fst_signif/`).
 Below is an overview of the steps involved in the analysis.
-(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+(The <span style="color:#4DAF4A">green dots</span> indicates the input files, <span style="color:#E41A1C">red dots</span> depict output that is exported for further use.)
 
 <div style="max-width:800px; margin:auto;">
-```{r, eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
-                         git = 3, point_types = prod_basic),
-        width_svg = 16, height_svg = 16)
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+girafe( ggobj = dot_plot(file = 'docs/analysis_fstsig.dot',
+                         git = 12,
+                         point_types = prod_fstsig,
+                         green_dot = c("p0", "p5"),
+                         red_dot = c("p67", "p50")),
+        width_svg = 16, 
+        height_svg = 16)
 
 ```
 </div>
@@ -64,7 +66,7 @@ girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the genotype data.
 
 :::kclass
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -76,6 +78,7 @@ Channel
 	.into{ vcf_locations; vcf_adapt }
 ```
 
+As population pairs of different locations are going to be tested independently, we prepare a location channel.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.2
@@ -85,6 +88,8 @@ Channel
 	.set{ locations_ch }
 ```
 
+The permutation test is going to be run once for the full genotype set and once for a subset excluding the highly differentiated regions of the genome.
+For this, we create a channel to toggle between the subset types.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.3
@@ -94,6 +99,7 @@ Channel
 	.into{ subset_type_ch; subset_type_ch2 }
 ```
 
+We also load a reference table with the genomic coordinates of the highly differentiated regions.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.4
@@ -103,6 +109,7 @@ Channel
 	.into{ outlier_tab; outlier_tab2 }
 ```
 
+Then we combine the information about the focal location with the genotype data and the outlier file.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.5
@@ -113,6 +120,7 @@ locations_ch
 	.set{ vcf_location_combo }
 ```
 
+At this point, the genotypes are subset by location.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.6
@@ -144,6 +152,7 @@ process subset_vcf_by_location {
 }
 ```
 
+Now, for each location, we respectively list the specific set...
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.7
@@ -153,6 +162,7 @@ Channel.from( [[1, "abe"], [2, "gum"], [3, "nig"], [4, "pue"], [5, "ran"], [6, "
 Channel.from( [[1, "nig"], [2, "pue"], [3, "uni"]] ).into{ pan_spec1_ch; pan_spec2_ch }
 ```
 
+...and create all possible species pairs.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.8
@@ -185,6 +195,13 @@ pan_pairs_ch = Channel.from( "pan" )
 bel_pairs_ch.concat( hon_pairs_ch, pan_pairs_ch  ).set { all_fst_pairs_ch }
 ```
 
+Before the actual permutations, a little preparation is necessary:
+
+- first, the differentiated regions are excluded from the data if needed
+- then, population assignment files are created (`pop1.txt` and `pop2.txt`)
+- next, differentiation for the actual population assignment are computed
+- the resulting genome wide <i>F<sub>ST</sub></i> is used to start populating a results table `*_random_fst_a00.tsv`
+- finally files that are not needed anymore are cleaned up and the list of involved samples is exported
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.9
@@ -238,13 +255,15 @@ process fst_run {
 }
 ```
 
+We are going to perform 10,000 permutations for each population pair.
+Theses are going to be split over 100 batches of 100 permutations each.
+For this we now create a channel with the indices for those batches ranging from 00 - 99.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.10
 // create indexes for permutation itteration
 Channel
 	.from( ('0'..'9'))
-	.map{ "0" + it } //.into{ sub_pre_ch; sub_pre_ch2 }
 	.into{ singles_ch; tens_ch }
 
 singles_ch
@@ -255,6 +274,7 @@ singles_ch
 	.into{ sub_pre_ch; sub_pre_ch2 }
 ```
 
+Then within each batch, 100 permutations of the population assignments are conducted, the genome wide  <i>F<sub>ST</sub></i> is computed and the results are exported.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.11
@@ -295,6 +315,7 @@ process random_bodies {
 }
 ```
 
+Finally, the results of all batches are collected and a single output file is compiled per species pair.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.12
@@ -319,6 +340,11 @@ process compile_random_results {
 }
 ```
 
+---
+
+The same general approach is used for the permutation test for the allopatric populations of the *H. nigricans*, *H. puella* and *H. unicolor*.
+
+First, a channel for the three species is created.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // -----------------------------------------
@@ -332,6 +358,7 @@ Channel
 	.set{ species_ch }
 ```
 
+Then two instances of a location channel are created...
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.14
@@ -339,6 +366,7 @@ Channel
 Channel.from( [[1, "bel"], [2, "hon"], [3, "pan"]]).into{ locations_ch_1;locations_ch_2 }
 ```
 
+...to produce every possible location combination.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.15
@@ -354,6 +382,7 @@ locations_ch_1
 	.set{ vcf_location_combo_adapt }
 ```
 
+Then, as a preparation of the permutation, genome wide <i>F<sub>ST</sub></i> for the actual sample configuration is computed (s. git 12.9).
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.16
@@ -414,6 +443,7 @@ process fst_run_adapt {
 }
 ```
 
+Now, 100 batches of 100 permutations each are run for every location pair (s. git 12.11).
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.17
@@ -454,6 +484,7 @@ process random_bodies_adapt {
 }
 ```
 
+Finally, the results are collected and a single output file is compiled.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 12.18
@@ -477,6 +508,7 @@ process compile_random_results_adapt {
 	"""
 }
 ```
+
 :::
 
 ---

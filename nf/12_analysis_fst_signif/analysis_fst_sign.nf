@@ -148,7 +148,6 @@ process fst_run {
 // create indexes for permutation itteration
 Channel
 	.from( ('0'..'9'))
-	.map{ "0" + it } //.into{ sub_pre_ch; sub_pre_ch2 }
 	.into{ singles_ch; tens_ch }
 
 singles_ch

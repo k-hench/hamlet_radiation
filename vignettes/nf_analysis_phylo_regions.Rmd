@@ -26,234 +26,199 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
 ```
 
-
-```{r, include = FALSE}
-source('R/draw_workflow.R')
-prod_basic <- tibbler(c('gxp_lm_smoothing_output, gxp_lmm_smoothing_output', 'gemma_results',
-                        'phenotype_file', 'fst_glob', "fst_10k_output","fst_50k", 'fst_logs',
-                        'multi_fst_output', 'fst_outlier_output','vcf_multi_fst'))
-```
-
 # (git 14) Analysis XII  (Outlier Region Phylogenies)
 
 This pipeline can be executed as follows:
 
 ```sh
-cd $BASE_DIR/nf/14_analysis_revpomo
-source ../sh/nextflow_alias.sh
-nf_run_revpomo
+cd $BASE_DIR/nf/14_analysis_phylo_regions
+nextflow run analysis_phylo_regions.nf
 ```
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_revpomo.nf` (located under `$BASE_DIR/nf/14_analysis_revpomo/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
-Below is an overview of the steps involved in the analysis.
-(The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
+The phylogenies specific to particular differentiation outlier regions are reconstructed within the [**nextflow**](https://www.nextflow.io/) script `analysis_phylo_regions.nf` (located under `$BASE_DIR/nf/14_analysis_phylo_regions/`).
+This includes both the *sample-level* as well as the *population-level* phylogenies.
 
-<div style="max-width:800px; margin:auto;">
-```{r, eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
-                         git = 3, point_types = prod_basic),
-        width_svg = 16, height_svg = 16)
+## Details of `analysis_phylo_regions.nf`
 
-```
-</div>
-
-## Details of `analysis_revpomo.nf`
+> This part of the analysis was actually manged manually and not via `nextflow`. 
+> We still report the analysis as a `.nf` script as we believe this is a cleaner and more concise report of the conducted analysis.
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the two specific linkage groups of the *all_bp* genotype data set and binding it to differentiation outlier IDs as well as to a reference table containing the genomic coordinates of all differentiation outlier regions.
 
 :::kclass
 ```{r , eval = FALSE, hilang = 'nf'}
 #!/usr/bin/env nextflow
+
+// ----------------------- DISCLAIMER ----------------------
+// this pipeline was not actually run using nexflow,
+// but managed manually
+// ---------------------------------------------------------
+
+// Region-specific phylogenies
+// ---------------------------
+
 // git 14.1
-// Open the SNP data set
+// bundle allBP files and outlier table
 Channel
-	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.set{ vcf_snps_ch }
+  .fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG04.vcf.{gz,gz.tbi}")
+  .concat(Channel.fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG12.vcf.{gz,gz.tbi}"))
+  .concat(Channel.fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG12.vcf.{gz,gz.tbi}"))
+  .merge(Channel.from("LG04_1", "LG12_3", "LG12_4"))
+  .combine(Channel.fromPath("../../ressources/focal_outlier.tsv"))
+  .set{ vcf_lg_ch }
 ```
 
+Then, two different sample lists (both excluding hybrid samples, one with and one without Serranus outgroup samples) are loaded and bound to a sample mode identifier.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 14.2
-// Prepare LG channel for vcf subsetting
-Channel
-	.from( ('01'..'09') + ('10'..'19') + ('20'..'24'))
-	.map{ "LG" + it }
-	.set{ lg_ch }
+// toggle sample modes (with / without Serranus outgroup)
+Channel.fromPath("../../ressources/samples_155.txt")
+  .concat(Channel.fromPath("../../ressources/samples_hybrids.txt"))
+  .merge(Channel.from("155", "hyS"))
+  .set{ sample_mode_ch }
 ```
 
+Next, for each outlier region, the genotype data is subset to the respective outlier region.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 14.3
-// Subset snp data set by LG
-process subset_snps_by_lg {
-	label "L_20g2h_subset_lg"
-	tag "${vcfId}"
+// subset genotypes to outlier region
+process extract_regions {
 
 	input:
-	set  vcfId, file( vcf ), val ( lg ) from vcf_snps_ch.map{ [it[0].minus(".vcf"), it[1]]}.combine( lg_ch )
-	
+	set val( vcfIdx ), file( vcf ), val( outlierId ), file( outlier_file ), file( sample_file ), val( sample_mode ) from vcf_lg_ch.combine( sample_mode_ch )
+
 	output:
-	set val( "${vcfId}.${lg}.vcf" ), file( "${vcfId}.${lg}.vcf.gz*" ) into vcf_snps_lg_ch
+	set file( "*_${sample_mode}.vcf" ), val( outlierId ), val( sample_mode ) into ( vcf_raxml_ch, vcf_pomo_ch )
 
 	script:
 	"""
-	vcftools \
-		--gzvcf ${vcf[0]} \
-		--chr ${lg} \
-		--recode \
-		--stdout | \
-		bgzip > ${vcfId}.${lg}.vcf.gz
-	
-	tabix ${vcfId}.${lg}.vcf.gz
+	# Extract regions of interest from genotype data (allBP),
+	# remove hybrid / Serranus samples and indels; simplify headers
+
+	head -n 1 ${outlier_file} | cut -f 1-3 > outlier.bed
+	grep ${outlierId} ${outlier_file} | cut -f 1-3 >> outlier.bed
+
+	OUT_ALT=\$(echo ${outlierId} | tr '[:upper:]' '[:lower:]' | sed 's/_/./')
+
+	vcftools --gzvcf \
+	  ${vcf[0]} \
+	  --bed outlier.bed \
+	  --remove-indels \
+	  --remove ${sample_file} \
+	  --recode \
+	  --stdout | \
+	  grep -v '##' > \${OUT_ALT}_${sample_mode}.vcf
 	"""
 }
 ```
 
+Then, for the *population-level* phylogenies, the genotypes are first converted to `fasta` format and then to a allele frequency format (`.cf`).
+At that point, `iqtree2` is run to create the *population-level* phylogenies.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 14.4
-// Open the allBP data set (will be expanded x 24 LGs)
-Channel
-	.fromFilePairs("../../1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG*.vcf.{gz,gz.tbi}")
-	.set{ vcf_allbp_ch }
+// run iqtree under pomo model
+process run_pomo {
+	publishDir "../../2_analysis/revPoMo/outlier_regions/", mode: 'copy' 
+	
+	input:
+	set file( vcf ), val( outlierId ), val( sample_mode ) from vcf_raxml_ch
+
+	output:
+	file( "*_pop.cf.treefile" ) into pomo_results_ch
+
+	script:
+	"""
+	OUT_ALT=\$(echo ${outlierId} | tr '[:upper:]' '[:lower:]' | sed 's/_/./')
+
+	# Convert to fasta format (Python scripts available at https://github.com/simonhmartin/genomics_general), picked up from 6.1.1 output
+	python \$SFTWR/genomics_general/VCF_processing/parseVCF.py -i ${vcf} > \${OUT_ALT}_${sample_mode}.geno
+
+	python \$SFTWR/genomics_general/genoToSeq.py \
+		-g \${OUT_ALT}_${sample_mode}.geno \
+		-s \${OUT_ALT}_${sample_mode}.fas \
+		-f fasta \
+		--splitPhased
+	
+	# Reformat sample ids to provide population prefixes for cflib
+	sed -e 's/-/_/g' -e 's/>\(.*\)\([a-z]\{6\}\)_\([AB]\)/>\2-\1_\3/g' \${OUT_ALT}_${sample_mode}.fas > \${OUT_ALT}_${sample_mode}_p.fas
+
+	# Convert to allele frequency format (cflib library available at https://github.com/pomo-dev/cflib)
+	\$SFTWR/cflib/FastaToCounts.py \${OUT_ALT}_${sample_mode}_p.fas \${OUT_ALT}_${sample_mode}_pop.cf
+
+	# IQTREE analysis under PoMo model
+	iqtree2 \
+		-nt 16 \
+		-s \${OUT_ALT}_${sample_mode}_pop.cf \
+		-m HKY+F+P+N9+G4 \
+		-b 100
+	"""
+}
 ```
 
+For the *sample-level* phylogenies, the genotypes are also converted to `fasta` format.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 14.5
-// Open the pre-defined window positions
-Channel
-	.fromPath("../../ressources/windows_1kb.bed.gz")
-	.set{ windows_ch }
+// convert genotypes to fasta for raxml
+process conversion_raxml {
+	input:
+	set file( vcf ), val( outlierId ), val( sample_mode ) from vcf_pomo_ch
+	
+	output:
+	set val( outlierId ), val( sample_mode ), file( "*N.fas" ) into outlier_regions_ch
+
+	script:
+	"""
+	OUT_ALT=\$(echo ${outlierId} | tr '[:upper:]' '[:lower:]' | sed 's/_/./')
+
+	# Replace unknown character states and asterisks (deletions as encoded by GATK) with "N"
+	vcf-to-tab < ${vcf} | sed -e 's/\\.\\/\\./N\\/N/g' -e 's/[ACGTN\\*]\\/\\*/N\\/N/g' > \${OUT_ALT}_${sample_mode}N.tab
+
+	# Convert to fasta format (Perl script available at https://github.com/JinfengChen/vcf-tab-to-fasta)
+	wget https://raw.githubusercontent.com/JinfengChen/vcf-tab-to-fasta/master/vcf_tab_to_fasta_alignment.pl
+	perl ~/apps/vcf-tab-to-fasta/vcf_tab_to_fasta_alignment.pl -i \${OUT_ALT}_${sample_mode}N.tab > \${OUT_ALT}_${sample_mode}N.fas
+	"""
+}
 ```
 
+Then, `raxml` is run directly on the `fasta` files.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 14.6
-// Subset ALL vcf files (also allBP) by missingnes (max. 10%)
-process filter_vcf_missingnes {
-	label "L_20g6h_filter_vcf"
-	tag "${vcfId}"
-
-	input:
-	set  vcfId, file( vcf ) from vcf_snps_lg_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
+// run raxml
+process run_raxml {
+	publishDir "../../2_analysis/raxml/", mode: 'copy' 
 	
+	input:
+	set val( outlierId ), val( sample_mode ), file( fas ) from outlier_regions_ch
+
 	output:
-	set val( vcfId ),  file( "*_single_ind.vcf.gz*" ) into vcf_snps_filterd_ch
+	file( "*.raxml.support" ) into outlier_results_ch
 
 	script:
 	"""
-	vcftools \
-		--gzvcf ${vcf[0]} \
-		--max-missing 0.9 \
-		--recode \
-		--stdout | \
-		sed "s/<NON_REF>/./g" | \
-		bgzip > ${vcfId}_filtered.vcf.gz
-	
-	tabix ${vcfId}_filtered.vcf.gz
+	OUT_ALT=\$(echo ${outlierId} | tr '[:upper:]' '[:lower:]' | sed 's/_/./')
 
-	vcfsamplenames ${vcfId}_filtered.vcf.gz | head -n 1 > first_ind.txt
-
-	vcftools \
-		--gzvcf ${vcfId}_filtered.vcf.gz \
-		--keep first_ind.txt \
-		--recode \
-		--stdout | \
-		bgzip > ${vcfId}_single_ind.vcf.gz
-	
-	tabix ${vcfId}_single_ind.vcf.gz
+	# Reconstruct phylogenies
+	raxml-NG --all \
+		--msa ${fas} \
+		--model GTR+G \
+		--tree pars{10},rand{10} \
+		--bs-trees 100 \
+		--threads 24 \
+		--worker 8 \
+		--seed 123 \
+		--prefix \${OUT_ALT}_${sample_mode}N
 	"""
 }
-```
 
-
-```{r , eval = FALSE, hilang = 'nf'}
-// git 14.7
-// Coverage of SNPs vcf for SNPdensity, allBP for Ns
-process compute_coverage {
-	label "L_50g3h_coverage"
-	tag "${vcfId}"
-	publishDir "../../2_analysis/revPoMo/coverage", mode: 'copy' 
-
-	input:
-	set vcfId, file( vcf ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
-	
-	output:
-	file( "${vcfId}_cov.tsv.gz" ) into coverage_ch
-
-	script:
-	"""
-	LG=\$( echo ${vcfId} | sed 's/.*\\(LG[0-9]\\{2\\}\\)/\\1/' )
-	echo -e "CHROM\\tSTART\\tEND" > windows_1kb.\$LG.bed
-
-	zcat ${window} | \
-		grep \$LG >> windows_1kb.\$LG.bed
-	
-	gzip windows_1kb.\$LG.bed
-
-	bedtools coverage \
-		-a windows_1kb.\$LG.bed.gz \
-		-b ${vcf[0]} \
-		-counts  > ${vcfId}_cov.tsv
-	
-	gzip ${vcfId}_cov.tsv
-	"""
-}
-```
-
-
-```{r , eval = FALSE, hilang = 'nf'}
-// git 14.8
-// Compile summary table
-process compile_window_stats {
-	label "L_20g2h_window_stats"
-	publishDir "../../2_analysis/revPoMo/", mode: 'copy' 
-
-	input:
-	file( windows ) from coverage_ch.collect()
-
-	output:
-	file( "window_stats.tsv.gz" ) into final_ch
-
-	script:
-	"""
-	#!/usr/bin/env Rscript
-
-	library(tidyverse)
-
-	data_SNPs <- 1:24 %>% 
-					str_pad(width = 2, pad = 0) %>%
-					str_c("phased_mac2.LG", ., "_cov.tsv.gz") %>%
-					map_dfr(.f = function(file){
-							read_tsv(file, 
-								col_names = c("CHROM", "START", "END", "COV_SNP")) %>%
-							filter(COV_SNP > 0 )
-								} ) 
-					
-	data_allBPs <- 1:24 %>% 
-					str_pad(width = 2, pad = 0) %>%
-					str_c("filterd.allBP.LG", ., "_cov.tsv.gz") %>%
-					map_dfr(.f = function(file){
-							read_tsv(file, 
-								col_names = c("CHROM", "START", "END", "COV_ALL")) %>%
-							filter(COV_ALL > 0 )
-							}
-						)
-
-	data <- data_SNPs %>%
-		left_join(data_allBPs, by = c(CHROM = "CHROM", START = "START", END = "END")) %>%
-		mutate(SNP_density = COV_SNP/ COV_ALL, 
-				REL_COV =  COV_ALL/ (END-START))
-	
-	data %>% write_tsv("window_stats.tsv.gz")
-	"""
-}
 ```
 :::
 

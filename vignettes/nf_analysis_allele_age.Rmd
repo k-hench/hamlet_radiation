@@ -46,8 +46,7 @@ nf_run_aa
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_allele_age.nf` (located under `$BASE_DIR/nf/11_analysis_allele_age/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+The allele age is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_allele_age.nf` (located under `$BASE_DIR/nf/11_analysis_allele_age/`) which runs on the _SNPs only_ data set.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
@@ -64,7 +63,7 @@ girafe( ggobj = dot_plot(file = 'docs/analysis_basic.dot',
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the genotype data.
 
 :::kclass
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -76,6 +75,7 @@ Channel
 	.set{ vcf_ch }
 ```
 
+As the data is going to be split by linkage group, we create a channel for the individual LGs.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 11.2
@@ -87,6 +87,12 @@ Channel
 	.set{ lg_ch }
 ```
 
+Several things are happening in the next step:
+
+- First the genotypes are split by LG and a new info field is added to the `vcf` file to store information about the ancestral state of each SNP.
+- The second step checks for each SNP if it is invariant across all Serranid outgroup samples (in that case the outgroup allele is considered ancestral).
+- Then, allele frequencies are computed as a fallback clue - if a SNP is variant in the outgroup, the major allele is then set as ancestral allele.
+- Lastly, the ancestral state information is added to the genotype file.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 11.3
@@ -152,6 +158,7 @@ process prepare_vcf {
 }
 ```
 
+Based on the ancestral state information, the genotypes are recoded such that the ancestral allele is set as the new reference allele of the `vcf` file.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 11.4
@@ -175,6 +182,7 @@ process set_ancestral_states {
 }
 ```
 
+After this, the outgroup samples are removed from the data and the remaining data set is filtered to remove sites that are invariant within the hamlets.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 11.5
@@ -223,6 +231,7 @@ process create_positions {
 }
 ```
 
+Since a single `GEVA` run can take quite some time, the data is split further into chunks of 25k SNPs 
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 11.5
@@ -256,6 +265,7 @@ process pre_split {
 }
 ```
 
+Then `GEVA` is run on those genotype subsets to actually estimate the allele ages.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 11.6
@@ -301,6 +311,7 @@ process run_geva {
 }
 ```
 
+And finally, the results of the separate chunks are gathered and compiled into a single output file.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 11.7

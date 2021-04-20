@@ -16,7 +16,7 @@ Channel
 // setting loci restrictions
 // (keep vs remove outlier regions)
 Channel
-	.from( "whg" ) //, "no_musks" )
+	.from( "whg" ) //, "no_outl" )
 	.set{ whg_modes }
 
 // git 5.4
@@ -67,7 +67,7 @@ process subset_vcf_by_location_whg {
 	fi
 
 	# check if diverged LGs need to be dropped
-	if [ "${mode}" == "no_musks" ];then
+	if [ "${mode}" == "no_outl" ];then
 		DROP_CHRS="--not-chr LG04 --not-chr LG07 --not-chr LG08 --not-chr LG09 --not-chr LG12 --not-chr LG17 --not-chr LG23"
 	fi
 

@@ -43,7 +43,7 @@ nf_run_phylo
 
 ## Summary
 
-A supersede version of the whole genome phylogeny and the topology weighting are prepared within the [**nextflow**](https://www.nextflow.io/) script `analysis_fasttree_twisst.nf` (located under `$BASE_DIR/nf/05_analysis_fasttree_twisst/`), which runs on the _SNPs only_ data set.
+A superseded version of the whole genome phylogeny and the topology weighting are prepared within the [**nextflow**](https://www.nextflow.io/) script `analysis_fasttree_twisst.nf` (located under `$BASE_DIR/nf/05_analysis_fasttree_twisst/`), which runs on the _SNPs only_ data set.
 Below is an overview of the steps involved in the process.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
@@ -74,8 +74,8 @@ Channel
 
 ### Whole genome phylogeny
 
-During data exploration, various subsets of the data set were investigated, including the different sampling locations, _whole genome_ vs. _non-outlier regions_ and all samples vs. _hamlets only_.
-(Now, most of the options have been muted by commenting these options out.)
+> *During data exploration, various subsets of the data set were investigated, including the different sampling locations, _whole genome_ vs. _non-outlier regions_ and all samples vs. _hamlets only_.*
+> *(Now, most of the options have been muted by commenting these options out.)*
 
 Here, we set up a channel managing the subset by location.
 
@@ -95,7 +95,7 @@ This channel toggles the inclusion of <i>F<sub>ST</sub></i> outlier regions.
 // setting loci restrictions
 // (keep vs remove outlier regions)
 Channel
-	.from( "whg" ) //, "no_musks" )
+	.from( "whg" ) //, "no_outl" )
 	.set{ whg_modes }
 ```
 
@@ -158,7 +158,7 @@ process subset_vcf_by_location_whg {
 	fi
 
 	# check if diverged LGs need to be dropped
-	if [ "${mode}" == "no_musks" ];then
+	if [ "${mode}" == "no_outl" ];then
 		DROP_CHRS="--not-chr LG04 --not-chr LG07 --not-chr LG08 --not-chr LG09 --not-chr LG12 --not-chr LG17 --not-chr LG23"
 	fi
 
@@ -402,7 +402,7 @@ process twisst_prep {
 */
 ```
 
-The last step then is to run `twisst` prepared phylogenies.
+The last step then is to run `twisst` on the prepared phylogenies.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 /* MUTE: python thread conflict - run locally and feed into ressources/plugin

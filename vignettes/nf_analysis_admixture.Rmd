@@ -44,7 +44,7 @@ nf_run_admixture
 
 ## Summary
 
-The population recombination rate is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_admixture.nf` (located under `$BASE_DIR/nf/10_analysis_admixture/`), which runs on the _SNPs only_ data set.
+The degree of admixture is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_admixture.nf` (located under `$BASE_DIR/nf/10_analysis_admixture/`), which runs on the _SNPs only_ data set.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
