@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 #
 # Context: this script depends on the input file 2_analysis/summaries/fst_permutation_summary.tsv
-#          which is created by R/figs/plot_SFY.R
+#          which is created by R/figs/plot_SF15.R
 #
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F1.R \
@@ -125,17 +125,16 @@ edvr_serr_short$tip.label <- edvr_serr$tip.label %>%
   ifelse(. %in% names(label_two_chars), label_two_chars[.], .) %>% 
   ggplot2:::parse_safe()
 
-clr_tree <- scico::scico(6, palette = "berlin") %>% # viridis::plasma(6) %>% #
+clr_tree <- scico::scico(6, palette = "berlin") %>% 
   prismatic::clr_desaturate(shift = .4) %>% 
-  # prismatic::clr_lighten(shift = .2) #%>% 
   prismatic::clr_darken(shift = .2)
-# plot(edvr_serr_short, labels = TRUE, legend = TRUE,pal = rainbow(15),logcolor = TRUE, cex = .7)
+
 
 p1 <- as.grob(function(){
   par(mar = c(0,0,0,0))
   bammplot_k(x = edvr_serr_short,
              labels = T,
-             lwd = .8, #legend = TRUE,
+             lwd = .8,
              cex = .3,
              pal = clr_tree,
              labelcolor = c(rep("black", 9),
@@ -165,7 +164,6 @@ grob_grad <- rasterGrob(grad_mat,
 blank_hamlet <- hypoimg::hypo_outline %>% 
   ggplot()+
   coord_equal()+
-  # geom_polygon(aes(x, y), color = "black", fill = rgb(0, 0, 0, .2), size = .1)+
   geom_polygon(aes(x, y), color = rgb(0, 0, 0, .5), fill = rgb(1, 1, 1, .3), size = .1)+
   theme_void()
 
@@ -174,7 +172,7 @@ p_tree <- ggplot() +
              x = .5, y = .5, aes(color = v),alpha = 0)+
   scale_color_gradientn(colours = clr_tree, limits = c(.056, 2.4))+
   annotation_custom(grob = grob_grad,
-                    ymin = 0.01, ymax = .23,
+                    ymin = 0.01, ymax = .2335,
                     xmin = .4, xmax = .96)+
   annotation_custom(grob = ggplotGrob(blank_hamlet),
                     xmin = 0.55, xmax = .75,
@@ -193,40 +191,11 @@ p_tree <- ggplot() +
                                 barheight = unit(3, "pt"),
                                 barwidth = unit(57, "pt"),
                                 ticks.colour = "white")) +
-  # theme_minimal()+
   theme_void()+
   theme(legend.position = c(.01, .08),
         legend.justification = c(0, 0))
 
 # =================================================================================================
-
-plot_fish2 <- function (name, x = 0, y = 3, height = 4, width = 4, lwd = .15, line_color = "black") { 
-  spec <- str_remove(string = name, "Hypoplectrus_")
-  hypo_anno_l_lwd(spec, xmin = x - 0.5 * width, xmax = x + 
-                    0.5 * width, ymin = y - 0.5 * height, ymax = y + 0.5 * 
-                    height, lwd = lwd, line_color = line_color)
-}
-
-hypo_anno_l_lwd <- function (species, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, lwd = .15, line_color = "black") {
-  stopifnot(length(species) == 1)
-  stopifnot(is.character(species))
-  stopifnot(species %in% hypo_img$spec)
-  nr_species <- which(hypo_img$spec == species)
-  annotation_custom(editGrob(grob = hypo_img$l[[nr_species]],
-                             gPath = "GRID.picComplexPath.*", grep = TRUE,
-                             gp = gpar( lwd = lwd, col = line_color
-                             ), 
-                             global = TRUE, strict = FALSE) ,
-                    xmin = xmin, 
-                    xmax = xmax, ymin = ymin, ymax = ymax)
-}
-
-plot_serranus <- function(grob, x = 0, y = 3, height = 4, width = 4, ...){
-  annotation_custom(grob = grob, xmin = x - 0.5 * width, xmax = x + 
-                      0.5 * width, ymin = y - 0.5 * height, ymax = y + 0.5 * 
-                      height)
-}
-
 # import Fst
 fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
 
@@ -246,7 +215,7 @@ fst_data_gather <- fst_data %>%
   # duplicate dxy values scaled to fst range
   mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
   unite(temp, val, val_scaled) %>%
-  # separate th eoriginal values from the scales ons (scaled = secondary axis)
+  # separate the original values from the scaled ones (scaled = secondary axis, legacy)
   spread(.,key = 'sumstat',value = 'temp') %>%
   separate(mean, into = c('mean','mean_scaled'),sep = '_', convert = TRUE) %>%
   separate(median, into = c('median','median_scaled'), sep = '_', convert = TRUE) %>%
@@ -268,124 +237,7 @@ fst_data_gather <- fst_data %>%
 run_ord <- tibble(run = levels(fst_data_gather$run),
                   run_ord = 1:length(levels(fst_data_gather$run)))
 
-clr_alt <- clr
-clr_alt[["uni"]] <- "lightgray"
-pca_fish_scale <- 1.15
-
-pca_fish_pos <- tibble(pop = GenomicOriginsScripts::pop_levels,
-                       short = str_sub(pop, 1, 3),
-                       loc = str_sub(pop, 4, 6),
-                       width = c(bel = .08, hon =.08, pan = .09)[loc] * pca_fish_scale,
-                       height = c(bel = .08, hon =.08, pan = .09)[loc] * pca_fish_scale) %>% 
-  arrange(loc) %>%
-  mutate(x = c(-.18, -.01, .03, -.03, .075,
-               -.04, -.2, -.02, -.01, -.02, -.01,
-               -.15, 0, .05),
-         y = c(.02, .27, -.13, -.03, .05,
-               -.1, .05, 0, .075, -.23, .2,
-               .06, -.2, .2)) %>%
-  select(-pop) %>%
-  group_by(loc) %>%
-  nest()
-
-plot_fish_lwd <- function (short, x = 0, y = 3, height = 5, width = 5, lwd = .15, line_color = "transparent") { 
-  hypo_anno_l_lwd(sp_names[short], xmin = x - 0.5 * width, xmax = x + 
-                    0.5 * width, ymin = y - 0.5 * height, ymax = y + 0.5 * 
-                    height, lwd = lwd, line_color = line_color)
-}
-
-pca_plot <- function(loc){
-  set.seed(42)
-  evs <- str_c("2_analysis/pca/", loc ,".exp_var.txt.gz") %>% 
-    read_tsv()
-  str_c("2_analysis/pca/", loc ,".scores.txt.gz") %>% 
-    read_tsv() %>% 
-    mutate(spec = str_sub(id, -6,-4)) %>%
-    ggplot(aes(x = EV01, y = EV02, fill = spec))+
-    ggforce::geom_mark_ellipse(aes(color = spec),
-    fill = "transparent",
-    linetype = 3,
-    size = .3,
-    expand = unit(5, "pt"))+
-    geom_point(shape = 21, aes(color = after_scale(prismatic::clr_darken(fill))), size = .7) +
-    (pca_fish_pos$data[[which(pca_fish_pos$loc == loc)]] %>%
-       pmap(plot_fish_lwd))+
-    labs(x = str_c("PC1 (", sprintf("%.1f",evs$exp_var[[1]]), " %)"),
-         y = str_c("PC2 (", sprintf("%.1f",evs$exp_var[[2]]), " %)"))+
-    scale_fill_manual(values = clr)+
-    scale_color_manual(values = clr_alt %>%
-                         prismatic::clr_alpha(alpha = .7) %>%
-                         set_names(nm = names(clr_alt)))+
-    labs(title = loc_names[[loc]])+
-    theme_minimal()+
-    theme(legend.position = "none", 
-          panel.grid = element_blank(),
-          panel.background = element_rect(color = clr_loc[[loc]],
-                                          fill = "transparent"),
-          axis.text = element_blank(),
-          axis.ticks = element_blank(),
-          text = element_text(size = plot_text_size),
-          plot.title = element_text(color = clr_loc[[loc]]))
-}
-
-pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
-
-
-networx <- tibble( loc = c('bel','hon', 'pan'),
-                   n = c(5, 6, 3),
-                   label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
-                                str_c(c('abe','gum','nig','pue','ran','uni'),'hon'),
-                                str_c(c('nig','pue','uni'),'pan')),
-                   weight = c(1,1.45,1)) %>%
-  purrr::pmap_dfr(network_layout) %>%
-  mutate(edges = map(edges, function(x){x %>% left_join(fst_data_gather %>% filter(popstat == "weighted-fst") %>% select(run, median, mean)) }))
-
-
-plot_network <- function(loc, nodes, edges, asp = 0.8, sep = 0, node_lab_shift = 0){
-  loc_edge <- c(bel = .68, hon = .66, pan = .82) -.03
-  clr_prep <- (scales::colour_ramp(c("black",
-                                     clr_loc[loc])))(c(0.4, 1))
-  clrs <- colorRampPalette(clr_prep)(max(edges$idx))
-  p <- nodes %>% ggplot(aes(x, y)) + 
-    coord_fixed(ratio = asp) + 
-    geom_segment(data = edges,
-                 aes(xend = xend, yend = yend),#, size = median), 
-                 size = .1,
-                 color = clr_loc[loc]) +#, size = plot_lwd)
-    # scale_size(limits = c(0, 1), range = c(.1, 4))+
-    scale_size(limits = c(0, 1), range = c(.1, 2))+
-    scale_color_manual(values = clr)
-  for (k in nodes$idx) {
-    p <- p + plot_fish_lwd(short = str_sub(nodes$label[k], 1,  3),
-                           x = nodes$x[k], y = nodes$y[k], height = .7, width = .7)
-  }
-  p + geom_label(data = edges, aes(x = xmid_shift + sign(xmid_shift) * sep,
-                                   y = ymid_shift + sign(ymid_shift) * sep * asp,
-                                   label = run_ord),
-                 color = clr_loc[loc],
-                 label.padding = unit(1, "pt"),
-                 label.size = 0,
-                 size = plot_text_size * .5 /ggplot2::.pt) +
-    scale_fill_manual(values = clr_loc,
-                      guide = FALSE) +
-    scale_x_continuous(limits = c(-1.3, 1.3),
-                       expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0.1)) +
-    theme_void()
-}
-
-plot_list <- networx %>%
-  purrr::pmap(plot_network, node_lab_shift = .2)
-
-p_net <- cowplot::plot_grid(
-  # grid::textGrob('Belize', gp = gpar(fontsize = plot_text_size,)),
-  # grid::textGrob('Honduras', gp = gpar(fontsize = plot_text_size)),
-  # grid::textGrob('Panama', gp = gpar(fontsize = plot_text_size)),
-  plot_list[[1]] + theme(legend.position = "none"), plot_list[[2]] + theme(legend.position = "none"), plot_list[[3]] + theme(legend.position = "none"),
-  ncol = 3#, 
-  #rel_heights = c(.1,1)
-) %>% cowplot::as_grob()
-
+# load fst permutation results
 fst_sig_attach <- read_tsv(fst_permutation_file) %>% 
   filter( subset_type == "whg" ) %>% 
   mutate(loc = str_sub(run, -3, -1)) %>%
@@ -395,6 +247,29 @@ fst_sig_attach <- read_tsv(fst_permutation_file) %>%
          fdr_alpha = .05 / fdr_correction_factor,
          is_sig = p_perm > fdr_alpha) %>% 
   ungroup()
+
+# create network annotation
+# underlying structure for the network plots
+networx <- tibble( loc = c('bel','hon', 'pan'),
+                   n = c(5, 6, 3),
+                   label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
+                                str_c(c('abe','gum','nig','pue','ran','uni'),'hon'),
+                                str_c(c('nig','pue','uni'),'pan')),
+                   weight = c(1,1.45,1)) %>%
+  purrr::pmap_dfr(network_layout) %>%
+  mutate(edges = map(edges, function(x){x %>% left_join(fst_data_gather %>% filter(popstat == "weighted-fst") %>% select(run, median, mean)) }))
+
+# plot the individual networks by location
+plot_list <- networx %>%
+  purrr::pmap(plot_network, node_lab_shift = .2)
+
+# combine the networks into a single grob
+p_net <- cowplot::plot_grid(
+  plot_list[[1]] + theme(legend.position = "none"),
+  plot_list[[2]] + theme(legend.position = "none"),
+  plot_list[[3]] + theme(legend.position = "none"),
+  ncol = 3) %>%
+  cowplot::as_grob()
 
 # assemble panel b
 p2 <- fst_data_gather %>%
@@ -419,8 +294,7 @@ p2 <- fst_data_gather %>%
   annotation_custom(p_net, ymin = .15, xmax = 25) +
   scale_x_continuous(name = "Pair of sympatric species",
                      breaks = 1:28) +
-  scale_y_continuous(#breaks = c(0,.05,.1,.15),
-    name = expression(italic(F[ST])))+
+  scale_y_continuous(name = expression(italic(F[ST])))+
   scale_color_manual(values = c(make_faint_clr('bel'),
                                 make_faint_clr('hon'),
                                 make_faint_clr('pan'))[c(2, 4, 6)])+
@@ -437,18 +311,36 @@ p2 <- fst_data_gather %>%
         axis.text.y.right = element_text(color = clr_sec),
         axis.title.y.right = element_text(color = clr_sec))
 
+# assemble panel c-e
+clr_alt <- clr
+clr_alt[["uni"]] <- "lightgray"
+pca_fish_scale <- 1.15
+
+pca_fish_pos <- tibble(pop = GenomicOriginsScripts::pop_levels,
+                       short = str_sub(pop, 1, 3),
+                       loc = str_sub(pop, 4, 6),
+                       width = c(bel = .08, hon =.08, pan = .09)[loc] * pca_fish_scale,
+                       height = c(bel = .08, hon =.08, pan = .09)[loc] * pca_fish_scale) %>% 
+  arrange(loc) %>%
+  mutate(x = c(-.18, -.01, .03, -.03, .075,
+               -.04, -.2, -.02, -.01, -.02, -.01,
+               -.15, 0, .05),
+         y = c(.02, .27, -.13, -.03, .05,
+               -.1, .05, 0, .075, -.23, .2,
+               .06, -.2, .2)) %>%
+  select(-pop) %>%
+  group_by(loc) %>%
+  nest()
+
+pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
 
 fish_tib <- tibble(short = names(clr)[!names(clr) %in% c("flo", "tab", "tor")],
-       # x = ((seq_along(short) - 1)  %% 4 + 1)* 3 - 2.5,
-       # y = ((seq_along(short) - 1)  %/% 4 ) * -1.5 + .5,
-       # x = (seq_along(short) - 1) * 3 + .5,
        x = c(0.5,  3.5,  7,  9.7, 12.25, 15.25, 18, 21.5)
        )
 
 key_sz <- .75
 p_leg <- fish_tib %>% 
   ggplot() +
-  # coord_equal(xlim = c(-.05, 12), expand = 0) +
   coord_equal(xlim = c(-.05, 24), expand = 0) +
   geom_tile(aes(x = x, y = 0,
                 fill = short, 
@@ -457,7 +349,6 @@ p_leg <- fish_tib %>%
   geom_text(aes(x = x + .6, y = 0,
                 label = str_c("H. ", sp_names[short])), 
             hjust = 0, fontface = "italic", size = plot_text_size / ggplot2:::.pt) +
-  # labs(subtitle = "Hamlet Species") +
   pmap(fish_tib, plot_fish_lwd, width = 1, height = 1, y = 0) +
   scale_fill_manual(values = clr, guide = FALSE) +
   theme_void()
@@ -465,14 +356,8 @@ p_leg <- fish_tib %>%
 
 p_combined <- ((wrap_elements(plot = p_tree +
                                 theme(axis.title = element_blank(),
-                                      text = element_text(size = plot_text_size)
-                                      # plot.margin = unit(c(0, 0, 0,0), "pt"),
-                                      # plot.background = element_rect(fill = "green")
-                                ),
-                              clip = FALSE) +
-                  # wrap_plots(p_net, p2,ncol = 1,heights = c(.8,1))
-                 p2 
-                ) /
+                                      text = element_text(size = plot_text_size)),
+                              clip = FALSE) + p2 ) /
                  (pcas %>% wrap_plots()) +
                  plot_layout(heights = c(1,.75)) +
                  plot_annotation(tag_levels = 'a') &

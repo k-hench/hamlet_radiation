@@ -27,6 +27,7 @@ args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt', '2_anal
 ## Summary
 
 This is the accessory documentation of Figure 1.
+Note that this script depends on results that are created within the script `R/figs/plot_SF15.R` (specifically `2_analysis/summaries/fst_permutation_summary.ts`) and thus needs to be run after this script has finished.
 The Figure can be recreated by running the **R** script `plot_F1.R` from a (`bash` terminal):
 
 ```sh
@@ -49,7 +50,7 @@ The scripts start with a header that contains copy & paste templates to execute 
 #!/usr/bin/env Rscript
 #
 # Context: this script depends on the input file 2_analysis/summaries/fst_permutation_summary.tsv
-#          which is created by R/figs/plot_SFY.R
+#          which is created by R/figs/plot_SF15.R
 #
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F1.R \
@@ -75,6 +76,7 @@ args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(patchwork)
 library(ape)
 library(ggraph)
@@ -112,10 +114,14 @@ scaler <- 20       # the ratio of the Fst and the dxy axis (legacy - not really 
 clr_sec <- 'gray'  # the color of the secondary axis (dxy)
 ```
 
-### Data import
 
-We begin with the data import by first collecting the paths to all files containing either *F<sub>ST</sub>* or *d<sub>XY</sub>* data (`dir()`), then iterating the import function over all files (`map(summarize_fst)`) and finally combining the outputs into a single tibble (`bind_rows()`).
-This is done for both *F<sub>ST</sub>* and *d<sub>XY</sub>*.
+### Fish Tree Of Life Subtree
+
+The Figure 1 is assembled from five panels (a-e) which are prepared independently and combined at the end of the R script.
+
+The first panel (a) contains ar re-drawing of a of subset of the data from [@rabosky18data] and also uses builds upon the **R** code from the script `scripts/main figures/Figure3.R` of their [Dryad repository](https://datadryad.org/stash/dataset/doi:10.5061/dryad.fc71cp4).
+
+The code of [@rabosky18data] relies on the packages {BAMMtools} and {geiger} which are loaded additionally to those loaded during the start-up (this is to keep the modified code as close to the original as possible).
 
 ```{r, message = FALSE, warning = FALSE}
 # start script -------------------
@@ -124,14 +130,22 @@ library(BAMMtools)
 library(geiger)
 ```
 
+To be able to handle the tree-plot within a **ggplot** framework, we also need the package {ggplotify} to turn the plot into a grid object.
+
 ```{r, message = FALSE, warning = FALSE}
 library(ggplotify)
 ```
 
+Then, the path to the downloaded Dryad repository is specified and the original helper script `PlottingFunctions.R` from [@rabosky18data] is sourced.
+
 ```{r, message = FALSE, warning = FALSE}
 basepath <- 'ressources/Rabosky_etal_2018/'
 source(paste0(basepath, "scripts/supporting_fxns/PlottingFunctions.R"))
+```
 
+Next, the paths of Fish Tree Of Life (FToL) data are specified and the tree is loaded and prepared according to the original script by [@rabosky18data].
+
+```{r, message = FALSE, warning = FALSE}
 eventdata_vr <- paste0(basepath, "dataFiles/bamm_results/12k_tv1/event_data_thinned.csv")
 eventdata_cr <- paste0(basepath, "dataFiles/bamm_results/12k_tc1/event_data_thinned.csv")
 treefile <- paste0(basepath, "dataFiles/bamm_results/12k_tv1/bigfish_no_outgroup.tre")
@@ -139,7 +153,7 @@ fspdata <- paste0(basepath, "dataFiles/rate_lat_stats_by_sp_fixed0.5.csv")
 
 anadromous <- FALSE
 
-vx <- read.tree(treefile) 
+vx <- read.tree(treefile)
 
 # node rotations for plotting:
 rset <- c(15447, 15708:15719)
@@ -167,6 +181,7 @@ latvals <- latvals[inboth]
 edvr <- getEventData(vx, eventdata_vr, burnin=0)
 ```
 
+At this point we diverge from the original script and define our own subset of interest, which covers all available species of the Serraninae subfamily.
 
 ```{r, message = FALSE, warning = FALSE}
 serranids <- c("Hypoplectrus_gemma", "Hypoplectrus_unicolor", "Hypoplectrus_gummigutta",
@@ -185,12 +200,14 @@ serranids <- c("Hypoplectrus_gemma", "Hypoplectrus_unicolor", "Hypoplectrus_gumm
                "Chelidoperca_pleurospilus")
 ```
 
+Then, the data is subset based on the selection.
 
 ```{r, message = FALSE, warning = FALSE}
 edvr_serr <- edvr %>% 
   subtreeBAMM(tips = serranids)
 ```
 
+Next, the species labels are specified and formatted (for those species that have would have an ambiguous family abbreviation based on the first letter).
 
 ```{r, message = FALSE, warning = FALSE}
 label_two_chars <- c(`italic(S.~'beta')` = "italic(Sc.~'beta')",
@@ -212,6 +229,7 @@ label_two_chars <- c(`italic(S.~'beta')` = "italic(Sc.~'beta')",
                      `italic(S.~tortugarum)` = "italic(Se.~tortugarum)")
 ```
 
+Then, the labels of the data set are actually re-formatted.
 
 ```{r, message = FALSE, warning = FALSE}
 edvr_serr_short <- edvr_serr
@@ -222,6 +240,7 @@ edvr_serr_short$tip.label <- edvr_serr$tip.label %>%
   ggplot2:::parse_safe()
 ```
 
+Now, the color scheme for the tree coloration is defined.
 
 ```{r, message = FALSE, warning = FALSE}
 clr_tree <- scico::scico(6, palette = "berlin") %>%
@@ -229,6 +248,7 @@ clr_tree <- scico::scico(6, palette = "berlin") %>%
   prismatic::clr_darken(shift = .2)
 ```
 
+At this stage, the basic tree is drawn using a modified version of `BAMMtools::plot.bammdata()` (which allows for different colors for the tip labels).
 
 ```{r, message = FALSE, warning = FALSE}
 p1 <- as.grob(function(){
@@ -253,6 +273,7 @@ p1 <- as.grob(function(){
 )
 ```
 
+Now that the basic tree is finished, we take care of the annotations starting with the color gradient that is going to highlight the Hypoplectrus family.
 
 ```{r, message = FALSE, warning = FALSE}
 c1 <- "transparent"
@@ -270,11 +291,12 @@ grob_grad <- rasterGrob(grad_mat,
 cowplot::ggdraw(grob_grad)
 ```
 
+Then, we create a black hamlet to add to the annotation.
+
 ```{r, message = FALSE, warning = FALSE}
 blank_hamlet <- hypoimg::hypo_outline %>% 
   ggplot()+
   coord_equal()+
-  # geom_polygon(aes(x, y), color = "black", fill = rgb(0, 0, 0, .2), size = .1)+
   geom_polygon(aes(x, y), color = rgb(0, 0, 0, .5), fill = rgb(1, 1, 1, .3), size = .1)+
   theme_void()
 ```
@@ -283,14 +305,15 @@ blank_hamlet <- hypoimg::hypo_outline %>%
 blank_hamlet
 ```
 
+At this point we have all pieces to assemble panel a of the figure.
 
 ```{r, message = FALSE, warning = FALSE}
 p_tree <- ggplot() +
   geom_point(data = tibble(v = c(.056, 2.4)),
-             x = .5, y = .5, aes(color = v),alpha = 0)+
+             x = .5, y = .5, aes(color = v), alpha = 0)+
   scale_color_gradientn(colours = clr_tree, limits = c(.056, 2.4))+
   annotation_custom(grob = grob_grad,
-                    ymin = 0.01, ymax = .23,
+                    ymin = 0.01, ymax = .2335,
                     xmin = .4, xmax = .96)+
   annotation_custom(grob = ggplotGrob(blank_hamlet),
                     xmin = 0.55, xmax = .75,
@@ -309,7 +332,6 @@ p_tree <- ggplot() +
                                 barheight = unit(3, "pt"),
                                 barwidth = unit(57, "pt"),
                                 ticks.colour = "white")) +
-  # theme_minimal()+
   theme_void()+
   theme(legend.position = c(.01, .08),
         legend.justification = c(0, 0))
@@ -319,6 +341,9 @@ p_tree <- ggplot() +
 p_tree
 ```
 
+### Genetic differentiation boxplots
+
+For panel b, the data import starts with collecting the paths to all files containing the *F<sub>ST</sub>* data (`dir()`), then iterating the import function over all files (`map(summarize_fst)`) and finally combining the outputs into a single tibble (`bind_rows()`).
 
 ```{r, message = FALSE, warning = FALSE}
 # =================================================================================================
@@ -339,12 +364,10 @@ fst_order <- fst_data %>%
   mutate(run = fct_reorder(run, `mean_weighted-fst`))
 ```
 
-Then, we merge the *F<sub>ST</sub>* and *d<sub>XY</sub>* data sets and do quite a bit of data wrangling to create a rescaled *d<sub>XY</sub>* value and to prepare the placement of the boxplots.
+Then, we transform the *F<sub>ST</sub>* data and do quite a bit of data wrangling to prepare the placement of the boxplots.
+(This is overly complicated by now, as this is mostly *legacy* code that was create for a previous version of the plot that combined re-scaled *F<sub>ST</sub>* and *D<sub>XY</sub>* boxplots.)
 
 ```{r, message = FALSE, warning = FALSE}
-# merge fst and dxy cc_data
-# (large parts of this code are now unnecessary after the separation of dxy and
-#  fst plots into separate panels b & c)
 fst_data_gather <- fst_data %>% 
   gather(key = 'stat', value = 'val', -run) %>%
   # sumstat contains the values needed to plot the boxplots (quartiles, etc)
@@ -353,7 +376,7 @@ fst_data_gather <- fst_data %>%
   mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
   unite(temp, val, val_scaled) %>%
   # separate th eoriginal values from the scales ons (scaled = secondary axis)
-  spread(.,key = 'sumstat',value = 'temp') %>%
+  spread(., key = 'sumstat', value = 'temp') %>%
   separate(mean, into = c('mean','mean_scaled'),sep = '_', convert = TRUE) %>%
   separate(median, into = c('median','median_scaled'), sep = '_', convert = TRUE) %>%
   separate(sd, into = c('sd','sd_scaled'),sep = '_', convert = TRUE) %>%
@@ -371,14 +394,7 @@ fst_data_gather <- fst_data %>%
          popstat_loc = str_c(popstat,'[',loc,']'))
 ```
 
-At this point, the data is ready for the boxplots.
-But first we are going to prepare the networks of pairwise comparisons.
-
-For this we create a tibble of the runs with their respective rank.
-Then, we prepare a config table with one row per location, storing the parameters needed for the layout function for the networks.
-We need to define the location, the number of species at the location, the short three letter ID of those species and a weight parameter that is shifting the comparison label on the link within the networks.
-
-Finally, we create one network plot per location.
+Then we re-order the species pairs according to their average wheighted *F<sub>ST</sub>*.
 
 ```{r, message = FALSE, warning = FALSE}
 # sort run by average genome wide Fst
@@ -386,41 +402,10 @@ run_ord <- tibble(run = levels(fst_data_gather$run),
                   run_ord = 1:length(levels(fst_data_gather$run)))
 ```
 
+As the last information that is needed for the *F<sub>ST</sub>* boxplots, we load the results from the permutation tests (this is the part that depends on `R/figs/plot_SF15.R`).
 
 ```{r, message = FALSE, warning = FALSE}
-clr_alt <- clr
-clr_alt[["uni"]] <- "lightgray"
-pca_fish_scale <- 1.15
-
-pca_fish_pos <- tibble(pop = GenomicOriginsScripts::pop_levels,
-                       short = str_sub(pop, 1, 3),
-                       loc = str_sub(pop, 4, 6),
-                       width = c(bel = .08, hon =.08, pan = .09)[loc] * pca_fish_scale,
-                       height = c(bel = .08, hon =.08, pan = .09)[loc] * pca_fish_scale) %>% 
-  arrange(loc) %>%
-  mutate(x = c(-.18, -.01, .03, -.03, .075,
-               -.04, -.2, -.02, -.01, -.02, -.01,
-               -.15, 0, .05),
-         y = c(.02, .27, -.13, -.03, .05,
-               -.1, .05, 0, .075, -.23, .2,
-               .06, -.2, .2)) %>%
-  select(-pop) %>%
-  group_by(loc) %>%
-  nest()
-
-
-pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
-```
-
-
-```{r, echo = FALSE, fig.width = 3, fig.height = 2.5, fig.align = "center"}
-ggdraw(pcas[[1]]) + 
-  draw_plot(hypoimg:::hypo_logo(.4), .2, .2, .6, .6) +
-  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
-```
-
-
-```{r, message = FALSE, warning = FALSE}
+# load fst permutation results
 fst_sig_attach <- read_tsv(fst_permutation_file) %>% 
   mutate(loc = str_sub(run, -3, -1)) %>%
   group_by(loc) %>% 
@@ -431,8 +416,16 @@ fst_sig_attach <- read_tsv(fst_permutation_file) %>%
   ungroup()
 ```
 
+At this point, the data is ready for the boxplots.
+
+But first, we are going to prepare the networks of pairwise comparisons that are used as annotation of that panel.
+
+For this we create a tibble of the species pairs with their respective rank.
+Then, we prepare a config table with one row per location, storing the parameters needed for the layout function for the networks.
+We need to define the location, the number of species at the location, the short three letter ID of those species and a weight parameter that is shifting the comparison label on the link within the networks.
 
 ```{r, message = FALSE, warning = FALSE}
+# create network annotation
 # underlying structure for the network plots
 networx <- tibble( loc = c('bel','hon', 'pan'),
                    n = c(5, 6, 3),
@@ -442,20 +435,33 @@ networx <- tibble( loc = c('bel','hon', 'pan'),
                    weight = c(1,1.45,1)) %>%
   purrr::pmap_dfr(network_layout) %>%
   mutate(edges = map(edges, function(x){x %>% left_join(fst_data_gather %>% filter(popstat == "weighted-fst") %>% select(run, median, mean)) }))
+```
 
+Next, we create one network plot per location...
+
+```{r, message = FALSE, warning = FALSE}
 # plot the individual networks by location
 plot_list <- networx %>%
   purrr::pmap(plot_network, node_lab_shift = .2)
-
-p_net <- cowplot::plot_grid(
-  plot_list[[1]] + theme(legend.position = "none"), plot_list[[2]] + theme(legend.position = "none"), plot_list[[3]] + theme(legend.position = "none"),
-  ncol = 3) %>% cowplot::as_grob()
 ```
 
+...and assemble them into a single grid object.
+
+```{r, message = FALSE, warning = FALSE}
+# combine the networks into a single grob
+p_net <- cowplot::plot_grid(
+  plot_list[[1]] + theme(legend.position = "none"),
+  plot_list[[2]] + theme(legend.position = "none"),
+  plot_list[[3]] + theme(legend.position = "none"),
+  ncol = 3) %>%
+  cowplot::as_grob()
+```
 
 ```{r, echo = FALSE, fig.width = 6, fig.height = 2, fig.align = "center"}
 cowplot::ggdraw(p_net)
 ```
+
+At this point we can create panel b.
 
 ```{r, message = FALSE, warning = FALSE}
 # assemble panel b
@@ -499,14 +505,71 @@ p2 <- fst_data_gather %>%
         axis.title.y.right = element_text(color = clr_sec))
 ```
 
+```{r, echo = FALSE, fig.width = 3, fig.height = 2.5, fig.align = "center"}
+ggdraw(p2) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .2, .2, .6, .6) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
+```
+
+### Principal Component Analyses
+
+Most of the plotting functions for the PCAs are provided in {GenomicOriginsScripts} package, so that the largest part of the work for the PCAs actually concerns the annotations.
+
+Fist, we set an alternative color scale and define the size of the hamlet images.
+
+```{r, message = FALSE, warning = FALSE}
+clr_alt <- clr
+clr_alt[["uni"]] <- "lightgray"
+pca_fish_scale <- 1.15
+```
+
+The we create a configuration tibble that holds the desired positions of the hamlet annotations on the PCAs.
+
+```{r, message = FALSE, warning = FALSE}
+pca_fish_pos <- tibble(pop = GenomicOriginsScripts::pop_levels,
+                       short = str_sub(pop, 1, 3),
+                       loc = str_sub(pop, 4, 6),
+                       width = c(bel = .08, hon =.08, pan = .09)[loc] * pca_fish_scale,
+                       height = c(bel = .08, hon =.08, pan = .09)[loc] * pca_fish_scale) %>% 
+  arrange(loc) %>%
+  mutate(x = c(-.18, -.01, .03, -.03, .075,
+               -.04, -.2, -.02, -.01, -.02, -.01,
+               -.15, 0, .05),
+         y = c(.02, .27, -.13, -.03, .05,
+               -.1, .05, 0, .075, -.23, .2,
+               .06, -.2, .2)) %>%
+  select(-pop) %>%
+  group_by(loc) %>%
+  nest()
+```
+
+Then we create the individual PCA plots using the function `GenomicOriginsScripts::pca_plot()`.
+
+```{r, message = FALSE, warning = FALSE}
+pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
+```
+
+```{r, echo = FALSE, fig.width = 3, fig.height = 2.5, fig.align = "center"}
+ggdraw(pcas[[1]]) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .2, .2, .6, .6) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
+```
+
+### Legend and Final Figure
+
+To create the figure legend we define a set of hamlet species (all sequenced species except the outgroups) with their relative horizontal spacing.
+
 ```{r, message = FALSE, warning = FALSE}
 fish_tib <- tibble(short = names(clr)[!names(clr) %in% c("flo", "tab", "tor")],
        x = c(0.5,  3.5,  7,  9.7, 12.25, 15.25, 18, 21.5))
+```
 
+Then, we set the color-patch size and create a custom ggplot that is going to function as legend.
+
+```{r, message = FALSE, warning = FALSE}
 key_sz <- .75
 p_leg <- fish_tib %>% 
   ggplot() +
-  # coord_equal(xlim = c(-.05, 12), expand = 0) +
   coord_equal(xlim = c(-.05, 24), expand = 0) +
   geom_tile(aes(x = x, y = 0,
                 fill = short, 
@@ -515,11 +578,14 @@ p_leg <- fish_tib %>%
   geom_text(aes(x = x + .6, y = 0,
                 label = str_c("H. ", sp_names[short])), 
             hjust = 0, fontface = "italic", size = plot_text_size / ggplot2:::.pt) +
-  # labs(subtitle = "Hamlet Species") +
   pmap(fish_tib, plot_fish_lwd, width = 1, height = 1, y = 0) +
   scale_fill_manual(values = clr, guide = FALSE) +
   theme_void()
+```
 
+After this, first the fice panels are combined...
+
+```{r, message = FALSE, warning = FALSE}
 p_combined <- ((wrap_elements(plot = p_tree +
                                 theme(axis.title = element_blank(),
                                       text = element_text(size = plot_text_size)),
@@ -530,19 +596,21 @@ p_combined <- ((wrap_elements(plot = p_tree +
                  plot_annotation(tag_levels = 'a') &
                  theme(text = element_text(size = plot_text_size),
                        plot.background = element_rect(fill = "transparent",
-                                                      color = "transparent"))) 
+                                                      color = "transparent")))
+```
 
+.. and then the legend is attached.
+
+```{r, message = FALSE, warning = FALSE}
 p_done <- cowplot::plot_grid(p_combined, p_leg,
                              ncol = 1, rel_heights = c(1,.06))
 ```
-
 
 ```{r, echo = FALSE, fig.width = 6.75, fig.height = 4.5, fig.align = "center"}
 ggdraw(p_done) + 
   draw_plot(hypoimg:::hypo_logo(.4), .2, .2, .6, .6) +
   draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
 ```
-
 
 Finally, we can export Figure 1.
 
@@ -554,95 +622,6 @@ hypo_save(p_done, filename = 'figures/F1.pdf',
           device = cairo_pdf,
           bg = "transparent",
           comment = plot_comment)
-```
-
-
-
-> The function `hypo_save()` is simply a wrapper around `ggsave()`, that will write the name of the currently running script into the meta data of the plot (after the plot has been exported).
-The benefit of this is that you can read this information later to remember how a specific plot was created using `hypo_show_metadata()`.
-This is done using [exiftool](https://www.sno.phy.queensu.ca/~phil/exiftool/) and has currently only been tested on my linux system.
-If this does not work for you, simple replace `hypo_save()` with `ggsave()` and drop the `comment` parameter.
-
-```r
-hypo_show_metadata('figures/F1.pdf')
-```
-
-```r
-#> [1] "mother-script = /current/working/directory/R/fig/plot_F1.R"
-```
-
-### Plotting
-
-To create the first panel of Figure 1, we combine the three networks and label the locations.
-
-
-Now, we can create the second panel of Figure 1, by plotting our prepared data tibble.
-We are going to plot each boxplot element as a single layer.
-
-> (This, might seem a little cumbersome given `geom_boxplot()`, but this approach was chosen for specific fine tuning of the positioning, dropping of outliers and reducing runtime during the plotting phase - otherwise the entire genome wide data set would have been carried though whole script. By now, this indirect approach is also somewhat obsolete since the <i>F<sub>ST</sub></i> and <i>d<sub>XY</sub></i> boxplots are now separated into several panels)
-
-The <i>F<sub>ST</sub></i> boxplots are created for panel __b__...
-
-
-... and the <i>d<sub>XY</sub></i> boxplotsfor panel __c__:
-
-
-The panels __b__ and __c__ are merged to crate the lower half of the figure and then the entire figure is being brought together.
-
-### Table export
-
-This script is also used to compile the sub-tables Suppl. Table 3 __a__ - __c__.
-The table is compiled from the weighted average <i>F<sub>ST</sub></i> values which are imported from the `nextflow` results and the average <i>d<sub>XY</sub></i> values which are computed within this `R` script.
-
-First, a proto-version of Suppl. Table 3 is created.
-
-```r
-# compile fst and dxy table (table 1) for the manuscript
-table_all <- dxy_data %>%
-  select(run, mean_dxy) %>%
-  left_join( vroom::vroom(fst_globals, delim = '\t',
-                          col_names = c('loc','run','mean','weighted_fst')) %>%
-               mutate(run = str_c(loc,'-',run) %>%
-                        reformat_run_name())  %>%
-               select(run, weighted_fst)) %>%
-  pivot_longer(names_to = 'stat',2:3) %>%
-  separate(run, into = c('pop1', 'pop2'), sep = '-') %>%
-  mutate(prep1 = ifelse(stat == "weighted_fst", pop2,pop1),
-         prep2 = ifelse(stat == "weighted_fst", pop1,pop2),
-         pop1 = factor(prep1, levels = pop_levels),
-         pop2 = factor(prep2, levels = pop_levels),
-         value = sprintf('%7.5f', value) ) %>%
-  select(pop1,pop2,value) %>%
-  arrange(pop2,pop1) %>%
-  mutate(pop2 = as.character(pop2) %>%
-           str_replace(pattern = '([a-z]{3})([a-z]{3})',
-                       replacement = '\\1|\\2'),
-         pop1 = as.character(pop1) %>%
-           str_replace(pattern = '([a-z]{3})([a-z]{3})',
-                       replacement = '\\1|\\2')) %>%
-  pivot_wider(values_from = value,
-              names_from = pop2) %>%
-  rename( Population = 'pop1') %>%
-  mutate(srt1 = str_sub(Population,-3, -1),
-         srt2 = str_sub(Population,1, 3))  %>%
-  arrange(srt1,srt2) %>%
-  select(-srt1,-srt2)
-```
-
-Then, missing data is formated to be displayed as dashes.
-
-```r
-# replace "NA" by dashes "-"
-table_all[is.na(table_all)] <- '-'
-```
-
-Finally, the table is subset for each location and exported as a `.tex` file to be easily integrated within the `latex` document of the manuscript.
-
-```r
-# export sub-tables 1 a - c
-table_all[1:5,c(1,2:6)] %>% export_2_latex(name = 'tables/suppl_tab3a.tex')
-table_all[6:11,c(1,7:12)] %>% export_2_latex(name = 'tables/suppl_tab3b.tex')
-table_all[12:14, c(1,13:15)] %>% export_2_latex(name = 'tables/suppl_tab3c.tex')
 ```
 
 ---

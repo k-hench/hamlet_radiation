@@ -1,6 +1,6 @@
 book_filename: "Script repository Hench et al."
 chapter_name: ""
-repo: https://github.com/k-hench/bookdown
+repo: https://github.com/k-hench/hamlet_radiation
 output_dir: ../docs
 rmd_files: ["index.Rmd", "nf_genotyping.Rmd","nf_genotyping_all_basepairs.Rmd",
    "nf_analysis_fst_gxp.Rmd","nf_analysis_dxy.Rmd","nf_analysis_phylo.Rmd","nf_analysis_recombination.Rmd",
