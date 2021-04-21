@@ -131,6 +131,7 @@ p_done <- data2 %>%
         legend.title = element_text(size = plot_text_size),
         strip.background.y = element_blank(),
         plot.background = element_blank())
+
 # export figure 3
 hypo_save(filename = 'figures/F3.pdf',
           plot = p_done,

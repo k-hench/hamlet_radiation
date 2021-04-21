@@ -25,14 +25,12 @@ library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
 library(furrr)
-library(ggraph)
-library(tidygraph)
 library(ggtext)
 library(ape)
 library(ggtree)
 library(patchwork)
-library(ggplotify)
 library(phangorn)
+library(igraph)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -60,8 +58,6 @@ source(twisst_functions, local = TRUE)
 
 plan(multiprocess)
 window_buffer <- 2.5*10^5
-#-------------------
-library(igraph)
 # actual script =========================================================
 # locate dxy data files
 dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.', resolution ,'0kb-', resolution ,'kb.tsv.gz'))
@@ -130,7 +126,6 @@ data_dxy_summary <- dxy_data %>%
             sd_dxy = sd(dxy),
             delta_dxy = max(dxy)-min(dxy))
 
-# twisst part ------------------
 # load fst outlier regions
 outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
   setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
@@ -138,6 +133,11 @@ outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
 # set outlier regions of interest
 outlier_pick = c('LG04_1', 'LG12_3', 'LG12_4')
 
+# load group-level phylogeny data
+pomo_data <- str_c(pomo_path, pomo_trees) %>% 
+  purrr::map_dfr(import_tree) %>% 
+  mutate(rooted_tree = map2(.x = tree,.y = type, .f = root_hamlets))
+  
 # select genes to label
 cool_genes <- c('arl3','kif16b','cdx1','hmcn2',
                 'sox10','smarca4',
@@ -168,19 +168,6 @@ trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_tra
 
 # recolor second bars-layer
 trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7, color = gxp_clr[["Bars"]])
-
-# # prepare population tree trait_panels ----------------------
-# # load outler region wide average fst data
-# tree_list <- outlier_pick %>%
-#   purrr::map_dfr(get_fst_summary_data)
-# 
-# # create neighbour-joining trees and plot
-# poptree_plot_list <- tree_list %>%
-#   purrr::pmap(plot_fst_poptree)
-
-pomo_data <- str_c(pomo_path, pomo_trees) %>% 
-  purrr::map_dfr(import_tree) %>% 
-  mutate(rooted_tree = map2(.x = tree,.y = type, .f = root_hamlets))
 
 p_pomo1 <- pomo_data$tree[[1]] %>% 
   midpoint() %>%
