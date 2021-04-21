@@ -17,7 +17,7 @@ args <- c('2_analysis/dxy/50k/')
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure 7.
+This is the accessory documentation of Figure S7.
 The Figure can be recreated by running the **R** script `plot_SF7.R`:
 
 ```sh
@@ -30,7 +30,7 @@ Rscript --vanilla R/fig/plot_SF7.R 2_analysis/dxy/50k/
 ## Details of `plot_SF7.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the packages [**hypoimg**](https://k-hench.github.io/hypoimg) and [**ggtext**](https://wilkelab.org/ggtext/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**ggtext**](https://wilkelab.org/ggtext/).
 
 ### Config
 
@@ -164,7 +164,7 @@ Then we can put together the final plot.
 
 ```{r, message = FALSE, warning = FALSE}
 # compose final figure
-p <- ggplot()+
+p_done <- ggplot()+
   # general plot structure separated by run
   facet_wrap( .~run, as.table = TRUE, ncol = 1, dir = 'v')+
   # add genome wide average dxy in the background
@@ -195,18 +195,18 @@ p <- ggplot()+
         axis.text.x.bottom = element_markdown(colour = 'darkgray'))
 ```
 
-<center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 8, fig.height = 12, dev.args = list(type = "cairo")}
-p
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 8, fig.height = 12, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 80, angle = 45)
 ```
-</center>
 
-Finally, we can export Supplementary Figure 7.
+Finally, we can export Figure S7.
 
 ```{r, eval = FALSE}
 # export final figure
 hypo_save(filename = 'figures/SF7.png',
-          plot = p,
+          plot = p_done,
           width = 8,
           height = 12,
           type = "cairo",

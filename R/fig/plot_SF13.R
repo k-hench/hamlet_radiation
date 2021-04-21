@@ -164,7 +164,7 @@ p_l <- (get_legend(p_phno) %>% ggdraw()) +
   plot_layout(nrow = 1)
 
 # finalize figure
-p_done <- p_ad[[1]] +
+p_prep <- p_ad[[1]] +
   p_ad[[2]] +
   p_ad[[3]]+
   p_spec + p_loc + p_l +
@@ -173,12 +173,12 @@ p_done <- p_ad[[1]] +
         axis.text = element_text(size = 12))
 
 # crop final figure (remove whitespace on left margin)
-p_done2 <- ggdraw(p_done, xlim = c(.023,1))
+p_done <- ggdraw(p_prep, xlim = c(.023,1))
 
 # export final figure
 scl <- .9
 ggsave("figures/SF13.pdf",
-       plot = p_done2,
+       plot = p_done,
        width = 16*scl,
        height = 10*scl,
        device = cairo_pdf)

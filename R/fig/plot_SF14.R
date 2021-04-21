@@ -38,7 +38,7 @@ trait_tib  <- tibble(file = dir(gxp_path) %>% .[str_detect(.,"Bars|Peduncle|Snou
 data <- pmap_dfr(trait_tib,get_gxp_both_models)
 
 # compose final figure
-p <- data %>%
+p_done <- data %>%
   ggplot(aes(x = gpos, y = AVG_p_wald))+
   # add gray/white LGs background
   geom_hypo_LG()+
@@ -56,7 +56,7 @@ p <- data %>%
 
 # export final figure
 hypo_save(filename = "figures/SF14.png",
-       plot = p,
+       plot = p_done,
        width = 11,
        height = 7,
        dpi = 600,

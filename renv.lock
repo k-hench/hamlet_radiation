@@ -90,11 +90,11 @@
     },
     "GenomicOriginsScripts": {
       "Package": "GenomicOriginsScripts",
-      "Version": "0.0.0.90065",
+      "Version": "0.0.0.90069",
       "Source": "Local",
       "RemoteType": "local",
-      "RemoteUrl": "/home/kluk/work/software/Rstuff/GenomicOriginsScripts",
-      "Hash": "569007e7534cb9a9cc53631c4780f5e9"
+      "RemoteUrl": "/home/kluk/work/software/Rstuff/own_packages/GenomicOriginsScripts",
+      "Hash": "8e1793b02f4d3a0c3344985c57a219cd"
     },
     "GenomicRanges": {
       "Package": "GenomicRanges",
@@ -552,13 +552,6 @@
       "Repository": "CRAN",
       "Hash": "f25fad6bee82b7ab01f055e2d813b96f"
     },
-    "gdata": {
-      "Package": "gdata",
-      "Version": "2.18.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "465ccb84427f5fe2c54f8620666db131"
-    },
     "gdsfmt": {
       "Package": "gdsfmt",
       "Version": "1.24.1",
@@ -585,18 +578,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "4d243a9c10b00589889fe32314ffd902"
-    },
-    "geomfactory": {
-      "Package": "geomfactory",
-      "Version": "0.0.3.1",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "geomfactory",
-      "RemoteUsername": "k-hench",
-      "RemoteRef": "master",
-      "RemoteSha": "503735671139a08bd7db7faa699ddf47a24a9c8d",
-      "Hash": "10920d8d100dc95d348389490ef8dca4"
     },
     "ggforce": {
       "Package": "ggforce",

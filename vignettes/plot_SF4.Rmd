@@ -14,12 +14,13 @@ library(paletteer)
 library(patchwork)
 library(ggtext)
 library(hypoimg)
+library(hypogen)
 args <- c("2_analysis/newhyb/nh_input/NH.Results/")
 ```
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure .
+This is the accessory documentation of Figure S4.
 The Figure can be recreated by running the **R** script `plot_SF4.R`:
 
 ```sh
@@ -32,7 +33,7 @@ Rscript --vanilla R/fig/plot_SF4.R 2_analysis/newhyb/nh_input/NH.Results/
 ## Details of `plot_SF4.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg), [**paletteer**](https://emilhvitfeldt.github.io/paletteer/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hyponen), [**paletteer**](https://emilhvitfeldt.github.io/paletteer/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
 
 ### Config
 
@@ -115,35 +116,35 @@ p_loc <- c("bel", "hon", "pan") %>%
 
 As an example we can have a look at the result for `plot_loc("pan")`:
 
-<center>
-```{r, echo = FALSE, fig.width = 10, fig.height = 4, dev.args = list(type = "cairo")}
-p_loc[[3]]
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = f_width, fig.height = 4.5, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_loc[[3]]) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
 ```
-</center>
 
-All three panels are collected and the final Figure is composed using the pacckage [**patchwork**](https://patchwork.data-imaginist.com/):
+All three panels are collected and the final Figure is composed using the package [**patchwork**](https://patchwork.data-imaginist.com/):
 
 ```{r, message = FALSE, warning = FALSE}
 # compose figure from the individual panels
-p <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) +
+p_done <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) +
   (p_loc[[2]] + theme_hyb() ) +
   (p_loc[[3]] + theme_hyb() )  +
   plot_layout(ncol = 1, heights = c(10,15,3) %>% label_spacer())+
   plot_annotation(tag_levels = 'a')
 ```
 
-<center>
-```{r, echo = FALSE, fig.width = 10, fig.height = 16, dev.args = list(type = "cairo")}
-p
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 10, fig.height = 16, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 60, angle = 45)
 ```
-</center>
 
-Finally, we can export Supplementary Figure 4.
+Finally, we can export Figure S4.
 
 ```{r, eval = FALSE}
 # export the final figure
 hypo_save(filename = "figures/SF4.pdf",
-       plot = p,
+       plot = p_done,
        height = 16,
        width = 10,
        device = cairo_pdf,

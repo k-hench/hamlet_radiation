@@ -61,14 +61,6 @@ combined_data <- data %>%
   # merge with recombination data
   left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START'))
 
-# nest data to run linear regression on all runs in one go
-model_data <- combined_data %>%
-  group_by(spec) %>%
-  nest() %>%
-  left_join(., global_bar) %>%
-  mutate(mod =  map(data, ~ lm(.$PI ~ .$RHO))) %>%
-  bind_cols(., summarise_model(.))
-
 # create table with fish annotations
 grob_tibble2 <- global_bar$spec %>%
   purrr::map(fish_plot2) %>%

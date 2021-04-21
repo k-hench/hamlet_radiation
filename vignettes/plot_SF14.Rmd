@@ -16,7 +16,7 @@ args <- c('2_analysis/GxP/50000/')
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure 14.
+This is the accessory documentation of Figure S14.
 The Figure can be recreated by running the **R** script `plot_SF14.R`:
 
 ```sh
@@ -29,7 +29,7 @@ Rscript --vanilla R/fig/plot_SF14.R 2_analysis/GxP/50000/
 ## Details of `plot_SF14.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the packages [**hypoimg**](https://k-hench.github.io/hypoimg) and [**hypogen**](https://k-hench.github.io/hypogen).
 
 ### Config
 
@@ -106,11 +106,11 @@ The we load the $G \times P$ data.
 data <- pmap_dfr(trait_tib, get_gxp_both_models)
 ```
 
-After the data import this table is already suited for plotting. 
+After the data import, this table is already suited for plotting. 
 
 ```{r, message = FALSE, warning = FALSE}
 # compose final figure
-p <- data %>%
+p_done <- data %>%
   ggplot(aes(x = gpos, y = AVG_p_wald))+
   # add gray/white LGs background
   geom_hypo_LG()+
@@ -127,18 +127,19 @@ p <- data %>%
   theme_hypo()
 ```
 
-<center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 11, fig.height = 7, dev.args = list(type = "cairo")}
-p
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 11, fig.height = 7, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 85, angle = 45)
 ```
-</center>
 
-Finally, we can export Supplementary Figure 14.
+
+Finally, we can export Figure S14.
 
 ```{r, eval = FALSE}
 # export final figure
 hypo_save(filename = "figures/SF14.png",
-       plot = p,
+       plot = p_done,
        width = 11,
        height = 7,
        dpi = 600,

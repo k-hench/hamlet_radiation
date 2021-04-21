@@ -80,7 +80,7 @@ sc_ax <- scales::cbreaks(c(0,max(globals$weighted)),
                          scales::pretty_breaks(4))
 
 # compose final figure
-p <- ggplot()+
+p_done <- ggplot()+
   # general plot structure separated by run
   facet_grid( run_label ~ ., as.table = TRUE) +
   # add genome wide average fst in the background
@@ -118,7 +118,7 @@ p <- ggplot()+
 
 # export final figure
 hypo_save(filename = 'figures/SF5.png',
-          plot = p,
+          plot = p_done,
           width = 8,
           height = 12,
           type = "cairo",

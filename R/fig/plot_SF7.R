@@ -74,7 +74,7 @@ data <- data %>%
   mutate(run = factor(run, levels = levels(global_bar$run)))
 
 # compose final figure
-p <- ggplot()+
+p_done <- ggplot()+
   # general plot structure separated by run
   facet_wrap( .~run, as.table = TRUE, ncol = 1, dir = 'v')+
   # add genome wide average dxy in the background
@@ -106,7 +106,7 @@ p <- ggplot()+
 
 # export final figure
 hypo_save(filename = 'figures/SF7.png',
-          plot = p,
+          plot = p_done,
           width = 8,
           height = 12,
           type = "cairo",

@@ -42,7 +42,7 @@ p_loc <- c("bel", "hon", "pan") %>%
   map(plot_loc)
 
 # compose figure from the individual panels
-p <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) +
+p_done <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) +
   (p_loc[[2]] + theme_hyb() ) +
   (p_loc[[3]] + theme_hyb() )  +
   plot_layout(ncol = 1, heights = c(10,15,3) %>% label_spacer())+
@@ -50,7 +50,7 @@ p <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_
 
 # export the final figure
 hypo_save(filename = "figures/SF4.pdf",
-       plot = p,
+       plot = p_done,
        height = 16,
        width = 10,
        device = cairo_pdf,

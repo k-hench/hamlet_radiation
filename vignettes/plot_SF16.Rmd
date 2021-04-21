@@ -1,3 +1,42 @@
+---
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+# Supplementary Figure 16
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(ape)
+library(ggtree)
+args <- c("2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support")
+```
+
+## Summary
+
+This is the accessory documentation of Figure S16.
+The Figure can be recreated by running the **R** script `plot_SF16.R`:
+
+```sh
+cd $BASE_DIR
+
+Rscript --vanilla R/fig/plot_SF16.R 2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support
+```
+
+## Details of `plot_SF16.R`
+
+In the following, the individual steps of the R script are documented.
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen), [**ape**](http://ape-package.ird.fr/) and [**ggtree**](https://github.com/YuLab-SMU/ggtree).
+
+### Config
+
+The scripts start with a header that contains copy & paste templates to execute or debug the script:
+
+```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF16.R 2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support
@@ -9,6 +48,16 @@
 # ===============================================================
 # args <- c("2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support")
 # script_name <- "R/fig/plot_SF16.R"
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -25,17 +74,40 @@ plot_comment <- script_name %>%
   str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
+```
 
+```r
+#> ── Script: R/fig/plot_SF16.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support
+#> ────────────────────────────────────────── /current/working/directory ───
+```
+
+The path of the tree file is received and stored inside a more descriptive variable.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 tree_serr_file <- as.character(args[1])
+```
 
+Then, the default tree layout is defined and the default tree color is set.
+
+```{r, message = FALSE, warning = FALSE}
 clr_neutral <- rgb(.6, .6, .6)
 lyout <- 'circular'
+```
 
+Then, the tree file is read and the tree is rooted once with the Serranus samples as outgroup and once midpoint-rooted.
+
+```{r, message = FALSE, warning = FALSE}
 tree_s <- read.tree(tree_serr_file)
 tree_s_rooted <- root(tree_s, outgroup = c("28393torpan", "s_tort_3torpan", "20478tabhon" ))
 tree_s_mid <- phangorn::midpoint(tree_s_rooted)
+```
 
+Now, the support values of the tree are transformed into discrete support classes.
+
+```{r, message = FALSE, warning = FALSE}
 tree_s_data <- open_tree(ggtree(tree_s_mid, layout = "circular"), 180) %>% 
   .$data %>% 
   mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
@@ -43,7 +115,11 @@ tree_s_data <- open_tree(ggtree(tree_s_mid, layout = "circular"), 180) %>%
          support_class = cut(support, c(0,50,70,90,100)) %>% 
            as.character() %>% 
            factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]")))
+```
 
+At this point, the basic pylogenetic tree can be drawn.
+
+```{r, message = FALSE, warning = FALSE}
 p_s_tree <- rotate_tree(open_tree(ggtree(tree_s_data,
                                           aes(color = spec),
                                           layout = "circular"), 
@@ -75,7 +151,13 @@ p_s_tree <- rotate_tree(open_tree(ggtree(tree_s_data,
   guides(fill = guide_legend(title = "Node Support Class", title.position = "top", ncol = 2),
          size = guide_legend(title = "Node Support Class", title.position = "top", ncol = 2)) +
   theme_void()
+```
 
+Unfortunately, the polar coordinate system underlying the circular tree layout introduces a lot of empty space for a open tree that spans 180 degrees.
+In order to crop that empty space, the basic tree is converted into grid object and used as an annotation in a different ggplot.
+This uses cartesian coordinates and is easily cropped to create the final figure.
+
+```{r, message = FALSE, warning = FALSE}
 y_sep <- .05
 x_shift <- -.03
 p_done <- ggplot() +
@@ -89,7 +171,17 @@ p_done <- ggplot() +
                     ymin = .05, ymax = .15,
                     xmin = .4, xmax = .6) +
   theme_void()
+```
 
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 7.5 * 1.5, fig.height = 6, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 85, angle = 45)
+```
+
+Finally, we can export Figure S16.
+
+```{r, eval = FALSE}
 scl <- 1.5
 hypo_save(plot = p_done,
           filename = "figures/SF16.pdf",
@@ -98,3 +190,6 @@ hypo_save(plot = p_done,
           device = cairo_pdf,
           bg = "transparent",
           comment = plot_comment)
+```
+
+---

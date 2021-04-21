@@ -34,11 +34,6 @@ raxml_tree_rooted <- root(phy = raxml_tree, outgroup = "PL17_160floflo")
 clr_neutral <- rgb(.6, .6, .6)
 lyout <- 'circular'
 
-lab2spec <- function(label){
-  x <- str_sub(label, start = -6, end = -4) %>% str_remove(.,"[0-9.]{1,3}$") %>% str_remove(.," ")
-  ifelse(x == "",'ungrouped', x)
-}
-
 raxml_tree_rooted_grouped <- groupClade(raxml_tree_rooted,
                                         .node = c(298, 302, 187, 179, 171, 159,
                                                   193, 204, 201, 222, 219, 209,
@@ -97,7 +92,7 @@ p_tree <- (open_tree(
 
 y_sep <- .05
 x_shift <- -.03
-p_single <- ggplot() +
+p_done <- ggplot() +
   coord_equal(xlim = c(0, .93),
               ylim = c(-.01, .54),
               expand = 0) +
@@ -110,7 +105,7 @@ p_single <- ggplot() +
   theme_void()
 
 scl <- 1.5
-hypo_save(plot = p_single,
+hypo_save(plot = p_done,
           filename = "figures/SF9.pdf",
           width = 7.5 * scl,
           height = 4 * scl,

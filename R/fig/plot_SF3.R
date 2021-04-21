@@ -111,7 +111,7 @@ dxy_subplot <- function(select_idx){
 
 ps <- list(1:7, 8:14, 15:21, 22:28) %>% map(dxy_subplot)
 
-p <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = element_blank()), 
+p_done <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = element_blank()), 
           ps[[2]] + theme(legend.position = "none", axis.title.x = element_blank()), 
           ps[[3]] + theme(legend.position = "none", axis.title.x = element_blank()),
           ps[[4]] + theme(legend.position = "none"),
@@ -121,7 +121,7 @@ p <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = element_
 # export final figure
 scl <- 1.2
 hypo_save(filename = 'figures/SF3.pdf',
-          plot = p,
+          plot = p_done,
           width = f_width * scl,
           height = f_width * 1.15 * scl,
           device = cairo_pdf,

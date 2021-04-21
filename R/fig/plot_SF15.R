@@ -9,14 +9,12 @@
 # ===============================================================
 # args <- c("2_analysis/fst_signif/random/")
 # script_name <- "R/fig/plot_SF15.R"
-args <- commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypogen)
 library(hypoimg)
-library(vroom)
 library(ggtext)
-library(cowplot)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -31,43 +29,9 @@ args <- process_input(script_name, args)
 rand_path <- as.character(args[1])
 rand_files <- dir(path = rand_path, pattern = "_random_fst.tsv.gz")
 
-get_random_fst <- function(file){
-  nm <- file %>% str_remove(pattern = ".*\\/") %>%
-    str_remove("_random_fst.tsv.gz")
-  rn <- str_remove(nm, "_.*")
-  sub_type <- str_remove(nm, "[a-z]{6}-[a-z]{6}_")
-  vroom::vroom(file = file,
-               delim = "\t",
-               # col_names = c("idx", "type", "mean_fst", "weighted_fst"),
-               col_types = "dcdd") %>%
-    mutate(group = nm,
-           run = rn,
-           subset_type = sub_type)
-}
-
 data <- str_c(rand_path, rand_files) %>%
   map_dfr(.f = get_random_fst) %>% 
   mutate(sign = c(subset_non_diverged = -1, whg = 1)[subset_type])
-
-get_percentile <- function(data){
-  ran <- data$weighted_fst[data$type == "random"]
-  real_fst <- data$weighted_fst[data$type == "real_pop"]
-  
-  # sprintf("%.7f", sum(ran < real_fst) / length(ran))
-  sum(ran < real_fst) / length(ran)
-}
-
-get_n_above<- function(data){
-  ran <- data$weighted_fst[data$type == "random"]
-  real_fst <- data$weighted_fst[data$type == "real_pop"]
-  
-  sum(ran > real_fst)
-}
-
-get_n_total <- function(data){
-  ran <- data$weighted_fst[data$type == "random"]
-  length(ran)
-}
 
 data_grouped <- data %>% 
   group_by(group, run, subset_type, sign) %>%
@@ -164,8 +128,6 @@ data_export %>%
          `001` = .001/ fdr_correction_factor,
          sig = ifelse(p_perm < `001`, "***", ifelse(p_perm < `010`, "**", ifelse(p_perm < `050`, "*", "-")))) %>% 
 arrange(as.character(run)) %>% 
-filter(grepl( "uni", run),
-       subset_type != "whg") %>% 
   select(run, subset_type, sig,real_pop, p_perm) %>% 
   mutate(real_pop = sprintf("%.4f",real_pop),
          p_perm = sprintf("%.2f",p_perm * 100))

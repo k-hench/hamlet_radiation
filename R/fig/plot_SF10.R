@@ -66,7 +66,7 @@ data <- data %>%
   mutate(spec = factor(spec, levels = levels(global_bar$spec)))
 
 # compose final figure
-p <- ggplot()+
+p_done <- ggplot()+
   # general plot structure separated by run
   facet_wrap( .~spec, as.table = TRUE, ncol = 1, dir = 'v')+
   # add genome wide average pi in the background
@@ -101,7 +101,7 @@ p <- ggplot()+
 
 # export final figure
 hypo_save(filename = 'figures/SF10.png',
-          plot = p,
+          plot = p_done,
           width = 8,
           height = 8,
           type = "cairo",

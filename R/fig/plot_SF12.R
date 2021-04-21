@@ -47,11 +47,6 @@ trees <- c(tree_file_lg04_1, tree_file_lg12_3, tree_file_lg12_4) %>%
 clr_neutral <- rgb(.6, .6, .6)
 lyout <- 'circular'
 
-lab2spec <- function(label){
-  x <- str_sub(label, start = -6, end = -4) %>% str_remove(.,"[0-9.]{1,3}$") %>% str_remove(.," ")
-  ifelse(x == "",'ungrouped', x)
-}
-
 tree_data <- trees %>% 
   map(.f = function(tree_in){
     open_tree(ggtree(tree_in, 
@@ -64,63 +59,10 @@ tree_data <- trees %>%
       )}
   )
 
-plot_outl_tree <- function(tree, show_legend = TRUE){
-  p <- open_tree(ggtree(tree,
-              layout = lyout,
-              aes(color = spec), size = .3), 180) +
-    geom_tiplab(aes(color = lab2spec(label), 
-                    label = str_sub(label, -6, -1)),
-                size = 1.7,
-                hjust = -.1)+
-    ggtree::geom_treescale(width = .01,
-                           x = .001, 
-                           y = 158, 
-                           offset = -1,
-                           fontsize = 1.5,
-                           color = clr_neutral) +
-    ggtree::geom_nodepoint(aes(fill = support_class, size = support_class),
-                           shape = 21) +
-    scale_color_manual(values = c(ungrouped = clr_neutral, 
-                                  GenomicOriginsScripts::clr2),
-                       guide = FALSE) +
-    scale_fill_manual(values = c(`(0,50]` = "transparent",
-                                 `(50,70]` = "white",
-                                 `(70,90]` = "gray",
-                                 `(90,100]` = "black"),
-                      drop = FALSE) +
-    scale_size_manual(values = c(`(0,50]` = 0,
-                                 `(50,70]` = 1,
-                                 `(70,90]` = 1,
-                                 `(90,100]` = 1),
-                      na.value = 0,
-                      drop = FALSE) +
-    guides(fill = guide_legend(title = "Node Support Class", title.position = "top", ncol = 2),
-           size = guide_legend(title = "Node Support Class", title.position = "top", ncol = 2)) +
-    theme_void() 
-    # theme_bw() +
-  
-  if(show_legend){
-    p <- p +
-      theme(legend.position = c(.5, .75),
-            legend.justification = c(.5, 1),
-            legend.text = element_text(size = plot_text_size))
-  } else {
-    p <- p + theme(legend.position = "none")
-  }
-  
-  ggplot() +
-    coord_equal(xlim = c(0, 1),
-                ylim = c(-.01, .54),
-                expand = 0) +
-    annotation_custom(grob = ggplotGrob(p),
-                      ymin = -.6, ymax = .6,
-                      xmin = -.1, xmax = 1.1) +
-    theme_void()
-}
 
-p1 <- plot_outl_tree(tree_data[[1]])
-p2 <- plot_outl_tree(tree_data[[2]], show_legend = FALSE)
-p3 <- plot_outl_tree(tree_data[[3]], show_legend = FALSE)
+p1 <- plot_outl_tree_s(tree_data[[1]])
+p2 <- plot_outl_tree_s(tree_data[[2]], show_legend = FALSE)
+p3 <- plot_outl_tree_s(tree_data[[3]], show_legend = FALSE)
 
 p_done <- p1 + p2 + p3 + plot_annotation(tag_levels = 'a') + plot_layout(ncol = 1)
 

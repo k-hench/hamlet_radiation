@@ -12,6 +12,7 @@ library(paletteer)
 library(patchwork)
 library(GenomicOriginsScripts)
 library(hypoimg)
+library(hypogen)
 library(ggtext)
 
 args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
@@ -19,20 +20,21 @@ args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure 13.
+This is the accessory documentation of Figure S13.
 The Figure can be recreated by running the **R** script `plot_SF13.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF13.R 2_analysis/admixture/ metadata/phenotypes.sc
-
+Rscript --vanilla R/fig/plot_SF13.R\
+  2_analysis/admixture/ \
+  metadata/phenotypes.sc
 ```
 
 ## Details of `plot_SF13.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**ggtext**](https://wilkelab.org/ggtext/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**paletteer**](https://emilhvitfeldt.github.io/paletteer/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen), [**ggtext**](https://wilkelab.org/ggtext/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**paletteer**](https://emilhvitfeldt.github.io/paletteer/).
 
 ### Config
 
@@ -164,7 +166,7 @@ trait_icons <- c(LG04_1 = "<img src='ressources/img/snout_c.png' width='60' />  
                LG12_4 = "<img src='ressources/img/peduncle_c.png' width='60' />    ")
 ```
 
-Then we clean and format the phenotype data for plotting.
+Then, we clean and format the phenotype data for plotting.
 
 ```{r, message = FALSE, warning = FALSE}
 # format phenotype data
@@ -203,13 +205,13 @@ p_ad <- c("LG04_1", "LG12_3", "LG12_4") %>% purrr::map(adm_plot, data = data)
 p_ad[[3]] # not part of the actual script
 ```
 
-<center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 2.5, dev.args = list(type = "cairo")}
-p_ad[[3]]
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 2.5, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_ad[[3]]) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 20, angle = 45)
 ```
-</center>
 
-then we create a dummy plot to extract the legend for the phenotypes.
+Next, we create a dummy plot to extract the legend for the phenotypes.
 
 ```{r, message = FALSE, warning = FALSE}
 # create dummy plot for the phenotype legend
@@ -226,7 +228,7 @@ p_phno <- pheno_plot_data %>%
     legend.position = "bottom")
 ```
 
-Below the panels a - c, the species of the samples are indicated.
+Below the panels a - c the species of the samples are indicated.
 To do this, we prepare a small table from the species affiliation of each sample.
 
 ```{r, message = FALSE, warning = FALSE}
@@ -269,13 +271,11 @@ p_spec <- pheno_plot_data %>%
         axis.text.x = element_blank())
 ```
 
-<center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 1.6, dev.args = list(type = "cairo")}
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 1.6, dev.args = list(type = "cairo"), fig.align = "center"}
 p_spec
 ```
-</center>
 
-Similarely to the species affiliation, we create a second plot to indicate the sampling location.
+Similarly to the species affiliation, we create a second plot to indicate the sampling location.
 
 ```{r, message = FALSE, warning = FALSE}
 # create sub-plot for samplong location indication
@@ -298,13 +298,11 @@ p_loc <- pheno_plot_data %>%
         axis.text.x = element_blank())
 ```
 
-<center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 1, dev.args = list(type = "cairo")}
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 1, dev.args = list(type = "cairo"), fig.align = "center"}
 p_loc
 ```
-</center>
 
-Then, we compose the figre legend from individual sub-legends.
+Then, we compose the figure legend from individual sub-legends.
 
 ```{r, message = FALSE, warning = FALSE}
 # compose legend from individual legend parts
@@ -314,18 +312,16 @@ p_l <- (get_legend(p_phno) %>% ggdraw()) +
   plot_layout(nrow = 1)
 ```
 
-<center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 2, dev.args = list(type = "cairo")}
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 2, dev.args = list(type = "cairo"), fig.align = "center"}
 p_l
 ```
-</center>
 
 At this point, we can assemble the final figure.
-Yet, due to the positioning of the trait images with **ggtext** we need to crop the left margin a little (hence we need `p_done2`).
+Yet, due to the positioning of the trait images with **ggtext** we need to crop the left margin a little (hence we need `p_done`).
 
 ```{r, message = FALSE, warning = FALSE}
 # finalize figure
-p_done <- p_ad[[1]] +
+p_prep <- p_ad[[1]] +
   p_ad[[2]] +
   p_ad[[3]]+
   p_spec + p_loc + p_l +
@@ -337,22 +333,22 @@ p_done <- p_ad[[1]] +
 
 ```{r, message = FALSE, warning = FALSE}
 # crop final figure (remove whitespace on left margin)
-p_done2 <- ggdraw(p_done, xlim = c(.023,1))
+p_done <- ggdraw(p_prep, xlim = c(.023,1))
 ```
 
-<center>
-```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 9, dev.args = list(type = "cairo")}
-p_done2
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 9, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 85, angle = 45)
 ```
-</center>
 
-Finally, we can export Supplementary Figure 13.
+Finally, we can export Figure S13.
 
 ```{r, eval = FALSE}
 # export final figure
 scl <- .9
 ggsave("figures/SF13.pdf",
-       plot = p_done2,
+       plot = p_done,
        width = 16*scl,
        height = 10*scl,
        device = cairo_pdf)

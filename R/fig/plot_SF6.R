@@ -139,7 +139,7 @@ p3 <- model_data %>%
   theme_minimal()
 
 # compose final figure
-p <- plot_grid(p1,
+p_done <- plot_grid(p1,
                plot_grid(p2,p3,
                          nrow = 1,
                          labels = letters[2:3] %>%
@@ -149,7 +149,7 @@ p <- plot_grid(p1,
 
 # export final figure
 hypo_save(filename = 'figures/SF6.pdf',
-          plot = p,
+          plot = p_done,
           width = 10,
           height = 16,
           comment = plot_comment)
