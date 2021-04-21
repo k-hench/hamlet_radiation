@@ -9,7 +9,7 @@ editor_options:
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure 5.
+This is the accessory documentation of Figure S5.
 The Figure can be recreated by running the **R** script `plot_SF5.R`:
 
 ```sh
@@ -24,7 +24,7 @@ Rscript --vanilla R/fig/plot_SF5.R 2_analysis/fst/50k/ \
 ## Details of `plot_SF5.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg) and [**vroom**](https://vroom.r-lib.org/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**vroom**](https://vroom.r-lib.org/).
 
 ### Config
 
@@ -77,12 +77,12 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_SF5.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF5.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/fst/50k/
 #> ★ 2: 2_analysis/summaries/fst_outliers_998.tsv
 #> ★ 3: 2_analysis/summaries/fst_globals.txt
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
 The directory containing the $F_{ST}$ data, and the files containing the locations
@@ -181,7 +181,7 @@ Then, the Supplementary Figure is assembled.
 
 ```r
 # compose final figure
-p <- ggplot()+
+p_done <- ggplot()+
   # general plot structure separated by run
   facet_grid( run_label ~ ., as.table = TRUE) +
   # add genome wide average fst in the background
@@ -218,18 +218,15 @@ p <- ggplot()+
         axis.text.x.bottom = element_text(colour = 'darkgray'))
 ```
 
+<img src="plot_SF5_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" />
 
-<center>
-<img src="plot_SF5_files/figure-html/unnamed-chunk-11-1.png" width="768" />
-</center>
-
-Finally, we can export Supplementary Figure 5.
+Finally, we can export Figure S5.
 
 
 ```r
 # export final figure
 hypo_save(filename = 'figures/SF5.png',
-          plot = p,
+          plot = p_done,
           width = 8,
           height = 12,
           type = "cairo",

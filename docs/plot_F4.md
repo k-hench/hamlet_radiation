@@ -3,6 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
+
 # Figure 4
 
 
@@ -11,6 +12,7 @@ editor_options:
 
 This is the accessory documentation of Figure 4.
 The Figure can be recreated by running the **R** script `plot_F4.R`:
+
 ```sh
 cd $BASE_DIR
 
@@ -26,7 +28,7 @@ Rscript --vanilla R/fig/plot_F4.R 2_analysis/dxy/50k/ \
 ## Details of `plot_F4.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg) and [**hypogen**](https://k-hench.github.io/hypogen).
 
 ### Config
 
@@ -81,7 +83,7 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_F4.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_F4.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/dxy/50k/
 #> ★ 2: 2_analysis/fst/50k/multi_fst.50k.tsv.gz
@@ -92,7 +94,7 @@ args <- process_input(script_name, args)
 #> ★ 7: ressources/plugin/trees/
 #> ★ 8: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 #> ★ 9: 2_analysis/summaries/fst_globals.txt
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
 The directories for the different data types are received and stored in respective variables.
@@ -115,7 +117,7 @@ source(twisst_script)
 
 ### Data import
 
-Supplementary Figure 4 contains quite a lot of different data sets.
+Figure 4 contains quite a lot of different data sets.
 The main part of this script is just importing and organizing all of this data:
 In the following we'll go step by step through the import of:
 
@@ -127,8 +129,8 @@ In the following we'll go step by step through the import of:
 
 We start with the import of the $F_{ST}$ data, specifically the data set containing the genome wide $F_{ST}$ computed for all populations simultaneously (joint $F_{ST}$).
 
-The data file is read, the columns are renamed and the genomic position is added.
-Then, only the genomic position and the $F_{ST}$ columns are selected and a window column is added for faceting in `ggplot()`.
+The data file is read, the columns are renamed and the genomic positions are added.
+Then, only the genomic positions and the $F_{ST}$ columns are selected and a window column is added for faceting in `ggplot()`.
 
 
 ```r

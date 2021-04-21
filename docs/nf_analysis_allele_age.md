@@ -22,8 +22,7 @@ nf_run_aa
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_allele_age.nf` (located under `$BASE_DIR/nf/11_analysis_allele_age/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+The allele age is estimated within the [**nextflow**](https://www.nextflow.io/) script `analysis_allele_age.nf` (located under `$BASE_DIR/nf/11_analysis_allele_age/`) which runs on the _SNPs only_ data set.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
@@ -35,7 +34,7 @@ Below is an overview of the steps involved in the analysis.
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the genotype data.
 
 :::kclass
 
@@ -51,6 +50,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+As the data is going to be split by linkage group, we create a channel for the individual LGs.
 
 
 <div class="sourceCode">
@@ -66,6 +66,12 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Several things are happening in the next step:
+
+- First the genotypes are split by LG and a new info field is added to the `vcf` file to store information about the ancestral state of each SNP.
+- The second step checks for each SNP if it is invariant across all Serranid outgroup samples (in that case the outgroup allele is considered ancestral).
+- Then, allele frequencies are computed as a fallback clue - if a SNP is variant in the outgroup, the major allele is then set as ancestral allele.
+- Lastly, the ancestral state information is added to the genotype file.
 
 
 <div class="sourceCode">
@@ -135,6 +141,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Based on the ancestral state information, the genotypes are recoded such that the ancestral allele is set as the new reference allele of the `vcf` file.
 
 
 <div class="sourceCode">
@@ -162,6 +169,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+After this, the outgroup samples are removed from the data and the remaining data set is filtered to remove sites that are invariant within the hamlets.
 
 
 <div class="sourceCode">
@@ -214,6 +222,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Since a single `GEVA` run can take quite some time, the data is split further into chunks of 25k SNPs 
 
 
 <div class="sourceCode">
@@ -251,6 +260,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Then `GEVA` is run on those genotype subsets to actually estimate the allele ages.
 
 
 <div class="sourceCode">
@@ -300,6 +310,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+And finally, the results of the separate chunks are gathered and compiled into a single output file.
 
 
 <div class="sourceCode">

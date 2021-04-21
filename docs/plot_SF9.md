@@ -9,20 +9,20 @@ editor_options:
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure 9.
+This is the accessory documentation of Figure S9.
 The Figure can be recreated by running the **R** script `plot_SF9.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF9.R 
-
+Rscript --vanilla R/fig/plot_SF9.R 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support
 ```
 
 ## Details of `plot_SF9.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg), [**paletteer**](https://emilhvitfeldt.github.io/paletteer/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen), [**ape**](http://ape-package.ird.fr/) and [**ggtree**](https://github.com/YuLab-SMU/ggtree).
+
 
 ### Config
 
@@ -32,15 +32,14 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```r
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF9.R ~/work/puebla_lab/stash/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
+# Rscript --vanilla R/fig/plot_SF9.R 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support
 # ===============================================================
 # This script produces Suppl. Figure 9 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe",
-#           "2_analysis/raxml/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb")
+# args <- c("2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support")
 # script_name <- "R/fig/plot_SF9.R"
 ```
 
@@ -72,51 +71,74 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_SF9.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF9.R ────────────────────────────────────────────
 #> Parameters read:
-#> ★ 1: 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe
-#> ★ 2: 2_analysis/raxml/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ★ 1: 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directory containing the hybridization data is received and stored in a variable.
+The path of the phylogentic tree file is received and stored in a variable.
 
 
 ```r
 # config -----------------------
-tree_file <- as.character(args[1])
+tree_hypo_file <- as.character(args[1])
+```
 
-raxml_tree <- read.tree(tree_file) 
-raxml_tree_rooted <- root(phy = raxml_tree, outgroup="PL17_160floflo")
+Then, the tree file is read and the tree is rooted with the *H. floriedae* sample as outgroup.
+
+
+```r
+raxml_tree <- read.tree(tree_hypo_file) 
+raxml_tree_rooted <- root(phy = raxml_tree, outgroup = "PL17_160floflo")
+```
+
+Also, the default tree layout is defined and the default tree color is set.
+
+
+```r
 clr_neutral <- rgb(.6, .6, .6)
 lyout <- 'circular'
+```
 
-lab2spec <- function(label){
-  x <- str_sub(label, start = -6, end = -4) %>% str_remove(.,"[0-9.]{1,3}$") %>% str_remove(.," ")
-  ifelse(x == "",'ungrouped', x)
-}
+Based on key nodes of the tree, clades of the tree are grouped when they only contain a single hamlet species.
 
+
+```r
 raxml_tree_rooted_grouped <- groupClade(raxml_tree_rooted,
                                         .node = c(298, 302, 187, 179, 171, 159,
                                                   193, 204, 201, 222, 219, 209,
                                                   284, 278, 268, 230, 242),
                                         group_name =  "clade")
+```
+
+Then, the labels for the previously grouped clades are set.
 
 
+```r
 clade2spec <- c( `0` = "none", `1` = "ran", `2` = "uni", `3` = "ran", `4` = "may",
                  `5` = "pue", `6` = "ind", `7` = "nig", `8` = "nig", `9` = "ran",
                  `10` = "abe", `11` = "abe", `12` = "gum", `13` = "uni", `14` = "pue",
                  `15` = "uni", `16` = "pue", `17` = "nig")
+```
 
+Now, the support values of the tree are transformed into discrete support classes.
+
+
+```r
 raxml_data <- ggtree(raxml_tree_rooted_grouped, layout = lyout) %>%
-  # ggtree::rotate(200) %>%
   .$data %>% 
   mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
          support = as.numeric(label),
-         support_class = cut(as.numeric(label), c(0,.5,.7,.9,1)) %>% 
-           as.character() %>% factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]"))
+         support_class = cut(support, c(0,50,70,90,100)) %>% 
+           as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))
            )
+```
 
+At this point, the basic pylogenetic tree can be drawn.
+
+
+```r
 p_tree <- (open_tree(
   ggtree(raxml_data, layout = lyout,
          aes(color = ifelse(clade == 0,
@@ -133,140 +155,63 @@ p_tree <- (open_tree(
                          offset = -3,fontsize = 3,
                          color = clr_neutral) +
   xlim(c(-.0007,.0092)) +
-  ggtree::geom_nodepoint(aes(fill = support_class, size = support_class),
+  ggtree::geom_nodepoint(aes(fill = support_class, 
+                             size = support_class),
                  shape = 21) +
   scale_color_manual(values = c(ungrouped = clr_neutral, 
                                 GenomicOriginsScripts::clr2),
                      guide = FALSE) +
-  scale_fill_manual(values = c(`(0,0.5]` = "transparent",
-                               `(0.5,0.7]` = "white",
-                               `(0.7,0.9]` = "gray",
-                               `(0.9,1]` = "black"),
+  scale_fill_manual(values = c(`(0,50]` = "transparent",
+                               `(50,70]` = "white",
+                               `(70,90]` = "gray",
+                               `(90,100]` = "black"),
                     drop = FALSE) +
-  scale_size_manual(values = c(`(0,0.5]` = 0,
-                               `(0.5,0.7]` = 1.5,
-                               `(0.7,0.9]` = 1.5,
-                               `(0.9,1]` = 1.5),
+  scale_size_manual(values = c(`(0,50]` = 0,
+                               `(50,70]` = 1.5,
+                               `(70,90]` = 1.5,
+                               `(90,100]` = 1.5),
                     na.value = 0,
-                    drop = FALSE) +
+                    drop = FALSE)+
   guides(fill = guide_legend(title = "Node Support Class", title.position = "top", ncol = 2),
          size = guide_legend(title = "Node Support Class",title.position = "top", ncol = 2)) +
-  theme_void() 
-
-
-tree_s <- read.tree("~/work/puebla_lab/stash/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb")
-
-# get_tree_data <- function(tree, lab){ggtree(tree, layout = "circular") %>% .$data %>% select(node, label) %>% set_names(nm = c("node", lab))}
-
-tree_s_rooted <- root(tree_s, outgroup = c("28393torpan", "s_tort_3torpan", "20478tabhon" ))
-tree_s_mid <- phangorn::midpoint(tree_s_rooted)
-
-tree_s_data <- open_tree(ggtree(tree_s_mid, layout = "circular"), 180) %>% 
-  .$data %>% 
-  mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
-         support = as.numeric(label)/100,
-         support_class = cut(as.numeric(label), c(0,.5,.7,.9,1)) %>% 
-           as.character() %>% factor(levels = c("(0,0.5]", "(0.5,0.7]", "(0.7,0.9]", "(0.9,1]")))
-
-p_s_tree <- (rotate_tree(open_tree(ggtree(tree_s_data, aes(color = spec),
-                              layout = "circular") %>% 
-                         rotate(node = 159), 
-                       180),
-             183) )+
-  geom_tiplab2(aes(label = str_sub(label, -6, -1)),
-               size = 3, offset = .5) +
-  geom_nodepoint(aes(fill = support_class, size = support_class),
-                 shape = 21) +
-  ggtree::geom_treescale(width = 5,
-                         x = -7, y = 155, 
-                         offset = 5, fontsize = 3,
-                         color = clr_neutral) +
-  scale_color_manual(values = c(ungrouped = clr_neutral, 
-                                GenomicOriginsScripts::clr2),
-                     guide = FALSE) +
-  scale_fill_manual(values = c(`(0,0.5]` = "transparent",
-                               `(0.5,0.7]` = "white",
-                               `(0.7,0.9]` = "gray",
-                               `(0.9,1]` = "black"),
-                    drop = FALSE) +
-  scale_size_manual(values = c(`(0,0.5]` = 0,
-                               `(0.5,0.7]` = 1.5,
-                               `(0.7,0.9]` = 1.5,
-                               `(0.9,1]` = 1.5),
-                    na.value = 0,
-                    drop = FALSE) +
   theme_void()
+```
 
+<img src="plot_SF9_files/figure-html/unnamed-chunk-10-1.png" width="864" style="display: block; margin: auto;" />
+
+Unfortunately, the polar coordinate system underlying the circular tree layout introduces a lot of empty space for a open tree that spans 180 degrees.
+In order to crop that empty space, the basic tree is converted into grid object and used as an annotation in a different ggplot.
+This uses cartesian coordinates and is easily cropped to create the final figure.
+
+
+```r
 y_sep <- .05
 x_shift <- -.03
-p_single <- ggplot() +
-  coord_equal(xlim = c(0, .93), 
+p_done <- ggplot() +
+  coord_equal(xlim = c(0, .93),
               ylim = c(-.01, .54),
               expand = 0) +
-  # annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
-  #                   ymin = -.575, ymax = .575,
-  #                   xmin = -.075, xmax = 1.075) +
   annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
                     ymin = -.6 + (.5 * y_sep), ymax = .6 + (.5 * y_sep),
                     xmin = -.1, xmax = 1.1) +
-  annotation_custom(grob = cowplot::get_legend(p_tree), 
+  annotation_custom(grob = cowplot::get_legend(p_tree),
                     ymin = .35, ymax = .54,
                     xmin = 0, xmax = .2) +
   theme_void()
 ```
 
+<img src="plot_SF9_files/figure-html/unnamed-chunk-12-1.png" width="1080" style="display: block; margin: auto;" />
 
-
-```r
-scl <- 1.5
-hypo_save(plot = p_single,
-          filename = "figures/SFY3_single.pdf", 
-          width = 7.5 * scl,
-          height = 4 * scl, 
-          device = cairo_pdf, 
-          bg = "transparent",
-          comment = plot_comment)
-```
-
-
-
-```r
-p_done <- ggplot() +
-  coord_equal(xlim = c(0, .93), 
-              ylim = c(-.52, .54),
-              expand = 0) +
-  # annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
-  #                   ymin = -.575, ymax = .575,
-  #                   xmin = -.075, xmax = 1.075) +
-  annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
-                    ymin = -.6 + (.5 * y_sep), ymax = .6 + (.5 * y_sep),
-                    xmin = -.1, xmax = 1.1) +
-  annotation_custom(grob = ggplotGrob(p_s_tree + theme(legend.position = "none")),
-                    ymin = -.6 - (.5 * y_sep), ymax = .6 - (.5 * y_sep),
-                    xmin = 0 + x_shift, xmax = 1 + x_shift) +
-  annotation_custom(grob = cowplot::get_legend(p_tree), 
-                    ymin = -.2, ymax = -.1,
-                    xmin = 0, xmax = .907) +
-  theme_void()
-```
-
-
-
-```r
-p_done
-```
-
-<img src="plot_SF9_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" />
-
+Finally, we can export Figure S9.
 
 
 ```r
 scl <- 1.5
 hypo_save(plot = p_done,
-       filename = "figures/SF9.pdf", 
-       width = 7.5 * scl,
-       height = 8 * scl, 
-       device = cairo_pdf, 
-       bg = "transparent",
-       comment = plot_comment)
+          filename = "figures/SF9.pdf",
+          width = 7.5 * scl,
+          height = 4 * scl,
+          device = cairo_pdf,
+          bg = "transparent",
+          comment = plot_comment)
 ```

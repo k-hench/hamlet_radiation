@@ -17,13 +17,14 @@ cd $BASE_DIR
 
 Rscript --vanilla R/fig/plot_F6.R \
    2_analysis/summaries/fst_outliers_998.tsv \
-   2_analysis/geva/ 2_analysis/GxP/bySNP/
+   2_analysis/geva/ \
+   2_analysis/GxP/bySNP/
 ```
 
 ## Details of `plot_F6.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**ggtext**](https://wilkelab.org/ggtext/) and [**ggpointdensity**](https://github.com/LKremer/ggpointdensity).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen), [**ggtext**](https://wilkelab.org/ggtext/), [**ggpointdensity**](https://github.com/LKremer/ggpointdensity), [**scales**](https://scales.r-lib.org/), [**grid**](https://CRAN.R-project.org/package=grid) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
 
 ### Config
 
@@ -81,13 +82,15 @@ cli::rule(right = getwd())
 ```
 
 ```r
-#> ── Script: scripts/plot_F6.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_F6.R ────────────────────────────────────────────
 #> Parameters read:
-#> ★ 1: 2_analysis/twisst/weights/
-#> ★ 2: ressources/plugin/trees/
-#> ★ 3: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ★ 1: 2_analysis/summaries/fst_outliers_998.tsv
+#> ★ 2: 2_analysis/geva/
+#> ★ 3: 2_analysis/GxP/bySNP
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
+
+The directories allele age and genotype $\times$ phenotype data, as well as the outlier location file are received and stored in respective variables.
 
 
 ```r
@@ -97,6 +100,7 @@ geva_path <- as.character(args[2])
 gxp_path <- as.character(args[3])
 ```
 
+Then, the outlier coordinates are loaded and the allele age and G $\times$ P data within those regions are imported.
 
 
 ```r
@@ -106,6 +110,8 @@ data <- outlier_data[c(2, 13, 14),] %>%
   pmap_dfr(get_gxp_and_geva)
 ```
 
+Next, some settings for the plotting are pre-defined.
+Those include the desire x-range, symbol sizes and the estimated age of the first split within Hypoplectrus.
 
 
 ```r
@@ -119,6 +125,7 @@ base_line_clr <- "black"
 splitage <- tibble(intercept = 5000)
 ```
 
+Also, the outlier labels are formatted and the color scheme of the traits is set (for the G $\times$ P annotation).
 
 
 ```r
@@ -126,21 +133,29 @@ gid_label <- c( LG04_1 = "LG04 (A)", LG12_3 = "LG12 (B)", LG12_4 = "LG12 (C)" )
 gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
   darken(factor = .95) %>%
   set_names(., nm = c("Bars", "Snout", "Peduncle"))
+```
 
+Than the annotation images are loaded and the traits are re-colored according to the color scheme.
+
+
+```r
 annotation_grobs <- tibble(svg = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c( 'Snout', 'Bars', 'Peduncle')],
                            layer = c(4,3,7),
                            color = gxp_clr[c(1,3,2)]) %>%
     purrr::pmap(.l = ., .f = hypo_recolor_svg) %>%
   set_names(nm = c( "LG12_3","LG12_4","LG04_1"))
-```
 
-
-
-```r
 annotation_grobs$LG12_3 <- hypo_recolor_svg(annotation_grobs$LG12_3,
                                             layer = 7, color = gxp_clr[[1]] %>% 
                                               clr_desaturate %>% clr_lighten(.25))
+```
 
+<img src="plot_F6_files/figure-html/unnamed-chunk-8-1.png" width="329.28" style="display: block; margin: auto;" />
+
+For the correct distribution of the annotations across the ggplot facets, the annotations are stored within a tibble that also holds the respective outlier ID $\times$ trait combinations.
+
+
+```r
 annotation_grobs_tib <- tibble(gid = names(annotation_grobs),
                                grob = annotation_grobs) %>%
   mutate( gid_label = gid_label[gid],
@@ -148,6 +163,7 @@ annotation_grobs_tib <- tibble(gid = names(annotation_grobs),
                           levels = c("Snout", "Bars", "Peduncle")))
 ```
 
+Similarly, a tibble for the background highlights is created (compatible with the faceting regime).
 
 
 ```r
@@ -156,6 +172,7 @@ highlight_rects <- tibble(trait = factor( c("Snout", "Bars", "Peduncle"),
                           gid_label = gid_label)
 ```
 
+At this point, we can create Figure 6.
 
 
 ```r
@@ -202,15 +219,9 @@ p_done <- data %>%
 ```
 
 
+<img src="plot_F6_files/figure-html/unnamed-chunk-12-1.png" width="329.28" style="display: block; margin: auto;" />
 
-```r
-ggdraw(p_done) + 
-  draw_plot(hypoimg:::hypo_logo(.4), .2, .2, .6, .6) +
-  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
-```
-
-<img src="plot_F6_files/figure-html/unnamed-chunk-10-1.png" width="329.28" style="display: block; margin: auto;" />
-
+Finally, we can export Figure 6.
 
 
 ```r

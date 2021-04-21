@@ -9,20 +9,20 @@ editor_options:
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure 10.
+This is the accessory documentation of Figure S10.
 The Figure can be recreated by running the **R** script `plot_SF10.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/
+Rscript --vanilla R/fig/plot_SF10.R 2_analysis/pi/50k/
 
 ```
 
 ## Details of `plot_SF10.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the packages [**hypoimg**](https://k-hench.github.io/hypoimg) and [**ggtext**](https://wilkelab.org/ggtext/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**ggtext**](https://wilkelab.org/ggtext/).
 
 ### Config
 
@@ -70,10 +70,10 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_SF10.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF10.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/pi/50k/
-#> ─────────────────────────────────────────── /current/working/directory ───
+#> ────────────────────────────────────────── /current/working/directory ───
 ```
 
 The path containing the $\pi$ data is received and stored inside a more descriptive variable.
@@ -163,7 +163,7 @@ Then we can put together the final plot.
 
 ```r
 # compose final figure
-p <- ggplot()+
+p_done <- ggplot()+
   # general plot structure separated by run
   facet_wrap( .~spec, as.table = TRUE, ncol = 1, dir = 'v')+
   # add genome wide average pi in the background
@@ -197,17 +197,15 @@ p <- ggplot()+
         axis.text.x.bottom = element_markdown(colour = 'darkgray'))
 ```
 
-<center>
-<img src="plot_SF10_files/figure-html/unnamed-chunk-11-1.png" width="768" />
-</center>
+<img src="plot_SF10_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" />
 
-Finally, we can export Supplementary Figure 10.
+Finally, we can export Figure S10.
 
 
 ```r
 # export final figure
 hypo_save(filename = 'figures/SF10.png',
-          plot = p,
+          plot = p_done,
           width = 8,
           height = 8,
           type = "cairo",

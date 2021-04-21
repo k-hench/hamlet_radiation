@@ -10,7 +10,7 @@ css: highlight.css
 
 
 
-# (git 15) DAta Visualization
+# (git 15) Data Visualization
 
 After all `nextflow` pipelines are successfully run to completion, each Figure (and Suppl. Figure) of the manuscript can be re-created with its respective `R` script located under `R/fig`.
 These are executable `R` scripts that can be launched from the base directory;

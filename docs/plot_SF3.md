@@ -9,20 +9,20 @@ editor_options:
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure .
+This is the accessory documentation of Figure S3.
 The Figure can be recreated by running the **R** script `plot_SF3.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF3.R 
+Rscript --vanilla R/fig/plot_SF3.R 2_analysis/dxy/50k/
 
 ```
 
 ## Details of `plot_SF3.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg), [**paletteer**](https://emilhvitfeldt.github.io/paletteer/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**paletteer**](https://emilhvitfeldt.github.io/paletteer/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
 
 ### Config
 
@@ -69,13 +69,13 @@ args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: scripts/plot_SF3.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF3.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/dxy/50k/
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directory containing the hybridization data is received and stored in a variable.
+The directory containing the*d<sub>XY</sub>* data is received and stored in a variable.
 
 
 ```r
@@ -83,24 +83,42 @@ The directory containing the hybridization data is received and stored in a vari
 dxy_path <- as.character(args[1])
 ```
 
+Then, all file names of all files within the data folder are gathered...
+
 
 ```r
 # locate dxy data files
 files <- dir(dxy_path)
+```
 
+... and all *d<sub>XY</sub>* data is loaded.
+
+
+```r
 # load dxy data
-data <- str_c(dxy_path,files) %>%
+data <- str_c(dxy_path, files) %>%
   purrr::map(get_dxy) %>%
   bind_rows() %>%
   purrr::set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
+```
 
+Next, the genome wide average *d<sub>XY</sub>* is computed for all species pairs.
+(This is done to be able to later order the sub-plots with decreasing average genome wide *d<sub>XY</sub>*.)
+
+
+```r
 genoe_wide_avg <- data %>% 
   group_by(run) %>%
   summarise(avg_dxy = mean(dxy)) %>%
   ungroup() %>%
   arrange(avg_dxy)
+```
 
+Next, a simple linear model is run for all species pairs.
+
+
+```r
 model_data <- data %>%
   pivot_longer(cols = starts_with("pi_pop"),
                names_to = "pi_pop", 
@@ -112,9 +130,14 @@ model_data <- data %>%
   nest() %>%
   mutate(mod =  map(data, function(data){lm(pi ~ dxy, data = data)})) %>%
   bind_cols(., summarise_model(.))
+```
 
+Then, a wrapper function is created that will allow to plot a subset of all the species pairs in one go.
+The function first subsets the *d<sub>XY</sub>* data set and then directly plots them.
+
+
+```r
 dxy_subplot <- function(select_idx){
-  #run_select <- genoe_wide_avg$run[c(1,7,14,21,28)]
   run_select <- genoe_wide_avg$run[select_idx]
   
   plt_data <- data %>%
@@ -167,20 +190,31 @@ dxy_subplot <- function(select_idx){
     )
   p
 }
+```
 
+Now, the individual sub-plot are created.
+
+
+```r
 ps <- list(1:7, 8:14, 15:21, 22:28) %>% map(dxy_subplot)
+```
 
-p <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = element_blank()), 
-          ps[[2]] + theme(legend.position = "none", axis.title.x = element_blank()), 
-          ps[[3]] + theme(legend.position = "none", axis.title.x = element_blank()),
-          ps[[4]] + theme(legend.position = "none"),
-          ps[[4]]  %>% get_legend(),
-          ncol = 1, rel_heights = c(1,1,1,1,.3))
+<img src="plot_SF3_files/figure-html/unnamed-chunk-10-1.png" width="806.4" style="display: block; margin: auto;" />
 
+Form the sub-plots, the final figure is assembled.
+
+
+
+<img src="plot_SF3_files/figure-html/unnamed-chunk-12-1.png" width="806.4" style="display: block; margin: auto;" />
+
+Finally, we can export Figure S3.
+
+
+```r
 # export final figure
 scl <- 1.2
 hypo_save(filename = 'figures/SF3.pdf',
-          plot = p,
+          plot = p_done,
           width = f_width * scl,
           height = f_width * 1.15 * scl,
           device = cairo_pdf,

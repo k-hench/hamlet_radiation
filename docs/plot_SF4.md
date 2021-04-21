@@ -9,7 +9,7 @@ editor_options:
 
 ## Summary
 
-This is the accessory documentation of Supplementary Figure .
+This is the accessory documentation of Figure S4.
 The Figure can be recreated by running the **R** script `plot_SF4.R`:
 
 ```sh
@@ -22,7 +22,7 @@ Rscript --vanilla R/fig/plot_SF4.R 2_analysis/newhyb/nh_input/NH.Results/
 ## Details of `plot_SF4.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg), [**paletteer**](https://emilhvitfeldt.github.io/paletteer/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hyponen), [**paletteer**](https://emilhvitfeldt.github.io/paletteer/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
 
 ### Config
 
@@ -76,10 +76,10 @@ cli::rule(right = getwd())
 ```
 
 ```r
-#> ── Script: scripts/plot_SF4.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF4.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1: 2_analysis/newhyb/nh_input/NH.Results/
-#> ─────────────────────────────────────────── /current/working/directory ──
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
 The directory containing the hybridization data is received and stored in a variable.
@@ -110,33 +110,29 @@ p_loc <- c("bel", "hon", "pan") %>%
 
 As an example we can have a look at the result for `plot_loc("pan")`:
 
-<center>
-<img src="plot_SF4_files/figure-html/unnamed-chunk-6-1.png" width="960" />
-</center>
+<img src="plot_SF4_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" />
 
-All three panels are collected and the final Figure is composed using the pacckage [**patchwork**](https://patchwork.data-imaginist.com/):
+All three panels are collected and the final Figure is composed using the package [**patchwork**](https://patchwork.data-imaginist.com/):
 
 
 ```r
 # compose figure from the individual panels
-p <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) +
+p_done <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) +
   (p_loc[[2]] + theme_hyb() ) +
   (p_loc[[3]] + theme_hyb() )  +
   plot_layout(ncol = 1, heights = c(10,15,3) %>% label_spacer())+
   plot_annotation(tag_levels = 'a')
 ```
 
-<center>
-<img src="plot_SF4_files/figure-html/unnamed-chunk-8-1.png" width="960" />
-</center>
+<img src="plot_SF4_files/figure-html/unnamed-chunk-8-1.png" width="960" style="display: block; margin: auto;" />
 
-Finally, we can export Supplementary Figure 4.
+Finally, we can export Figure S4.
 
 
 ```r
 # export the final figure
 hypo_save(filename = "figures/SF4.pdf",
-       plot = p,
+       plot = p_done,
        height = 16,
        width = 10,
        device = cairo_pdf,
