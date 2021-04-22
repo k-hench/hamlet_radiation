@@ -343,7 +343,7 @@ p_tree
 
 ### Genetic differentiation boxplots
 
-For panel b, the data import starts with collecting the paths to all files containing the *F<sub>ST</sub>* data (`dir()`), then iterating the import function over all files (`map(summarize_fst)`) and finally combining the outputs into a single tibble (`bind_rows()`).
+For panel b, the data import starts with collecting the paths to all files containing the $F_{ST}$ data (`dir()`), then iterating the import function over all files (`map(summarize_fst)`) and finally combining the outputs into a single tibble (`bind_rows()`).
 
 ```{r, message = FALSE, warning = FALSE}
 # =================================================================================================
@@ -355,7 +355,7 @@ fst_data <- str_c(fst_dir, fst_files) %>%
   bind_rows()
 ```
 
-We use the genome wide average *F<sub>ST</sub>* to rank the individual pair wise comparisons.
+We use the genome wide average $F_{ST}$ to rank the individual pair wise comparisons.
 
 ```{r, message = FALSE, warning = FALSE}
 # determine fst ranking
@@ -364,8 +364,8 @@ fst_order <- fst_data %>%
   mutate(run = fct_reorder(run, `mean_weighted-fst`))
 ```
 
-Then, we transform the *F<sub>ST</sub>* data and do quite a bit of data wrangling to prepare the placement of the boxplots.
-(This is overly complicated by now, as this is mostly *legacy* code that was create for a previous version of the plot that combined re-scaled *F<sub>ST</sub>* and *D<sub>XY</sub>* boxplots.)
+Then, we transform the $F_{ST}$ data and do quite a bit of data wrangling to prepare the placement of the boxplots.
+(This is overly complicated by now, as this is mostly *legacy* code that was create for a previous version of the plot that combined re-scaled $F_{ST}$ and $d_{XY}$ boxplots.)
 
 ```{r, message = FALSE, warning = FALSE}
 fst_data_gather <- fst_data %>% 
@@ -394,7 +394,7 @@ fst_data_gather <- fst_data %>%
          popstat_loc = str_c(popstat,'[',loc,']'))
 ```
 
-Then we re-order the species pairs according to their average wheighted *F<sub>ST</sub>*.
+Then we re-order the species pairs according to their average wheighted $F_{ST}$.
 
 ```{r, message = FALSE, warning = FALSE}
 # sort run by average genome wide Fst
@@ -402,7 +402,7 @@ run_ord <- tibble(run = levels(fst_data_gather$run),
                   run_ord = 1:length(levels(fst_data_gather$run)))
 ```
 
-As the last information that is needed for the *F<sub>ST</sub>* boxplots, we load the results from the permutation tests (this is the part that depends on `R/figs/plot_SF15.R`).
+As the last information that is needed for the $F_{ST}$ boxplots, we load the results from the permutation tests (this is the part that depends on `R/figs/plot_SF15.R`).
 
 ```{r, message = FALSE, warning = FALSE}
 # load fst permutation results

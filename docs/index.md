@@ -8,7 +8,7 @@ bibliography: [book.bib]
 biblio-style: apalike
 link-citations: yes
 github-repo: k-hench/bookdown
-description: "Scripts used to produce Figures and Supplementary Figures of 'Ancestral variation, hybridization and modularity fuel a marine radiation' by Hench, McMillan an Puebla"
+description: "Scripts used to produce Figures and Supplementary Figures of 'Ancestral variation, hybridization and modularity fuel a marine radiation' by Hench, Helmkampf, McMillan an Puebla"
 ---
 
 # Intro

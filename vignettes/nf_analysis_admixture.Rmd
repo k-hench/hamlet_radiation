@@ -81,7 +81,7 @@ Channel
 	.set{ k_ch }
 ```
 
-Then, we open the <i>F<sub>ST</sub></i> outlier regions within which we want to run the admixture analysis.
+Then, we open the $F_{ST}$ outlier regions within which we want to run the admixture analysis.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 10.3

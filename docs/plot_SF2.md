@@ -79,7 +79,7 @@ args <- process_input(script_name, args)
 #> ────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directories containing the *F<sub>ST</sub>* and *d<sub>XY</sub>* data, as well as the file containing the genome wide average  *F<sub>ST</sub>* values are received and stored in respective variables. Also, we set a few parameters for the plot layout:
+The directories containing the $F_{ST}$ and $d_{XY}$ data, as well as the file containing the genome wide average  $F_{ST}$ values are received and stored in respective variables. Also, we set a few parameters for the plot layout:
 
 
 ```r
@@ -93,7 +93,7 @@ clr_sec <- 'gray'  # the color of the secondary axis (dxy)
 ```
 
 
-Then we start with the data import for the *F<sub>ST</sub>* data.
+Then we start with the data import for the $F_{ST}$ data.
 First all file names are collected, then all files are imporeted and combined into a single tibble.
 
 
@@ -107,7 +107,7 @@ fst_data <- str_c(fst_dir,fst_files) %>%
   bind_rows()
 ```
 
-The same data import approach is used for the *d<sub>XY</sub>* data.
+The same data import approach is used for the $d_{XY}$ data.
 
 
 ```r
@@ -120,7 +120,7 @@ dxy_data <-  str_c(dxy_dir,dxy_files) %>%
   bind_rows()
 ```
 
-The rank of the pair-wise species comparisons according to their *F<sub>ST</sub>* determined.
+The rank of the pair-wise species comparisons according to their $F_{ST}$ determined.
 
 
 ```r
@@ -130,7 +130,7 @@ fst_order <- fst_data %>%
   mutate(run = fct_reorder(run, `mean_weighted-fst`))
 ```
 
-Then the *F<sub>ST</sub>* and *d<sub>XY</sub>* data are merged (this is due to the legacy of this script on by now makes little sense since the *F<sub>ST</sub>* is not plotted anymore).
+Then the $F_{ST}$ and $d_{XY}$ data are merged (this is due to the legacy of this script on by now makes little sense since the $F_{ST}$ is not plotted anymore).
 
 
 ```r
@@ -165,7 +165,7 @@ data <- left_join(fst_data, dxy_data) %>%
          popstat_loc = str_c(popstat,'[',loc,']'))
 ```
 
-For the network plots we need a *long-format* version of the  *F<sub>ST</sub>* data though (another legacy piece).
+For the network plots we need a *long-format* version of the  $F_{ST}$ data though (another legacy piece).
 
 
 ```r

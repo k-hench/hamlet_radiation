@@ -75,7 +75,7 @@ args <- process_input(script_name, args)
 #> ────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directory containing the*d<sub>XY</sub>* data is received and stored in a variable.
+The directory containing the$d_{XY}$ data is received and stored in a variable.
 
 
 ```r
@@ -91,7 +91,7 @@ Then, all file names of all files within the data folder are gathered...
 files <- dir(dxy_path)
 ```
 
-... and all *d<sub>XY</sub>* data is loaded.
+... and all $d_{XY}$ data is loaded.
 
 
 ```r
@@ -103,8 +103,8 @@ data <- str_c(dxy_path, files) %>%
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
 ```
 
-Next, the genome wide average *d<sub>XY</sub>* is computed for all species pairs.
-(This is done to be able to later order the sub-plots with decreasing average genome wide *d<sub>XY</sub>*.)
+Next, the genome wide average $d_{XY}$ is computed for all species pairs.
+(This is done to be able to later order the sub-plots with decreasing average genome wide $d_{XY}$.)
 
 
 ```r
@@ -133,7 +133,7 @@ model_data <- data %>%
 ```
 
 Then, a wrapper function is created that will allow to plot a subset of all the species pairs in one go.
-The function first subsets the *d<sub>XY</sub>* data set and then directly plots them.
+The function first subsets the $d_{XY}$ data set and then directly plots them.
 
 
 ```r

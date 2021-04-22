@@ -90,11 +90,11 @@
     },
     "GenomicOriginsScripts": {
       "Package": "GenomicOriginsScripts",
-      "Version": "0.0.0.90069",
+      "Version": "0.0.1.0",
       "Source": "Local",
       "RemoteType": "local",
       "RemoteUrl": "/home/kluk/work/software/Rstuff/own_packages/GenomicOriginsScripts",
-      "Hash": "8e1793b02f4d3a0c3344985c57a219cd"
+      "Hash": "53fd058c61ac28fbc1ea2202e7677505"
     },
     "GenomicRanges": {
       "Package": "GenomicRanges",

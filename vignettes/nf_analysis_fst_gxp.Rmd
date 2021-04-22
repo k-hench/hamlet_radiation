@@ -47,7 +47,7 @@ nf_run_basic
 ## Summary
 
 The genetic differentiation, as well as the genotype x phenotype association, are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_gxp.nf` (located under `$BASE_DIR/nf/03_analysis_fst_gxp/`).
-It takes the _SNPs only_ data set and computes _F<sub>ST</sub>_ and the GxP association.
+It takes the _SNPs only_ data set and computes $F_{ST}$ and the GxP association.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
@@ -560,7 +560,7 @@ At this step we are done with differentiation and GxP.
 ### <i>F<sub>ST</sub></i> within species (adaptation scenario)
 
 To judge the independence of the individual populations of the hamlets species sampled at several locations,
-we also compute the <i>F<sub>ST</sub></i> among those populations.
+we also compute the $F_{ST}$ among those populations.
 We start by defining the species-set for which we sampled multiple populations.
 
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -594,7 +594,7 @@ locations_ch_1
 	.set{ vcf_location_combo_adapt }
 ```
 
-Last, we compute the pair wise <i>F<sub>ST</sub></i> among all populations.
+Last, we compute the pair wise $F_{ST}$ among all populations.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 3.24

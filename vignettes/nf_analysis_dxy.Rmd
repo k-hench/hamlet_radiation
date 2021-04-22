@@ -45,7 +45,7 @@ nf_run_dxy
 ## Summary
 
 The genetic divergence, as well diversity, are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dxy.nf` (located under `$BASE_DIR/nf/04_analysis_dxy/`).
-It takes the _all BP_ data set and computes _d<sub>XY</sub>_ and $\pi$.
+It takes the _all BP_ data set and computes $d_{XY}$ and $\pi$.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 

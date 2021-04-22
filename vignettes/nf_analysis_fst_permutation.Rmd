@@ -45,7 +45,7 @@ nf_run_fstsig
 
 ## Summary
 
-<i>F<sub>ST</sub></i> significance is assesed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_sign.nf` (located under `$BASE_DIR/nf/12_analysis_fst_signif/`).
+$F_{ST}$ significance is assesed within the [**nextflow**](https://www.nextflow.io/) script `analysis_fst_sign.nf` (located under `$BASE_DIR/nf/12_analysis_fst_signif/`).
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dots</span> indicates the input files, <span style="color:#E41A1C">red dots</span> depict output that is exported for further use.)
 

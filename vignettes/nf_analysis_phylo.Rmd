@@ -88,7 +88,7 @@ Channel
 	.set{ locations4_ch }
 ```
 
-This channel toggles the inclusion of <i>F<sub>ST</sub></i> outlier regions.
+This channel toggles the inclusion of $F_{ST}$ outlier regions.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 5.3

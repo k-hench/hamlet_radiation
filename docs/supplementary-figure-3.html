@@ -5,20 +5,20 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>25 Supplementary Figure 3 | Script repository</title>
-  <meta name="description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, McMillan an Puebla" />
+  <meta name="description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, Helmkampf, McMillan an Puebla" />
   <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
 
   <meta property="og:title" content="25 Supplementary Figure 3 | Script repository" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, McMillan an Puebla" />
+  <meta property="og:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, Helmkampf, McMillan an Puebla" />
   <meta name="github-repo" content="k-hench/bookdown" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="25 Supplementary Figure 3 | Script repository" />
   
-  <meta name="twitter:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, McMillan an Puebla" />
+  <meta name="twitter:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, Helmkampf, McMillan an Puebla" />
   
 
 <meta name="author" content="Kosmas Hench" />
@@ -519,21 +519,21 @@ This information will later be written into the meta data of the figure to help 
 <span id="cb168-2"><a href="supplementary-figure-3.html#cb168-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters read:</span></span>
 <span id="cb168-3"><a href="supplementary-figure-3.html#cb168-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 1: 2_analysis/dxy/50k/</span></span>
 <span id="cb168-4"><a href="supplementary-figure-3.html#cb168-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
-<p>The directory containing the<em>d<sub>XY</sub></em> data is received and stored in a variable.</p>
+<p>The directory containing the<span class="math inline">\(d_{XY}\)</span> data is received and stored in a variable.</p>
 <div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="supplementary-figure-3.html#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config -----------------------</span></span>
 <span id="cb169-2"><a href="supplementary-figure-3.html#cb169-2" aria-hidden="true" tabindex="-1"></a>dxy_path <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">1</span>])</span></code></pre></div>
 <p>Then, all file names of all files within the data folder are gathered…</p>
 <div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="supplementary-figure-3.html#cb170-1" aria-hidden="true" tabindex="-1"></a><span class="co"># locate dxy data files</span></span>
 <span id="cb170-2"><a href="supplementary-figure-3.html#cb170-2" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">dir</span>(dxy_path)</span></code></pre></div>
-<p>… and all <em>d<sub>XY</sub></em> data is loaded.</p>
+<p>… and all <span class="math inline">\(d_{XY}\)</span> data is loaded.</p>
 <div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="supplementary-figure-3.html#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load dxy data</span></span>
 <span id="cb171-2"><a href="supplementary-figure-3.html#cb171-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">str_c</span>(dxy_path, files) <span class="sc">%&gt;%</span></span>
 <span id="cb171-3"><a href="supplementary-figure-3.html#cb171-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map</span>(get_dxy) <span class="sc">%&gt;%</span></span>
 <span id="cb171-4"><a href="supplementary-figure-3.html#cb171-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb171-5"><a href="supplementary-figure-3.html#cb171-5" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">set_names</span>(., <span class="at">nm =</span> <span class="fu">c</span>(<span class="st">&#39;scaffold&#39;</span>, <span class="st">&#39;start&#39;</span>, <span class="st">&#39;end&#39;</span>, <span class="st">&#39;mid&#39;</span>, <span class="st">&#39;sites&#39;</span>, <span class="st">&#39;pi_pop1&#39;</span>,</span>
 <span id="cb171-6"><a href="supplementary-figure-3.html#cb171-6" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&#39;pi_pop2&#39;</span>, <span class="st">&#39;dxy&#39;</span>, <span class="st">&#39;fst&#39;</span>, <span class="st">&#39;GSTART&#39;</span>, <span class="st">&#39;gpos&#39;</span>, <span class="st">&#39;run&#39;</span>))</span></code></pre></div>
-<p>Next, the genome wide average <em>d<sub>XY</sub></em> is computed for all species pairs.
-(This is done to be able to later order the sub-plots with decreasing average genome wide <em>d<sub>XY</sub></em>.)</p>
+<p>Next, the genome wide average <span class="math inline">\(d_{XY}\)</span> is computed for all species pairs.
+(This is done to be able to later order the sub-plots with decreasing average genome wide <span class="math inline">\(d_{XY}\)</span>.)</p>
 <div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="supplementary-figure-3.html#cb172-1" aria-hidden="true" tabindex="-1"></a>genoe_wide_avg <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
 <span id="cb172-2"><a href="supplementary-figure-3.html#cb172-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(run) <span class="sc">%&gt;%</span></span>
 <span id="cb172-3"><a href="supplementary-figure-3.html#cb172-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_dxy =</span> <span class="fu">mean</span>(dxy)) <span class="sc">%&gt;%</span></span>
@@ -552,7 +552,7 @@ This information will later be written into the meta data of the figure to help 
 <span id="cb173-10"><a href="supplementary-figure-3.html#cb173-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mod =</span>  <span class="fu">map</span>(data, <span class="cf">function</span>(data){<span class="fu">lm</span>(pi <span class="sc">~</span> dxy, <span class="at">data =</span> data)})) <span class="sc">%&gt;%</span></span>
 <span id="cb173-11"><a href="supplementary-figure-3.html#cb173-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(., <span class="fu">summarise_model</span>(.))</span></code></pre></div>
 <p>Then, a wrapper function is created that will allow to plot a subset of all the species pairs in one go.
-The function first subsets the <em>d<sub>XY</sub></em> data set and then directly plots them.</p>
+The function first subsets the <span class="math inline">\(d_{XY}\)</span> data set and then directly plots them.</p>
 <div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="supplementary-figure-3.html#cb174-1" aria-hidden="true" tabindex="-1"></a>dxy_subplot <span class="ot">&lt;-</span> <span class="cf">function</span>(select_idx){</span>
 <span id="cb174-2"><a href="supplementary-figure-3.html#cb174-2" aria-hidden="true" tabindex="-1"></a>  run_select <span class="ot">&lt;-</span> genoe_wide_avg<span class="sc">$</span>run[select_idx]</span>
 <span id="cb174-3"><a href="supplementary-figure-3.html#cb174-3" aria-hidden="true" tabindex="-1"></a>  </span>
