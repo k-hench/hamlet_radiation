@@ -1,5 +1,9 @@
 # Code repository for: *Ancestral variation, hybridization and modularity fuel a marine radiation*
 
+<!-- badges: start -->
+[![DOI](https://zenodo.org/badge/145688309.svg)](https://zenodo.org/badge/latestdoi/145688309)
+<!-- badges: end -->
+
 This repository contains the original bioinformatic analysis behind the paper *Ancestral variation, hybridization and modularity fuel a marine radiation* by Hench, Helmkampf, McMillan and Puebla.
 
 It covers all steps from genotyping based on raw sequencing data, over population genetic analysis to the final plotting of the figures used within the publication.
