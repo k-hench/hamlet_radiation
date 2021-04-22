@@ -21,7 +21,7 @@
   <meta name="twitter:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Ancestral variation, hybridization and modularity fuel a marine radiation’ by Hench, Helmkampf, McMillan an Puebla" />
   
 
-<meta name="author" content="Kosmas Hench" />
+<meta name="author" content="Kosmas Hench and Martin Helmkampf" />
 
 
 <meta name="date" content="2021-04-22" />
@@ -478,6 +478,109 @@ These are executable <code>R</code> scripts that can be launched from the base d
 <span id="cb21-2"><a href="git-15-data-visualization.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> sh/create_figures.sh</span></code></pre></div>
 <p>After running <code>create_figures.sh</code>, Figures 1 - 6 and Suppl. Figures 1 - 13 should be created withing the folder <code>figures/</code>.</p>
 <p>In the remaining documentation, the individual Visualization scripts are going to discussed in detail.</p>
+<p>Below is the bash code that is executed when running <code>create_figures.sh</code>:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb22-1"><a href="git-15-data-visualization.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#/usr/bin/bash</span></span>
+<span id="cb22-2"><a href="git-15-data-visualization.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># git 15</span></span>
+<span id="cb22-3"><a href="git-15-data-visualization.html#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="git-15-data-visualization.html#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Main Figures</span></span>
+<span id="cb22-5"><a href="git-15-data-visualization.html#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="git-15-data-visualization.html#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F1.R <span class="kw">\</span></span>
+<span id="cb22-7"><a href="git-15-data-visualization.html#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fst/50k/</span> <span class="kw">\</span></span>
+<span id="cb22-8"><a href="git-15-data-visualization.html#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_globals.txt</span> <span class="kw">\</span></span>
+<span id="cb22-9"><a href="git-15-data-visualization.html#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_permutation_summary.tsv</span></span>
+<span id="cb22-10"><a href="git-15-data-visualization.html#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="git-15-data-visualization.html#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F2.R <span class="kw">\</span></span>
+<span id="cb22-12"><a href="git-15-data-visualization.html#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/msmc/output/</span> <span class="kw">\</span></span>
+<span id="cb22-13"><a href="git-15-data-visualization.html#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/cross_coalescence/output/</span> <span class="kw">\</span></span>
+<span id="cb22-14"><a href="git-15-data-visualization.html#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/msmc/setup/msmc_grouping.txt</span> <span class="kw">\</span></span>
+<span id="cb22-15"><a href="git-15-data-visualization.html#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/msmc/setup/msmc_cc_grouping.txt</span> <span class="kw">\</span></span>
+<span id="cb22-16"><a href="git-15-data-visualization.html#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb22-17"><a href="git-15-data-visualization.html#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-18"><a href="git-15-data-visualization.html#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F3.R <span class="kw">\</span></span>
+<span id="cb22-19"><a href="git-15-data-visualization.html#cb22-19" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fst/50k/</span> <span class="kw">\</span></span>
+<span id="cb22-20"><a href="git-15-data-visualization.html#cb22-20" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb22-21"><a href="git-15-data-visualization.html#cb22-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-22"><a href="git-15-data-visualization.html#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F4.R 2_analysis/dxy/50k/ <span class="kw">\</span></span>
+<span id="cb22-23"><a href="git-15-data-visualization.html#cb22-23" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fst/50k/multi_fst.50k.tsv.gz</span> 2_analysis/GxP/50000/ <span class="kw">\</span></span>
+<span id="cb22-24"><a href="git-15-data-visualization.html#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_outliers_998.tsv</span> <span class="kw">\</span></span>
+<span id="cb22-25"><a href="git-15-data-visualization.html#cb22-25" aria-hidden="true" tabindex="-1"></a>  <span class="ex">https</span>://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R <span class="kw">\</span></span>
+<span id="cb22-26"><a href="git-15-data-visualization.html#cb22-26" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/twisst/weights/</span> ressources/plugin/trees/ <span class="kw">\</span></span>
+<span id="cb22-27"><a href="git-15-data-visualization.html#cb22-27" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span> <span class="kw">\</span></span>
+<span id="cb22-28"><a href="git-15-data-visualization.html#cb22-28" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb22-29"><a href="git-15-data-visualization.html#cb22-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-30"><a href="git-15-data-visualization.html#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F5.R <span class="kw">\</span></span>
+<span id="cb22-31"><a href="git-15-data-visualization.html#cb22-31" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/twisst/weights/</span> ressources/plugin/trees/ <span class="kw">\</span></span>
+<span id="cb22-32"><a href="git-15-data-visualization.html#cb22-32" aria-hidden="true" tabindex="-1"></a>  <span class="ex">https</span>://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R <span class="kw">\</span></span>
+<span id="cb22-33"><a href="git-15-data-visualization.html#cb22-33" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_outliers_998.tsv</span> 2_analysis/dxy/50k/ <span class="kw">\</span></span>
+<span id="cb22-34"><a href="git-15-data-visualization.html#cb22-34" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fst/50k/</span> 2_analysis/summaries/fst_globals.txt <span class="kw">\</span></span>
+<span id="cb22-35"><a href="git-15-data-visualization.html#cb22-35" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/GxP/50000/</span> 200 5 2_analysis/revPoMo/outlier_regions/</span>
+<span id="cb22-36"><a href="git-15-data-visualization.html#cb22-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-37"><a href="git-15-data-visualization.html#cb22-37" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F6.R <span class="kw">\</span></span>
+<span id="cb22-38"><a href="git-15-data-visualization.html#cb22-38" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_outliers_998.tsv</span> <span class="kw">\</span></span>
+<span id="cb22-39"><a href="git-15-data-visualization.html#cb22-39" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/geva/</span> 2_analysis/GxP/bySNP/</span>
+<span id="cb22-40"><a href="git-15-data-visualization.html#cb22-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-41"><a href="git-15-data-visualization.html#cb22-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppl. Figures</span></span>
+<span id="cb22-42"><a href="git-15-data-visualization.html#cb22-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-43"><a href="git-15-data-visualization.html#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF1.R <span class="kw">\</span></span>
+<span id="cb22-44"><a href="git-15-data-visualization.html#cb22-44" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/pca/</span></span>
+<span id="cb22-45"><a href="git-15-data-visualization.html#cb22-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-46"><a href="git-15-data-visualization.html#cb22-46" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF2.R <span class="kw">\</span></span>
+<span id="cb22-47"><a href="git-15-data-visualization.html#cb22-47" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/dxy/50k/</span> <span class="kw">\</span></span>
+<span id="cb22-48"><a href="git-15-data-visualization.html#cb22-48" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fst/50k/</span> <span class="kw">\</span></span>
+<span id="cb22-49"><a href="git-15-data-visualization.html#cb22-49" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb22-50"><a href="git-15-data-visualization.html#cb22-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-51"><a href="git-15-data-visualization.html#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF3.R <span class="kw">\</span></span>
+<span id="cb22-52"><a href="git-15-data-visualization.html#cb22-52" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/dxy/50k/</span></span>
+<span id="cb22-53"><a href="git-15-data-visualization.html#cb22-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-54"><a href="git-15-data-visualization.html#cb22-54" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF4.R <span class="kw">\</span></span>
+<span id="cb22-55"><a href="git-15-data-visualization.html#cb22-55" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/newhyb/nh_input/NH.Results/</span></span>
+<span id="cb22-56"><a href="git-15-data-visualization.html#cb22-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-57"><a href="git-15-data-visualization.html#cb22-57" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF5.R 2_analysis/fst/50k/ <span class="kw">\</span></span>
+<span id="cb22-58"><a href="git-15-data-visualization.html#cb22-58" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_outliers_998.tsv</span> <span class="kw">\</span></span>
+<span id="cb22-59"><a href="git-15-data-visualization.html#cb22-59" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_globals.txt</span></span>
+<span id="cb22-60"><a href="git-15-data-visualization.html#cb22-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-61"><a href="git-15-data-visualization.html#cb22-61" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF6.R <span class="kw">\</span></span>
+<span id="cb22-62"><a href="git-15-data-visualization.html#cb22-62" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/summaries/fst_globals.txt</span> <span class="kw">\</span></span>
+<span id="cb22-63"><a href="git-15-data-visualization.html#cb22-63" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fst/50k/</span> <span class="kw">\</span></span>
+<span id="cb22-64"><a href="git-15-data-visualization.html#cb22-64" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span></span>
+<span id="cb22-65"><a href="git-15-data-visualization.html#cb22-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-66"><a href="git-15-data-visualization.html#cb22-66" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF7.R <span class="kw">\</span></span>
+<span id="cb22-67"><a href="git-15-data-visualization.html#cb22-67" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/dxy/50k/</span></span>
+<span id="cb22-68"><a href="git-15-data-visualization.html#cb22-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-69"><a href="git-15-data-visualization.html#cb22-69" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF8.R <span class="kw">\</span></span>
+<span id="cb22-70"><a href="git-15-data-visualization.html#cb22-70" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/pi/50k/</span> <span class="kw">\</span></span>
+<span id="cb22-71"><a href="git-15-data-visualization.html#cb22-71" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span></span>
+<span id="cb22-72"><a href="git-15-data-visualization.html#cb22-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-73"><a href="git-15-data-visualization.html#cb22-73" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF9.R <span class="kw">\</span></span>
+<span id="cb22-74"><a href="git-15-data-visualization.html#cb22-74" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support.bs-tbe</span> <span class="kw">\</span></span>
+<span id="cb22-75"><a href="git-15-data-visualization.html#cb22-75" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/RAxML_bipartitions.hypS-h_n_0.33_mac6_10kb</span></span>
+<span id="cb22-76"><a href="git-15-data-visualization.html#cb22-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-77"><a href="git-15-data-visualization.html#cb22-77" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF10.R <span class="kw">\</span></span>
+<span id="cb22-78"><a href="git-15-data-visualization.html#cb22-78" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/pi/50k/</span></span>
+<span id="cb22-79"><a href="git-15-data-visualization.html#cb22-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-80"><a href="git-15-data-visualization.html#cb22-80" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF11.R <span class="kw">\</span></span>
+<span id="cb22-81"><a href="git-15-data-visualization.html#cb22-81" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/lg04.1_155N.raxml.support</span> <span class="kw">\</span></span>
+<span id="cb22-82"><a href="git-15-data-visualization.html#cb22-82" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/lg12.3_155N.raxml.support</span> <span class="kw">\</span></span>
+<span id="cb22-83"><a href="git-15-data-visualization.html#cb22-83" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/lg12.4_155N.raxml.support</span></span>
+<span id="cb22-84"><a href="git-15-data-visualization.html#cb22-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-85"><a href="git-15-data-visualization.html#cb22-85" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF12.R <span class="kw">\</span></span>
+<span id="cb22-86"><a href="git-15-data-visualization.html#cb22-86" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/lg04.1_hySN.raxml.support</span> <span class="kw">\</span></span>
+<span id="cb22-87"><a href="git-15-data-visualization.html#cb22-87" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/lg12.3_hySN.raxml.support</span> <span class="kw">\</span></span>
+<span id="cb22-88"><a href="git-15-data-visualization.html#cb22-88" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/lg12.4_hySN.raxml.support</span></span>
+<span id="cb22-89"><a href="git-15-data-visualization.html#cb22-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-90"><a href="git-15-data-visualization.html#cb22-90" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF13.R <span class="kw">\</span></span>
+<span id="cb22-91"><a href="git-15-data-visualization.html#cb22-91" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/admixture/</span> <span class="kw">\</span></span>
+<span id="cb22-92"><a href="git-15-data-visualization.html#cb22-92" aria-hidden="true" tabindex="-1"></a>  <span class="ex">metadata/phenotypes.sc</span></span>
+<span id="cb22-93"><a href="git-15-data-visualization.html#cb22-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-94"><a href="git-15-data-visualization.html#cb22-94" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF14.R <span class="kw">\</span></span>
+<span id="cb22-95"><a href="git-15-data-visualization.html#cb22-95" aria-hidden="true" tabindex="-1"></a><span class="ex">2_analysis/GxP/50000/</span></span>
+<span id="cb22-96"><a href="git-15-data-visualization.html#cb22-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-97"><a href="git-15-data-visualization.html#cb22-97" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF15.R <span class="kw">\</span></span>
+<span id="cb22-98"><a href="git-15-data-visualization.html#cb22-98" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/fst_signif/random/</span></span>
+<span id="cb22-99"><a href="git-15-data-visualization.html#cb22-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-100"><a href="git-15-data-visualization.html#cb22-100" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF16.R <span class="kw">\</span></span>
+<span id="cb22-101"><a href="git-15-data-visualization.html#cb22-101" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/hyS_n_0.33_mac4_5kb.raxml.support</span></span>
+<span id="cb22-102"><a href="git-15-data-visualization.html#cb22-102" aria-hidden="true" tabindex="-1"></a><span class="co"># ==================</span></span></code></pre></div>
 <hr />
 
 </div>

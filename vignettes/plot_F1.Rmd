@@ -27,7 +27,9 @@ args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt', '2_anal
 ## Summary
 
 This is the accessory documentation of Figure 1.
-Note that this script depends on results that are created within the script `R/figs/plot_SF15.R` (specifically `2_analysis/summaries/fst_permutation_summary.ts`) and thus needs to be run after this script has finished.
+
+> Note that this script depends on results that are created within the script `R/figs/plot_SF15.R` (specifically `2_analysis/summaries/fst_permutation_summary.ts`) and thus needs to be run after this script has finished.
+
 The Figure can be recreated by running the **R** script `plot_F1.R` from a (`bash` terminal):
 
 ```sh

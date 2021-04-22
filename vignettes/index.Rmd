@@ -1,7 +1,7 @@
 ---
 title: "Script repository"
 subtitle: "(Hench *et al.* supplement)"
-author: "Kosmas Hench"
+author: "Kosmas Hench and Martin Helmkampf"
 date: "`r Sys.Date()`"
 documentclass: book
 bibliography: [book.bib]
@@ -67,7 +67,7 @@ So if you are only interested in a single figure - that is the place to start lo
 
 Furthermore, a more detailed documentation exists for all the figure scripts used for the manuscript:
 
-[F1](figure-1.html), [F2](figure-2.html), [F3](figure-3.html), [F4](figure-4.html) and [F5](figure-5.html)
+[F1](figure-1.html), [F2](figure-2.html), [F3](figure-3.html), [F4](figure-4.html) [F5](figure-5.html) and [F6](figure-6.html)
 
 as well as for all the supplementary figures:
 
@@ -108,7 +108,5 @@ Apart from the specific **R** packages that can be retrieved via {renv} from the
 ```{r}
 sessionInfo()
 ```
-
-
 
 ---
