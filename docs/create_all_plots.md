@@ -26,7 +26,7 @@ cd $BASE_DIR
 bash sh/create_figures.sh
 ```
 
-After running `create_figures.sh`, Figures 1 - 6 and Suppl. Figures 1 - 13 should be created withing the folder `figures/`.
+After running `create_figures.sh`, Figures 1 - 6 and Suppl. Figures 1 - 16 should be created withing the folder `figures/`.
 
 In the remaining documentation, the individual Visualization scripts are going to discussed in detail.
 
