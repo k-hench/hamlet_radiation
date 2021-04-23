@@ -277,5 +277,6 @@ p_done <- ggplot()+
 hypo_save(p_done, filename = 'figures/F4.png',
           width = f_width,
           height = f_width * .9,
+          dpi = 600,
           type = "cairo",
           comment = plot_comment)

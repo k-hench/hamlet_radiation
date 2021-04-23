@@ -49,11 +49,52 @@ import_table <- list(file = str_c(data_dir,files),
             str_sub(.,1,11) %>%
             reformat_run_name())
 
-# load data and compute statistics based on fixed fst treshold
-data <- purrr::pmap_dfr(import_table,get_fst_fixed) %>%
+# import dxy data and compute threshold stats
+get_fst_fixed <- function(file, run, fst_threshold,...){
+
+  data <- hypogen::hypo_import_windows(file, ...) %>%
+    mutate(rank = rank(WEIGHTED_FST, ties.method = "random"))%>%
+    mutate(thresh = fst_threshold) %>%
+    mutate(outl = (WEIGHTED_FST > thresh) %>% as.numeric()) %>%
+    filter(outl == 1 )
+
+  if(nrow(data) == 0){
+    return(tibble(run = run, n = 0, avg_length = NA, med_length = NA, min_length = NA, max_length = NA,
+                  sd_length = NA, overal_length = NA, threshold_value = fst_threshold))
+  } else {
+    data %>%
+      # next, we want to collapse overlapping windows
+      group_by(CHROM) %>%
+      # we check for overlap and create 'region' IDs
+      mutate(check = 1-(lag(BIN_END,default = 0)>BIN_START),
+                    ID = str_c(CHROM,'_',cumsum(check))) %>%
+      ungroup() %>%
+      # then we collapse the regions by ID
+      group_by(ID) %>%
+      summarise(run = run[1],
+                       run = run[1],
+                       treshold_value = thresh[1],
+                       CHROM = CHROM[1],
+                       BIN_START = min(BIN_START),
+                       BIN_END = max(BIN_END)) %>%
+      mutate(PEAK_SIZE = BIN_END-BIN_START) %>%
+      summarize(run = run[1],
+                       run = run[1],
+                       n = length(ID),
+                       avg_length = mean(PEAK_SIZE),
+                       med_length = median(PEAK_SIZE),
+                       min_length = min(PEAK_SIZE),
+                       max_length = max(PEAK_SIZE),
+                       sd_length = sd(PEAK_SIZE),
+                       overal_length = sum(PEAK_SIZE),
+                       threshold_value = treshold_value[1])
+  }
+}
+
+# load data and compute statistics based on fixed fst threshold
+data <- purrr::pmap_dfr(import_table, get_fst_fixed) %>%
   left_join(globals) %>%
   mutate(run = fct_reorder(run, weighted))
-
 
 # pre-format labels
 data2 <- data %>%
