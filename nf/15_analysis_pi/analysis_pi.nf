@@ -88,10 +88,12 @@ process pi_per_spec {
 
 	script:
 	"""
+	awk '{print \$1"\\t"substr(\$1,length(\$1)-5,length(\$1)-1)}' ${pop} > ${spec}.pop
+
 	python \$SFTWR/genomics_general/popgenWindows.py \
 		-w ${kb}0000 \
 		-s ${kb}000 \
-		--popsFile ${pop} \
+		--popsFile ${spec}.pop \
 		-p ${spec} \
 		-g ${geno} \
 		-o pi.${spec}${outlier}.LG${lg}.${kb}0kb.csv.gz \
