@@ -84,14 +84,13 @@ process pi_per_spec {
 	set val( spec ), val( kb ), val( lg ), val( outlier ), file( geno ), file( pop ) from geno_ch
 
 	output:
-	set val( spec ), file( "*.${kb}0k.windowed.pi.gz" ) into pi_lg_ch
+	set val( spec ), file( "*0kb.csv.gz" ) into pi_lg_ch
 
 	script:
 	"""
 	awk '{print \$1"\\t"substr(\$1,length(\$1)-5,length(\$1)-1)}' ${pop} > ${spec}.pop
 
-	mpirun -np 1 \
-		python \$SFTWR/genomics_general/popgenWindows.py \
+	python \$SFTWR/genomics_general/popgenWindows.py \
 		-w ${kb}0000 \
 		-s ${kb}000 \
 		--popsFile ${spec}.pop \
