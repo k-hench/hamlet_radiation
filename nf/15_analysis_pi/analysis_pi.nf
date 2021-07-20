@@ -90,7 +90,8 @@ process pi_per_spec {
 	"""
 	awk '{print \$1"\\t"substr(\$1,length(\$1)-5,length(\$1)-1)}' ${pop} > ${spec}.pop
 
-	python \$SFTWR/genomics_general/popgenWindows.py \
+	mpirun -np 1 \
+		python \$SFTWR/genomics_general/popgenWindows.py \
 		-w ${kb}0000 \
 		-s ${kb}000 \
 		--popsFile ${spec}.pop \
