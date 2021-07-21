@@ -84,7 +84,7 @@ process pi_per_spec {
 	set val( spec ), val( kb ), val( lg ), val( outlier ), file( geno ), file( pop ) from geno_ch
 
 	output:
-	set val( spec ), file( "*0kb.csv.gz" ) into pi_lg_ch
+	set val( "${spec}.${outlier}.${kb}" ), val( kb ), file( "*0kb.csv.gz" ) into pi_lg_ch
 
 	script:
 	"""
@@ -109,20 +109,20 @@ process merge_pi {
 	publishDir "../../2_analysis/pi/${kb}0k", mode: 'copy'
 
 	input:
-	set val( spec ), file( pi ) from pi_lg_ch.groupTuple()
+	set val( spec_outlier ), val( kb ), file( pi ) from pi_lg_ch.groupTuple()
 
 	output:
-	file( "pi.${spec}${outlier}.${kb}0kb.tsv.gz" ) into pi_output_ch
+	file( "pi.${spec_outlier_kb}0kb.tsv.gz" ) into pi_output_ch
 
 	script:
 	"""
-	echo -e "CHROM\\tBIN_START\\tBIN_END\\tBIN_MID_SITES\\tN_SITES\\tPI" > pi.${spec}${outlier}.${kb}0kb.tsv
-	tail -n +2 ${fll} | \
+	echo -e "CHROM\\tBIN_START\\tBIN_END\\tBIN_MID_SITES\\tN_SITES\\tPI" > pi.${spec_outlier_kb}0kb.tsv
+	tail -n +2 ${pi} | \
 		grep -v "==>" | \
 		grep -v "^\$" | \
 		sed -s "s/,/\\t/g" | \
-		sort >> pi.${spec}${outlier}.${kb}0kb.tsv
+		sort >> pi.${spec_outlier_kb}0kb.tsv
 	
-	gzip pi.${spec}${outlier}.${kb}0kb.tsv
+	gzip pi.${spec_outlier_kb}0kb.tsv
 	"""
 }
