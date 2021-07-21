@@ -121,8 +121,7 @@ process merge_pi {
 		tail -n +2 | \
 		grep -v "==>" | \
 		grep -v "^\$" | \
-		sed -s "s/,/\\t/g" | \
-		sort >> pi.${spec_outlier_kb}0kb.tsv
+		sed -s "s/,/\\t/g" >> pi.${spec_outlier_kb}0kb.tsv
 	
 	gzip pi.${spec_outlier_kb}0kb.tsv
 	"""
