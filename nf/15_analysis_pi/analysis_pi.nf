@@ -105,7 +105,7 @@ process pi_per_spec {
 
 process merge_pi {
 	label 'L_32g4h_pi_merge'
-	tag "${spec}"
+	tag "${spec_outlier_kb}"
 	publishDir "../../2_analysis/pi/${kb[0]}0k", mode: 'copy'
 
 	input:
@@ -117,11 +117,12 @@ process merge_pi {
 	script:
 	"""
 	echo -e "CHROM\\tBIN_START\\tBIN_END\\tBIN_MID_SITES\\tN_SITES\\tPI" > pi.${spec_outlier_kb}0kb.tsv
-	zcat ${pi} | \
-		tail -n +2 | \
-		grep -v "==>" | \
-		grep -v "^\$" | \
-		sed -s "s/,/\\t/g" >> pi.${spec_outlier_kb}0kb.tsv
+
+	for k in \$(ls *.csv.gz); do 
+		zcat \$k | \
+			grep -v "scaff" | \
+			sed -s "s/,/\t/g"  >> pi.${spec_outlier_kb}0kb.tsv
+	done
 	
 	gzip pi.${spec_outlier_kb}0kb.tsv
 	"""
