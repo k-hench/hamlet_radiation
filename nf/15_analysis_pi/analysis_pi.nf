@@ -109,7 +109,7 @@ process merge_pi {
 	publishDir "../../2_analysis/pi/${kb}0k", mode: 'copy'
 
 	input:
-	set val( spec_outlier ), val( kb ), file( pi ) from pi_lg_ch.groupTuple()
+	set val( spec_outlier_kb ), val( kb ), file( pi ) from pi_lg_ch.groupTuple()
 
 	output:
 	file( "pi.${spec_outlier_kb}0kb.tsv.gz" ) into pi_output_ch
