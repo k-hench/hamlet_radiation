@@ -84,7 +84,7 @@ process pi_per_spec {
 	set val( spec ), val( kb ), val( lg ), val( outlier ), file( geno ), file( pop ) from geno_ch
 
 	output:
-	set val( "${spec}.${outlier}.${kb}" ), val( kb ), file( "*0kb.csv.gz" ) into pi_lg_ch
+	set val( "${spec}${outlier}.${kb}" ), val( kb ), file( "*0kb.csv.gz" ) into pi_lg_ch
 
 	script:
 	"""
@@ -106,7 +106,7 @@ process pi_per_spec {
 process merge_pi {
 	label 'L_32g4h_pi_merge'
 	tag "${spec}"
-	publishDir "../../2_analysis/pi/${kb}0k", mode: 'copy'
+	publishDir "../../2_analysis/pi/${kb[0]}0k", mode: 'copy'
 
 	input:
 	set val( spec_outlier_kb ), val( kb ), file( pi ) from pi_lg_ch.groupTuple()
