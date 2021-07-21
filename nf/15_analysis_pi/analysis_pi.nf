@@ -117,7 +117,8 @@ process merge_pi {
 	script:
 	"""
 	echo -e "CHROM\\tBIN_START\\tBIN_END\\tBIN_MID_SITES\\tN_SITES\\tPI" > pi.${spec_outlier_kb}0kb.tsv
-	tail -n +2 ${pi} | \
+	zcat ${pi} | \
+		tail -n +2 | \
 		grep -v "==>" | \
 		grep -v "^\$" | \
 		sed -s "s/,/\\t/g" | \
