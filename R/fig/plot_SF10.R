@@ -28,7 +28,7 @@ args <- process_input(script_name, args)
 pi_path <- as.character(args[1])
 
 # locate pi data files
-files <- dir(pi_path, pattern = '^[a-z]{6}.50k')
+files <- dir(pi_path, pattern = '^pi.[a-z]{6}.50k')
 # load pi data
 data <- str_c(pi_path, files) %>%
   purrr::map(get_pi) %>%
@@ -39,13 +39,15 @@ data <- str_c(pi_path, files) %>%
 global_bar <- data %>%
   # filter to non-overlaping windows only
   filter( BIN_START %% 50000 == 1) %>%
-  select(N_VARIANTS, PI, spec) %>%
+  select(N_SITES, PI, spec) %>%
   group_by(spec) %>%
-  summarise(genome_wide_pi = sum(N_VARIANTS*PI)/sum(N_VARIANTS)) %>%
+  summarise(genome_wide_pi = sum(N_SITES*PI)/sum(N_SITES)) %>%
   arrange(genome_wide_pi) %>%
   ungroup() %>%
   mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
          scaled_pi = genome_wide_pi/max(genome_wide_pi))
+
+global_bar %>% write_tsv("2_analysis/summaries/pi_globals.tsv")
 
 # prepare plot annotaton images
 grob_tibble <- global_bar$spec %>%
@@ -88,7 +90,7 @@ p_done <- ggplot()+
                                        breaks = (sc_ax$breaks/max(global_bar$genome_wide_pi)),
                                        labels = labels,
                                        name = "Genomic position/ Genome wide *\u03C0*"))+
-  scale_y_continuous(name = "*\u03C0*", breaks = c(0,.006,.012))+
+  scale_y_continuous(name = "*\u03C0*", breaks = c(0,.01,.02))+
   # set plot extent
   coord_cartesian(xlim = c(0, hypo_karyotype$GEND[24]*1.06))+
   # general plot layout
@@ -106,3 +108,13 @@ hypo_save(filename = 'figures/SF10.png',
           height = 8,
           type = "cairo",
           comment = plot_comment)
+
+
+# export S.Tab. 4
+global_bar %>% 
+  dplyr::select(- scaled_pi) %>% 
+  mutate(loc = loc_names[str_sub(spec, -3,-1)],
+         spec = str_c("H. ", sp_names[str_sub(spec, 1,3)]),
+         genome_wide_pi = sprintf("%.5f",genome_wide_pi)) %>% 
+  pivot_wider(names_from = spec, values_from = genome_wide_pi, values_fill = "-") %>% 
+  knitr::kable(format = "latex")

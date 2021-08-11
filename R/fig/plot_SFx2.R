@@ -1,22 +1,23 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F4.R \
+# Rscript --vanilla R/fig/plot_F4.R 2_analysis/dxy/50k/ \
 #    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
 #    2_analysis/summaries/fst_outliers_998.tsv \
 #    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
 #    2_analysis/twisst/weights/ ressources/plugin/trees/ \
+#    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
 #    2_analysis/summaries/fst_globals.txt
 # ===============================================================
 # This script produces Figure 4 of the study "Ancestral variation, hybridization and modularity
 # fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/fst/50k/multi_fst.50k.tsv.gz',
+# args <- c('2_analysis/dxy/50k/','2_analysis/fst/50k/multi_fst.50k.tsv.gz',
 # '2_analysis/GxP/50000/', '2_analysis/summaries/fst_outliers_998.tsv',
 # 'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
 # '2_analysis/twisst/weights/', 'ressources/plugin/trees/',
-# '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_F4.R"
+# '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
+# script_name <- "R/fig/plot_SFx2.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -32,13 +33,15 @@ plot_comment <- script_name %>%
 args <- process_input(script_name, args)
 
 # config -----------------------
-fst_file <- as.character(args[1])
-gxp_dir <- as.character(args[2])
-outlier_table <- as.character(args[3])
-twisst_script <- as.character(args[4])
-w_path <- as.character(args[5])
-d_path <- as.character(args[6])
-global_fst_file <- as.character(args[7])
+dxy_dir <- as.character(args[1])
+fst_file <- as.character(args[2])
+gxp_dir <- as.character(args[3])
+outlier_table <- as.character(args[4])
+twisst_script <- as.character(args[5])
+w_path <- as.character(args[6])
+d_path <- as.character(args[7])
+recombination_file <- as.character(args[8])
+global_fst_file <- as.character(args[9])
 source(twisst_script)
 
 # start script -------------------
@@ -51,13 +54,39 @@ fst_data <- vroom::vroom(fst_file, delim = '\t') %>%
   setNames(., nm = c('GPOS','value')) %>%
   mutate(window = str_c('bold(',project_case('a'),'):joint~italic(F[ST])'))
 
+# locate dxy data files
+dxy_files <- dir(dxy_dir)
+
+# import dxy data
+dxy_data <-  str_c(dxy_dir,dxy_files) %>%
+  purrr::map(get_dxy) %>%
+  bind_rows() %>%
+  select(N_SITES:GPOS, run) %>%
+  mutate(pop1 = str_sub(run,1,6),
+         pop2 = str_sub(run,8,13))
+
+# compute delta dxy
+dxy_summary <- dxy_data %>%
+  group_by(GPOS) %>%
+  summarise(delta_dxy = max(dxy)-min(dxy),
+            sd_dxy = sd(dxy),
+            delt_pi = max(c(max(PI_POP1),max(PI_POP2))) - min(c(min(PI_POP1),min(PI_POP2)))) %>%
+  ungroup() %>%
+  setNames(., nm = c('GPOS',
+                     str_c('bold(',project_case('e'),'):\u0394~italic(d[xy])'),
+                     str_c('bold(',project_case('e'),'):italic(d[xy])~(sd)'),
+                     str_c('bold(',project_case('e'),'):\u0394~italic(\u03C0)'))) %>%
+  gather(key = 'window', value = 'value',2:4) %>%
+  filter(window == str_c('bold(',project_case('e'),'):\u0394~italic(d[xy])'))
+
+
 # set G x P traits to be imported
 traits <- c("Bars.lm.50k.5k.txt.gz", "Peduncle.lm.50k.5k.txt.gz", "Snout.lm.50k.5k.txt.gz")
 
 # set trait figure panels
-trait_panels <- c(Bars = str_c('bold(',project_case('d'),')'),
-                  Peduncle = str_c('bold(',project_case('e'),')'),
-                  Snout = str_c('bold(',project_case('f'),')'))
+trait_panels <- c(Bars = str_c('bold(',project_case('h'),')'),
+                  Peduncle = str_c('bold(',project_case('i'),')'),
+                  Snout = str_c('bold(',project_case('j'),')'))
 
 # import G x P data
 gxp_data <- str_c(gxp_dir,traits) %>%
@@ -79,21 +108,93 @@ selectors_dxy <- globals %>%
   .$weighted %>%
   .[15]
 
+# the dxy population pair corresponding to the selector is identified
+select_dxy_runs <- globals %>%
+  filter(weighted %in% selectors_dxy) %>%
+  .$run %>% as.character()
+
+# then thne dxy data is subset based on the selector
+dxy_select <- dxy_data %>%
+  filter(run %in% select_dxy_runs) %>%
+  mutate(window = str_c('bold(',project_case('b'),'): italic(d[XY])'))
+
+# the pi data is filtered on a similar logic to the dxy data
+# first a table with the genome wide average pi for each population is compiled
+# (based on the first populations from the dxy data table
+# which contains pi for both populations)
+pi_summary_1 <- dxy_data %>%
+  group_by(pop1,run) %>%
+  summarise(avg_pi = mean(PI_POP1)) %>%
+  ungroup() %>%
+  purrr::set_names(., nm = c('pop','run','avg_pi'))
+
+# the mean genome wide average pi is compiled for all the second populations
+# from the dxy data
+# then, the average of all the comparisons is computed for each population
+pi_summary <- dxy_data %>%
+  group_by(pop2,run) %>%
+  summarise(avg_pi = mean(PI_POP2)) %>%
+  ungroup() %>%
+  purrr::set_names(., nm = c('pop','run','avg_pi')) %>%
+  bind_rows(pi_summary_1)  %>%
+  group_by(pop) %>%
+  summarise(n = length(pop),
+            mean_pi = mean(avg_pi),
+            min_pi = min(avg_pi),
+            max_pi = max(avg_pi),
+            sd_pi = sd(avg_pi)) %>%
+  arrange(n)
+
+# one of the central populations with respect to average genome
+# wide pi is identified
+# for this, the 7th lowest pi value of the 14 populations is
+# determined as "selector"
+selectors_pi <- pi_summary %>%
+  .$mean_pi %>%
+  sort() %>%
+  .[7]
+
+# the respective population is identified
+select_pi_pops <- pi_summary %>%
+  filter(mean_pi %in% selectors_pi) %>%
+  .$pop %>% as.character()
+
+# then the dxy data is subset by that population and the average pi over
+# all pair-wise runs is calculated for each window
+pi_data_select <- dxy_data %>%
+  select(GPOS, PI_POP1, pop1 )%>%
+  purrr::set_names(., nm = c('GPOS','pi','pop')) %>%
+  bind_rows(.,dxy_data %>%
+              select(GPOS, PI_POP2, pop2 )%>%
+              purrr::set_names(., nm = c('GPOS','pi','pop'))) %>%
+  group_by(GPOS,pop) %>%
+  summarise(n = length(pop),
+            mean_pi = mean(pi),
+            min_pi = min(pi),
+            max_pi = max(pi),
+            sd_pi = sd(pi)) %>%
+  filter(pop %in% select_pi_pops) %>%
+  mutate(window = str_c('bold(',project_case('c'),'):~\u03C0'))
+
+# import recombination data
+recombination_data <- vroom::vroom(recombination_file,delim = '\t') %>%
+  add_gpos() %>%
+  mutate(window = str_c('bold(',project_case('d'),'):~\u03C1'))
 
 # import topology weighting data
 twisst_data <- tibble(loc = c('bel','hon'),
-                      panel = c('b','c') %>% project_case() %>% str_c('bold(',.,')')) %>%
+                      panel = c('f','g') %>% project_case() %>% str_c('bold(',.,')')) %>%
   purrr::pmap(match_twisst_files) %>%
   bind_rows() %>%
   select(GPOS, topo3,topo_rel,window,weight)
 
 # the "null-weighting" is computed for both locations
-twisst_null <- tibble(window = c(str_c('bold(',project_case('b'),'):~italic(w)[bel]'),
-                                 str_c('bold(',project_case('c'),'):~italic(w)[hon]')),
+twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~italic(w)[bel]'),
+                                 str_c('bold(',project_case('g'),'):~italic(w)[hon]')),
                       weight = c(1/15, 1/105))
 
 # combine data types --------
-data <- bind_rows(fst_data, gxp_data)
+data <- bind_rows(dxy_summary, fst_data, gxp_data)
 
 # import fst outliers
 outliers <-  vroom::vroom(outlier_table, delim = '\t')
@@ -115,9 +216,9 @@ outlier_y <- .45
 outlier_yend <- .475
 
 # the icons for the traits of the GxP are loaded
-trait_tibble <- tibble(window = c("bold(d):italic(p)[Bars]",
-                                  "bold(e):italic(p)[Peduncle]",
-                                  "bold(f):italic(p)[Snout]"),
+trait_tibble <- tibble(window = c("bold(h):italic(p)[Bars]",
+                                  "bold(i):italic(p)[Peduncle]",
+                                  "bold(j):italic(p)[Snout]"),
                        grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
 
 # finally, the figure is being put together
@@ -140,14 +241,14 @@ p_done <- ggplot()+
   # the fst, delta dxy and gxp data is plotted
   geom_point(data = data, aes(x = GPOS, y = value),size = plot_size, color = plot_clr) +
   # the dxy data is plotted
-  # geom_point(data = dxy_select,aes(x = GPOS, y = dxy),size = plot_size, color = plot_clr)+
-  # # the pi data is plotted
-  # geom_point(data = pi_data_select, aes(x = GPOS, y = mean_pi),size = plot_size, color = plot_clr) +
-  # # the roh data is plotted
-  # geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
-  # # the smoothed rho is plotted
-  # geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
-  #               color = 'red', se = FALSE, size = .4) +
+  geom_point(data = dxy_select,aes(x = GPOS, y = dxy),size = plot_size, color = plot_clr)+
+  # the pi data is plotted
+  geom_point(data = pi_data_select, aes(x = GPOS, y = mean_pi),size = plot_size, color = plot_clr) +
+  # the roh data is plotted
+  geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
+  # the smoothed rho is plotted
+  geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
+              color = 'red', se = FALSE, size = .4) +
   # the topology weighting data is plotted
   geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel), size = .4) +
   # the null weighting is added
@@ -173,9 +274,9 @@ p_done <- ggplot()+
 
 # export figure 4
 #scl <- .8
-hypo_save(p_done, filename = 'figures/F4.png',
+hypo_save(p_done, filename = 'figures/SFx2.png',
           width = f_width,
-          height = f_width * .5,
+          height = f_width * .9,
           dpi = 600,
           type = "cairo",
           comment = plot_comment)

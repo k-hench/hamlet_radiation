@@ -103,13 +103,13 @@ data2 <- data %>%
          overal_length = overal_length/(10^6)) %>%
   rename(`atop(Number~of,Regions)` = 'n',
          `atop(Average~Region,Length~(kb))` = 'avg_length',
-         `atop(Cummulative~Region,Length~(Mb))` = 'overal_length') %>%
+         `atop(Cum.~Region,Length~(Mb))` = 'overal_length') %>%
   pivot_longer(names_to = 'variable',values_to = 'Value',3:5) %>%
   mutate(threshold_value = str_c('italic(F[ST])~threshold:~',
                                  threshold_value),
          variable = factor(variable, levels = c('atop(Number~of,Regions)',
                                                 'atop(Average~Region,Length~(kb))',
-                                                'atop(Cummulative~Region,Length~(Mb))')))
+                                                'atop(Cum.~Region,Length~(Mb))')))
 
 # set font size
 base_line_clr <- "black"
@@ -123,12 +123,12 @@ p_done <- data2 %>%
              )
          )+
   # add red line for genome extent in lowest row
-  geom_hline(data = tibble(variable = factor(c('atop(Cummulative~Region,Length~(Mb))',
+  geom_hline(data = tibble(variable = factor(c('atop(Cum.~Region,Length~(Mb))',
                                                'atop(Average~Region,Length~(kb))',
                                                'atop(Number~of,Regions)'),
                                              levels = c('atop(Number~of,Regions)',
                                                         'atop(Average~Region,Length~(kb))',
-                                                        'atop(Cummulative~Region,Length~(Mb))')),
+                                                        'atop(Cum.~Region,Length~(Mb))')),
                            y = c(559649677/(10^6),NA,NA)),
              aes(yintercept = y),
              color = rgb(1,0,0,.25))+
@@ -176,8 +176,8 @@ p_done <- data2 %>%
 # export figure 3
 hypo_save(filename = 'figures/F3.pdf',
           plot = p_done,
-          width = .52 * f_width,
-          height = .52 * f_width,
+          width = f_width,
+          height = .5 * f_width,
           device = cairo_pdf,
           comment = plot_comment,
           bg = "transparent")

@@ -30,7 +30,7 @@ pi_path <- as.character(args[1])
 rho_path <- as.character(args[2])
 
 # locate pi data files
-files <- dir(pi_path, pattern = '^[a-z]{6}.50k')
+files <- dir(pi_path, pattern = '^pi.[a-z]{6}.50k')
 
 # load pi data
 data <- str_c(pi_path, files) %>%
@@ -40,9 +40,9 @@ data <- str_c(pi_path, files) %>%
 # compute genome wide average pi for the subplot order
 global_bar <- data %>%
   filter( BIN_START %% 50000 == 1) %>%
-  select(N_VARIANTS, PI, spec) %>%
+  select(N_SITES, PI, spec) %>%
   group_by(spec) %>%
-  summarise(genome_wide_pi = sum(N_VARIANTS*PI)/sum(N_VARIANTS)) %>%
+  summarise(genome_wide_pi = sum(N_SITES*PI)/sum(N_SITES)) %>%
   arrange(genome_wide_pi) %>%
   ungroup() %>%
   mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
@@ -98,3 +98,30 @@ hypo_save(filename = 'figures/SF8.pdf',
           width = 8,
           height = 10,
           comment = plot_comment)
+
+
+# ===============
+
+combined_data %>% 
+  filter( BIN_START %% 50000 == 1) %>%
+  group_by(spec) %>% 
+  summarise(genom_avg_pi = sum(PI*N_VARIANTS)/sum(N_VARIANTS)) %>% #write_tsv("2_analysis/summaries/pi_globals.tsv")
+  ungroup() %>% 
+  mutate(loc = str_sub(spec, 4, 6) %>%  loc_names[.],
+         spec = str_sub(spec, 1, 3) %>% sp_names[.] %>% str_c("H. ",.),
+         genom_avg_pi = sprintf("%.4f", genom_avg_pi)) %>% 
+  pivot_wider(names_from = spec,
+              values_from = genom_avg_pi,
+              values_fill = "-") %>% 
+  knitr::kable(format = "latex")
+
+combined_data %>% 
+  group_by(spec) %>% 
+  summarise(genom_avg_pi = sum(PI*N_VARIANTS)/sum(N_VARIANTS),
+            genom_avg_pi2 = median(PI, na.rm = TRUE)) %>% 
+  left_join(global_bar) %>% 
+  ggplot() +
+  geom_point(aes(x = as.numeric(spec) +.25, y = genom_avg_pi), color = "red")+
+  geom_point(aes(x = as.numeric(spec), y = genom_avg_pi2), color = "black")+
+  geom_point(aes(x = as.numeric(spec) -.25, y = genome_wide_pi), color = "blue")
+

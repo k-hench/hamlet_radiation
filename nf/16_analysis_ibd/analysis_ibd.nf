@@ -1,31 +1,31 @@
+#!/usr/bin/env nextflow
+// This pipeline includes the analysis calculating the pair-wise IBD
+
+// git 16.1
+// load genotypes
 Channel
-	.fromPath("phased_mac2.no_outgroup.vcf.gz")
+	.fromPath("../../phased_mac2.no_outgroup.vcf.gz")
 	.set{ genotypes_ch }
 
-/*
-Channel
-	.from([[ 50000, 20000, 4 ],
-	       [ 25000, 10000, 7 ],
-	       [ 15000, 7500, 10 ],
-	       [ 10000, 5000, 8 ], 
-	       [ 7500, 3000, 9 ],
-		   [ 5000, 2000, 3 ]])
-	.set{ seq_sizes_ch }
-*/
-
+// git 16.2
+//
 Channel
 	.from([[ 25000, 10000, 7 ],
 	       [ 15000, 7500, 10 ],
 	       [ 10000, 5000, 8 ]])
 	.set{ seq_sizes_ch }
 
+// git 16.3
+//
 Channel
 	.from([["direct", ""],
 	       ["filter", "LG08"]])
 	.set{ filtermode_ch }
 
+// git 16.4
+//
 process run_truffle {
-	publishDir "output/", mode: 'copy'
+	publishDir "../../2_analysis/ibd/", mode: 'copy'
 
 	input:
 	set file( vcf ), val( sz1 ), val( sz2 ), val( sz3 ), val( mode ), val( excluding ) from genotypes_ch.combine( seq_sizes_ch ).combine( filtermode_ch )

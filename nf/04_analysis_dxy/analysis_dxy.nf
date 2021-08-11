@@ -284,6 +284,7 @@ process receive_random_tuple {
 	"""
 }
 
+/*
 // ---------------------------------------------------------------
 // The pi part need to be run AFTER the global fst outlier
 // windows were selected (REMEMBER TO CHECK FST OUTLIER DIRECTORY)
@@ -327,4 +328,4 @@ process pi_per_spec {
 		--out ${spec}_no_outlier.${kb}0k 2> ${spec}_${kb}0k_no_outllier.pi.log
 	gzip ${spec}_no_outlier.${kb}0k.windowed.pi
 	"""
-}
+}*/

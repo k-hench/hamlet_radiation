@@ -11,7 +11,8 @@
 # fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt', '2_analysis/summaries/fst_permutation_summary.tsv')
+# args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt', 
+#           '2_analysis/summaries/fst_permutation_summary.tsv')
 # script_name <- "R/fig/plot_F1.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
@@ -100,7 +101,17 @@ serranids <- c("Hypoplectrus_gemma", "Hypoplectrus_unicolor", "Hypoplectrus_gumm
 edvr_serr <- edvr %>% 
   subtreeBAMM(tips = serranids)
 
-label_two_chars <- c(`italic(S.~'beta')` = "italic(Sc.~'beta')",
+label_two_chars <- c(`italic(Z.~kelloggi)` = "italic(Pl.~kelloggi)",
+                     `italic(P.~maculatofasciatus)` = "italic(Pa.~maculatofasciatus)",
+                     `italic(P.~nebulifer)` = "italic(Pa.~nebulifer)",
+                     `italic(P.~humeralis)` = "italic(Pa.~humeralis)",
+                     `italic(P.~clathratus)` = "italic(Pa.~clathratus)",
+                     `italic(P.~auroguttatus)` = "italic(Pa.~auroguttatus)",
+                     `italic(P.~loro)` = "italic(Pa.~loro)",
+                     `italic(P.~callaensis)` = "italic(Pa.~callaensis)",
+                     `italic(P.~dewegeri)` = "italic(Pa.~dewegeri)",
+                     `italic(P.~albomaculatus)` = "italic(Pa.~albomaculatus)",
+                     `italic(S.~'beta')` = "italic(Sc.~'beta')",
                      `italic(S.~notospilus)` = "italic(Se.~notospilus)",
                      `italic(S.~phoebe)` = "italic(Se.~phoebe)",
                      `italic(S.~psittacinus)` = "italic(Se.~psittacinus)",
@@ -130,6 +141,9 @@ clr_tree <- scico::scico(6, palette = "berlin") %>%
   prismatic::clr_darken(shift = .2)
 
 
+clr_lab <- rep(c("black","darkgray"), c(9,31))
+# clr_lab <- rep(c("black","darkgray","black","darkgray"), c(21,10,4,5))
+
 p1 <- as.grob(function(){
   par(mar = c(0,0,0,0))
   bammplot_k(x = edvr_serr_short,
@@ -137,9 +151,10 @@ p1 <- as.grob(function(){
              lwd = .8,
              cex = .3,
              pal = clr_tree,
-             labelcolor = c(rep("black", 9),
-                            rep("darkgray", 31)))
+             labelcolor = clr_lab)
   leg_shift_x <- 0
+  text(x = c(21.2, 40.2), y = c(15.6, 33.25),
+       label = "\U2605", family = "DejaVu Sans", col = clr_tree[[6]], cex = .5)
   lines(x = c(0,25) + leg_shift_x,
         y = c(1.5, 1.5),
         col = "darkgray")
@@ -197,45 +212,50 @@ p_tree <- ggplot() +
 
 # =================================================================================================
 # import Fst
-fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
-
-fst_data <- str_c(fst_dir, fst_files) %>%
-  purrr::map(summarize_fst) %>%
-  bind_rows()
+# fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
+# 
+# fst_data <- str_c(fst_dir, fst_files) %>%
+#   purrr::map(summarize_fst) %>%
+#   bind_rows()
 
 # determine fst ranking
-fst_order <- fst_data %>%
-  select(run, `mean_weighted-fst`) %>%
-  mutate(run = fct_reorder(run, `mean_weighted-fst`))
+# fst_order <- fst_data %>%
+#   select(run, `mean_weighted-fst`) %>%
+#   mutate(run = fct_reorder(run, `mean_weighted-fst`))
+# 
+# fst_data_gather <- fst_data %>% 
+#   gather(key = 'stat', value = 'val', -run) %>%
+#   # sumstat contains the values needed to plot the boxplots (quartiles, etc)
+#   separate(stat, into = c('sumstat', 'popstat'), sep = '_') %>%
+#   # duplicate dxy values scaled to fst range
+#   mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
+#   unite(temp, val, val_scaled) %>%
+#   # separate the original values from the scaled ones (scaled = secondary axis, legacy)
+#   spread(.,key = 'sumstat',value = 'temp') %>%
+#   separate(mean, into = c('mean','mean_scaled'),sep = '_', convert = TRUE) %>%
+#   separate(median, into = c('median','median_scaled'), sep = '_', convert = TRUE) %>%
+#   separate(sd, into = c('sd','sd_scaled'),sep = '_', convert = TRUE) %>%
+#   separate(lower, into = c('lower','lower_scaled'), sep = '_', convert = TRUE) %>%
+#   separate(upper, into = c('upper','upper_scaled'), sep = '_', convert = TRUE) %>%
+#   separate(lowpoint, into = c('lowpoint','lowpoint_scaled'), sep = '_', convert = TRUE) %>%
+#   separate(highpoint, into = c('highpoint','highpoint_scaled'), sep = '_', convert = TRUE) %>%
+#   # include "dodge"-positions for side-by-side plotting (secondary axis)
+#   mutate(loc = str_sub(run,4,6),
+#          run = factor(run, levels = levels(fst_order$run)),
+#          x = as.numeric(run) ,
+#          x_dodge = ifelse(popstat == 'dxy', x + .25, x - .25),
+#          x_start_dodge = x_dodge - wdh/2,
+#          x_end_dodge = x_dodge + wdh/2,
+#          popstat_loc = str_c(popstat,'[',loc,']'))
 
-fst_data_gather <- fst_data %>% 
-  gather(key = 'stat', value = 'val', -run) %>%
-  # sumstat contains the values needed to plot the boxplots (quartiles, etc)
-  separate(stat, into = c('sumstat', 'popstat'), sep = '_') %>%
-  # duplicate dxy values scaled to fst range
-  mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
-  unite(temp, val, val_scaled) %>%
-  # separate the original values from the scaled ones (scaled = secondary axis, legacy)
-  spread(.,key = 'sumstat',value = 'temp') %>%
-  separate(mean, into = c('mean','mean_scaled'),sep = '_', convert = TRUE) %>%
-  separate(median, into = c('median','median_scaled'), sep = '_', convert = TRUE) %>%
-  separate(sd, into = c('sd','sd_scaled'),sep = '_', convert = TRUE) %>%
-  separate(lower, into = c('lower','lower_scaled'), sep = '_', convert = TRUE) %>%
-  separate(upper, into = c('upper','upper_scaled'), sep = '_', convert = TRUE) %>%
-  separate(lowpoint, into = c('lowpoint','lowpoint_scaled'), sep = '_', convert = TRUE) %>%
-  separate(highpoint, into = c('highpoint','highpoint_scaled'), sep = '_', convert = TRUE) %>%
-  # include "dodge"-positions for side-by-side plotting (secondary axis)
-  mutate(loc = str_sub(run,4,6),
-         run = factor(run, levels = levels(fst_order$run)),
-         x = as.numeric(run) ,
-         x_dodge = ifelse(popstat == 'dxy', x + .25, x - .25),
-         x_start_dodge = x_dodge - wdh/2,
-         x_end_dodge = x_dodge + wdh/2,
-         popstat_loc = str_c(popstat,'[',loc,']'))
- 
+globals <- vroom::vroom(fst_globals, delim = '\t',
+                        col_names = c('loc','run','mean','weighted')) %>%
+  mutate(run = str_c(str_sub(run,1,3),loc,'-',str_sub(run,5,7),loc),
+         run = fct_reorder(run,weighted))
+
 # sort run by average genome wide Fst
-run_ord <- tibble(run = levels(fst_data_gather$run),
-                  run_ord = 1:length(levels(fst_data_gather$run)))
+run_ord <- tibble(run = levels(globals$run),
+                  run_ord = seq_along(levels(globals$run)))
 
 # load fst permutation results
 fst_sig_attach <- read_tsv(fst_permutation_file) %>% 
@@ -257,7 +277,7 @@ networx <- tibble( loc = c('bel','hon', 'pan'),
                                 str_c(c('nig','pue','uni'),'pan')),
                    weight = c(1,1.45,1)) %>%
   purrr::pmap_dfr(network_layout) %>%
-  mutate(edges = map(edges, function(x){x %>% left_join(fst_data_gather %>% filter(popstat == "weighted-fst") %>% select(run, median, mean)) }))
+  mutate(edges = map(edges, function(x){x %>% left_join(globals,by = "run") }))
 
 # plot the individual networks by location
 plot_list <- networx %>%
@@ -272,26 +292,57 @@ p_net <- cowplot::plot_grid(
   cowplot::as_grob()
 
 # assemble panel b
-p2 <- fst_data_gather %>%
-  filter(popstat == "weighted-fst") %>%
-  left_join(fst_sig_attach) %>% 
-  mutate(loc = str_sub(run, -3, -1)) %>% 
+# p2 <- fst_data_gather %>%
+#   filter(popstat == "weighted-fst") %>%
+#   left_join(fst_sig_attach) %>%
+#   mutate(loc = str_sub(run, -3, -1)) %>%
+#   ggplot(aes(color = loc)) +
+#   geom_segment(aes(x = x, xend = x,
+#                    y = lowpoint, yend = highpoint),
+#                lwd = plot_lwd)+
+#   geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
+#                 ymin = lower, ymax = upper),
+#             fill = 'white',
+#             size = plot_lwd)+
+#   geom_segment(aes(x = x - wdh,
+#                    xend = x + wdh,
+#                    y = median,
+#                    yend = median),
+#                lwd = plot_lwd)+
+#   geom_point(aes(x = x, y = mean, shape = is_sig, fill = after_scale(color)),
+#              size = .8) +
+#   annotation_custom(p_net, ymin = .15, xmax = 25) +
+#   scale_x_continuous(name = "Pair of sympatric species",
+#                      breaks = 1:28) +
+#   scale_y_continuous(name = expression(italic(F[ST])))+
+#   scale_color_manual(values = c(make_faint_clr('bel'),
+#                                 make_faint_clr('hon'),
+#                                 make_faint_clr('pan'))[c(2, 4, 6)])+
+#   scale_shape_manual(values = c(`TRUE` = 1, `FALSE` = 21)) +
+#   coord_cartesian(xlim = c(0,29),
+#                   expand = c(0,0))+
+#   theme_minimal()+
+#   theme(text = element_text(size = plot_text_size),
+#         legend.position = 'none',
+#         strip.placement = 'outside',
+#         strip.text = element_text(size = 12),
+#         panel.grid.major.x = element_blank(),
+#         panel.grid.minor.y = element_blank(),
+#         axis.text.y.right = element_text(color = clr_sec),
+#         axis.title.y.right = element_text(color = clr_sec))
+# # 
+
+p2 <- globals %>%
+  left_join(fst_sig_attach %>% mutate(run = factor(run, levels = levels(globals$run))) ) %>% 
   ggplot(aes(color = loc)) +
-  geom_segment(aes(x = x, xend = x,
-                   y = lowpoint, yend = highpoint),
-               lwd = plot_lwd)+
-  geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
-                ymin = lower, ymax = upper),
-            fill = 'white',
-            size = plot_lwd)+
-  geom_segment(aes(x = x - wdh,
-                   xend = x + wdh,
-                   y = median,
-                   yend = median),
-               lwd = plot_lwd)+
-  geom_point(aes(x = x, y = mean, shape = is_sig, fill = after_scale(color)),
-             size = .8) + 
-  annotation_custom(p_net, ymin = .15, xmax = 25) +
+  geom_bar(aes(x = as.numeric(run),
+                   y = weighted,
+               alpha = is_sig,
+               fill = after_scale(clr_lighten(color))),
+               stat = "identity",size = .2, width = .8)+
+  # geom_point(aes(x = x, y = mean, shape = is_sig, fill = after_scale(color)),
+  #            size = .8) + 
+  annotation_custom(p_net, ymin = .05, xmax = 24.5) +
   scale_x_continuous(name = "Pair of sympatric species",
                      breaks = 1:28) +
   scale_y_continuous(name = expression(italic(F[ST])))+
@@ -299,6 +350,7 @@ p2 <- fst_data_gather %>%
                                 make_faint_clr('hon'),
                                 make_faint_clr('pan'))[c(2, 4, 6)])+
   scale_shape_manual(values = c(`TRUE` = 1, `FALSE` = 21)) +
+  scale_alpha_manual(values = c(`TRUE` = .15, `FALSE` = 1)) + 
   coord_cartesian(xlim = c(0,29),
                   expand = c(0,0))+
   theme_minimal()+
@@ -310,7 +362,6 @@ p2 <- fst_data_gather %>%
         panel.grid.minor.y = element_blank(),
         axis.text.y.right = element_text(color = clr_sec),
         axis.title.y.right = element_text(color = clr_sec))
-
 # assemble panel c-e
 clr_alt <- clr
 clr_alt[["uni"]] <- "lightgray"
@@ -337,7 +388,7 @@ pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
 fish_tib <- tibble(short = names(clr)[!names(clr) %in% c("flo", "tab", "tor")],
        x = c(0.5,  3.5,  7,  9.7, 12.25, 15.25, 18, 21.5)
        )
-
+# ===================
 key_sz <- .75
 p_leg <- fish_tib %>% 
   ggplot() +
@@ -374,4 +425,3 @@ hypo_save(p_done, filename = 'figures/F1.pdf',
           device = cairo_pdf,
           bg = "transparent",
           comment = plot_comment)
-

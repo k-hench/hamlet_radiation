@@ -10,7 +10,7 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( "2_analysis/summaries/fst_outliers_998.tsv", "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
-# script_name <- "R/fig/plot_F6.R"
+# script_name <- "R/fig/plot_SFx4.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -21,6 +21,7 @@ library(ggpointdensity)
 library(scales)
 library(grid)
 library(prismatic)
+library(patchwork)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -95,36 +96,50 @@ highlight_rects <- tibble(trait = factor( c(NA, "Snout", rep(NA, 10), "Bars", "P
                                           levels = c("Snout", "Bars", "Peduncle")),
                           gid_label = gid_label)
 
-p_done <- data %>%
+p_1 <- data %>%
   pivot_longer(names_to = "trait",
                values_to = "p_wald",
                cols = Bars:Snout) %>%
   mutate(trait = factor(trait, levels = c("Snout", "Bars", "Peduncle")),
          gid_label = gid_label[gid]) %>%
   filter(Clock == "J",
-         Filtered == 1) %>%
+         Filtered == 1,
+          gid %in% outlier_data$gid[1:9]) %>%
   ggplot() +
-  # geom_rect(data = highlight_rects, 
-  #           aes( xmin = 0, xmax = Inf, 
-  #                ymin = 0, ymax = Inf),
-  #           color = rgb(.75,.75,.75),
-  #           size = .4, 
-  #           fill = rgb(.9,.9,.9,.5))+
   hypoimg::geom_hypo_grob(inherit.aes = FALSE,
-                          data = annotation_grobs_tib,
-                          aes(grob = grob), x = .15,  y = .78, angle = 0, width = .35, height =.35)+
+                          data = annotation_grobs_tib %>% filter( gid %in% outlier_data$gid[1:9]),
+                          aes(grob = grob), x = .15,  y = .78, angle = 0, width = .35, height =.35)
+
+p_2 <- data %>%
+  pivot_longer(names_to = "trait",
+               values_to = "p_wald",
+               cols = Bars:Snout) %>%
+  mutate(trait = factor(trait, levels = c("Snout", "Bars", "Peduncle")),
+         gid_label = gid_label[gid]) %>%
+  filter(Clock == "J",
+         Filtered == 1,
+         gid %in% outlier_data$gid[10:18]) %>%
+  ggplot() +
+  hypoimg::geom_hypo_grob(inherit.aes = FALSE,
+                          data = annotation_grobs_tib %>% filter( gid %in% outlier_data$gid[10:18]),
+                          aes(grob = grob), x = .15,  y = .78, angle = 0, width = .35, height =.35)
+
+p_done <- (p_1 + p_2 &
   geom_pointdensity(size = plot_size,
-                    aes(x = PostMedian,y = p_wald))+
-  facet_grid(gid ~ trait, scales = "free_y")+
-  scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  scale_y_continuous(trans = reverselog_trans(10),
-                     labels = scales::trans_format("log10", scales::math_format(10^.x)))+
-  scale_color_viridis_c("Density",  option = "B")+
+                  aes(x = PostMedian,y = p_wald)) &
+  facet_grid(gid ~ trait, scales = "free_y"
+             ) &
+  scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x))) &
+  scale_y_continuous(trans = reverselog_trans(10), #limits = c(10^0, 10^-90),
+                     labels = scales::trans_format("log10", scales::math_format(10^.x))) &
+  scale_color_viridis_c("Density",  option = "B", limits = c(0,750)#, limits = c(0,1100)
+                        ) &
   labs(y = "G x P *p* value <sub>Wald</sub>",
-       x  = "Derived allele age (generations)")+
-  guides(color = guide_colorbar(barwidth = unit(120, "pt"),
-                                barheight = unit(3, "pt")))+
-  theme_minimal()+
+       x  = "Derived allele age (generations)") &
+  guides(color = guide_colorbar(title.position = "top",
+                                barwidth = unit(.8, "npc"),
+                                barheight = unit(3, "pt"))) &
+  theme_minimal() &
   theme(text = element_text(size = plot_text_size),
         axis.title.y = element_markdown(),
         legend.position = "bottom",
@@ -133,13 +148,15 @@ p_done <- data %>%
                                  size = base_lwd), 
         strip.background = element_blank(), 
         panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(size = plot_lwd)
-  )
+        panel.grid.major = element_line(size = plot_lwd)))/
+  guide_area() +
+  plot_layout(heights = c(1,.1),
+              guides = "collect")
 
 hypo_save(plot = p_done,
-          filename = "figures/F6.pdf",
-          width = f_width_half,
-          height = f_width_half,
+          filename = "figures/SFx4_v2.pdf",
+          width = f_width,
+          height = f_width,
           comment = plot_comment,
           device = cairo_pdf,
           bg = "transparent")
