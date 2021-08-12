@@ -62,23 +62,25 @@ p_tree <- (open_tree(
   ggtree(raxml_data, layout = lyout,
          aes(color = ifelse(clade == 0,
                             lab2spec(label),
-                            clade2spec[as.character(clade)])), size = .3) %>%
+                            clade2spec[as.character(clade)])), size = .25) %>%
     ggtree::rotate(200), 180))  +
-  geom_tippoint(size = .3) + 
+  # geom_tippoint(size = .2) + 
   geom_tiplab2(aes(color = lab2spec(label), 
                    label = str_sub(
                      label, -6, -1)),
-  size = GenomicOriginsScripts::plot_text_size_small / ggplot2:::.pt  *.7,#2.5, 
+  size = GenomicOriginsScripts::plot_text_size_small / ggplot2:::.pt  *.6,#2.5, 
   hjust = -.1)+
   ggtree::geom_treescale(width = .002,
+                         linesize = .2,
                          x = -.0007, y = 155, 
-                         offset = -3,
+                         offset = -4,
                          fontsize = GenomicOriginsScripts::plot_text_size_small / ggplot2:::.pt,
                          color = clr_neutral) +
   xlim(c(-.0007,.0092)) +
   ggtree::geom_nodepoint(aes(fill = support_class, 
                              size = support_class),
-                 shape = 21) +
+                 shape = 21#, linewidth = 3
+                 ) +
   scale_color_manual(values = c(ungrouped = clr_neutral, 
                                 GenomicOriginsScripts::clr2),
                      guide = FALSE) +
@@ -88,9 +90,9 @@ p_tree <- (open_tree(
                                `(90,100]` = "black"),
                     drop = FALSE) +
   scale_size_manual(values = c(`(0,50]` = 0,
-                               `(50,70]` = 1,
-                               `(70,90]` = 1,
-                               `(90,100]` = 1),
+                               `(50,70]` = .4,
+                               `(70,90]` = .4,
+                               `(90,100]` = .4),
                     na.value = 0,
                     drop = FALSE)+
   guides(fill = guide_legend(title = "Node Support Class", title.position = "top", ncol = 2,keyheight = unit(9,"pt")),
@@ -110,7 +112,6 @@ p1 <- ggplot() +
                     ymin = .35, ymax = .54,
                     xmin = 0, xmax = .2) +
   theme_void()
-
 
 data_ibd <- read_tsv(ibd_file) %>% 
   mutate(ibd_total = (IBD2 + 0.5*IBD1) / (IBD0 + IBD1 + IBD2)) 
@@ -155,7 +156,7 @@ hypo_save(plot = p_done,
           bg = "transparent",
           type = "cairo",
           comment = plot_comment)
-
+system("convert figures/SF9.png figures/SF9.pdf")
 # hypo_save(plot = p_done,
 #           filename = "figures/SF9.pdf",
 #           width = 7.5 * scl,
