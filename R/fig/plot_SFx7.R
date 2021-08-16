@@ -74,10 +74,6 @@ clr_tree <- scico::scico(6, palette = "berlin") %>%
 
 clr_tree2 <- colorRampPalette(RColorBrewer::brewer.pal(9,"RdYlBu"))(64) %>% rev()
 
-clr_tree2 <- scales::colour_ramp(colors = RColorBrewer::brewer.pal(5,"PuOr")[c(5,4,3,2,1)])(seq(0,1,length.out = 501)) %>% 
-  prismatic::clr_desaturate(shift = .2) %>% 
-  prismatic::clr_lighten(shift = .2)
-
 clr_shift <- "red"
 
 css2 <- css

@@ -1,6 +1,34 @@
+#!/usr/bin/env Rscript
+# run from terminal:
+# Rscript --vanilla R/fig/plot_SFx5.R \
+#    ressources/species_order_tree1.txt 2_analysis/dstats/hyp_ld05_dtrios_BBAA.txt 2_analysis/dstats/BBAA_sign_ld05.csv
+# ===============================================================
+# This script produces Figure Sx5 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
+# ---------------------------------------------------------------
+# ===============================================================
+# args <- c("ressources/species_order_tree1.txt", "2_analysis/dstats/hyp_ld05_dtrios_BBAA.txt","2_analysis/dstats/BBAA_sign_ld05.csv")
+# script_name <- "R/fig/plot_SFx5.R"
+args <- commandArgs(trailingOnly=FALSE)
+# setup -----------------------
 library(GenomicOriginsScripts)
 library(prismatic)
 library(ggtext)
+
+cat('\n')
+script_name <- args[5] %>%
+  str_remove(., '--file=')
+
+plot_comment <- script_name %>%
+  str_c('mother-script = ', getwd(), '/', .)
+
+args <- process_input(script_name, args)
+# config -----------------------
+species_order_file <- as.character(args[1])
+trios_file <- as.character(args[2])
+signif_file <- as.character(args[3])
+
+set.seed(42)
 
 legend_bivariate <- function(x = c(1, 15),
                              y = c(1, 15), 
@@ -47,12 +75,11 @@ two_chr_to_sorted_pair <- function(P2, P3, ...){
   str_c(char_sorted[[1]], "-", char_sorted[[2]])
 }
 
-sorter <- read_tsv("ressources/species_order_tree1.txt",
-                   col_names = "group")
+sorter <- read_tsv(species_order_file, col_names = "group")
 
 p_cap <- 8
 
-data <- read_tsv("2_analysis/dstats/hyp_ld05_dtrios_BBAA.txt") %>%
+data <- read_tsv(trios_file) %>%
     mutate(pair = pmap_chr(.,two_chr_to_sorted_pair)) %>% 
     group_by(pair) %>% 
     mutate(p_is_min = `p-value` == min(`p-value`)) %>%
@@ -77,16 +104,13 @@ data_full <- cross_df(list(p_left = sorter$group ,
          Dstatistic = if_else(is.na(Dstatistic), 0, Dstatistic),
          `p-value` = if_else(is.na(`p-value`), 1, `p-value`))
 
-data_signif <- read_tsv("2_analysis/dstats/BBAA_sign_ld05.csv") %>%
+data_signif <- read_tsv(signif_file) %>%
   mutate(pair = pmap_chr(.,two_chr_to_sorted_pair)) %>% 
   separate(pair, into = c("p_left", "p_right"), sep = "-", remove = FALSE) %>% 
   mutate(p_left = factor(p_left, levels = sorter$group),
          p_right = factor(p_right, levels = rev(sorter$group)))
 
-clr <- scales::colour_ramp(colors = c("#02CAEE", "#7D6181", "#EC041F"))((1:7)/7) %>% clr_saturate(.1)
-clr <- scales::colour_ramp(colors = RColorBrewer::brewer.pal(5,"PuOr")[c(1,2,4,5)])((1:7)/7) %>% clr_saturate(.1)
-# clr <- viridis::cividis(6)
-# clr <- scico::scico(5,palette = "tokyo")
+clr <- scales::colour_ramp(colors = RColorBrewer::brewer.pal(5,"RdYlBu")[c(1,2,4,5)])((1:7)/7) %>% clr_saturate(.1)
 
 d_lim <- c(0,.01)
 p_lim <- c(1, p_cap)
@@ -99,7 +123,7 @@ p2 <- legend_bivariate(x = d_lim,
                        x_title = "D",
                        n_bins = 23)
 
-(p1 <- data_full %>%
+p_done <- (p1 <- data_full %>%
   mutate(check1 = as.numeric(p_left),
          check2 = as.numeric(p_right)) %>% 
   filter(check2 < 17-check1) %>% 
@@ -108,13 +132,7 @@ p2 <- legend_bivariate(x = d_lim,
                 y = p_right, 
                 fill = Dstatistic,
                 alpha = -log10(`p-value`),
-                color = after_scale(clr_darken(fill)))) +#log10(`p-value`))) +
-    # geom_text(data = data_signif %>% group_by(p_left,p_right) %>% count(),
-    #             aes(x = p_left,
-    #                 y = p_right,
-    #                 label = n),
-    #           size = plot_text_size / .pt,
-    #           color = "white") +
+                color = after_scale(clr_darken(fill)))) +
     geom_jitter(data = data_signif,
               width = .2, height = .2,
               aes(x = p_left,
@@ -139,8 +157,10 @@ p2 <- legend_bivariate(x = d_lim,
         axis.text.x = element_text(angle = 90, vjust = .5),
         axis.title = element_blank()) )
 
-ggsave(filename = "figures/SFx5.pdf",
+hypoimg::hypo_save(filename = "figures/SFx5.pdf",
        width = f_width_half,
        height = f_width_half,
-       device = cairo_pdf, bg = "transparent")
+       device = cairo_pdf,
+       bg = "transparent",
+       comment = plot_comment)
 

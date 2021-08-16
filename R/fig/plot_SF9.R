@@ -29,7 +29,6 @@ plot_comment <- script_name %>%
   str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
-
 # config -----------------------
 tree_hypo_file <- as.character(args[1])
 ibd_file <- as.character(args[2])
@@ -122,14 +121,14 @@ p2 <- data_ibd %>%
   mutate(spec = str_sub(name,-6,-4),
          loc = str_sub(name,-3,-1))  %>% 
   ggraph( layout = 'fr', weights = ibd_total) +
-  geom_edge_link(aes(alpha = ibd_total), color = rgb(.3,.3,.3), edge_width = .2) +
+  geom_edge_link(aes(alpha = ibd_total), color = rgb(.1,.1,.1), edge_width = .15) +
   geom_node_point(aes(fill = spec,
-                      shape = loc, color = after_scale(clr_darken(fill,.3))), size = 1.5) +
-  scale_fill_manual("Species", values = clr[!(names(clr) %in% c("flo", "tor", "tab"))],
+                      shape = loc, color = after_scale(clr_darken(fill,.3))), size = 1.2) +
+  scale_fill_manual("Species", values = GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))],
                     labels = GenomicOriginsScripts::sp_labs)+
-  scale_edge_alpha_continuous(#range = c(.01,.1),
-                              limits = c(0,.1), guide = "none" ) +
-  scale_shape_manual("Site", values = 21:23, labels = loc_names) +
+  scale_edge_alpha_continuous(#limits = c(0,.1),
+    range = c(0,1), guide = "none") +
+  scale_shape_manual("Site", values = 21:23, labels = GenomicOriginsScripts::loc_names) +
   guides(fill = guide_legend(nrow = 2, override.aes = list(shape = 21, size = 2.5)),
          shape = guide_legend(nrow = 2)) +
   coord_equal()  +
@@ -155,7 +154,9 @@ hypo_save(plot = p_done,
           height = GenomicOriginsScripts::f_width * .42,
           bg = "transparent",
           type = "cairo",
+          dpi = 600,
           comment = plot_comment)
+
 system("convert figures/SF9.png figures/SF9.pdf")
 # hypo_save(plot = p_done,
 #           filename = "figures/SF9.pdf",

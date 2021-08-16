@@ -90,11 +90,15 @@
     },
     "GenomicOriginsScripts": {
       "Package": "GenomicOriginsScripts",
-      "Version": "0.0.1.0",
-      "Source": "Local",
-      "RemoteType": "local",
-      "RemoteUrl": "/home/kluk/work/software/Rstuff/own_packages/GenomicOriginsScripts",
-      "Hash": "53fd058c61ac28fbc1ea2202e7677505"
+      "Version": "0.0.1.1",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "GenomicOriginsScripts",
+      "RemoteUsername": "k-hench",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "8614b3cec97804220713b23d72a3127080e02dba",
+      "Hash": "b2e92edc987383970106cef88f2267ba"
     },
     "GenomicRanges": {
       "Package": "GenomicRanges",
@@ -967,10 +971,10 @@
     },
     "matrixStats": {
       "Package": "matrixStats",
-      "Version": "0.56.0",
+      "Version": "0.60.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "d16f18aeb023d7a80c090d9458fc75a6"
+      "Hash": "915f59111573046dc425410b435ab5ed"
     },
     "mgcv": {
       "Package": "mgcv",
@@ -1114,6 +1118,18 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "ec0e5ab4e5f851f6ef32cd1d1984957f"
+    },
+    "plyranges": {
+      "Package": "plyranges",
+      "Version": "1.12.1",
+      "Source": "bioc_xgit",
+      "RemoteType": "bioc_xgit",
+      "RemoteMirror": "https://git.bioconductor.org/packages",
+      "RemoteRepo": "plyranges",
+      "RemoteRelease": "release",
+      "RemoteSha": "e3563e8e74d38a5a8f18bb85167f5a663305b5a3",
+      "RemoteBranch": "RELEASE_3_13",
+      "Hash": "eb650ca85ff20fcf77da5b55d8cc652e"
     },
     "png": {
       "Package": "png",
