@@ -48,6 +48,7 @@ These files are not tracked to minimize the repository size but the following st
 |   ├── LG24.mapmask.bed.txt.gz
 |   └── LG_M.mapmask.bed.txt.gz
 ├── plugin
+│   ├── idb_above_95.bed
 │   ├── indel_masks
 │   |   ├── indel_mask.LG01.bed.gz
 │   |   ├── ...

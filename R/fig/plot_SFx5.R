@@ -47,7 +47,7 @@ two_chr_to_sorted_pair <- function(P2, P3, ...){
   str_c(char_sorted[[1]], "-", char_sorted[[2]])
 }
 
-sorter <- read_tsv("2_analysis/dstats/species_order_tree1.txt",
+sorter <- read_tsv("ressources/species_order_tree1.txt",
                    col_names = "group")
 
 p_cap <- 8
@@ -109,7 +109,13 @@ p2 <- legend_bivariate(x = d_lim,
                 fill = Dstatistic,
                 alpha = -log10(`p-value`),
                 color = after_scale(clr_darken(fill)))) +#log10(`p-value`))) +
-  geom_jitter(data = data_signif,
+    # geom_text(data = data_signif %>% group_by(p_left,p_right) %>% count(),
+    #             aes(x = p_left,
+    #                 y = p_right,
+    #                 label = n),
+    #           size = plot_text_size / .pt,
+    #           color = "white") +
+    geom_jitter(data = data_signif,
               width = .2, height = .2,
               aes(x = p_left,
                   y = p_right,
@@ -125,7 +131,7 @@ p2 <- legend_bivariate(x = d_lim,
   scale_alpha(limits = p_lim,
               na.value = 0, guide = "none"
               ) +
-  scale_size(range = c(.1, 4),
+  scale_size(range = c(.1, 2.5),
              guide =  "none") +
   coord_equal() +
   theme_minimal(base_size = plot_text_size) +

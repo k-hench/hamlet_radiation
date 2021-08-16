@@ -12,6 +12,8 @@ data/*
 ressources/*
 !ressources/focal_outlier.tsv
 !ressources/windows_1kb.bed.gz
+!ressources/hyp_sets.txt
+!ressources/species_order_tree1.txt
 !ressources/README.md
 !ressources/img
 !ressources/other_studies/

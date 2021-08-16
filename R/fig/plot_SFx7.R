@@ -9,6 +9,9 @@ library(BAMMtools)
 library(GenomicOriginsScripts)
 library(ggplotify)
 library(patchwork)
+library(ggforce)
+library(glue)
+library(ggtext)
 
 basepath <- "ressources/Rabosky_etal_2018/"
 
@@ -69,15 +72,25 @@ clr_tree <- scico::scico(6, palette = "berlin") %>%
   prismatic::clr_desaturate(shift = .4) %>% 
   prismatic::clr_darken(shift = .2)
 
+clr_tree2 <- colorRampPalette(RColorBrewer::brewer.pal(9,"RdYlBu"))(64) %>% rev()
+
 clr_tree2 <- scales::colour_ramp(colors = RColorBrewer::brewer.pal(5,"PuOr")[c(5,4,3,2,1)])(seq(0,1,length.out = 501)) %>% 
   prismatic::clr_desaturate(shift = .2) %>% 
   prismatic::clr_lighten(shift = .2)
 
+clr_shift <- "red"
+
+css2 <- css
+css2$marg.probs["47"] <- .1
 p1 <- as.grob(function(){
   par(mar = c(0,0,0,0))
-  plot.credibleshiftset(css, logcolor = TRUE,
+  plot.credibleshiftset(css2, logcolor = TRUE,
+                        add.freq.text = FALSE,
                         border = FALSE,
-                        shiftColor = clr_tree2[[501]], lwd = 2, labels = TRUE, legend = FALSE,
+                        shiftColor = clr_shift,
+                        lwd = 2, 
+                        labels = TRUE, 
+                        legend = FALSE,
                         pal = clr_tree, cex = .5)
 })
 
@@ -93,20 +106,56 @@ cohorts(cmat, bamm_serrn,
         ofs = 0,
         use.plot.bammdata = TRUE,
         pal = clr_tree, 
-        # col = clr_tree2, 
-        cex.axis = .5)
+        col = clr_tree2, 
+        cex.axis = 0.1)
 })
 
-p_done <- (ggplot() +
-  annotation_custom(p1,xmin = -.3, ymin = -.33,xmax = 1.1,ymax = 1.04)) +
-  (ggplot() +
-     annotation_custom(p2,xmin = -.2, ymin = -.3))  &
-  plot_annotation(tag_levels = "a") &
-  coord_cartesian(xlim = c(0,1),
-                  ylim = c(0,1)) &
-  theme(plot.tag = element_text(hjust = 0),
-        panel.background = element_blank(),
-        plot.background = element_blank())
+
+(p_done <- (ggplot() +
+              geom_point(data = tibble(v = c(.056, 2.4)),
+                         x = .5, y = .5, aes(color = v),alpha = 0) +
+              scale_color_gradientn("Speciation Rate",
+                                    colours = clr_tree,
+                                    limits = c(.056, 2.4)) +
+              geom_richtext(data = tibble(x = -.05,
+                                          y = .12,
+                                          lab = glue("Posterior Frequency: {css$frequency}<br>Marginal Shift Prob.: {css$marg.probs['47']}")),
+                            aes(x = x, y = y, label = lab),
+                            size = plot_text_size_small / .pt,
+                            color = clr_shift,
+                            hjust = 0,
+                            label.size = 0,
+                            label.color = "transparent")+
+              geom_bezier0(data = tibble(x = c(.62,.5,.32), y = c(.185,.12,.12)),
+                           aes(x,y, group = 1),
+                           size = .3,
+                           color = prismatic::clr_alpha(clr_shift,.3))+
+              annotation_custom(p1,xmin = -.3, ymin = -.2,
+                                xmax = 1.1, ymax = 1.13)  +
+    (ggplot() +
+       geom_point(data = tibble(v = c(0, 1)),
+                  x = .5, y = .5, aes(color = v),alpha = 0)+
+       scale_color_gradientn("Pairwise Correlation", colours = clr_tree2, limits = c(0, 1))+
+       annotation_custom(p2, xmin = -.2, ymin = -.25,
+                         xmax = 1.2, ymax = 1.075) )  &
+    plot_annotation(tag_levels = "a") &
+    coord_cartesian(xlim = c(0,1),
+                    ylim = c(0,1)) &
+      guides(color = guide_colorbar(title.position = "top",
+                                    direction = "horizontal",
+                                    barheight = unit(3, "pt"),
+                                    barwidth = unit(100, "pt"),
+                                    ticks.colour = "white"))) &
+    theme_minimal(base_size = plot_text_size) & 
+    theme(legend.position = c(.5, -.03),
+          legend.justification = c(.5, 0),
+          legend.background = element_blank(),
+          panel.grid = element_blank(),
+          axis.title = element_blank(),
+          axis.text = element_blank(),
+          plot.tag = element_text(hjust = 0),
+          panel.background = element_blank(),
+          plot.background = element_blank()))
 
 ggsave("figures/SFx7.pdf", 
        plot = p_done, device = cairo_pdf,

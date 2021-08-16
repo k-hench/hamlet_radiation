@@ -104,11 +104,9 @@ p_1 <- data %>%
          gid_label = gid_label[gid]) %>%
   filter(Clock == "J",
          Filtered == 1,
-          gid %in% outlier_data$gid[1:9]) %>%
-  ggplot() +
-  hypoimg::geom_hypo_grob(inherit.aes = FALSE,
-                          data = annotation_grobs_tib %>% filter( gid %in% outlier_data$gid[1:9]),
-                          aes(grob = grob), x = .15,  y = .78, angle = 0, width = .35, height =.35)
+          gid %in% outlier_data$gid[1:9],
+         !(gid %in% outlier_data$gid[2])) %>%
+  ggplot()
 
 p_2 <- data %>%
   pivot_longer(names_to = "trait",
@@ -118,40 +116,41 @@ p_2 <- data %>%
          gid_label = gid_label[gid]) %>%
   filter(Clock == "J",
          Filtered == 1,
-         gid %in% outlier_data$gid[10:18]) %>%
-  ggplot() +
-  hypoimg::geom_hypo_grob(inherit.aes = FALSE,
-                          data = annotation_grobs_tib %>% filter( gid %in% outlier_data$gid[10:18]),
-                          aes(grob = grob), x = .15,  y = .78, angle = 0, width = .35, height =.35)
+         gid %in% outlier_data$gid[10:18],
+         !(gid %in% outlier_data$gid[c(13:14)])) %>%
+  ggplot() 
 
-p_done <- (p_1 + p_2 &
-  geom_pointdensity(size = plot_size,
-                  aes(x = PostMedian,y = p_wald)) &
-  facet_grid(gid ~ trait, scales = "free_y"
-             ) &
-  scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x))) &
-  scale_y_continuous(trans = reverselog_trans(10), #limits = c(10^0, 10^-90),
-                     labels = scales::trans_format("log10", scales::math_format(10^.x))) &
-  scale_color_viridis_c("Density",  option = "B", limits = c(0,750)#, limits = c(0,1100)
-                        ) &
-  labs(y = "G x P *p* value <sub>Wald</sub>",
-       x  = "Derived allele age (generations)") &
-  guides(color = guide_colorbar(title.position = "top",
-                                barwidth = unit(.8, "npc"),
-                                barheight = unit(3, "pt"))) &
-  theme_minimal() &
-  theme(text = element_text(size = plot_text_size),
-        axis.title.y = element_markdown(),
-        legend.position = "bottom",
-        plot.subtitle = element_markdown(),
-        axis.line = element_line(colour = base_line_clr,
-                                 size = base_lwd), 
-        strip.background = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(size = plot_lwd)))/
-  guide_area() +
-  plot_layout(heights = c(1,.1),
-              guides = "collect")
+complete_p <- function(p){
+  p +
+    geom_pointdensity(size = plot_size,
+                      aes(x = PostMedian,y = p_wald)) +
+    facet_grid(gid ~ trait, scales = "free_y"
+    ) +
+    scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+    scale_y_continuous(trans = reverselog_trans(10), #limits = c(10^0, 10^-90),
+                       labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+    scale_color_viridis_c("Density",  option = "B", limits = c(0,750)#, limits = c(0,1100)
+    ) +
+    labs(y = "G x P *p* value <sub>Wald</sub>",
+         x  = "Derived allele age (generations)") +
+    guides(color = guide_colorbar(title.position = "top",
+                                  barwidth = unit(.4, "npc"),
+                                  barheight = unit(3, "pt"))) +
+    theme_minimal() +
+    theme(text = element_text(size = plot_text_size),
+          axis.title.y = element_markdown(),
+          legend.position = "bottom",
+          plot.subtitle = element_markdown(),
+          axis.line = element_line(colour = base_line_clr,
+                                   size = base_lwd), 
+          strip.background = element_blank(), 
+          panel.grid.minor = element_blank(),
+          panel.grid.major = element_line(size = plot_lwd))
+}
+
+p_done <- cowplot::plot_grid( complete_p(p_1) +
+                      theme(legend.position = "none"),
+                    complete_p(p_2) + theme(legend.box.margin = unit(c(7,0,7,0),"pt")))
 
 hypo_save(plot = p_done,
           filename = "figures/SFx4_v2.pdf",
