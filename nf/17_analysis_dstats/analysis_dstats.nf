@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 // ----------------------- DISCLAIMER ----------------------
-// this pipeline was not actually run using nexflow,
+// this pipeline was not actually run using nextflow,
 // but managed manually
 // ---------------------------------------------------------
 
@@ -85,7 +85,7 @@ process run_dtrios {
 
 // git 17.7
 // Extract significant Dmin, BBAA trios
-process run_holm {
+process run_correction {
 	publishDir "../../2_analysis/dstats/", mode: 'copy'
 
 	input:
