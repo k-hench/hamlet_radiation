@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 // ----------------------- DISCLAIMER ----------------------
-// this pipeline was not actually run using nexflow,
+// this pipeline was not actually run using nextflow,
 // but managed manually
 // ---------------------------------------------------------
 

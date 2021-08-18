@@ -205,17 +205,60 @@ plot_ibd_gw <- function(n_zeros, y_lim = c(0, 4), filtmode = "direct"){
 #   write_tsv(glue::glue("ressources/plugin/idb_above_{as.integer(perc_cutoff*100)}.bed"))
 # 
 
+data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_direct_10.segments.tsv"),
+                         delim = "\t", col_types = "cccciidcdci") %>%
+  left_join(hypogen::hypo_chrom_start) %>%
+  mutate(start = POS * 10^6,
+         end = start + (LENGTH * 10^6),
+         gstart = GSTART + start,
+         gend = start + (LENGTH * 10^6),
+         ibd_hplo = str_remove(TYPE,"IBD") %>%
+           as.integer())
+
+data_compact <- data_seg %>%
+  dplyr::select(seqnames = CHROM,start,end,gstart,GSTART,TYPE,ibd_hplo,ID1,ID2) %>%
+  arrange(gstart) %>%
+  dplyr::select(-gstart) %>%
+  as_granges() %>%
+  GenomicRanges::coverage(weight = "ibd_hplo") %>%
+  plyranges::as_ranges() %>%
+  as_tibble() %>%
+  dplyr::select(CHROM = seqnames, start, end, width, score) %>%
+  left_join(hypogen::hypo_chrom_start) %>%
+  mutate(gstart = GSTART + start, gend = GSTART + end) %>%
+  dplyr::select(CHROM, gstart, gend, score)
+
+total_cov_lenght <- data_compact %>%
+  mutate(length = gend-gstart) %>% .$length %>% sum()
+
+data_sorted <- data_compact %>%
+  mutate(length = gend-gstart) %>%
+  group_by(score) %>%
+  summarise(length = sum(length)) %>%
+  ungroup() %>%
+  mutate(length = if_else(score == 0,
+                          length + hypo_karyotype$GEND[24]-total_cov_lenght, # attach uncovered chrom ends
+                          length),
+         gend = cumsum(length),
+         gstart = lag(gend,default = 0))
+
+perc_cutoff <- .95
+
+perc_score <- data_sorted %>%
+  filter(gstart < hypo_karyotype$GEND[24] * perc_cutoff,
+         gend > hypo_karyotype$GEND[24] * perc_cutoff) %>%
+  .$score
 
 plts <- c(c(5,8,6) %>% map(plot_network),
           c(5,8,6) %>% map(plot_network, filtmode = "bed95") %>% map(.f = function(p){ p + theme(axis.title.y = element_blank())}),
-          c(5,8,6) %>% map2(.y = list(c(0,25),
-                                      c(0,25),
-                                      c(0,25)),
+          c(5,8,6) %>% map2(.y = list(c(0,26), # .55),
+                                      c(0,26), # 4),
+                                      c(0,26)),
                             plot_ibd_gw,  filtmode = "direct"
-                            ))
+          ))
 
 p_done <- (plts[[1]] + plts[[4]] + plts[[7]] + 
-             plts[[2]] + plts[[5]] + plts[[8]] + 
+             plts[[2]] + plts[[5]] + plts[[8]] + geom_hline(yintercept = perc_score * hap_to_perc, color = "#11C269", size = .3, alpha = .7) + 
              plts[[3]] + plts[[6]] + plts[[9]] + 
              plot_layout(ncol = 3,
                          widths = c(.3,.3, 1)))/ 

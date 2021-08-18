@@ -84,12 +84,18 @@ process run_dtrios {
 }
 
 // git 17.7
+// load predefined species order
+Channel
+	.fromPath("../../ressources/species_order_alpha.txt")
+	.set{ spec_order_ch }
+
+// git 17.8
 // Extract significant Dmin, BBAA trios
 process run_correction {
 	publishDir "../../2_analysis/dstats/", mode: 'copy'
 
 	input:
-	set file( vcf ), file( sets ) from dtrios_results_ch
+	set file( vcf ), file( sets ), file( spec_order) from dtrios_results_ch.combine( spec_order_ch )
 
 	output:
 	set file( "BBAA_sign_ld05.csv" ), file( "Dmin_sign_ld05.csv" ) into dtrios_signif_ch

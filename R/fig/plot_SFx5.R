@@ -137,7 +137,7 @@ p_done <- (p1 <- data_full %>%
               width = .2, height = .2,
               aes(x = p_left,
                   y = p_right,
-                  size = -holm,
+                  size = -p_adjusted,
                   fill = Dstatistic,
                   color = after_scale(clr_darken(fill))),
               shape = 21, alpha = .5) +
