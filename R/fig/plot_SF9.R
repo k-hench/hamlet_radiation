@@ -64,9 +64,7 @@ p_tree <- (open_tree(
                             clade2spec[as.character(clade)])), size = .25) %>%
     ggtree::rotate(200), 180))  +
   # geom_tippoint(size = .2) + 
-  geom_tiplab2(aes(color = lab2spec(label), 
-                   label = str_sub(
-                     label, -6, -1)),
+  geom_tiplab2(aes(color = lab2spec(label), label = str_sub(label, -6, -1)),
   size = GenomicOriginsScripts::plot_text_size_small / ggplot2:::.pt  *.6,#2.5, 
   hjust = -.1)+
   ggtree::geom_treescale(width = .002,
@@ -118,16 +116,18 @@ data_ibd <- read_tsv(ibd_file) %>%
 set.seed(42)
 p2 <- data_ibd %>% 
   as_tbl_graph() %>%
-  mutate(spec = str_sub(name,-6,-4),
-         loc = str_sub(name,-3,-1))  %>% 
+  mutate(spec = str_sub(name, -6, -4),
+         loc = str_sub(name, -3, -1))  %>% 
   ggraph( layout = 'fr', weights = ibd_total) +
-  geom_edge_link(aes(alpha = ibd_total), color = rgb(.1,.1,.1), edge_width = .15) +
+  geom_edge_link(aes(alpha = ibd_total, edge_width = ibd_total), color = rgb(.1,.1,.1)) +
   geom_node_point(aes(fill = spec,
                       shape = loc, color = after_scale(clr_darken(fill,.3))), size = 1.2) +
   scale_fill_manual("Species", values = GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))],
                     labels = GenomicOriginsScripts::sp_labs)+
   scale_edge_alpha_continuous(#limits = c(0,.1),
     range = c(0,1), guide = "none") +
+  scale_edge_width_continuous(#limits = c(0,.1),
+    range = c(.1, .4), guide = "none") +
   scale_shape_manual("Site", values = 21:23, labels = GenomicOriginsScripts::loc_names) +
   guides(fill = guide_legend(nrow = 2, override.aes = list(shape = 21, size = 2.5)),
          shape = guide_legend(nrow = 2)) +
