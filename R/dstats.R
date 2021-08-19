@@ -38,6 +38,8 @@ bbaa <- read_tsv(paste("hyp_", dataset, "_dtrios_BBAA.txt", sep ="")) %>%
   rename(p_adjusted = `correction`)
 print(bbaa, n=20)
 
+write_delim(bbaa, paste("BBAA_", dataset, ".csv", sep = ""), delim = "\t")
+
 # Filter by significant excess allele sharing
 bbaa_sign <- bbaa %>%
   filter(p_adjusted < 0.05)

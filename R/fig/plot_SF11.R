@@ -1,72 +1,57 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF11.R 2_analysis/raxml/lg04.1_155N.raxml.support \
-#    2_analysis/raxml/lg12.3_155N.raxml.support \
-#    2_analysis/raxml/lg12.4_155N.raxml.support
+# Rscript --vanilla R/fig/plot_SF4.R 2_analysis/newhyb/nh_input/NH.Results/
 # ===============================================================
-# This script produces Suppl. Figure 11 of the study "Ancestral variation,
+# This script produces Suppl. Figure 4 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("2_analysis/raxml/lg04.1_155N.raxml.support",
-#           "2_analysis/raxml/lg12.3_155N.raxml.support",
-#           "2_analysis/raxml/lg12.4_155N.raxml.support")
-# script_name <- "R/fig/plot_SF11.R"
-args <- commandArgs(trailingOnly = FALSE)
+# args <- c("2_analysis/newhyb/nh_input/NH.Results/")
+# script_name <- "R/fig/plot_SF4.R"
+args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
+library(prismatic)
+library(paletteer)
+library(patchwork)
+library(ggtext)
 library(hypoimg)
 library(hypogen)
-library(ape)
-library(ggtree)
-library(patchwork)
-
 cat('\n')
 script_name <- args[5] %>%
-  str_remove(., '--file=')
+  str_remove(.,'--file=')
 
 plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
+  str_c('mother-script = ',getwd(),'/',.)
 
-args <- process_input(script_name, args)
+cli::rule( left = str_c(crayon::bold('Script: '),crayon::red(script_name)))
+args = args[7:length(args)]
+cat(' ')
+cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
+cli::rule(right = getwd())
 
 # config -----------------------
-tree_file_lg04_1 <- as.character(args[1])
-tree_file_lg12_3 <- as.character(args[2])
-tree_file_lg12_4 <- as.character(args[3])
+base_dir <- as.character(args[1])
 
-trees <- c(tree_file_lg04_1, tree_file_lg12_3, tree_file_lg12_4) %>% 
-  map(.f = function(file){
-    read.tree(file) %>%
-      root(phy = ., outgroup = "PL17_160floflo")}
-  )
+# locate hybridization data files
+folders <- dir(base_dir)
 
-clr_neutral <- rgb(.6, .6, .6)
-lyout <- 'circular'
+# load data and create plots by location
+p_loc <- c("bel", "hon", "pan") %>%
+  map(plot_loc)
 
-tree_data <- trees %>% 
-  map(.f = function(tree_in){
-    open_tree(ggtree(tree_in, layout = lyout), 180) %>%
-      .$data %>% 
-      mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
-             support = as.numeric(label),
-             support_class = cut(support, c(0,50,70,90,100)) %>% 
-               as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))
-      )}
-  )
+# compose figure from the individual panels
+p_done <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) +
+  (p_loc[[2]] + theme_hyb() ) +
+  (p_loc[[3]] + theme_hyb() )  +
+  plot_layout(ncol = 1, heights = c(10,15,3) %>% label_spacer())+
+  plot_annotation(tag_levels = 'a')
 
-p1 <- plot_outl_tree(tree_data[[1]])
-p2 <- plot_outl_tree(tree_data[[2]], show_legend = FALSE)
-p3 <- plot_outl_tree(tree_data[[3]], show_legend = FALSE)
-
-p_done <- p1 + p2 + p3 + plot_annotation(tag_levels = 'a') + plot_layout(ncol = 1)
-
-scl <- 2
-hypo_save(plot = p_done,
-          filename = "figures/SF11.pdf",
-          width = f_width_half * scl,
-          height = f_width_half * 1.5 * scl,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
+# export the final figure
+hypo_save(filename = "figures/SF4.pdf",
+       plot = p_done,
+       height = 16,
+       width = 10,
+       device = cairo_pdf,
+       comment = plot_comment)

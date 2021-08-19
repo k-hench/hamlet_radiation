@@ -1,65 +1,72 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF14.R 2_analysis/GxP/50000/
+# Rscript --vanilla R/fig/plot_SF11.R 2_analysis/raxml/lg04.1_155N.raxml.support \
+#    2_analysis/raxml/lg12.3_155N.raxml.support \
+#    2_analysis/raxml/lg12.4_155N.raxml.support
 # ===============================================================
-# This script produces Suppl. Figure 14 of the study "Ancestral variation,
+# This script produces Suppl. Figure 11 of the study "Ancestral variation,
 # hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/GxP/50000/')
-# script_name <- "R/fig/plot_SF14.R"
+# args <- c("2_analysis/raxml/lg04.1_155N.raxml.support",
+#           "2_analysis/raxml/lg12.3_155N.raxml.support",
+#           "2_analysis/raxml/lg12.4_155N.raxml.support")
+# script_name <- "R/fig/plot_SF11.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
+library(ape)
+library(ggtree)
+library(patchwork)
 
 cat('\n')
 script_name <- args[5] %>%
-  str_remove(.,'--file=')
+  str_remove(., '--file=')
 
 plot_comment <- script_name %>%
-  str_c('mother-script = ',getwd(),'/',.)
+  str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
+
 # config -----------------------
-gxp_path <- as.character(args[1])
+tree_file_lg04_1 <- as.character(args[1])
+tree_file_lg12_3 <- as.character(args[2])
+tree_file_lg12_4 <- as.character(args[3])
 
-# configure which gxp data to load
-trait_tib  <- tibble(file = dir(gxp_path) %>% .[str_detect(.,"Bars|Peduncle|Snout")]) %>%
-  mutate(prep = file) %>%
-  separate(prep , into = c("trait", "model_type", "win", "step", "filetype", "zip"),
-           sep = "\\.") %>%
-  select(file, trait, model_type) %>%
-  mutate(path = gxp_path)
+trees <- c(tree_file_lg04_1, tree_file_lg12_3, tree_file_lg12_4) %>% 
+  map(.f = function(file){
+    read.tree(file) %>%
+      root(phy = ., outgroup = "PL17_160floflo")}
+  )
 
-# load gxp data
-data <- pmap_dfr(trait_tib,get_gxp_both_models)
+clr_neutral <- rgb(.6, .6, .6)
+lyout <- 'circular'
 
-# compose final figure
-p_done <- data %>%
-  ggplot(aes(x = gpos, y = AVG_p_wald))+
-  # add gray/white LGs background
-  geom_hypo_LG()+
-  # add gxp data points
-  geom_point(color = plot_clr, size = .3)+
-  # set axis layout
-  scale_x_hypo_LG()+
-  scale_fill_hypo_LG_bg()+
-  # set axis titles
-  labs(y = expression(G~x~P~(average~italic(p)[wald])))+
-  # general plot structure separated by model type and trait
-  facet_grid(trait+model_type ~ ., scales = "free_y")+
-  # general plot layout
-  theme_hypo()
+tree_data <- trees %>% 
+  map(.f = function(tree_in){
+    open_tree(ggtree(tree_in, layout = lyout), 180) %>%
+      .$data %>% 
+      mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
+             support = as.numeric(label),
+             support_class = cut(support, c(0,50,70,90,100)) %>% 
+               as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))
+      )}
+  )
 
-# export final figure
-hypo_save(filename = "figures/SF14.png",
-       plot = p_done,
-       width = 11,
-       height = 7,
-       dpi = 600,
-       type = "cairo",
-       comment = plot_comment)
-  
+p1 <- plot_outl_tree(tree_data[[1]])
+p2 <- plot_outl_tree(tree_data[[2]], show_legend = FALSE)
+p3 <- plot_outl_tree(tree_data[[3]], show_legend = FALSE)
+
+p_done <- p1 + p2 + p3 + plot_annotation(tag_levels = 'a') + plot_layout(ncol = 1)
+
+scl <- 2
+hypo_save(plot = p_done,
+          filename = "figures/SF11.pdf",
+          width = f_width_half * scl,
+          height = f_width_half * 1.5 * scl,
+          device = cairo_pdf,
+          bg = "transparent",
+          comment = plot_comment)

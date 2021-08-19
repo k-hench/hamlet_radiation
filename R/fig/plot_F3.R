@@ -1,22 +1,26 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F3.R \
-#    2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_F2.R \
+#    2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
+#    2_analysis/msmc/setup/msmc_grouping.txt 2_analysis/msmc/setup/msmc_cc_grouping.txt \
+#    2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 3 of the study "Ancestral variation, hybridization and modularity
+# This script produces Figure 2 of the study "Ancestral variation, hybridization and modularity
 # fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_F3.R"
+# args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
+# '2_analysis/msmc/setup/msmc_grouping.txt', '2_analysis/msmc/setup/msmc_cc_grouping.txt',
+# '2_analysis/summaries/fst_globals.txt')
+# script_name <- "R/fig/plot_F2.R"
+# ----------------------------------------
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
-library(ggforce)
 library(hypoimg)
 library(hypogen)
-library(vroom)
-
+library(patchwork)
+# plot_text_size <- 8
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -26,159 +30,149 @@ plot_comment <- script_name %>%
 
 args <- process_input(script_name, args)
 # config -----------------------
-data_dir <- as.character(args[1])
-globals_file <- as.character(args[2])
-# script -----------------------
+msmc_path <- as.character(args[1])
+cc_path <- as.character(args[2])
+msmc_group_file <- as.character(args[3])
+cc_group_file <- as.character(args[4])
+fst_globals_file <- as.character(args[5])
 
-# locate data files
-files <- dir(path = data_dir, pattern = '.50k.windowed.weir.fst.gz')
+# actual script =========================================================
+msmc_groups <- read_tsv(msmc_group_file)
+cc_groups <- read_tsv(cc_group_file)
+fst_globals <- vroom::vroom(fst_globals_file,delim = '\t',
+                            col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
+  separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
+  mutate(run = str_c(pop1,loc,'-',pop2,loc),
+         run = fct_reorder(run,weighted_fst))
 
-# load genome wide average fst data
-globals <- vroom::vroom(globals_file, delim = '\t',
-                        col_names = c('loc','run','mean','weighted')) %>%
-  mutate(run = str_c(loc,'-',run) %>%
-           reformat_run_name()
-  )
+# locate cross-coalescence results
+msmc_files <- dir(msmc_path, pattern = '.final.txt.gz')
+cc_files <- dir(cc_path, pattern = '.final.txt.gz')
 
-# prepare data import settings within a data table (tibble)
-import_table <- list(file = str_c(data_dir,files),
-                     fst_threshold = c(.5,.4,.3,.2,.1,.05,.02,.01)) %>%
-  cross_df() %>%
-  mutate( run =  file %>%
-            str_remove('^.*/') %>%
-            str_sub(.,1,11) %>%
-            reformat_run_name())
+# import effective population size data
+msmc_data <- msmc_files %>%
+  map_dfr(.f = get_msmc, msmc_path = msmc_path)
 
-# import dxy data and compute threshold stats
-get_fst_fixed <- function(file, run, fst_threshold,...){
+# import cross-coalescence data
+cc_data <- cc_files %>%
+  map_dfr(get_cc, cc_groups = cc_groups, cc_path = cc_path) %>%
+  mutate( run = factor(run, levels = levels(fst_globals$run)))
 
-  data <- hypogen::hypo_import_windows(file, ...) %>%
-    mutate(rank = rank(WEIGHTED_FST, ties.method = "random"))%>%
-    mutate(thresh = fst_threshold) %>%
-    mutate(outl = (WEIGHTED_FST > thresh) %>% as.numeric()) %>%
-    filter(outl == 1 )
+# color adjustments for line plots (replace white by gray)
+clr_alt <- clr
+clr_alt['uni'] <- rgb(.8,.8,.8)
+clr_ticks <- 'lightgray'
 
-  if(nrow(data) == 0){
-    return(tibble(run = run, n = 0, avg_length = NA, med_length = NA, min_length = NA, max_length = NA,
-                  sd_length = NA, overal_length = NA, threshold_value = fst_threshold))
-  } else {
-    data %>%
-      # next, we want to collapse overlapping windows
-      group_by(CHROM) %>%
-      # we check for overlap and create 'region' IDs
-      mutate(check = 1-(lag(BIN_END,default = 0)>BIN_START),
-                    ID = str_c(CHROM,'_',cumsum(check))) %>%
-      ungroup() %>%
-      # then we collapse the regions by ID
-      group_by(ID) %>%
-      summarise(run = run[1],
-                       run = run[1],
-                       treshold_value = thresh[1],
-                       CHROM = CHROM[1],
-                       BIN_START = min(BIN_START),
-                       BIN_END = max(BIN_END)) %>%
-      mutate(PEAK_SIZE = BIN_END-BIN_START) %>%
-      summarize(run = run[1],
-                       run = run[1],
-                       n = length(ID),
-                       avg_length = mean(PEAK_SIZE),
-                       med_length = median(PEAK_SIZE),
-                       min_length = min(PEAK_SIZE),
-                       max_length = max(PEAK_SIZE),
-                       sd_length = sd(PEAK_SIZE),
-                       overal_length = sum(PEAK_SIZE),
-                       threshold_value = treshold_value[1])
-  }
-}
-
-# load data and compute statistics based on fixed fst threshold
-data <- purrr::pmap_dfr(import_table, get_fst_fixed) %>%
-  left_join(globals) %>%
-  mutate(run = fct_reorder(run, weighted))
-
-# pre-format labels
-data2 <- data %>%
-  select(threshold_value,weighted,n,avg_length,overal_length) %>%
-  mutate(avg_length = avg_length/1000,
-         overal_length = overal_length/(10^6)) %>%
-  rename(`atop(Number~of,Regions)` = 'n',
-         `atop(Average~Region,Length~(kb))` = 'avg_length',
-         `atop(Cum.~Region,Length~(Mb))` = 'overal_length') %>%
-  pivot_longer(names_to = 'variable',values_to = 'Value',3:5) %>%
-  mutate(threshold_value = str_c('italic(F[ST])~threshold:~',
-                                 threshold_value),
-         variable = factor(variable, levels = c('atop(Number~of,Regions)',
-                                                'atop(Average~Region,Length~(kb))',
-                                                'atop(Cum.~Region,Length~(Mb))')))
-
-# set font size
-base_line_clr <- "black"
-
-# compile plot
-p_done <- data2 %>%
-  # select thresholds of interest
-  filter(!(threshold_value %in% (c(0.02,.1,0.2, 0.3, .4) %>%
-                                   str_c("italic(F[ST])~threshold:~",.)))) %>%
-  ggplot(aes(x = weighted, y = Value#, fill = weighted
-             )
-         )+
-  # add red line for genome extent in lowest row
-  geom_hline(data = tibble(variable = factor(c('atop(Cum.~Region,Length~(Mb))',
-                                               'atop(Average~Region,Length~(kb))',
-                                               'atop(Number~of,Regions)'),
-                                             levels = c('atop(Number~of,Regions)',
-                                                        'atop(Average~Region,Length~(kb))',
-                                                        'atop(Cum.~Region,Length~(Mb))')),
-                           y = c(559649677/(10^6),NA,NA)),
-             aes(yintercept = y),
-             color = rgb(1,0,0,.25))+
-  # add data points
-  geom_point(size = plot_size,
-             color = plot_clr#, shape = 21
-             )+
-  # define plot stucture
-  facet_grid(variable~threshold_value,
-             scale='free',
-             switch = 'y',
-             labeller = label_parsed)+
-  # configure scales
-  # scale_fill_gradientn(name = expression(weighted~italic(F[ST])),
-  #                      colours = hypogen::hypo_clr_LGs[1:24] %>% clr_lighten(factor = .3))+
-  scale_x_continuous(name = expression(Whole-genome~differentiation~(weighted~italic(F[ST]))),
-                     breaks = c(0,.05,.1),
-                     limits = c(-.00025,.10025),
-                     labels = c("0", "0.05", "0.1"))+
-  # configure legend
-  guides(fill = guide_colorbar(barwidth = unit(150, "pt"),
-                               label.position = "top",
-                               barheight = unit(5,"pt")))+
-  # tweak plot apperance
+p_msmc <- msmc_data %>%
+  # remove the two first and last time segments
+  filter(!time_index %in% c(0:2,29:31)) %>%
+  ggplot( aes(x=YBP, y=Ne, group = run_nr, colour = spec)) +
+  # add guides for the logarithmic axes
+  annotation_logticks(sides="tl", color = clr_ticks, size = plot_lwd) +
+  # add the msmc data as lines
+  geom_line(size = .3)+
+  # set the color scheme
+  scale_color_manual(NULL,
+                     values = clr_alt, label = sp_labs) +
+  # format the x axis
+  scale_x_log10(expand = c(0,0),
+                breaks = c(10^3, 10^4, 10^5),
+                position = 'top',
+                labels = scales::trans_format("log10", scales::math_format(10^.x))
+                #labels = c("1-3 kya", "10-30 kya", "100-300 kya"),
+                #name = "Years Before Present"
+                ) +
+  # format the y axis
+  scale_y_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
+                breaks = c(10^3,10^4,10^5,10^6)) +
+  # format the color legend
+  guides(colour = guide_legend(title.position = "top",
+                               override.aes = list(alpha = 1, size=1),
+                               nrow = 3,
+                               keywidth = unit(7, "pt"),
+                               byrow = TRUE)) +
+  # set the axis titles
+  labs(x = "Generations Before Present",
+       y = expression(Effective~Population~Size~(italic(N[e])))) +
+  # set plot range
+  coord_cartesian(xlim = c(250, 5*10^5)) +
+  # tune plot appreance
   theme_minimal()+
-  theme(axis.text = element_text(size = plot_text_size_small,
-                                 color = rgb(.6,.6,.6)),
-        axis.title.y = element_blank(),
-        axis.text.x = element_text(vjust = .5, angle = 0),
-        axis.title.x = element_text(vjust = -2),
-        panel.background = element_rect(fill = rgb(.95,.95,.95,.5),
-                                        color = rgb(.9,.9,.9,.5),
-                                        size = .3),
-        panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(size = plot_lwd),
-        legend.position = "bottom",
-        strip.text = element_text(size = plot_text_size),
-        legend.direction = "horizontal",
-        strip.placement = 'outside',
-        axis.title = element_text(size = plot_text_size),
-        legend.title = element_text(size = plot_text_size),
-        strip.background.y = element_blank(),
-        plot.background = element_blank())
+  theme(text = element_text(size = plot_text_size),
+        axis.ticks = element_line(colour = clr_ticks),
+        legend.position = c(1.05,-.175),
+        legend.justification = c(1,0),
+        legend.text.align = 0,
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        title = element_text(face = 'bold'),
+        legend.spacing.y = unit(-5,"pt"),
+        legend.spacing.x = unit(3, "pt"),
+        axis.title = element_text(face = 'plain'),
+    #   axis.text.x = element_blank(),
+#        axis.title.x = element_blank(),
+        legend.title = element_text(face = 'plain'))
 
-# export figure 3
-hypo_save(filename = 'figures/F3.pdf',
-          plot = p_done,
-          width = f_width,
-          height = .5 * f_width,
-          device = cairo_pdf,
+p_cc <- cc_data %>%
+  # remove the two first and last time segments
+  filter( !time_index %in% c(0:2,29:31)) %>%
+  arrange(run_nr) %>%
+  # attach fst data
+  left_join(fst_globals %>%
+              select(run, weighted_fst)) %>%
+  ggplot(aes(x = YBP, y = Cross_coal, group = run_nr, color = weighted_fst)) +
+  # add guides for the logarithmic axis
+  annotation_logticks(sides="b", color = clr_ticks, size = plot_lwd) +
+  # add the msmc data as lines
+  geom_line(alpha = 0.2, size = .3)+
+  # set the color scheme
+  scale_color_gradientn(name = expression(Global~weighted~italic(F[ST])),
+                        colours = hypogen::hypo_clr_LGs[1:24])+
+  # format the x axis
+  scale_x_log10(expand = c(0,0),
+                labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+  # set the axis titles
+  guides(color = guide_colorbar(barheight = unit(3, 'pt'),
+                                barwidth = unit(110, 'pt'),
+                                title.position = 'top'
+  )) +
+  # set the axis titles
+  labs(x = "Generations Before Present",
+       y = 'Cross-coalescence Rate') +
+  # set plot range
+  coord_cartesian(xlim = c(250, 5*10^5)) +
+  # tune plot appreance
+  theme_minimal()+
+  theme(text = element_text(size = plot_text_size),
+        axis.ticks = element_line(colour = clr_ticks),
+        legend.position = c(1,.03),
+        legend.direction = 'horizontal',
+        legend.justification = c(1,0),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        title = element_text(face = 'bold'),
+        axis.title = element_text(face = 'plain'),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        legend.title = element_text(face = 'plain'))
+
+# combine panels a and b
+p_done <- p_msmc / 
+  p_cc  +
+  plot_annotation(tag_levels = c('a')) & 
+  theme(#legend.position = "bottom", 
+    legend.text = element_text(size = plot_text_size_small),
+    legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"),
+    panel.grid.major = element_line(size = plot_lwd),
+    axis.ticks.x = element_blank(),
+    panel.background = element_blank(),
+    plot.background = element_blank())
+
+# export figure 2
+hypo_save(plot = p_done, filename = 'figures/F2.pdf',
+          width = f_width_half,
+          height = f_width_half * .95,
           comment = plot_comment,
-          bg = "transparent")
-    
+          bg = "transparent",
+          device = cairo_pdf)
+

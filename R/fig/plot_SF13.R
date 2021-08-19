@@ -1,184 +1,286 @@
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF13.R 2_analysis/admixture/ metadata/phenotypes.sc
-# ===============================================================
-# This script produces Suppl. Figure 13 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
-# script_name <- "R/fig/plot_SF13.R"
-args <- commandArgs(trailingOnly=FALSE)
-# setup -----------------------
-library(paletteer)
-library(patchwork)
 library(GenomicOriginsScripts)
-library(hypoimg)
+library(tidygraph)
+library(ggraph)
+library(prismatic)
+library(patchwork)
+library(IRanges)
+library(plyranges)
 library(hypogen)
-library(ggtext)
 
-cat('\n')
-script_name <- args[5] %>%
-  str_remove(.,'--file=')
+outlier_regions <- read_tsv("2_analysis/summaries/fst_outliers_998.tsv")
 
-plot_comment <- script_name %>%
-  str_c('mother-script = ',getwd(),'/',.)
+hap_to_perc <- 100 / (166 * 165)
+iterations <- c(str_c("2/5*10^",6:3," BP"),"25/10 kb","10/5 kb","7-5/3 kb","15/7.5 kb")
+itteration_names <-   c(str_c("10-",6:3),"7","8","9","10")
 
-cli::rule( left = str_c(crayon::bold('Script: '),crayon::red(script_name)))
-args = args[7:length(args)]
-cat(' ')
-cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
-cli::rule(right = getwd())
+plot_network <- function(n_zeros, filtmode = "direct", filt = 0){
+  clr2 <- GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))]
+  clr2["uni"] <- rgb(.9,.9,.9)
+  
+  data <- read_tsv(glue::glue("2_analysis/ibd/no_outgr_{filtmode}_{itteration_names[n_zeros]}.ibd.tsv")) %>% 
+    mutate(ibd_total = (IBD2 + 0.5*IBD1) / (IBD0 + IBD1 + IBD2)) 
+  
+  set.seed(42)
+  
+  data %>% 
+    as_tbl_graph() %E>%
+    filter(ibd_total > filt) %N>%
+    mutate(spec = str_sub(name,-6,-4),
+           loc = str_sub(name,-3,-1))  %>% 
+    ggraph( layout = 'fr', weights = ibd_total) +
+    geom_edge_link(aes(alpha = ibd_total), color = rgb(.1,.1,.1), edge_width = .15) +
+    geom_node_point(aes(fill = spec,
+                        shape = loc, color = after_scale(clr_darken(fill,.3))), size = .7) +
+    labs(y = glue::glue("Seq. Length: {iterations[n_zeros]}")) +
+    scale_fill_manual("Species", values = GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))],
+                      labels = GenomicOriginsScripts::sp_labs)+
+    scale_edge_alpha_continuous(#limits = c(0,.1),
+                                range = c(0,1), guide = "none") +
+    scale_shape_manual("Site", values = 21:23, labels = GenomicOriginsScripts::loc_names) +
+    guides(fill = guide_legend(nrow = 2, override.aes = list(shape = 21, size = 2.5)),
+           shape = guide_legend(nrow = 2)) +
+    coord_equal()  +
+    theme(panel.background = element_blank(),
+          axis.title.y = element_text())
+}
 
-# config -----------------------
-admx_path <- as.character(args[1])
-pheno_file <- as.character(args[2])
+plot_ibd_gw <- function(n_zeros, y_lim = c(0, 4), filtmode = "direct"){
+  data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_{filtmode}_{itteration_names[n_zeros]}.segments.tsv"), delim = "\t", col_types = "cccciidcdci") %>% 
+    left_join(hypogen::hypo_chrom_start) %>% 
+    mutate(start = POS * 10^6,
+           end = start + (LENGTH * 10^6),
+           gstart = GSTART + start,
+           gend = start + (LENGTH * 10^6),
+           ibd_hplo = str_remove(TYPE,"IBD") %>%
+             as.integer())
+  data_seg %>%
+    dplyr::select(seqnames = CHROM,start,end,gstart,GSTART,TYPE,ibd_hplo,ID1,ID2) %>%
+    arrange(gstart) %>% 
+    dplyr::select(-gstart) %>% 
+    as_granges() %>% 
+    GenomicRanges::coverage(weight = "ibd_hplo") %>% 
+    plyranges::as_ranges() %>% 
+    as_tibble() %>% 
+    dplyr::select(CHROM = seqnames, start, end, width, score) %>% 
+    left_join(hypogen::hypo_chrom_start) %>% 
+    mutate(gstart = GSTART + start, gend = GSTART + end) %>% 
+    dplyr::select(CHROM, gstart, gend, score) %>% 
+    pivot_longer(gstart:gend,values_to = "GPOS", names_to = "PART") %>% 
+    ggplot() +
+    geom_hypo_LG() +
+    geom_vline(data = outlier_regions, aes(xintercept = gpos), color = rgb(1,0,0,.2), size = .3) +
+    geom_step(aes(x = GPOS, y = score * hap_to_perc, group = CHROM), color = rgb(.3,.3,.3), size = .3) +
+    geom_ribbon(aes(x = GPOS, ymin = 0, ymax = score * hap_to_perc, group = CHROM), fill = rgb(0,0,0,.5)) +
+    scale_hypobg_manual(values = c("transparent",rgb(.9,.9,.9,.9),"red","blue") %>%
+                          set_names(nm = c("even", "odd", "a","b")), guide = "none")+
+    scale_x_hypo_LG() +
+    labs(y = "IBD Score") +
+    coord_cartesian(ylim = y_lim, expand = 0) +
+    theme_hypo()
+}
 
-# load outlier window IDs (crop from admixture result file names)
-gids <- dir(admx_path,
-            pattern = "pop.*15.txt") %>%
-  str_remove("pop.") %>%
-  str_remove(".15.txt")
+# plts <- c(c(5,8,6) %>% map(plot_network),
+#           c(5,8,6) %>% map2(.y = list(c(0,26),
+#                                       c(0,26),
+#                                       c(0,26)),
+#                             plot_ibd_gw))
+# 
+# p_done <- (plts[[1]] + plts[[4]] + 
+#              plts[[2]] + plts[[5]] + 
+#              plts[[3]] + plts[[6]] + 
+#              plot_layout(ncol = 2,
+#                          widths = c(.25, 1)))/ 
+#   guide_area() +
+#   plot_annotation(tag_levels = "a") +
+#   plot_layout(heights = c(1, .07),
+#               guides = "collect") &
+#   theme(text = element_text(size = plot_text_size),
+#         plot.tag.position = c(0, 1),
+#         legend.position = "bottom",
+#         legend.key = element_blank(),
+#         legend.direction = "horizontal",
+#         legend.background = element_blank(),
+#         legend.box = "horizontal", 
+#         legend.text.align = 0)
+# 
+# ggsave(plot = p_done,
+#        filename = "figures/SFx3.png",
+#        width = f_width,
+#        height = .7 * f_width,
+#        type = "cairo")
+# system("convert figures/SFx3.png figures/SFx3_00.pdf")
 
-# load phenotype data
-pheno_data <- read_sc(pheno_file) %>%
-  select(id, Bars, Peduncle, Snout) %>%
-  filter(!is.na(Bars))
+# =================================================
+# data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_direct_10.segments.tsv"),
+#                          delim = "\t", col_types = "cccciidcdci") %>% 
+#   left_join(hypogen::hypo_chrom_start) %>% 
+#   mutate(start = POS * 10^6,
+#          end = start + (LENGTH * 10^6),
+#          gstart = GSTART + start,
+#          gend = start + (LENGTH * 10^6),
+#          ibd_hplo = str_remove(TYPE,"IBD") %>%
+#            as.integer())
+# 
+# data_compact <- data_seg %>%
+#   dplyr::select(seqnames = CHROM,start,end,gstart,GSTART,TYPE,ibd_hplo,ID1,ID2) %>%
+#   arrange(gstart) %>% 
+#   dplyr::select(-gstart) %>% 
+#   as_granges() %>% 
+#   GenomicRanges::coverage(weight = "ibd_hplo") %>% 
+#   plyranges::as_ranges() %>% 
+#   as_tibble() %>% 
+#   dplyr::select(CHROM = seqnames, start, end, width, score) %>% 
+#   left_join(hypogen::hypo_chrom_start) %>% 
+#   mutate(gstart = GSTART + start, gend = GSTART + end) %>% 
+#   dplyr::select(CHROM, gstart, gend, score)
+# 
+# total_cov_lenght <- data_compact %>%
+#   mutate(length = gend-gstart) %>% .$length %>% sum()
+# 
+# data_sorted <- data_compact %>%
+#   mutate(length = gend-gstart) %>%
+#   group_by(score) %>% 
+#   summarise(length = sum(length)) %>%
+#   ungroup() %>% 
+#   mutate(length = if_else(score == 0,
+#                           length + hypo_karyotype$GEND[24]-total_cov_lenght, # attach uncovered chrom ends
+#                           length),
+#          gend = cumsum(length),
+#          gstart = lag(gend,default = 0)) 
+# 
+# perc_cutoff <- .95
+# 
+# perc_score <- data_sorted %>% 
+#   filter(gstart < hypo_karyotype$GEND[24] * perc_cutoff,
+#          gend > hypo_karyotype$GEND[24] * perc_cutoff) %>% 
+#   .$score
+# 
+# pc1 <- data_sorted %>% 
+#   pivot_longer(gstart:gend,values_to = "GPOS", names_to = "PART") %>% 
+#   ggplot() +
+#   geom_hypo_LG() +
+#   geom_vline(xintercept = hypo_karyotype$GEND[24] * perc_cutoff) +
+#   geom_hline(yintercept = perc_score* hap_to_perc, color = "red") +
+#   scale_hypobg_manual(values = c("transparent", rgb(.9,.9,.9,.9), "red","blue") %>%
+#                         set_names(nm = c("even", "odd", "a","b")), guide = "none")+
+#   geom_ribbon(aes(x = GPOS, ymin = 0, ymax = score * hap_to_perc), fill = rgb(0,0,0,.5)) +
+#   geom_step(aes(x = GPOS, y = score * hap_to_perc), color = "black", size = .3) +
+#   scale_x_hypo_LG() +
+#   labs(y = "IBD Score") +
+#   coord_cartesian(ylim = y_lim, expand = 0) +
+#   theme_hypo() 
+# 
+# pc2 <- data_compact %>% 
+#   mutate(above_thresh = score >= perc_score) %>% 
+#   pivot_longer(gstart:gend,values_to = "GPOS", names_to = "PART") %>% 
+#   ggplot() +
+#   geom_hypo_LG() +
+#   # geom_vline(data = outlier_regions, aes(xintercept = gpos), color = rgb(1,0,0,.2), size = .3) +
+#   geom_step(aes(x = GPOS, y = score * hap_to_perc,  group = str_c(CHROM,above_thresh), color = above_thresh), size = .3) +
+#   geom_ribbon(aes(x = GPOS, ymin = c(0,perc_score* hap_to_perc)[above_thresh +1], 
+#                   ymax = score * hap_to_perc, group = str_c(CHROM,above_thresh), 
+#                   fill = above_thresh),
+#               alpha = .3) +
+#   geom_hline(yintercept = perc_score* hap_to_perc, color = rgb(0,0,0,.3)) +
+#   scale_hypobg_manual(values = c("transparent",rgb(.9,.9,.9,.9),"red","blue") %>%
+#                         set_names(nm = c("even", "odd", "a","b")), guide = "none")+
+#   scale_x_hypo_LG() +
+#   scale_color_manual(values = c(`FALSE` = "black", `TRUE` = "red")) +
+#   scale_fill_manual(values = c(`FALSE` = "black", `TRUE` = "red")) +
+#   labs(y = "IBD Score") +
+#   coord_cartesian(ylim = y_lim, expand = 0) +
+#   theme_hypo() +
+#   theme(legend.position = "none")
+# 
+# pc1 / pc2
+# ggsave("~/Desktop/ibd_cutoff.png", width = 7, height = 6, type = "cairo")
+# 
+# data_compact %>% 
+#   mutate(above_thresh = score >= perc_score) %>% 
+#   filter(above_thresh) %>% 
+#   left_join(hypo_chrom_start) %>% 
+#   mutate(START = gstart - GSTART,
+#          END = gend - GSTART) %>% 
+#   dplyr::select(CHROM,START,END) %>% 
+#   write_tsv(glue::glue("ressources/plugin/idb_above_{as.integer(perc_cutoff*100)}.bed"))
+# 
 
-# load admixture data
-data <- gids %>%
-  map_dfr(data_amdx, admx_path = admx_path,
-          k = 2)
+data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_direct_10.segments.tsv"),
+                         delim = "\t", col_types = "cccciidcdci") %>%
+  left_join(hypogen::hypo_chrom_start) %>%
+  mutate(start = POS * 10^6,
+         end = start + (LENGTH * 10^6),
+         gstart = GSTART + start,
+         gend = start + (LENGTH * 10^6),
+         ibd_hplo = str_remove(TYPE,"IBD") %>%
+           as.integer())
 
-# associate phenotypic trait with outlier region
-pheno_facet <- tibble( trait = c("Snout","Bars",  "Peduncle"),
-                       gid = c("LG04_1", "LG12_3", "LG12_4")) %>%
-  mutate(facet_label = str_c(gid, " / ", trait))
+data_compact <- data_seg %>%
+  dplyr::select(seqnames = CHROM,start,end,gstart,GSTART,TYPE,ibd_hplo,ID1,ID2) %>%
+  arrange(gstart) %>%
+  dplyr::select(-gstart) %>%
+  as_granges() %>%
+  GenomicRanges::coverage(weight = "ibd_hplo") %>%
+  plyranges::as_ranges() %>%
+  as_tibble() %>%
+  dplyr::select(CHROM = seqnames, start, end, width, score) %>%
+  left_join(hypogen::hypo_chrom_start) %>%
+  mutate(gstart = GSTART + start, gend = GSTART + end) %>%
+  dplyr::select(CHROM, gstart, gend, score)
 
-# set outlier region labels
-gid_labels <-  c(LG04_1 = "LG04 (A)",
-                 LG12_3 = "LG12 (B)",
-                 LG12_4 = "LG12 (C)")
+total_cov_lenght <- data_compact %>%
+  mutate(length = gend-gstart) %>% .$length %>% sum()
 
-# set outlier region phenotypic traits
-gid_traits <-  c(LG04_1 = "Snout",
-                 LG12_3 = "Bars",
-                 LG12_4 = "Peduncle")
+data_sorted <- data_compact %>%
+  mutate(length = gend-gstart) %>%
+  group_by(score) %>%
+  summarise(length = sum(length)) %>%
+  ungroup() %>%
+  mutate(length = if_else(score == 0,
+                          length + hypo_karyotype$GEND[24]-total_cov_lenght, # attach uncovered chrom ends
+                          length),
+         gend = cumsum(length),
+         gstart = lag(gend,default = 0))
 
-# set path to trait images
-trait_icons <- c(LG04_1 = "<img src='ressources/img/snout_c.png' width='60' />   ",
-               LG12_3 = "<img src='ressources/img/bars_c.png' width='60' />    ",
-               LG12_4 = "<img src='ressources/img/peduncle_c.png' width='60' />    ")
+perc_cutoff <- .95
 
-# format phenotype data
-pheno_plot_data <- data %>%
-  filter(!duplicated(id)) %>%
-  select(id:id_order) %>%
-  left_join(pheno_data,by = c( id_nr = "id")) %>%
-  arrange(spec, Bars, Peduncle, Snout, id) %>%
-  mutate(ord_nr = row_number()) %>%
-  pivot_longer(names_to = "trait",
-               values_to = "phenotype",
-               cols = Bars:Snout) %>%
-  left_join(pheno_facet)
+perc_score <- data_sorted %>%
+  filter(gstart < hypo_karyotype$GEND[24] * perc_cutoff,
+         gend > hypo_karyotype$GEND[24] * perc_cutoff) %>%
+  .$score
 
-# helper for consistent sample order across all panels
-sample_order <- pheno_plot_data %>%
-  filter(!duplicated(id)) %>%
-  select(id, ord_nr)
+plts <- c(c(5,8,6) %>% map(plot_network),
+          c(5,8,6) %>% map(plot_network, filtmode = "bed95") %>% map(.f = function(p){ p + theme(axis.title.y = element_blank())}),
+          c(5,8,6) %>% map2(.y = list(c(0,26), # .55),
+                                      c(0,26), # 4),
+                                      c(0,26)),
+                            plot_ibd_gw,  filtmode = "direct"
+          ))
 
-# create plot panels a-c
-p_ad <- c("LG04_1", "LG12_3", "LG12_4") %>% purrr::map(adm_plot, data = data)
-
-# create dummy plot for the phenotype legend
-p_phno <- pheno_plot_data %>%
-  ggplot(aes(x = ord_nr))+
-  geom_point(aes(y = trait, fill = factor(phenotype)),shape = 21)+
-  scale_fill_manual("Phenotype<br><img src='ressources/img/all_traits_c.png' width='110' />",
-                    values = c(`0` = "white", `1` = "black"),
-                    na.value = "gray",
-                    labels = c("absent", "present", "not scored"))+
-  guides(fill = guide_legend(ncol = 1))+
-  theme_minimal()+
-  theme(legend.title = element_markdown(hjust = .5),
-    legend.position = "bottom")
-
-# prepare table with fish annotations for the species indication
-tib_drawing <- pheno_plot_data %>%
-  group_by(spec) %>%
-  summarise(pos = (min(ord_nr)+max(ord_nr))*.5) %>%
-  ungroup()
-
-# create sub-plot for species indication
-p_spec <- pheno_plot_data %>%
-  group_by(spec) %>%
-  summarise(start = min(ord_nr)-1,
-            end = max(ord_nr)) %>%
-  ggplot(aes(xmin = start, xmax = end,
-             ymin = -Inf,
-             ymax = Inf))+
-  # add colored backgroud boxes
-  geom_rect(aes(fill = spec), color = "black")+
-  # add fish images
-  (tib_drawing %>% pmap(add_spec_drawing))+
-  # set axis layout
-  scale_y_continuous(breaks = .5, labels = c( "Species"), limits = c(0,1))+
-  scale_x_discrete(breaks = sample_order$ord_nr,
-                   labels = sample_order$id,
-                   expand = c(0,0)) +
-  # set species color scheme
-  scale_fill_manual("Species", values = clr, labels = sp_labs)+
-  # set general plot layout
-  theme_minimal()+
-  theme(plot.title = element_text(size = 9),
+p_done <- (plts[[1]] + plts[[4]] + plts[[7]] + 
+             plts[[2]] + plts[[5]] + plts[[8]] + geom_hline(yintercept = perc_score * hap_to_perc, color = "#11C269", size = .3, alpha = .7) + 
+             plts[[3]] + plts[[6]] + plts[[9]] + 
+             plot_layout(ncol = 3,
+                         widths = c(.3,.3, 1)))/ 
+  guide_area() +
+  plot_annotation(tag_levels = "a") +
+  plot_layout(heights = c(1, .07),
+              guides = "collect") &
+  theme(text = element_text(size = plot_text_size),
+        plot.tag.position = c(0, 1),
         legend.position = "bottom",
-        legend.text.align = 0,
-        axis.title = element_blank(),
-        axis.ticks = element_blank(),
-        axis.text.x = element_blank())
+        legend.key = element_blank(),
+        legend.direction = "horizontal",
+        legend.background = element_blank(),
+        legend.box = "horizontal", 
+        legend.text.align = 0)
 
-# create sub-plot for samplong location indication
-p_loc <- pheno_plot_data %>%
-  ggplot(aes(x = factor(ord_nr)))+
-  # add colored boxes
-  geom_raster(aes(y = 0, fill = loc))+
-  # set axis layout
-  scale_y_continuous(breaks = c(0),labels = c("Location"))+
-  scale_x_discrete(breaks = sample_order$ord_nr,
-                   labels = sample_order$id) +
-  # set location color scheme
-  scale_fill_manual("Location", values =  clr_loc, loc_names)+
-  # set general plot layout
-  theme_minimal()+
-  theme(plot.title = element_text(size = 9),
-        legend.position = "bottom",
-        axis.title = element_blank(),
-        axis.ticks = element_blank(),
-        axis.text.x = element_blank())
+ggsave(plot = p_done,
+       filename = "figures/SFx3.png",
+       width = f_width,
+       height = .7 * f_width,
+       dpi = 400,
+       type = "cairo")
 
-# compose legend from individual legend parts
-p_l <- (get_legend(p_phno) %>% ggdraw()) +
-  (get_legend(p_spec) %>% ggdraw()) +
-  (get_legend(p_loc) %>% ggdraw()) +
-  plot_layout(nrow = 1)
+system("convert figures/SFx3.png figures/SFx3.pdf")
 
-# finalize figure
-p_prep <- p_ad[[1]] +
-  p_ad[[2]] +
-  p_ad[[3]]+
-  p_spec + p_loc + p_l +
-  plot_layout(ncol = 1, heights = c(.4,.4,.4,.08,.02,.1)) &
-  theme(legend.position = "none",
-        axis.text = element_text(size = 12))
-
-# crop final figure (remove whitespace on left margin)
-p_done <- ggdraw(p_prep, xlim = c(.023,1))
-
-# export final figure
-scl <- .9
-ggsave("figures/SF13.pdf",
-       plot = p_done,
-       width = 16*scl,
-       height = 10*scl,
-       device = cairo_pdf)

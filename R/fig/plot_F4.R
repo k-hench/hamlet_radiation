@@ -1,181 +1,167 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F4.R \
-#    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
-#    2_analysis/summaries/fst_outliers_998.tsv \
-#    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
-#    2_analysis/twisst/weights/ ressources/plugin/trees/ \
-#    2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_SF9.R 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support 2_analysis/ibd/no_outgr_direct_10.ibd.tsv
 # ===============================================================
-# This script produces Figure 4 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 9 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
+# by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/fst/50k/multi_fst.50k.tsv.gz',
-# '2_analysis/GxP/50000/', '2_analysis/summaries/fst_outliers_998.tsv',
-# 'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
-# '2_analysis/twisst/weights/', 'ressources/plugin/trees/',
-# '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_F4.R"
+# args <- c("2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support",
+#           "2_analysis/ibd/no_outgr_direct_10.ibd.tsv")
+# script_name <- "R/fig/plot_SF9.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
+library(ape)
+library(ggtree)
+library(tidygraph)
+library(ggraph)
+library(patchwork)
+
 cat('\n')
 script_name <- args[5] %>%
-  str_remove(.,'--file=')
+  str_remove(., '--file=')
 
 plot_comment <- script_name %>%
-  str_c('mother-script = ',getwd(),'/',.)
+  str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
-
 # config -----------------------
-fst_file <- as.character(args[1])
-gxp_dir <- as.character(args[2])
-outlier_table <- as.character(args[3])
-twisst_script <- as.character(args[4])
-w_path <- as.character(args[5])
-d_path <- as.character(args[6])
-global_fst_file <- as.character(args[7])
-source(twisst_script)
+tree_hypo_file <- as.character(args[1])
+ibd_file <- as.character(args[2])
 
-# start script -------------------
-# import fst data
-fst_data <- vroom::vroom(fst_file, delim = '\t') %>%
-  select(CHROM, BIN_START, BIN_END, N_VARIANTS, WEIGHTED_FST) %>%
-  setNames(., nm = c('CHROM', 'BIN_START', 'BIN_END', 'n_snps', 'fst') ) %>%
-  add_gpos() %>%
-  select(GPOS, fst) %>%
-  setNames(., nm = c('GPOS','value')) %>%
-  mutate(window = str_c('bold(',project_case('a'),'):joint~italic(F[ST])'))
+raxml_tree <- read.tree(tree_hypo_file) 
+raxml_tree_rooted <- root(phy = raxml_tree, outgroup = "PL17_160floflo")
+clr_neutral <- rgb(.6, .6, .6)
+lyout <- 'circular'
 
-# set G x P traits to be imported
-traits <- c("Bars.lm.50k.5k.txt.gz", "Peduncle.lm.50k.5k.txt.gz", "Snout.lm.50k.5k.txt.gz")
+raxml_tree_rooted_grouped <- groupClade(raxml_tree_rooted,
+                                        .node = c(298, 302, 187, 179, 171, 159,
+                                                  193, 204, 201, 222, 219, 209,
+                                                  284, 278, 268, 230, 242),
+                                        group_name =  "clade")
 
-# set trait figure panels
-trait_panels <- c(Bars = str_c('bold(',project_case('d'),')'),
-                  Peduncle = str_c('bold(',project_case('e'),')'),
-                  Snout = str_c('bold(',project_case('f'),')'))
+clade2spec <- c( `0` = "none", `1` = "ran", `2` = "uni", `3` = "ran", `4` = "may",
+                 `5` = "pue", `6` = "ind", `7` = "nig", `8` = "nig", `9` = "ran",
+                 `10` = "abe", `11` = "abe", `12` = "gum", `13` = "uni", `14` = "pue",
+                 `15` = "uni", `16` = "pue", `17` = "nig")
 
-# import G x P data
-gxp_data <- str_c(gxp_dir,traits) %>%
-  purrr::map(get_gxp) %>%
-  join_list() %>%
-  gather(key = 'window', value = 'value',2:4)
+raxml_data <- ggtree(raxml_tree_rooted_grouped, layout = lyout) %>%
+  .$data %>% 
+  mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
+         support = as.numeric(label),
+         support_class = cut(support, c(0,50,70,90,100)) %>% 
+           as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))
+           )
 
-# import genome wide Fst data summary  --------
-globals <- vroom::vroom(global_fst_file, delim = '\t',
-                        col_names = c('loc','run','mean','weighted')) %>%
-  mutate(run = str_c(str_sub(run,1,3),loc,'-',str_sub(run,5,7),loc),
-         run = fct_reorder(run,weighted))
+p_tree <- (open_tree(
+  ggtree(raxml_data, layout = lyout,
+         aes(color = ifelse(clade == 0,
+                            lab2spec(label),
+                            clade2spec[as.character(clade)])), size = .25) %>%
+    ggtree::rotate(200), 180))  +
+  # geom_tippoint(size = .2) + 
+  geom_tiplab2(aes(color = lab2spec(label), label = str_sub(label, -6, -1)),
+  size = GenomicOriginsScripts::plot_text_size_small / ggplot2:::.pt  *.6,#2.5, 
+  hjust = -.1)+
+  ggtree::geom_treescale(width = .002,
+                         linesize = .2,
+                         x = -.0007, y = 155, 
+                         offset = -4,
+                         fontsize = GenomicOriginsScripts::plot_text_size_small / ggplot2:::.pt,
+                         color = clr_neutral) +
+  xlim(c(-.0007,.0092)) +
+  ggtree::geom_nodepoint(aes(fill = support_class, 
+                             size = support_class),
+                 shape = 21#, linewidth = 3
+                 ) +
+  scale_color_manual(values = c(ungrouped = clr_neutral, 
+                                GenomicOriginsScripts::clr2),
+                     guide = FALSE) +
+  scale_fill_manual(values = c(`(0,50]` = "transparent",
+                               `(50,70]` = "white",
+                               `(70,90]` = "gray",
+                               `(90,100]` = "black"),
+                    drop = FALSE) +
+  scale_size_manual(values = c(`(0,50]` = 0,
+                               `(50,70]` = .4,
+                               `(70,90]` = .4,
+                               `(90,100]` = .4),
+                    na.value = 0,
+                    drop = FALSE)+
+  guides(fill = guide_legend(title = "Node Support Class", title.position = "top", ncol = 2,keyheight = unit(9,"pt")),
+         size = guide_legend(title = "Node Support Class", title.position = "top", ncol = 2,keyheight = unit(9,"pt"))) +
+  theme_void(base_size = GenomicOriginsScripts::plot_text_size_small  ) 
 
-# dxy and pi are only shown for one exemplary population (/pair)
-# select dxy pair run (15 is one of the two central runs of the 28 pairs)
-# here, the 15th lowest fst value is identified as "selector"
-selectors_dxy <- globals %>%
-  arrange(weighted) %>%
-  .$weighted %>%
-  .[15]
+y_sep <- .05
+x_shift <- -.03
+p1 <- ggplot() +
+  coord_equal(xlim = c(0, .93),
+              ylim = c(-.01, .54),
+              expand = 0) +
+  annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
+                    ymin = -.6 + (.5 * y_sep), ymax = .6 + (.5 * y_sep),
+                    xmin = -.1, xmax = 1.1) +
+  annotation_custom(grob = cowplot::get_legend(p_tree),
+                    ymin = .35, ymax = .54,
+                    xmin = 0, xmax = .2) +
+  theme_void()
 
+data_ibd <- read_tsv(ibd_file) %>% 
+  mutate(ibd_total = (IBD2 + 0.5*IBD1) / (IBD0 + IBD1 + IBD2)) 
 
-# import topology weighting data
-twisst_data <- tibble(loc = c('bel','hon'),
-                      panel = c('b','c') %>% project_case() %>% str_c('bold(',.,')')) %>%
-  purrr::pmap(match_twisst_files) %>%
-  bind_rows() %>%
-  select(GPOS, topo3,topo_rel,window,weight)
+set.seed(42)
+p2 <- data_ibd %>% 
+  as_tbl_graph() %>%
+  mutate(spec = str_sub(name, -6, -4),
+         loc = str_sub(name, -3, -1))  %>% 
+  ggraph( layout = 'fr', weights = ibd_total) +
+  geom_edge_link(aes(alpha = ibd_total, edge_width = ibd_total), color = rgb(.1,.1,.1)) +
+  geom_node_point(aes(fill = spec,
+                      shape = loc, color = after_scale(clr_darken(fill,.3))), size = 1.2) +
+  scale_fill_manual("Species", values = GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))],
+                    labels = GenomicOriginsScripts::sp_labs)+
+  scale_edge_alpha_continuous(#limits = c(0,.1),
+    range = c(0,1), guide = "none") +
+  scale_edge_width_continuous(#limits = c(0,.1),
+    range = c(.1, .4), guide = "none") +
+  scale_shape_manual("Site", values = 21:23, labels = GenomicOriginsScripts::loc_names) +
+  guides(fill = guide_legend(nrow = 2, override.aes = list(shape = 21, size = 2.5)),
+         shape = guide_legend(nrow = 2)) +
+  coord_equal()  +
+  theme(text = element_text(size = GenomicOriginsScripts::plot_text_size),
+        panel.background = element_blank())
 
-# the "null-weighting" is computed for both locations
-twisst_null <- tibble(window = c(str_c('bold(',project_case('b'),'):~italic(w)[bel]'),
-                                 str_c('bold(',project_case('c'),'):~italic(w)[hon]')),
-                      weight = c(1/15, 1/105))
+p_done <- (p1 + p2) / guide_area() +
+  plot_annotation(tag_levels = "a") +
+  plot_layout(heights = c(1, .07),
+              guides = "collect") &
+  theme(text = element_text(size = GenomicOriginsScripts::plot_text_size),
+        plot.tag.position = c(0, 1),
+        legend.position = "bottom",
+        legend.key = element_blank(),
+        legend.direction = "horizontal",
+        legend.background = element_blank(),
+        legend.box = "horizontal", 
+        legend.text.align = 0)
 
-# combine data types --------
-data <- bind_rows(fst_data, gxp_data)
-
-# import fst outliers
-outliers <-  vroom::vroom(outlier_table, delim = '\t')
-
-# the focal outlier IDs are set
-outlier_pick <- c('LG04_1', 'LG12_3', 'LG12_4')
-
-# the table for the outlier labels is created
-outlier_label <- outliers %>%
-  filter(gid %in% outlier_pick) %>%
-  mutate(label = letters[row_number()] %>% project_inv_case(),
-         x_shift_label = c(-1,-1.2,1)*10^7,
-         gpos_label = gpos + x_shift_label,
-         gpos_label2 = gpos_label - sign(x_shift_label) *.5*10^7,
-         window = str_c('bold(',project_case('a'),'):joint~italic(F[ST])'))
-
-# the y height of the outlier labels and the corresponding tags is set
-outlier_y <- .45
-outlier_yend <- .475
-
-# the icons for the traits of the GxP are loaded
-trait_tibble <- tibble(window = c("bold(d):italic(p)[Bars]",
-                                  "bold(e):italic(p)[Peduncle]",
-                                  "bold(f):italic(p)[Snout]"),
-                       grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
-
-# finally, the figure is being put together
-p_done <- ggplot()+
-  # add gray/white LGs background
-  geom_hypo_LG()+
-  # the red highlights for the outlier regions are added
-  geom_vline(data = outliers, aes(xintercept = gpos), color = outlr_clr)+
-  # the tags of the outlier labels are added
-  geom_segment(data = outlier_label,
-               aes(x = gpos,
-                   xend = gpos_label2, y = outlier_y, yend = outlier_yend),
-               color = alpha(outlr_clr,1),
-               size = .2)+
-  # the outlier labels are added
-  geom_text(data = outlier_label, aes(x = gpos_label, y = outlier_yend, label = label),
-            color = alpha(outlr_clr,1), 
-            fontface = 'bold',
-            size = plot_text_size / ggplot2:::.pt)+
-  # the fst, delta dxy and gxp data is plotted
-  geom_point(data = data, aes(x = GPOS, y = value),size = plot_size, color = plot_clr) +
-  # the dxy data is plotted
-  # geom_point(data = dxy_select,aes(x = GPOS, y = dxy),size = plot_size, color = plot_clr)+
-  # # the pi data is plotted
-  # geom_point(data = pi_data_select, aes(x = GPOS, y = mean_pi),size = plot_size, color = plot_clr) +
-  # # the roh data is plotted
-  # geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
-  # # the smoothed rho is plotted
-  # geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
-  #               color = 'red', se = FALSE, size = .4) +
-  # the topology weighting data is plotted
-  geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel), size = .4) +
-  # the null weighting is added
-  geom_hline(data = twisst_null, aes(yintercept = weight), color = rgb(1, 1, 1, .5), size = .4) +
-  # the trait icons are added
-  geom_hypo_grob(data = trait_tibble,
-                 aes(grob = grob, angle = 0, height = .65),
-                 inherit.aes = FALSE, x = .95, y = 0.65)+
-  # setting the scales
-  scale_fill_hypo_LG_bg() +
-  scale_x_hypo_LG()+
-  scale_color_gradient( low = "#f0a830ff", high = "#084082ff", guide = FALSE)+
-  # organizing the plot across panels
-  facet_grid(window~.,scales = 'free',switch = 'y', labeller = label_parsed)+
-  # tweak plot appreance
-  theme_hypo()+
-  theme(text = element_text(size = plot_text_size),
-        legend.position = 'bottom',
-        axis.title = element_blank(),
-        strip.text = element_text(size = plot_text_size),
-        strip.background = element_blank(),
-        strip.placement = 'outside')
-
-# export figure 4
-#scl <- .8
-hypo_save(p_done, filename = 'figures/F4.png',
-          width = f_width,
-          height = f_width * .5,
-          dpi = 600,
+hypo_save(plot = p_done,
+          filename = "figures/SF9.png",
+          width = GenomicOriginsScripts::f_width,
+          height = GenomicOriginsScripts::f_width * .42,
+          bg = "transparent",
           type = "cairo",
+          dpi = 600,
           comment = plot_comment)
+
+system("convert figures/SF9.png figures/SF9.pdf")
+# hypo_save(plot = p_done,
+#           filename = "figures/SF9.pdf",
+#           width = 7.5 * scl,
+#           height = 4 * scl,
+#           device = cairo_pdf,
+#           bg = "transparent",
+#           comment = plot_comment)

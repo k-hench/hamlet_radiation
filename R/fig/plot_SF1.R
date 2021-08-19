@@ -1,68 +1,31 @@
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF1.R 2_analysis/pca/
-# ===============================================================
-# This script produces Suppl. Figure 1 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c("2_analysis/pca/")
-# script_name <- "R/fig/plot_SF1.R"
-args <- commandArgs(trailingOnly=FALSE)
-# setup -----------------------
+### Tip-specific speciation rates across Fish Tree of Life
+### ------------------------------------------------------
+
+### Data from Rabosky et al. 2018 (Nature) -- Dryad: https://doi. org/10.5061/dryad.fc71cp4)
+### Aug 11, 2021, Martin Helmkampf
+
 library(GenomicOriginsScripts)
-library(patchwork)
-library(hypoimg)
-library(hypogen)
-cat('\n')
-script_name <- args[5] %>%
-  str_remove(., '--file=')
 
-plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
+## Import FToL data
+rates <- read_csv(file = "ressources/Rabosky_etal_2018/dataFiles/ratemat_enhanced.csv")
 
-args <- process_input(script_name, args)
+p1 <- ggplot(rates, aes(lambda.tv)) +
+  geom_histogram(binwidth = 0.25, colour="grey20", fill="grey80", size = .2) +
+  labs(x = "Mean speciation rate", y = "Number of species") +
+  geom_segment(aes(x = 2.5 , y = 200, xend = 2.5, yend = 1500), size = 0.2, color = "#0976BA") +
+  annotate("text", x = 2.5, y = 1750, label = "Hamlets", size =  plot_text_size / ggplot2:::.pt, color = "#0976BA") +
+  geom_segment(aes(x = 3.5 , y = 200, xend = 3.5, yend = 1500), size = 0.2, color = "grey60") +
+  annotate("text", x = 3.5, y = 2150, label = "Haplo-\nchromines", size =  plot_text_size / ggplot2:::.pt, color = "grey60") +
+  geom_segment(aes(x = 4.5 , y = 200, xend = 4.5, yend = 1500), size = 0.2, color = "grey60") +
+  annotate("text", x = 4.5, y = 1750, label = "Labeobarbus", size = plot_text_size / ggplot2:::.pt, color = "grey60") +
+  coord_cartesian(xlim = c(-.2, 5.1),
+                  ylim = c(-200, 8400),
+                  expand = 0) +
+  theme_bw(base_size = plot_text_size) +
+  theme(
+    panel.grid.minor = element_blank())
 
-# config -----------------------
-pca_dir <- as.character(args[1])
-clr_alt <- clr
-clr_alt[["uni"]] <- "lightgray"
+ggsave("figures/SFx6.pdf", 
+       plot = p1, device = cairo_pdf,
+       width = f_width_half, height = f_width_half*.6)
 
-fish_tib <- tibble(short = names(clr)[!names(clr) %in% c("flo", "tab", "tor")],
-                   x = c(0.5,  3.5,  7,  9.7, 12.25, 15.25, 18, 21.5))
-
-key_sz <- .75
-sp_fam <- rep(c("H", "S", "H"), c(8, 2, 1)) %>% set_names(nm = names(sp_names))
-p_leg <- fish_tib %>% 
-  ggplot() +
-  coord_equal(xlim = c(-.05, 24), expand = 0) +
- geom_tile(aes(x = x, y = 0,
-                fill = short, 
-                color = after_scale(prismatic::clr_darken(fill, .25))),
-            width = key_sz, height = key_sz, size = .3) +
-  geom_text(aes(x = x + .6, y = 0,
-                label = str_c(sp_fam[short], ". ", sp_names[short])), 
-            hjust = 0, fontface = "italic", size = plot_text_size / ggplot2:::.pt) +
-  pmap(fish_tib, plot_fish_lwd, width = 1, height = 1, y = 0) +
-  scale_fill_manual(values = clr, guide = FALSE) +
-  theme_void()
-
-p_done <- cowplot::plot_grid((tibble(loc = c("bel.", "hon.", "pan."), 
-                              mode = rep(c("subset_non_diverged"), 3),
-                              pc1 = 1,
-                              pc2 = 2) %>% 
-                        pmap(pca_plot_no_fish) %>% 
-                        wrap_plots(ncol = 3) +
-                        plot_annotation(tag_levels = "a") & 
-                        theme(plot.background = element_blank())),
-                     p_leg,
-  ncol = 1 ,
-  rel_heights = c(1,.1))
-
-hypo_save(p_done, filename = 'figures/SF1.pdf',
-          width = f_width,
-          height = f_width * .38,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
