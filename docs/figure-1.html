@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench and Martin Helmkampf" />
 
 
-<meta name="date" content="2021-04-23" />
+<meta name="date" content="2021-08-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -64,6 +64,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
@@ -479,7 +480,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The Figure can be recreated by running the <strong>R</strong> script <code>plot_F1.R</code> from a (<code>bash</code> terminal):</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb23-1"><a href="figure-1.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
 <span id="cb23-2"><a href="figure-1.html#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="figure-1.html#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/</span></code></pre></div>
+<span id="cb23-3"><a href="figure-1.html#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_F1.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/</span></code></pre></div>
 </div>
 <div id="details-of-plot_f1.r" class="section level2" number="17.2">
 <h2><span class="header-section-number">17.2</span> Details of <code>plot_F1.R</code></h2>
@@ -590,17 +591,7 @@ Also, we set a few parameters for the plot layout:</p>
 <span id="cb31-30"><a href="figure-1.html#cb31-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-31"><a href="figure-1.html#cb31-31" aria-hidden="true" tabindex="-1"></a>latvals <span class="ot">&lt;-</span> latvals[inboth]</span>
 <span id="cb31-32"><a href="figure-1.html#cb31-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-33"><a href="figure-1.html#cb31-33" aria-hidden="true" tabindex="-1"></a>edvr <span class="ot">&lt;-</span> <span class="fu">getEventData</span>(vx, eventdata_vr, <span class="at">burnin=</span><span class="dv">0</span>)</span>
-<span id="cb31-34"><a href="figure-1.html#cb31-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Reading event datafile:  ressources/Rabosky_etal_2018/dataFiles/bamm_results/12k_tv1/event_data_thinned.csv </span></span>
-<span id="cb31-35"><a href="figure-1.html#cb31-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      ...........</span></span>
-<span id="cb31-36"><a href="figure-1.html#cb31-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Read a total of 1000 samples from posterior</span></span>
-<span id="cb31-37"><a href="figure-1.html#cb31-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb31-38"><a href="figure-1.html#cb31-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Discarded as burnin: GENERATIONS &lt;  1</span></span>
-<span id="cb31-39"><a href="figure-1.html#cb31-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Analyzing  1000  samples from posterior</span></span>
-<span id="cb31-40"><a href="figure-1.html#cb31-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb31-41"><a href="figure-1.html#cb31-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Setting recursive sequence on tree...</span></span>
-<span id="cb31-42"><a href="figure-1.html#cb31-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb31-43"><a href="figure-1.html#cb31-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Done with recursive sequence</span></span></code></pre></div>
+<span id="cb31-33"><a href="figure-1.html#cb31-33" aria-hidden="true" tabindex="-1"></a>edvr <span class="ot">&lt;-</span> <span class="fu">getEventData</span>(vx, eventdata_vr, <span class="at">burnin=</span><span class="dv">0</span>)</span></code></pre></div>
 <p>At this point we diverge from the original script and define our own subset of interest, which covers all available species of the Serraninae subfamily.</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="figure-1.html#cb32-1" aria-hidden="true" tabindex="-1"></a>serranids <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Hypoplectrus_gemma&quot;</span>, <span class="st">&quot;Hypoplectrus_unicolor&quot;</span>, <span class="st">&quot;Hypoplectrus_gummigutta&quot;</span>,</span>
 <span id="cb32-2"><a href="figure-1.html#cb32-2" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;Hypoplectrus_chlorurus&quot;</span>, <span class="st">&quot;Hypoplectrus_aberrans&quot;</span>, <span class="st">&quot;Hypoplectrus_nigricans&quot;</span>,</span>
@@ -679,14 +670,12 @@ Also, we set a few parameters for the plot layout:</p>
 <span id="cb38-7"><a href="figure-1.html#cb38-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">width =</span> <span class="fu">unit</span>(<span class="dv">1</span>, <span class="st">&quot;npc&quot;</span>),</span>
 <span id="cb38-8"><a href="figure-1.html#cb38-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">height =</span> <span class="fu">unit</span>(<span class="dv">1</span>, <span class="st">&quot;npc&quot;</span>), </span>
 <span id="cb38-9"><a href="figure-1.html#cb38-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">interpolate =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="plot_F1_files/figure-html/unnamed-chunk-15-1.png" width="192" style="display: block; margin: auto;" /></p>
 <p>Then, we create a black hamlet to add to the annotation.</p>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="figure-1.html#cb39-1" aria-hidden="true" tabindex="-1"></a>blank_hamlet <span class="ot">&lt;-</span> hypoimg<span class="sc">::</span>hypo_outline <span class="sc">%&gt;%</span> </span>
 <span id="cb39-2"><a href="figure-1.html#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
 <span id="cb39-3"><a href="figure-1.html#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>()<span class="sc">+</span></span>
 <span id="cb39-4"><a href="figure-1.html#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(x, y), <span class="at">color =</span> <span class="fu">rgb</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, .<span class="dv">5</span>), <span class="at">fill =</span> <span class="fu">rgb</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, .<span class="dv">3</span>), <span class="at">size =</span> .<span class="dv">1</span>)<span class="sc">+</span></span>
 <span id="cb39-5"><a href="figure-1.html#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code></pre></div>
-<p><img src="plot_F1_files/figure-html/unnamed-chunk-17-1.png" width="288" style="display: block; margin: auto;" /></p>
 <p>At this point we have all pieces to assemble panel a of the figure.</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="figure-1.html#cb40-1" aria-hidden="true" tabindex="-1"></a>p_tree <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
 <span id="cb40-2"><a href="figure-1.html#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">tibble</span>(<span class="at">v =</span> <span class="fu">c</span>(.<span class="dv">056</span>, <span class="fl">2.4</span>)),</span>
@@ -715,7 +704,6 @@ Also, we set a few parameters for the plot layout:</p>
 <span id="cb40-25"><a href="figure-1.html#cb40-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()<span class="sc">+</span></span>
 <span id="cb40-26"><a href="figure-1.html#cb40-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(.<span class="dv">01</span>, .<span class="dv">08</span>),</span>
 <span id="cb40-27"><a href="figure-1.html#cb40-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>))</span></code></pre></div>
-<p><img src="plot_F1_files/figure-html/unnamed-chunk-19-1.png" width="432" style="display: block; margin: auto;" /></p>
 </div>
 <div id="genetic-differentiation-boxplots" class="section level3" number="17.2.3">
 <h3><span class="header-section-number">17.2.3</span> Genetic differentiation boxplots</h3>
@@ -799,7 +787,6 @@ We need to define the location, the number of species at the location, the short
 <span id="cb48-5"><a href="figure-1.html#cb48-5" aria-hidden="true" tabindex="-1"></a>  plot_list[[<span class="dv">3</span>]] <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>),</span>
 <span id="cb48-6"><a href="figure-1.html#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb48-7"><a href="figure-1.html#cb48-7" aria-hidden="true" tabindex="-1"></a>  cowplot<span class="sc">::</span><span class="fu">as_grob</span>()</span></code></pre></div>
-<p><img src="plot_F1_files/figure-html/unnamed-chunk-28-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>At this point we can create panel b.</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="figure-1.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assemble panel b</span></span>
 <span id="cb49-2"><a href="figure-1.html#cb49-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> fst_data_gather <span class="sc">%&gt;%</span></span>
@@ -840,84 +827,76 @@ We need to define the location, the number of species at the location, the short
 <span id="cb49-37"><a href="figure-1.html#cb49-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor.y =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb49-38"><a href="figure-1.html#cb49-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y.right =</span> <span class="fu">element_text</span>(<span class="at">color =</span> clr_sec),</span>
 <span id="cb49-39"><a href="figure-1.html#cb49-39" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y.right =</span> <span class="fu">element_text</span>(<span class="at">color =</span> clr_sec))</span></code></pre></div>
-<pre><code>#&gt; Warning in if (!expand) {: the condition has length &gt; 1 and only the first
-#&gt; element will be used
-
-#&gt; Warning in if (!expand) {: the condition has length &gt; 1 and only the first
-#&gt; element will be used</code></pre>
-<p><img src="plot_F1_files/figure-html/unnamed-chunk-30-1.png" width="288" style="display: block; margin: auto;" /></p>
 </div>
 <div id="principal-component-analyses" class="section level3" number="17.2.4">
 <h3><span class="header-section-number">17.2.4</span> Principal Component Analyses</h3>
 <p>Most of the plotting functions for the PCAs are provided in {GenomicOriginsScripts} package, so that the largest part of the work for the PCAs actually concerns the annotations.</p>
 <p>Fist, we set an alternative color scale and define the size of the hamlet images.</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="figure-1.html#cb51-1" aria-hidden="true" tabindex="-1"></a>clr_alt <span class="ot">&lt;-</span> clr</span>
-<span id="cb51-2"><a href="figure-1.html#cb51-2" aria-hidden="true" tabindex="-1"></a>clr_alt[[<span class="st">&quot;uni&quot;</span>]] <span class="ot">&lt;-</span> <span class="st">&quot;lightgray&quot;</span></span>
-<span id="cb51-3"><a href="figure-1.html#cb51-3" aria-hidden="true" tabindex="-1"></a>pca_fish_scale <span class="ot">&lt;-</span> <span class="fl">1.15</span></span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="figure-1.html#cb50-1" aria-hidden="true" tabindex="-1"></a>clr_alt <span class="ot">&lt;-</span> clr</span>
+<span id="cb50-2"><a href="figure-1.html#cb50-2" aria-hidden="true" tabindex="-1"></a>clr_alt[[<span class="st">&quot;uni&quot;</span>]] <span class="ot">&lt;-</span> <span class="st">&quot;lightgray&quot;</span></span>
+<span id="cb50-3"><a href="figure-1.html#cb50-3" aria-hidden="true" tabindex="-1"></a>pca_fish_scale <span class="ot">&lt;-</span> <span class="fl">1.15</span></span></code></pre></div>
 <p>The we create a configuration tibble that holds the desired positions of the hamlet annotations on the PCAs.</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="figure-1.html#cb52-1" aria-hidden="true" tabindex="-1"></a>pca_fish_pos <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">pop =</span> GenomicOriginsScripts<span class="sc">::</span>pop_levels,</span>
-<span id="cb52-2"><a href="figure-1.html#cb52-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">short =</span> <span class="fu">str_sub</span>(pop, <span class="dv">1</span>, <span class="dv">3</span>),</span>
-<span id="cb52-3"><a href="figure-1.html#cb52-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">loc =</span> <span class="fu">str_sub</span>(pop, <span class="dv">4</span>, <span class="dv">6</span>),</span>
-<span id="cb52-4"><a href="figure-1.html#cb52-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">width =</span> <span class="fu">c</span>(<span class="at">bel =</span> .<span class="dv">08</span>, <span class="at">hon =</span>.<span class="dv">08</span>, <span class="at">pan =</span> .<span class="dv">09</span>)[loc] <span class="sc">*</span> pca_fish_scale,</span>
-<span id="cb52-5"><a href="figure-1.html#cb52-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">height =</span> <span class="fu">c</span>(<span class="at">bel =</span> .<span class="dv">08</span>, <span class="at">hon =</span>.<span class="dv">08</span>, <span class="at">pan =</span> .<span class="dv">09</span>)[loc] <span class="sc">*</span> pca_fish_scale) <span class="sc">%&gt;%</span> </span>
-<span id="cb52-6"><a href="figure-1.html#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(loc) <span class="sc">%&gt;%</span></span>
-<span id="cb52-7"><a href="figure-1.html#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">18</span>, <span class="sc">-</span>.<span class="dv">01</span>, .<span class="dv">03</span>, <span class="sc">-</span>.<span class="dv">03</span>, .<span class="dv">075</span>,</span>
-<span id="cb52-8"><a href="figure-1.html#cb52-8" aria-hidden="true" tabindex="-1"></a>               <span class="sc">-</span>.<span class="dv">04</span>, <span class="sc">-</span>.<span class="dv">2</span>, <span class="sc">-</span>.<span class="dv">02</span>, <span class="sc">-</span>.<span class="dv">01</span>, <span class="sc">-</span>.<span class="dv">02</span>, <span class="sc">-</span>.<span class="dv">01</span>,</span>
-<span id="cb52-9"><a href="figure-1.html#cb52-9" aria-hidden="true" tabindex="-1"></a>               <span class="sc">-</span>.<span class="dv">15</span>, <span class="dv">0</span>, .<span class="dv">05</span>),</span>
-<span id="cb52-10"><a href="figure-1.html#cb52-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="fu">c</span>(.<span class="dv">02</span>, .<span class="dv">27</span>, <span class="sc">-</span>.<span class="dv">13</span>, <span class="sc">-</span>.<span class="dv">03</span>, .<span class="dv">05</span>,</span>
-<span id="cb52-11"><a href="figure-1.html#cb52-11" aria-hidden="true" tabindex="-1"></a>               <span class="sc">-</span>.<span class="dv">1</span>, .<span class="dv">05</span>, <span class="dv">0</span>, .<span class="dv">075</span>, <span class="sc">-</span>.<span class="dv">23</span>, .<span class="dv">2</span>,</span>
-<span id="cb52-12"><a href="figure-1.html#cb52-12" aria-hidden="true" tabindex="-1"></a>               .<span class="dv">06</span>, <span class="sc">-</span>.<span class="dv">2</span>, .<span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb52-13"><a href="figure-1.html#cb52-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>pop) <span class="sc">%&gt;%</span></span>
-<span id="cb52-14"><a href="figure-1.html#cb52-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(loc) <span class="sc">%&gt;%</span></span>
-<span id="cb52-15"><a href="figure-1.html#cb52-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="figure-1.html#cb51-1" aria-hidden="true" tabindex="-1"></a>pca_fish_pos <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">pop =</span> GenomicOriginsScripts<span class="sc">::</span>pop_levels,</span>
+<span id="cb51-2"><a href="figure-1.html#cb51-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">short =</span> <span class="fu">str_sub</span>(pop, <span class="dv">1</span>, <span class="dv">3</span>),</span>
+<span id="cb51-3"><a href="figure-1.html#cb51-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">loc =</span> <span class="fu">str_sub</span>(pop, <span class="dv">4</span>, <span class="dv">6</span>),</span>
+<span id="cb51-4"><a href="figure-1.html#cb51-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">width =</span> <span class="fu">c</span>(<span class="at">bel =</span> .<span class="dv">08</span>, <span class="at">hon =</span>.<span class="dv">08</span>, <span class="at">pan =</span> .<span class="dv">09</span>)[loc] <span class="sc">*</span> pca_fish_scale,</span>
+<span id="cb51-5"><a href="figure-1.html#cb51-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">height =</span> <span class="fu">c</span>(<span class="at">bel =</span> .<span class="dv">08</span>, <span class="at">hon =</span>.<span class="dv">08</span>, <span class="at">pan =</span> .<span class="dv">09</span>)[loc] <span class="sc">*</span> pca_fish_scale) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-6"><a href="figure-1.html#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(loc) <span class="sc">%&gt;%</span></span>
+<span id="cb51-7"><a href="figure-1.html#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">18</span>, <span class="sc">-</span>.<span class="dv">01</span>, .<span class="dv">03</span>, <span class="sc">-</span>.<span class="dv">03</span>, .<span class="dv">075</span>,</span>
+<span id="cb51-8"><a href="figure-1.html#cb51-8" aria-hidden="true" tabindex="-1"></a>               <span class="sc">-</span>.<span class="dv">04</span>, <span class="sc">-</span>.<span class="dv">2</span>, <span class="sc">-</span>.<span class="dv">02</span>, <span class="sc">-</span>.<span class="dv">01</span>, <span class="sc">-</span>.<span class="dv">02</span>, <span class="sc">-</span>.<span class="dv">01</span>,</span>
+<span id="cb51-9"><a href="figure-1.html#cb51-9" aria-hidden="true" tabindex="-1"></a>               <span class="sc">-</span>.<span class="dv">15</span>, <span class="dv">0</span>, .<span class="dv">05</span>),</span>
+<span id="cb51-10"><a href="figure-1.html#cb51-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="fu">c</span>(.<span class="dv">02</span>, .<span class="dv">27</span>, <span class="sc">-</span>.<span class="dv">13</span>, <span class="sc">-</span>.<span class="dv">03</span>, .<span class="dv">05</span>,</span>
+<span id="cb51-11"><a href="figure-1.html#cb51-11" aria-hidden="true" tabindex="-1"></a>               <span class="sc">-</span>.<span class="dv">1</span>, .<span class="dv">05</span>, <span class="dv">0</span>, .<span class="dv">075</span>, <span class="sc">-</span>.<span class="dv">23</span>, .<span class="dv">2</span>,</span>
+<span id="cb51-12"><a href="figure-1.html#cb51-12" aria-hidden="true" tabindex="-1"></a>               .<span class="dv">06</span>, <span class="sc">-</span>.<span class="dv">2</span>, .<span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb51-13"><a href="figure-1.html#cb51-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>pop) <span class="sc">%&gt;%</span></span>
+<span id="cb51-14"><a href="figure-1.html#cb51-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(loc) <span class="sc">%&gt;%</span></span>
+<span id="cb51-15"><a href="figure-1.html#cb51-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>()</span></code></pre></div>
 <p>Then we create the individual PCA plots using the function <code>GenomicOriginsScripts::pca_plot()</code>.</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="figure-1.html#cb53-1" aria-hidden="true" tabindex="-1"></a>pcas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;bel&quot;</span>, <span class="st">&quot;hon&quot;</span>, <span class="st">&quot;pan&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">map</span>(pca_plot)</span></code></pre></div>
-<p><img src="plot_F1_files/figure-html/unnamed-chunk-34-1.png" width="288" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="figure-1.html#cb52-1" aria-hidden="true" tabindex="-1"></a>pcas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;bel&quot;</span>, <span class="st">&quot;hon&quot;</span>, <span class="st">&quot;pan&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">map</span>(pca_plot)</span></code></pre></div>
 </div>
 <div id="legend-and-final-figure" class="section level3" number="17.2.5">
 <h3><span class="header-section-number">17.2.5</span> Legend and Final Figure</h3>
 <p>To create the figure legend we define a set of hamlet species (all sequenced species except the outgroups) with their relative horizontal spacing.</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="figure-1.html#cb54-1" aria-hidden="true" tabindex="-1"></a>fish_tib <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">short =</span> <span class="fu">names</span>(clr)[<span class="sc">!</span><span class="fu">names</span>(clr) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;flo&quot;</span>, <span class="st">&quot;tab&quot;</span>, <span class="st">&quot;tor&quot;</span>)],</span>
-<span id="cb54-2"><a href="figure-1.html#cb54-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,  <span class="fl">3.5</span>,  <span class="dv">7</span>,  <span class="fl">9.7</span>, <span class="fl">12.25</span>, <span class="fl">15.25</span>, <span class="dv">18</span>, <span class="fl">21.5</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="figure-1.html#cb53-1" aria-hidden="true" tabindex="-1"></a>fish_tib <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">short =</span> <span class="fu">names</span>(clr)[<span class="sc">!</span><span class="fu">names</span>(clr) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;flo&quot;</span>, <span class="st">&quot;tab&quot;</span>, <span class="st">&quot;tor&quot;</span>)],</span>
+<span id="cb53-2"><a href="figure-1.html#cb53-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,  <span class="fl">3.5</span>,  <span class="dv">7</span>,  <span class="fl">9.7</span>, <span class="fl">12.25</span>, <span class="fl">15.25</span>, <span class="dv">18</span>, <span class="fl">21.5</span>))</span></code></pre></div>
 <p>Then, we set the color-patch size and create a custom ggplot that is going to function as legend.</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="figure-1.html#cb55-1" aria-hidden="true" tabindex="-1"></a>key_sz <span class="ot">&lt;-</span> .<span class="dv">75</span></span>
-<span id="cb55-2"><a href="figure-1.html#cb55-2" aria-hidden="true" tabindex="-1"></a>p_leg <span class="ot">&lt;-</span> fish_tib <span class="sc">%&gt;%</span> </span>
-<span id="cb55-3"><a href="figure-1.html#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb55-4"><a href="figure-1.html#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">05</span>, <span class="dv">24</span>), <span class="at">expand =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb55-5"><a href="figure-1.html#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="dv">0</span>,</span>
-<span id="cb55-6"><a href="figure-1.html#cb55-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">fill =</span> short, </span>
-<span id="cb55-7"><a href="figure-1.html#cb55-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="fu">after_scale</span>(prismatic<span class="sc">::</span><span class="fu">clr_darken</span>(fill, .<span class="dv">25</span>))),</span>
-<span id="cb55-8"><a href="figure-1.html#cb55-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">width =</span> key_sz, <span class="at">height =</span> key_sz, <span class="at">size =</span> .<span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb55-9"><a href="figure-1.html#cb55-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> x <span class="sc">+</span> .<span class="dv">6</span>, <span class="at">y =</span> <span class="dv">0</span>,</span>
-<span id="cb55-10"><a href="figure-1.html#cb55-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">label =</span> <span class="fu">str_c</span>(<span class="st">&quot;H. &quot;</span>, sp_names[short])), </span>
-<span id="cb55-11"><a href="figure-1.html#cb55-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">fontface =</span> <span class="st">&quot;italic&quot;</span>, <span class="at">size =</span> plot_text_size <span class="sc">/</span> ggplot2<span class="sc">:::</span>.pt) <span class="sc">+</span></span>
-<span id="cb55-12"><a href="figure-1.html#cb55-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pmap</span>(fish_tib, plot_fish_lwd, <span class="at">width =</span> <span class="dv">1</span>, <span class="at">height =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb55-13"><a href="figure-1.html#cb55-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> clr, <span class="at">guide =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb55-14"><a href="figure-1.html#cb55-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="figure-1.html#cb54-1" aria-hidden="true" tabindex="-1"></a>key_sz <span class="ot">&lt;-</span> .<span class="dv">75</span></span>
+<span id="cb54-2"><a href="figure-1.html#cb54-2" aria-hidden="true" tabindex="-1"></a>p_leg <span class="ot">&lt;-</span> fish_tib <span class="sc">%&gt;%</span> </span>
+<span id="cb54-3"><a href="figure-1.html#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb54-4"><a href="figure-1.html#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">05</span>, <span class="dv">24</span>), <span class="at">expand =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb54-5"><a href="figure-1.html#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="dv">0</span>,</span>
+<span id="cb54-6"><a href="figure-1.html#cb54-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">fill =</span> short, </span>
+<span id="cb54-7"><a href="figure-1.html#cb54-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="fu">after_scale</span>(prismatic<span class="sc">::</span><span class="fu">clr_darken</span>(fill, .<span class="dv">25</span>))),</span>
+<span id="cb54-8"><a href="figure-1.html#cb54-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">width =</span> key_sz, <span class="at">height =</span> key_sz, <span class="at">size =</span> .<span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb54-9"><a href="figure-1.html#cb54-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> x <span class="sc">+</span> .<span class="dv">6</span>, <span class="at">y =</span> <span class="dv">0</span>,</span>
+<span id="cb54-10"><a href="figure-1.html#cb54-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">label =</span> <span class="fu">str_c</span>(<span class="st">&quot;H. &quot;</span>, sp_names[short])), </span>
+<span id="cb54-11"><a href="figure-1.html#cb54-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">fontface =</span> <span class="st">&quot;italic&quot;</span>, <span class="at">size =</span> plot_text_size <span class="sc">/</span> ggplot2<span class="sc">:::</span>.pt) <span class="sc">+</span></span>
+<span id="cb54-12"><a href="figure-1.html#cb54-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pmap</span>(fish_tib, plot_fish_lwd, <span class="at">width =</span> <span class="dv">1</span>, <span class="at">height =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb54-13"><a href="figure-1.html#cb54-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> clr, <span class="at">guide =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb54-14"><a href="figure-1.html#cb54-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code></pre></div>
 <p>After this, first the fice panels are combined…</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="figure-1.html#cb56-1" aria-hidden="true" tabindex="-1"></a>p_combined <span class="ot">&lt;-</span> ((<span class="fu">wrap_elements</span>(<span class="at">plot =</span> p_tree <span class="sc">+</span></span>
-<span id="cb56-2"><a href="figure-1.html#cb56-2" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb56-3"><a href="figure-1.html#cb56-3" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size)),</span>
-<span id="cb56-4"><a href="figure-1.html#cb56-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">clip =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb56-5"><a href="figure-1.html#cb56-5" aria-hidden="true" tabindex="-1"></a>                 p2 ) <span class="sc">/</span></span>
-<span id="cb56-6"><a href="figure-1.html#cb56-6" aria-hidden="true" tabindex="-1"></a>                 (pcas <span class="sc">%&gt;%</span> <span class="fu">wrap_plots</span>()) <span class="sc">+</span></span>
-<span id="cb56-7"><a href="figure-1.html#cb56-7" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">1</span>,.<span class="dv">75</span>)) <span class="sc">+</span></span>
-<span id="cb56-8"><a href="figure-1.html#cb56-8" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">plot_annotation</span>(<span class="at">tag_levels =</span> <span class="st">&#39;a&#39;</span>) <span class="sc">&amp;</span></span>
-<span id="cb56-9"><a href="figure-1.html#cb56-9" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size),</span>
-<span id="cb56-10"><a href="figure-1.html#cb56-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;transparent&quot;</span>,</span>
-<span id="cb56-11"><a href="figure-1.html#cb56-11" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">color =</span> <span class="st">&quot;transparent&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="figure-1.html#cb55-1" aria-hidden="true" tabindex="-1"></a>p_combined <span class="ot">&lt;-</span> ((<span class="fu">wrap_elements</span>(<span class="at">plot =</span> p_tree <span class="sc">+</span></span>
+<span id="cb55-2"><a href="figure-1.html#cb55-2" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb55-3"><a href="figure-1.html#cb55-3" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size)),</span>
+<span id="cb55-4"><a href="figure-1.html#cb55-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">clip =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb55-5"><a href="figure-1.html#cb55-5" aria-hidden="true" tabindex="-1"></a>                 p2 ) <span class="sc">/</span></span>
+<span id="cb55-6"><a href="figure-1.html#cb55-6" aria-hidden="true" tabindex="-1"></a>                 (pcas <span class="sc">%&gt;%</span> <span class="fu">wrap_plots</span>()) <span class="sc">+</span></span>
+<span id="cb55-7"><a href="figure-1.html#cb55-7" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">1</span>,.<span class="dv">75</span>)) <span class="sc">+</span></span>
+<span id="cb55-8"><a href="figure-1.html#cb55-8" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">plot_annotation</span>(<span class="at">tag_levels =</span> <span class="st">&#39;a&#39;</span>) <span class="sc">&amp;</span></span>
+<span id="cb55-9"><a href="figure-1.html#cb55-9" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_text_size),</span>
+<span id="cb55-10"><a href="figure-1.html#cb55-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;transparent&quot;</span>,</span>
+<span id="cb55-11"><a href="figure-1.html#cb55-11" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">color =</span> <span class="st">&quot;transparent&quot;</span>)))</span></code></pre></div>
 <p>.. and then the legend is attached.</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="figure-1.html#cb57-1" aria-hidden="true" tabindex="-1"></a>p_done <span class="ot">&lt;-</span> cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(p_combined, p_leg,</span>
-<span id="cb57-2"><a href="figure-1.html#cb57-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>,.<span class="dv">06</span>))</span></code></pre></div>
-<p><img src="plot_F1_files/figure-html/unnamed-chunk-39-1.png" width="648" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="figure-1.html#cb56-1" aria-hidden="true" tabindex="-1"></a>p_done <span class="ot">&lt;-</span> cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(p_combined, p_leg,</span>
+<span id="cb56-2"><a href="figure-1.html#cb56-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>,.<span class="dv">06</span>))</span></code></pre></div>
 <p>Finally, we can export Figure 1.</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="figure-1.html#cb58-1" aria-hidden="true" tabindex="-1"></a>scl <span class="ot">&lt;-</span> .<span class="dv">75</span></span>
-<span id="cb58-2"><a href="figure-1.html#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hypo_save</span>(p_done, <span class="at">filename =</span> <span class="st">&#39;figures/F1.pdf&#39;</span>,</span>
-<span id="cb58-3"><a href="figure-1.html#cb58-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> <span class="dv">9</span> <span class="sc">*</span> scl,</span>
-<span id="cb58-4"><a href="figure-1.html#cb58-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> <span class="dv">6</span> <span class="sc">*</span> scl,</span>
-<span id="cb58-5"><a href="figure-1.html#cb58-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">device =</span> cairo_pdf,</span>
-<span id="cb58-6"><a href="figure-1.html#cb58-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">bg =</span> <span class="st">&quot;transparent&quot;</span>,</span>
-<span id="cb58-7"><a href="figure-1.html#cb58-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">comment =</span> plot_comment)</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="figure-1.html#cb57-1" aria-hidden="true" tabindex="-1"></a>scl <span class="ot">&lt;-</span> .<span class="dv">75</span></span>
+<span id="cb57-2"><a href="figure-1.html#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hypo_save</span>(p_done, <span class="at">filename =</span> <span class="st">&#39;figures/F1.pdf&#39;</span>,</span>
+<span id="cb57-3"><a href="figure-1.html#cb57-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> <span class="dv">9</span> <span class="sc">*</span> scl,</span>
+<span id="cb57-4"><a href="figure-1.html#cb57-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> <span class="dv">6</span> <span class="sc">*</span> scl,</span>
+<span id="cb57-5"><a href="figure-1.html#cb57-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">device =</span> cairo_pdf,</span>
+<span id="cb57-6"><a href="figure-1.html#cb57-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">bg =</span> <span class="st">&quot;transparent&quot;</span>,</span>
+<span id="cb57-7"><a href="figure-1.html#cb57-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">comment =</span> plot_comment)</span></code></pre></div>
 <hr />
 
 </div>

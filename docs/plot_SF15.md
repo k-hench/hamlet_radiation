@@ -177,7 +177,7 @@ p_done <- data %>%
         axis.title.x = element_markdown())
 ```
 
-<img src="plot_SF15_files/figure-html/unnamed-chunk-9-1.png" width="940.8" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S15.
 
@@ -234,23 +234,6 @@ arrange(as.character(run)) %>%
   select(run, subset_type, sig,real_pop, p_perm) %>% 
   mutate(real_pop = sprintf("%.4f",real_pop),
          p_perm = sprintf("%.2f",p_perm * 100))
-```
-
-```
-## # A tibble: 56 x 5
-##    run           subset_type         sig   real_pop p_perm
-##    <chr>         <chr>               <chr> <chr>    <chr> 
-##  1 abehon-gumhon whg                 ***   0.0445   0.00  
-##  2 abehon-gumhon subset_non_diverged ***   0.0440   0.00  
-##  3 abehon-nighon whg                 -     0.0033   4.93  
-##  4 abehon-nighon subset_non_diverged -     0.0032   4.19  
-##  5 abehon-puehon whg                 -     0.0030   5.11  
-##  6 abehon-puehon subset_non_diverged -     0.0026   6.39  
-##  7 abehon-ranhon whg                 -     0.0039   3.40  
-##  8 abehon-ranhon subset_non_diverged -     0.0037   3.97  
-##  9 abehon-unihon whg                 *     0.0057   1.01  
-## 10 abehon-unihon subset_non_diverged -     0.0053   1.36  
-## # … with 46 more rows
 ```
 
 ---

@@ -1,16 +1,17 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF14.R 2_analysis/GxP/50000/
+# Rscript --vanilla R/fig/plot_SF17.R \
+#     2_analysis/GxP/50000/
 # ===============================================================
-# This script produces Suppl. Figure 14 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 17 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/GxP/50000/')
-# script_name <- "R/fig/plot_SF14.R"
+# script_name <- "R/fig/plot_SF17.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -55,11 +56,15 @@ p_done <- data %>%
   theme_hypo()
 
 # export final figure
-hypo_save(filename = "figures/SF14.png",
+hypo_save(filename = "figures/SF17.png",
        plot = p_done,
        width = 11,
        height = 7,
        dpi = 600,
        type = "cairo",
        comment = plot_comment)
-  
+
+system("convert figures/SF17.png figures/SF17.pdf")
+system("rm figures/SF17.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF17.pdf")
+system(create_metadata)

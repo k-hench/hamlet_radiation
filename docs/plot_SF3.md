@@ -199,13 +199,13 @@ Now, the individual sub-plot are created.
 ps <- list(1:7, 8:14, 15:21, 22:28) %>% map(dxy_subplot)
 ```
 
-<img src="plot_SF3_files/figure-html/unnamed-chunk-10-1.png" width="806.4" style="display: block; margin: auto;" />
+
 
 Form the sub-plots, the final figure is assembled.
 
 
 
-<img src="plot_SF3_files/figure-html/unnamed-chunk-12-1.png" width="806.4" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S3.
 

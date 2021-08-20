@@ -1,16 +1,17 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF3.R 2_analysis/dxy/50k/
+# Rscript --vanilla R/fig/plot_SF10.R \
+#     2_analysis/dxy/50k/
 # ===============================================================
-# This script produces Suppl. Figure 3 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 10 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("2_analysis/dxy/50k/")
-# script_name <- "R/fig/plot_SF3.R"
+# script_name <- "R/fig/plot_SF10.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypogen)
 library(hypoimg)
@@ -120,7 +121,7 @@ p_done <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = ele
 
 # export final figure
 scl <- 1.2
-hypo_save(filename = 'figures/SF3.pdf',
+hypo_save(filename = 'figures/SF10.pdf',
           plot = p_done,
           width = f_width * scl,
           height = f_width * 1.15 * scl,

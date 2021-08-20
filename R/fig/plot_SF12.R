@@ -1,19 +1,23 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SFx5.R \
-#    ressources/species_order_tree1.txt 2_analysis/dstats/hyp_ld05_dtrios_BBAA.txt 2_analysis/dstats/BBAA_sign_ld05.csv
+# Rscript --vanilla R/fig/plot_SF12.R \
+#     ressources/species_order_alpha.txt \
+#     2_analysis/dstats/hyp_ld05_dtrios_BBAA.txt \
+#     2_analysis/dstats/BBAA_ld05.csv \
+#     2_analysis/dstats/BBAA_sign_ld05.csv
 # ===============================================================
-# This script produces Figure Sx5 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 12 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-args <- c("ressources/species_order_alpha.txt",
-          "2_analysis/dstats/hyp_ld05_dtrios_BBAA.txt",
-          "2_analysis/dstats/BBAA_ld05.csv",
-          "2_analysis/dstats/BBAA_sign_ld05.csv")
-script_name <- "R/fig/plot_SFx5.R"
-args <- commandArgs(trailingOnly=FALSE)
+# args <- c("ressources/species_order_alpha.txt",
+#           "2_analysis/dstats/hyp_ld05_dtrios_BBAA.txt",
+#           "2_analysis/dstats/BBAA_ld05.csv",
+#           "2_analysis/dstats/BBAA_sign_ld05.csv")
+# script_name <- "R/fig/plot_SF12.R"
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(prismatic)
 library(ggtext)
@@ -121,7 +125,7 @@ p_lim <- c(1, p_cap)
         axis.title = element_blank(),
         legend.title = element_markdown()) )
 
-hypoimg::hypo_save(filename = "figures/SFx5.pdf",
+hypoimg::hypo_save(filename = "figures/SF12.pdf",
        width = f_width_half,
        height = f_width_half,
        device = cairo_pdf,

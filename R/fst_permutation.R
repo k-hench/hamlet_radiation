@@ -1,14 +1,14 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF15.R 2_analysis/fst_signif/random/
+# Rscript --vanilla R/fst_permutation.R 2_analysis/fst_signif/random/
 # ===============================================================
-# This script produces Suppl. Figure 15 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
+# This script produces the Fst permutation summary of the study
+# "Rapid radiation in a highly diverse marine environment"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("2_analysis/fst_signif/random/")
-# script_name <- "R/fig/plot_SF15.R"
+# script_name <- "R/fst_permutation.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
@@ -96,7 +96,7 @@ p_done <- data %>%
         axis.title.x = element_markdown())
 
 scl <- 1.4
-hypo_save(p_done, filename = 'figures/SF15.pdf',
+hypo_save(p_done, filename = 'figures/fst_permutation.pdf',
           width = f_width * scl,
           height = f_width * .65 * scl,
           device = cairo_pdf,

@@ -219,7 +219,7 @@ p1 <- combined_data %>%
         strip.text = element_markdown())
 ```
 
-<img src="plot_SF6_files/figure-html/unnamed-chunk-11-1.png" width="960" style="display: block; margin: auto;" />
+
 
 Then we plot the slopes of the regression within panel __b__.
 
@@ -235,7 +235,7 @@ p2 <- model_data %>%
   theme_minimal()
 ```
 
-<img src="plot_SF6_files/figure-html/unnamed-chunk-13-1.png" width="480" style="display: block; margin: auto;" />
+
 
 And finally the $R^2$ values in panel __c__.
 
@@ -251,7 +251,7 @@ p3 <- model_data %>%
   theme_minimal()
 ```
 
-<img src="plot_SF6_files/figure-html/unnamed-chunk-15-1.png" width="480" style="display: block; margin: auto;" />
+
 
 The final figure is created by combining the three sub panels.
 
@@ -267,7 +267,7 @@ p_done <- plot_grid(p1,
           rel_heights = c(1,.3),labels = project_case(c("a")))
 ```
 
-<img src="plot_SF6_files/figure-html/unnamed-chunk-17-1.png" width="960" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure SF6.
 

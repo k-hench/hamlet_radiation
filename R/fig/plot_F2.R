@@ -1,14 +1,16 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F4.R \
-#    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
-#    2_analysis/summaries/fst_outliers_998.tsv \
-#    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
-#    2_analysis/twisst/weights/ ressources/plugin/trees/ \
-#    2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_F2.R \
+#     2_analysis/fst/50k/multi_fst.50k.tsv.gz \
+#     2_analysis/GxP/50000/ \
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+#     2_analysis/twisst/weights/ \
+#     ressources/plugin/trees/ \
+#     2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 4 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
+# This script produces Figure 2 of the study "Rapid radiation in a highly
+# diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fst/50k/multi_fst.50k.tsv.gz',
@@ -16,9 +18,10 @@
 # 'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
 # '2_analysis/twisst/weights/', 'ressources/plugin/trees/',
 # '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_F4.R"
+# script_name <- "R/fig/plot_F2.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -30,7 +33,6 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
-
 # config -----------------------
 fst_file <- as.character(args[1])
 gxp_dir <- as.character(args[2])
@@ -173,9 +175,15 @@ p_done <- ggplot()+
 
 # export figure 4
 #scl <- .8
-hypo_save(p_done, filename = 'figures/F4.png',
+hypo_save(p_done,
+          filename = 'figures/F2.png',
           width = f_width,
           height = f_width * .5,
           dpi = 600,
           type = "cairo",
           comment = plot_comment)
+
+system("convert figures/F2.png figures/F2.pdf")
+system("rm figures/F2.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/F2.pdf")
+system(create_metadata)

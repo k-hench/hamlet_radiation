@@ -193,7 +193,7 @@ p_done <- combined_data %>%
 ```
 
 
-<img src="plot_SF8_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S8.
 

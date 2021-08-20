@@ -218,7 +218,7 @@ p_done <- ggplot()+
         axis.text.x.bottom = element_text(colour = 'darkgray'))
 ```
 
-<img src="plot_SF5_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S5.
 

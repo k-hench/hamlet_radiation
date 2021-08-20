@@ -1,16 +1,17 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF10.R 2_analysis/pi/50k/
+# Rscript --vanilla R/fig/plot_SF19.R \
+#     2_analysis/pi/50k/
 # ===============================================================
-# This script produces Suppl. Figure 10 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 19 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/pi/50k/')
-# script_name <- "R/fig/plot_SF10.R"
-args <- commandArgs(trailingOnly=FALSE)
+# script_name <- "R/fig/plot_SF19.R"
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -102,13 +103,18 @@ p_done <- ggplot()+
         axis.text.x.bottom = element_markdown(colour = 'darkgray'))
 
 # export final figure
-hypo_save(filename = 'figures/SF10.png',
+hypo_save(filename = 'figures/SF19.png',
           plot = p_done,
           width = 8,
           height = 8,
+          dpi = 600,
           type = "cairo",
           comment = plot_comment)
 
+system("convert figures/SF19.png figures/SF19.pdf")
+system("rm figures/SF19.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF19.pdf")
+system(create_metadata)
 
 # export S.Tab. 4
 global_bar %>% 

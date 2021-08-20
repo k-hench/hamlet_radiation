@@ -177,7 +177,7 @@ p_tree <- (open_tree(
   theme_void()
 ```
 
-<img src="plot_SF9_files/figure-html/unnamed-chunk-10-1.png" width="864" style="display: block; margin: auto;" />
+
 
 Unfortunately, the polar coordinate system underlying the circular tree layout introduces a lot of empty space for a open tree that spans 180 degrees.
 In order to crop that empty space, the basic tree is converted into grid object and used as an annotation in a different ggplot.
@@ -200,7 +200,7 @@ p_done <- ggplot() +
   theme_void()
 ```
 
-<img src="plot_SF9_files/figure-html/unnamed-chunk-12-1.png" width="1080" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S9.
 

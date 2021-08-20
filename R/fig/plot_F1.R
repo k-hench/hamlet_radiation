@@ -1,21 +1,22 @@
 #!/usr/bin/env Rscript
 #
 # Context: this script depends on the input file 2_analysis/summaries/fst_permutation_summary.tsv
-#          which is created by R/figs/plot_SF15.R
+#          which is created by R/fst_permutation.R
 #
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F1.R \
-#    2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt 2_analysis/summaries/fst_permutation_summary.tsv
+#     2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt 2_analysis/summaries/fst_permutation_summary.tsv
 # ===============================================================
-# This script produces Figure 1 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
+# This script produces Figure 1 of the study "Rapid radiation in a highly
+# diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt', 
+# args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt',
 #           '2_analysis/summaries/fst_permutation_summary.tsv')
 # script_name <- "R/fig/plot_F1.R"
-args <- commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -210,44 +211,6 @@ p_tree <- ggplot() +
   theme(legend.position = c(.01, .08),
         legend.justification = c(0, 0))
 
-# =================================================================================================
-# import Fst
-# fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
-# 
-# fst_data <- str_c(fst_dir, fst_files) %>%
-#   purrr::map(summarize_fst) %>%
-#   bind_rows()
-
-# determine fst ranking
-# fst_order <- fst_data %>%
-#   select(run, `mean_weighted-fst`) %>%
-#   mutate(run = fct_reorder(run, `mean_weighted-fst`))
-# 
-# fst_data_gather <- fst_data %>% 
-#   gather(key = 'stat', value = 'val', -run) %>%
-#   # sumstat contains the values needed to plot the boxplots (quartiles, etc)
-#   separate(stat, into = c('sumstat', 'popstat'), sep = '_') %>%
-#   # duplicate dxy values scaled to fst range
-#   mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
-#   unite(temp, val, val_scaled) %>%
-#   # separate the original values from the scaled ones (scaled = secondary axis, legacy)
-#   spread(.,key = 'sumstat',value = 'temp') %>%
-#   separate(mean, into = c('mean','mean_scaled'),sep = '_', convert = TRUE) %>%
-#   separate(median, into = c('median','median_scaled'), sep = '_', convert = TRUE) %>%
-#   separate(sd, into = c('sd','sd_scaled'),sep = '_', convert = TRUE) %>%
-#   separate(lower, into = c('lower','lower_scaled'), sep = '_', convert = TRUE) %>%
-#   separate(upper, into = c('upper','upper_scaled'), sep = '_', convert = TRUE) %>%
-#   separate(lowpoint, into = c('lowpoint','lowpoint_scaled'), sep = '_', convert = TRUE) %>%
-#   separate(highpoint, into = c('highpoint','highpoint_scaled'), sep = '_', convert = TRUE) %>%
-#   # include "dodge"-positions for side-by-side plotting (secondary axis)
-#   mutate(loc = str_sub(run,4,6),
-#          run = factor(run, levels = levels(fst_order$run)),
-#          x = as.numeric(run) ,
-#          x_dodge = ifelse(popstat == 'dxy', x + .25, x - .25),
-#          x_start_dodge = x_dodge - wdh/2,
-#          x_end_dodge = x_dodge + wdh/2,
-#          popstat_loc = str_c(popstat,'[',loc,']'))
-
 globals <- vroom::vroom(fst_globals, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
   mutate(run = str_c(str_sub(run,1,3),loc,'-',str_sub(run,5,7),loc),
@@ -291,47 +254,6 @@ p_net <- cowplot::plot_grid(
   ncol = 3) %>%
   cowplot::as_grob()
 
-# assemble panel b
-# p2 <- fst_data_gather %>%
-#   filter(popstat == "weighted-fst") %>%
-#   left_join(fst_sig_attach) %>%
-#   mutate(loc = str_sub(run, -3, -1)) %>%
-#   ggplot(aes(color = loc)) +
-#   geom_segment(aes(x = x, xend = x,
-#                    y = lowpoint, yend = highpoint),
-#                lwd = plot_lwd)+
-#   geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
-#                 ymin = lower, ymax = upper),
-#             fill = 'white',
-#             size = plot_lwd)+
-#   geom_segment(aes(x = x - wdh,
-#                    xend = x + wdh,
-#                    y = median,
-#                    yend = median),
-#                lwd = plot_lwd)+
-#   geom_point(aes(x = x, y = mean, shape = is_sig, fill = after_scale(color)),
-#              size = .8) +
-#   annotation_custom(p_net, ymin = .15, xmax = 25) +
-#   scale_x_continuous(name = "Pair of sympatric species",
-#                      breaks = 1:28) +
-#   scale_y_continuous(name = expression(italic(F[ST])))+
-#   scale_color_manual(values = c(make_faint_clr('bel'),
-#                                 make_faint_clr('hon'),
-#                                 make_faint_clr('pan'))[c(2, 4, 6)])+
-#   scale_shape_manual(values = c(`TRUE` = 1, `FALSE` = 21)) +
-#   coord_cartesian(xlim = c(0,29),
-#                   expand = c(0,0))+
-#   theme_minimal()+
-#   theme(text = element_text(size = plot_text_size),
-#         legend.position = 'none',
-#         strip.placement = 'outside',
-#         strip.text = element_text(size = 12),
-#         panel.grid.major.x = element_blank(),
-#         panel.grid.minor.y = element_blank(),
-#         axis.text.y.right = element_text(color = clr_sec),
-#         axis.title.y.right = element_text(color = clr_sec))
-# # 
-
 p2 <- globals %>%
   left_join(fst_sig_attach %>% mutate(run = factor(run, levels = levels(globals$run))) ) %>% 
   ggplot(aes(color = loc)) +
@@ -340,8 +262,6 @@ p2 <- globals %>%
                alpha = is_sig,
                fill = after_scale(clr_lighten(color))),
                stat = "identity",size = .2, width = .8)+
-  # geom_point(aes(x = x, y = mean, shape = is_sig, fill = after_scale(color)),
-  #            size = .8) + 
   annotation_custom(p_net, ymin = .05, xmax = 24.5) +
   scale_x_continuous(name = "Pair of sympatric species",
                      breaks = 1:28) +

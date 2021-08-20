@@ -1,16 +1,18 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF13.R 2_analysis/admixture/ metadata/phenotypes.sc
+# Rscript --vanilla R/fig/plot_SF16.R \
+#     2_analysis/admixture/ \
+#     metadata/phenotypes.sc
 # ===============================================================
-# This script produces Suppl. Figure 13 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 16 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
-# script_name <- "R/fig/plot_SF13.R"
-args <- commandArgs(trailingOnly=FALSE)
+# script_name <- "R/fig/plot_SF16.R"
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(paletteer)
 library(patchwork)
 library(GenomicOriginsScripts)
@@ -177,8 +179,10 @@ p_done <- ggdraw(p_prep, xlim = c(.023,1))
 
 # export final figure
 scl <- .9
-ggsave("figures/SF13.pdf",
+hypo_save("figures/SF16.pdf",
        plot = p_done,
        width = 16*scl,
        height = 10*scl,
-       device = cairo_pdf)
+       device = cairo_pdf,
+       bg = "transparent",
+       comment = plot_comment)

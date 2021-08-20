@@ -1,14 +1,17 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F4.R 2_analysis/dxy/50k/ \
-#    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
-#    2_analysis/summaries/fst_outliers_998.tsv \
-#    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
-#    2_analysis/twisst/weights/ ressources/plugin/trees/ \
-#    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
-#    2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_SF8.R \
+#     2_analysis/dxy/50k/ \
+#     2_analysis/fst/50k/multi_fst.50k.tsv.gz \
+#     2_analysis/GxP/50000/ \
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+#     2_analysis/twisst/weights/ \
+#     ressources/plugin/trees/ \
+#     2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
+#     2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 4 of the study "Ancestral variation, hybridization and modularity
+# This script produces Figure 8 of the study "Ancestral variation, hybridization and modularity
 # fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
@@ -17,9 +20,10 @@
 # 'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
 # '2_analysis/twisst/weights/', 'ressources/plugin/trees/',
 # '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_SFx2.R"
+# script_name <- "R/fig/plot_SF8.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -272,11 +276,14 @@ p_done <- ggplot()+
         strip.background = element_blank(),
         strip.placement = 'outside')
 
-# export figure 4
-#scl <- .8
-hypo_save(p_done, filename = 'figures/SFx2.png',
+hypo_save(p_done, filename = 'figures/SF8.png',
           width = f_width,
           height = f_width * .9,
           dpi = 600,
           type = "cairo",
           comment = plot_comment)
+
+system("convert figures/SF8.png figures/SF8.pdf")
+system("rm figures/SF8.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF8.pdf")
+system(create_metadata)

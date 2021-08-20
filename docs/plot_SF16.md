@@ -172,7 +172,7 @@ p_done <- ggplot() +
   theme_void()
 ```
 
-<img src="plot_SF16_files/figure-html/unnamed-chunk-9-1.png" width="1080" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S16.
 

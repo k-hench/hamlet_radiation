@@ -144,7 +144,7 @@ p2 <- plot_outl_tree_s(tree_data[[2]], show_legend = FALSE)
 p3 <- plot_outl_tree_s(tree_data[[3]], show_legend = FALSE)
 ```
 
-<img src="plot_SF12_files/figure-html/unnamed-chunk-8-1.png" width="658.56" style="display: block; margin: auto;" />
+
 
 All three trees are combined to create the final figure.
 
@@ -153,7 +153,7 @@ All three trees are combined to create the final figure.
 p_done <- p1 + p2 + p3 + plot_annotation(tag_levels = 'a') + plot_layout(ncol = 1)
 ```
 
-<img src="plot_SF12_files/figure-html/unnamed-chunk-10-1.png" width="658.56" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S12.
 

@@ -1,13 +1,12 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF6.R \
-#   2_analysis/summaries/fst_globals.txt \
-#   2_analysis/fst/50k/ \
-#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+#     2_analysis/summaries/fst_globals.txt \
+#     2_analysis/fst/50k/ \
+#     2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
-# This script produces Suppl. Figure 6 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 6 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( '2_analysis/summaries/fst_globals.txt',
@@ -16,6 +15,7 @@
 # script_name <- "R/fig/plot_SF6.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)

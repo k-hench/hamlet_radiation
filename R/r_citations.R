@@ -5,7 +5,7 @@ all_pkg <- system("grep -r ^library R/* | sed 's/.*library(//g; s/)//' | sort | 
 
 pkg_table <- function(pkg){
   tibble(pkg = pkg,
-         local_version = packageVersion(pkg)%>% str_c())
+         local_version = packageVersion(pkg) %>% str_c())
 }
 
 
@@ -34,7 +34,7 @@ all_pkg[! (all_pkg %in% custom_pkg)] %>%
   select(output) %>% 
   unname() %>% 
   unlist() %>% 
-  str_c(collapse = ', ') %>% 
+  str_c(collapse = ' \\cite{},\n') %>% 
   cat()
   
 

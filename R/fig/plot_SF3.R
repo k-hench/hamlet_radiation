@@ -1,16 +1,17 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF1.R 2_analysis/pca/
+# Rscript --vanilla R/fig/plot_SF3.R \
+#     2_analysis/pca/
 # ===============================================================
-# This script produces Suppl. Figure 1 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 3 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("2_analysis/pca/")
-# script_name <- "R/fig/plot_SF1.R"
+# script_name <- "R/fig/plot_SF3.R"
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(patchwork)
 library(hypoimg)
@@ -60,7 +61,7 @@ p_done <- cowplot::plot_grid((tibble(loc = c("bel.", "hon.", "pan."),
   ncol = 1 ,
   rel_heights = c(1,.1))
 
-hypo_save(p_done, filename = 'figures/SF1.pdf',
+hypo_save(p_done, filename = 'figures/SF3.pdf',
           width = f_width,
           height = f_width * .38,
           device = cairo_pdf,

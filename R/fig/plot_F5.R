@@ -1,14 +1,20 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F5.R \
-#   2_analysis/twisst/weights/ ressources/plugin/trees/ \
-#   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
-#   2_analysis/summaries/fst_outliers_998.tsv 2_analysis/dxy/50k/ \
-#   2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt \
-#   2_analysis/GxP/50000/ 200 5 2_analysis/revPoMo/outlier_regions/
+#     2_analysis/twisst/weights/ \
+#     ressources/plugin/trees/ \
+#     https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     2_analysis/dxy/50k/ \
+#     2_analysis/fst/50k/ \
+#     2_analysis/summaries/fst_globals.txt \
+#     2_analysis/GxP/50000/ \
+#     200 \
+#     5 \
+#     2_analysis/revPoMo/outlier_regions/
 # ===============================================================
-# This script produces Figure 5 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
+# This script produces Figure 5 of the study "Rapid radiation in a highly
+# diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
@@ -21,6 +27,7 @@
 # script_name <- "R/fig/plot_F5.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)

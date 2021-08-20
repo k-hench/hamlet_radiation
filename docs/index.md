@@ -2,7 +2,7 @@
 title: "Script repository"
 subtitle: "(Hench *et al.* supplement)"
 author: "Kosmas Hench and Martin Helmkampf"
-date: "2021-04-23"
+date: "2021-08-20"
 documentclass: book
 bibliography: [book.bib]
 biblio-style: apalike
@@ -13,6 +13,9 @@ description: "Scripts used to produce Figures and Supplementary Figures of 'Ance
 
 # Intro
 
+
+
+<span style="color:#FF0000">**Disclaimer:** We are currently still in the process of updating the documentation after the last round of revisions. Some sections are thus still not up to date.</span> 
 
 
 [This repository](https://github.com/k-hench/chapter2) contains the complete workflow used in the paper "*Ancestral variation, hybridization and modularity fuel a marine radiation*".

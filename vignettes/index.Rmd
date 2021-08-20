@@ -17,6 +17,9 @@ description: "Scripts used to produce Figures and Supplementary Figures of 'Ance
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+<span style="color:#FF0000">**Disclaimer:** We are currently still in the process of updating the documentation after the last round of revisions. Some sections are thus still not up to date.</span> 
+
+
 [This repository](https://github.com/k-hench/chapter2) contains the complete workflow used in the paper "*Ancestral variation, hybridization and modularity fuel a marine radiation*".
 The individual chapters of this documentation follow the separate main steps of the workflow.
 Each of the chapters thus refers to an individual prefix in the _git x.x_ references of the papers method section.

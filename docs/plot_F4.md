@@ -430,7 +430,7 @@ p_done <- ggplot()+
         strip.placement = 'outside')
 ```
 
-<img src="plot_F4_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+
 
 The final figure is then exported using `hypo_save()`.
 

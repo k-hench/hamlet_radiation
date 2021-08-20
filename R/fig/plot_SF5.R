@@ -1,16 +1,18 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F3.R \
-#    2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_SF5.R \
+#     2_analysis/fst/50k/ \
+#     2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 3 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 5 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_F3.R"
-args <- commandArgs(trailingOnly=FALSE)
+# script_name <- "R/fig/plot_SF5.R"
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(ggforce)
 library(hypoimg)
@@ -134,16 +136,13 @@ p_done <- data2 %>%
              color = rgb(1,0,0,.25))+
   # add data points
   geom_point(size = plot_size,
-             color = plot_clr#, shape = 21
-             )+
+             color = plot_clr )+
   # define plot stucture
   facet_grid(variable~threshold_value,
              scale='free',
              switch = 'y',
              labeller = label_parsed)+
   # configure scales
-  # scale_fill_gradientn(name = expression(weighted~italic(F[ST])),
-  #                      colours = hypogen::hypo_clr_LGs[1:24] %>% clr_lighten(factor = .3))+
   scale_x_continuous(name = expression(Whole-genome~differentiation~(weighted~italic(F[ST]))),
                      breaks = c(0,.05,.1),
                      limits = c(-.00025,.10025),
@@ -174,7 +173,7 @@ p_done <- data2 %>%
         plot.background = element_blank())
 
 # export figure 3
-hypo_save(filename = 'figures/F3.pdf',
+hypo_save(filename = 'figures/SF5.pdf',
           plot = p_done,
           width = f_width,
           height = .5 * f_width,

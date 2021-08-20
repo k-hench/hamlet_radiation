@@ -197,7 +197,7 @@ p_done <- ggplot()+
         axis.text.x.bottom = element_markdown(colour = 'darkgray'))
 ```
 
-<img src="plot_SF10_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S10.
 

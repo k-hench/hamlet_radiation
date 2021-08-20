@@ -201,7 +201,7 @@ p_msmc <- msmc_data %>%
         legend.title = element_text(face = 'plain'))
 ```
 
-<img src="plot_F2_files/figure-html/unnamed-chunk-9-1.png" width="329.28" style="display: block; margin: auto;" />
+
 
 
 Then, the second panel containing the cross-coalescence plot is created.
@@ -268,7 +268,7 @@ p_done <- p_msmc /
         plot.background = element_blank())
 ```
 
-<img src="plot_F2_files/figure-html/unnamed-chunk-12-1.png" width="329.28" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure 2.
 

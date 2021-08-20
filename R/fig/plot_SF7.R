@@ -1,16 +1,17 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF7.R 2_analysis/dxy/50k/
+# Rscript --vanilla R/fig/plot_SF7.R \
+#     2_analysis/dxy/50k/
 # ===============================================================
-# This script produces Suppl. Figure 7 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 7 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/dxy/50k/')
 # script_name <- "R/fig/plot_SF7.R"
-args <- commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -109,5 +110,11 @@ hypo_save(filename = 'figures/SF7.png',
           plot = p_done,
           width = 8,
           height = 12,
+          dpi = 600,
           type = "cairo",
           comment = plot_comment)
+
+system("convert figures/SF7.png figures/SF7.pdf")
+system("rm figures/SF7.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF7.pdf")
+system(create_metadata)

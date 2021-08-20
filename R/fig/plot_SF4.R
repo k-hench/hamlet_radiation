@@ -1,20 +1,21 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF5.R 2_analysis/fst/50k/ \
-#   2_analysis/summaries/fst_outliers_998.tsv \
-#   2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_SF4.R \
+#     2_analysis/fst/50k/ \
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Suppl. Figure 5 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 4 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fst/50k/',
 #           '2_analysis/summaries/fst_outliers_998.tsv',
 #           '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_SF5.R"
-args <- commandArgs(trailingOnly=FALSE)
+# script_name <- "R/fig/plot_SF4.R"
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -117,9 +118,15 @@ p_done <- ggplot()+
         axis.text.x.bottom = element_text(colour = 'darkgray'))
 
 # export final figure
-hypo_save(filename = 'figures/SF5.png',
+hypo_save(filename = 'figures/SF4.png',
           plot = p_done,
           width = 8,
           height = 12,
+          dpi = 600,
           type = "cairo",
           comment = plot_comment)
+
+system("convert figures/SF4.png figures/SF4.pdf")
+system("rm figures/SF4.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF4.pdf")
+system(create_metadata)

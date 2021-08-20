@@ -110,7 +110,7 @@ p_loc <- c("bel", "hon", "pan") %>%
 
 As an example we can have a look at the result for `plot_loc("pan")`:
 
-<img src="plot_SF4_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" />
+
 
 All three panels are collected and the final Figure is composed using the package [**patchwork**](https://patchwork.data-imaginist.com/):
 
@@ -124,7 +124,7 @@ p_done <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + t
   plot_annotation(tag_levels = 'a')
 ```
 
-<img src="plot_SF4_files/figure-html/unnamed-chunk-8-1.png" width="960" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S4.
 

@@ -1,18 +1,19 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/ \
-#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+# Rscript --vanilla R/fig/plot_SF9.R \
+#     2_analysis/pi/50k/ \
+#     2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
-# This script produces Suppl. Figure 8 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 9 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/pi/50k/',
 #           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
-# script_name <- "R/fig/plot_SF8.R"
-args <- commandArgs(trailingOnly=FALSE)
+# script_name <- "R/fig/plot_SF9.R"
+args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(vroom)
 library(hypoimg)
@@ -93,35 +94,16 @@ p <- combined_data %>%
         strip.text = element_blank())
 
 # export final figure
-hypo_save(filename = 'figures/SF8.pdf',
+hypo_save(filename = 'figures/SF9.pdf',
           plot = p,
           width = 8,
           height = 10,
           comment = plot_comment)
 
-
 # ===============
-
-combined_data %>% 
+combined_data %>%
   filter( BIN_START %% 50000 == 1) %>%
-  group_by(spec) %>% 
-  summarise(genom_avg_pi = sum(PI*N_VARIANTS)/sum(N_VARIANTS)) %>% #write_tsv("2_analysis/summaries/pi_globals.tsv")
-  ungroup() %>% 
-  mutate(loc = str_sub(spec, 4, 6) %>%  loc_names[.],
-         spec = str_sub(spec, 1, 3) %>% sp_names[.] %>% str_c("H. ",.),
-         genom_avg_pi = sprintf("%.4f", genom_avg_pi)) %>% 
-  pivot_wider(names_from = spec,
-              values_from = genom_avg_pi,
-              values_fill = "-") %>% 
-  knitr::kable(format = "latex")
-
-combined_data %>% 
-  group_by(spec) %>% 
-  summarise(genom_avg_pi = sum(PI*N_VARIANTS)/sum(N_VARIANTS),
-            genom_avg_pi2 = median(PI, na.rm = TRUE)) %>% 
-  left_join(global_bar) %>% 
-  ggplot() +
-  geom_point(aes(x = as.numeric(spec) +.25, y = genom_avg_pi), color = "red")+
-  geom_point(aes(x = as.numeric(spec), y = genom_avg_pi2), color = "black")+
-  geom_point(aes(x = as.numeric(spec) -.25, y = genome_wide_pi), color = "blue")
+  group_by(spec) %>%
+  summarise(genom_avg_pi = sum(PI*N_SITES)/sum(N_SITES)) %>%
+  write_tsv("2_analysis/summaries/pi_globals.tsv")
 

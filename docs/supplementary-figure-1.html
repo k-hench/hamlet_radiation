@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench and Martin Helmkampf" />
 
 
-<meta name="date" content="2021-04-23" />
+<meta name="date" content="2021-08-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -64,6 +64,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
@@ -474,9 +475,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">23.1</span> Summary</h2>
 <p>This is the accessory documentation of Figure S1.
 The Figure can be recreated by running the <strong>R</strong> script <code>plot_SF1.R</code>:</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb143-1"><a href="supplementary-figure-1.html#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb143-2"><a href="supplementary-figure-1.html#cb143-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb143-3"><a href="supplementary-figure-1.html#cb143-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF1.R 2_analysis/pca/</span></code></pre></div>
+<div class="sourceCode" id="cb142"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb142-1"><a href="supplementary-figure-1.html#cb142-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb142-2"><a href="supplementary-figure-1.html#cb142-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb142-3"><a href="supplementary-figure-1.html#cb142-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF1.R 2_analysis/pca/</span></code></pre></div>
 </div>
 <div id="details-of-plot_sf1.r" class="section level2" number="23.2">
 <h2><span class="header-section-number">23.2</span> Details of <code>plot_SF1.R</code></h2>
@@ -485,87 +486,85 @@ It is an executable R script that depends on the accessory R package <a href="ht
 <div id="config-6" class="section level3" number="23.2.1">
 <h3><span class="header-section-number">23.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
-<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="supplementary-figure-1.html#cb144-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
-<span id="cb144-2"><a href="supplementary-figure-1.html#cb144-2" aria-hidden="true" tabindex="-1"></a><span class="co"># run from terminal:</span></span>
-<span id="cb144-3"><a href="supplementary-figure-1.html#cb144-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Rscript --vanilla R/fig/plot_SF1.R 2_analysis/pca/</span></span>
-<span id="cb144-4"><a href="supplementary-figure-1.html#cb144-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
-<span id="cb144-5"><a href="supplementary-figure-1.html#cb144-5" aria-hidden="true" tabindex="-1"></a><span class="co"># This script produces Suppl. Figure 1 of the study &quot;Ancestral variation,</span></span>
-<span id="cb144-6"><a href="supplementary-figure-1.html#cb144-6" aria-hidden="true" tabindex="-1"></a><span class="co"># hybridization and modularity fuel a marine radiation&quot;</span></span>
-<span id="cb144-7"><a href="supplementary-figure-1.html#cb144-7" aria-hidden="true" tabindex="-1"></a><span class="co"># by Hench, Helmkampf, McMillan and Puebla</span></span>
-<span id="cb144-8"><a href="supplementary-figure-1.html#cb144-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------------</span></span>
-<span id="cb144-9"><a href="supplementary-figure-1.html#cb144-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
-<span id="cb144-10"><a href="supplementary-figure-1.html#cb144-10" aria-hidden="true" tabindex="-1"></a><span class="co"># args &lt;- c(&quot;2_analysis/pca/&quot;)</span></span>
-<span id="cb144-11"><a href="supplementary-figure-1.html#cb144-11" aria-hidden="true" tabindex="-1"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF1.R&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="supplementary-figure-1.html#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb143-2"><a href="supplementary-figure-1.html#cb143-2" aria-hidden="true" tabindex="-1"></a><span class="co"># run from terminal:</span></span>
+<span id="cb143-3"><a href="supplementary-figure-1.html#cb143-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Rscript --vanilla R/fig/plot_SF1.R 2_analysis/pca/</span></span>
+<span id="cb143-4"><a href="supplementary-figure-1.html#cb143-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
+<span id="cb143-5"><a href="supplementary-figure-1.html#cb143-5" aria-hidden="true" tabindex="-1"></a><span class="co"># This script produces Suppl. Figure 1 of the study &quot;Ancestral variation,</span></span>
+<span id="cb143-6"><a href="supplementary-figure-1.html#cb143-6" aria-hidden="true" tabindex="-1"></a><span class="co"># hybridization and modularity fuel a marine radiation&quot;</span></span>
+<span id="cb143-7"><a href="supplementary-figure-1.html#cb143-7" aria-hidden="true" tabindex="-1"></a><span class="co"># by Hench, Helmkampf, McMillan and Puebla</span></span>
+<span id="cb143-8"><a href="supplementary-figure-1.html#cb143-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------------</span></span>
+<span id="cb143-9"><a href="supplementary-figure-1.html#cb143-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
+<span id="cb143-10"><a href="supplementary-figure-1.html#cb143-10" aria-hidden="true" tabindex="-1"></a><span class="co"># args &lt;- c(&quot;2_analysis/pca/&quot;)</span></span>
+<span id="cb143-11"><a href="supplementary-figure-1.html#cb143-11" aria-hidden="true" tabindex="-1"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF1.R&quot;</span></span></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
 The needed R packages are loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="supplementary-figure-1.html#cb145-1" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly=</span><span class="cn">FALSE</span>)</span>
-<span id="cb145-2"><a href="supplementary-figure-1.html#cb145-2" aria-hidden="true" tabindex="-1"></a><span class="co"># setup -----------------------</span></span>
-<span id="cb145-3"><a href="supplementary-figure-1.html#cb145-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicOriginsScripts)</span>
-<span id="cb145-4"><a href="supplementary-figure-1.html#cb145-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb145-5"><a href="supplementary-figure-1.html#cb145-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypoimg)</span>
-<span id="cb145-6"><a href="supplementary-figure-1.html#cb145-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypogen)</span>
-<span id="cb145-7"><a href="supplementary-figure-1.html#cb145-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
-<span id="cb145-8"><a href="supplementary-figure-1.html#cb145-8" aria-hidden="true" tabindex="-1"></a>script_name <span class="ot">&lt;-</span> args[<span class="dv">5</span>] <span class="sc">%&gt;%</span></span>
-<span id="cb145-9"><a href="supplementary-figure-1.html#cb145-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(., <span class="st">&#39;--file=&#39;</span>)</span>
-<span id="cb145-10"><a href="supplementary-figure-1.html#cb145-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb145-11"><a href="supplementary-figure-1.html#cb145-11" aria-hidden="true" tabindex="-1"></a>plot_comment <span class="ot">&lt;-</span> script_name <span class="sc">%&gt;%</span></span>
-<span id="cb145-12"><a href="supplementary-figure-1.html#cb145-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>, <span class="fu">getwd</span>(), <span class="st">&#39;/&#39;</span>, .)</span>
-<span id="cb145-13"><a href="supplementary-figure-1.html#cb145-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb145-14"><a href="supplementary-figure-1.html#cb145-14" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">process_input</span>(script_name, args)</span></code></pre></div>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="supplementary-figure-1.html#cb146-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ── Script: R/fig/plot_SF1.R ────────────────────────────────────────────</span></span>
-<span id="cb146-2"><a href="supplementary-figure-1.html#cb146-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters read:</span></span>
-<span id="cb146-3"><a href="supplementary-figure-1.html#cb146-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 1: 2_analysis/pca/</span></span>
-<span id="cb146-4"><a href="supplementary-figure-1.html#cb146-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="supplementary-figure-1.html#cb144-1" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly=</span><span class="cn">FALSE</span>)</span>
+<span id="cb144-2"><a href="supplementary-figure-1.html#cb144-2" aria-hidden="true" tabindex="-1"></a><span class="co"># setup -----------------------</span></span>
+<span id="cb144-3"><a href="supplementary-figure-1.html#cb144-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicOriginsScripts)</span>
+<span id="cb144-4"><a href="supplementary-figure-1.html#cb144-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb144-5"><a href="supplementary-figure-1.html#cb144-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypoimg)</span>
+<span id="cb144-6"><a href="supplementary-figure-1.html#cb144-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypogen)</span>
+<span id="cb144-7"><a href="supplementary-figure-1.html#cb144-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb144-8"><a href="supplementary-figure-1.html#cb144-8" aria-hidden="true" tabindex="-1"></a>script_name <span class="ot">&lt;-</span> args[<span class="dv">5</span>] <span class="sc">%&gt;%</span></span>
+<span id="cb144-9"><a href="supplementary-figure-1.html#cb144-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(., <span class="st">&#39;--file=&#39;</span>)</span>
+<span id="cb144-10"><a href="supplementary-figure-1.html#cb144-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb144-11"><a href="supplementary-figure-1.html#cb144-11" aria-hidden="true" tabindex="-1"></a>plot_comment <span class="ot">&lt;-</span> script_name <span class="sc">%&gt;%</span></span>
+<span id="cb144-12"><a href="supplementary-figure-1.html#cb144-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>, <span class="fu">getwd</span>(), <span class="st">&#39;/&#39;</span>, .)</span>
+<span id="cb144-13"><a href="supplementary-figure-1.html#cb144-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb144-14"><a href="supplementary-figure-1.html#cb144-14" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">process_input</span>(script_name, args)</span></code></pre></div>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="supplementary-figure-1.html#cb145-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ── Script: R/fig/plot_SF1.R ────────────────────────────────────────────</span></span>
+<span id="cb145-2"><a href="supplementary-figure-1.html#cb145-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters read:</span></span>
+<span id="cb145-3"><a href="supplementary-figure-1.html#cb145-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 1: 2_analysis/pca/</span></span>
+<span id="cb145-4"><a href="supplementary-figure-1.html#cb145-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ────────────────────────────────────────── /current/working/directory ──</span></span></code></pre></div>
 <p>The directory containing the PCA data is received and stored in a variable.
 Also the default color scheme is updated and the size of the hamlet ann.</p>
-<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="supplementary-figure-1.html#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config -----------------------</span></span>
-<span id="cb147-2"><a href="supplementary-figure-1.html#cb147-2" aria-hidden="true" tabindex="-1"></a>pca_dir <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">1</span>])</span>
-<span id="cb147-3"><a href="supplementary-figure-1.html#cb147-3" aria-hidden="true" tabindex="-1"></a>clr_alt <span class="ot">&lt;-</span> clr</span>
-<span id="cb147-4"><a href="supplementary-figure-1.html#cb147-4" aria-hidden="true" tabindex="-1"></a>clr_alt[[<span class="st">&quot;uni&quot;</span>]] <span class="ot">&lt;-</span> <span class="st">&quot;lightgray&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="supplementary-figure-1.html#cb146-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config -----------------------</span></span>
+<span id="cb146-2"><a href="supplementary-figure-1.html#cb146-2" aria-hidden="true" tabindex="-1"></a>pca_dir <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">1</span>])</span>
+<span id="cb146-3"><a href="supplementary-figure-1.html#cb146-3" aria-hidden="true" tabindex="-1"></a>clr_alt <span class="ot">&lt;-</span> clr</span>
+<span id="cb146-4"><a href="supplementary-figure-1.html#cb146-4" aria-hidden="true" tabindex="-1"></a>clr_alt[[<span class="st">&quot;uni&quot;</span>]] <span class="ot">&lt;-</span> <span class="st">&quot;lightgray&quot;</span></span></code></pre></div>
 <p>Then the layout of the legend elements, labels and patch sizes are pre-configured.</p>
-<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="supplementary-figure-1.html#cb148-1" aria-hidden="true" tabindex="-1"></a>fish_tib <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">short =</span> <span class="fu">names</span>(clr)[<span class="sc">!</span><span class="fu">names</span>(clr) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;flo&quot;</span>, <span class="st">&quot;tab&quot;</span>, <span class="st">&quot;tor&quot;</span>)],</span>
-<span id="cb148-2"><a href="supplementary-figure-1.html#cb148-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">x =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,  <span class="fl">3.5</span>,  <span class="dv">7</span>,  <span class="fl">9.7</span>, <span class="fl">12.25</span>, <span class="fl">15.25</span>, <span class="dv">18</span>, <span class="fl">21.5</span>))</span>
-<span id="cb148-3"><a href="supplementary-figure-1.html#cb148-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb148-4"><a href="supplementary-figure-1.html#cb148-4" aria-hidden="true" tabindex="-1"></a>key_sz <span class="ot">&lt;-</span> .<span class="dv">75</span></span>
-<span id="cb148-5"><a href="supplementary-figure-1.html#cb148-5" aria-hidden="true" tabindex="-1"></a>sp_fam <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;H&quot;</span>, <span class="st">&quot;S&quot;</span>, <span class="st">&quot;H&quot;</span>), <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">2</span>, <span class="dv">1</span>)) <span class="sc">%&gt;%</span> <span class="fu">set_names</span>(<span class="at">nm =</span> <span class="fu">names</span>(sp_names))</span></code></pre></div>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="supplementary-figure-1.html#cb147-1" aria-hidden="true" tabindex="-1"></a>fish_tib <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">short =</span> <span class="fu">names</span>(clr)[<span class="sc">!</span><span class="fu">names</span>(clr) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;flo&quot;</span>, <span class="st">&quot;tab&quot;</span>, <span class="st">&quot;tor&quot;</span>)],</span>
+<span id="cb147-2"><a href="supplementary-figure-1.html#cb147-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">x =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,  <span class="fl">3.5</span>,  <span class="dv">7</span>,  <span class="fl">9.7</span>, <span class="fl">12.25</span>, <span class="fl">15.25</span>, <span class="dv">18</span>, <span class="fl">21.5</span>))</span>
+<span id="cb147-3"><a href="supplementary-figure-1.html#cb147-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-4"><a href="supplementary-figure-1.html#cb147-4" aria-hidden="true" tabindex="-1"></a>key_sz <span class="ot">&lt;-</span> .<span class="dv">75</span></span>
+<span id="cb147-5"><a href="supplementary-figure-1.html#cb147-5" aria-hidden="true" tabindex="-1"></a>sp_fam <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;H&quot;</span>, <span class="st">&quot;S&quot;</span>, <span class="st">&quot;H&quot;</span>), <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">2</span>, <span class="dv">1</span>)) <span class="sc">%&gt;%</span> <span class="fu">set_names</span>(<span class="at">nm =</span> <span class="fu">names</span>(sp_names))</span></code></pre></div>
 <p>Now, the legend is created.</p>
-<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="supplementary-figure-1.html#cb149-1" aria-hidden="true" tabindex="-1"></a>p_leg <span class="ot">&lt;-</span> fish_tib <span class="sc">%&gt;%</span> </span>
-<span id="cb149-2"><a href="supplementary-figure-1.html#cb149-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb149-3"><a href="supplementary-figure-1.html#cb149-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">05</span>, <span class="dv">24</span>), <span class="at">expand =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb149-4"><a href="supplementary-figure-1.html#cb149-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="dv">0</span>,</span>
-<span id="cb149-5"><a href="supplementary-figure-1.html#cb149-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">fill =</span> short, </span>
-<span id="cb149-6"><a href="supplementary-figure-1.html#cb149-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="fu">after_scale</span>(prismatic<span class="sc">::</span><span class="fu">clr_darken</span>(fill, .<span class="dv">25</span>))),</span>
-<span id="cb149-7"><a href="supplementary-figure-1.html#cb149-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">width =</span> key_sz, <span class="at">height =</span> key_sz, <span class="at">size =</span> .<span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb149-8"><a href="supplementary-figure-1.html#cb149-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> x <span class="sc">+</span> .<span class="dv">6</span>, <span class="at">y =</span> <span class="dv">0</span>,</span>
-<span id="cb149-9"><a href="supplementary-figure-1.html#cb149-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">label =</span> <span class="fu">str_c</span>(sp_fam[short], <span class="st">&quot;. &quot;</span>, sp_names[short])), </span>
-<span id="cb149-10"><a href="supplementary-figure-1.html#cb149-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">fontface =</span> <span class="st">&quot;italic&quot;</span>, <span class="at">size =</span> plot_text_size <span class="sc">/</span> ggplot2<span class="sc">:::</span>.pt) <span class="sc">+</span></span>
-<span id="cb149-11"><a href="supplementary-figure-1.html#cb149-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pmap</span>(fish_tib, plot_fish_lwd, <span class="at">width =</span> <span class="dv">1</span>, <span class="at">height =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb149-12"><a href="supplementary-figure-1.html#cb149-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> clr, <span class="at">guide =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb149-13"><a href="supplementary-figure-1.html#cb149-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code></pre></div>
-<p><img src="plot_SF1_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="supplementary-figure-1.html#cb148-1" aria-hidden="true" tabindex="-1"></a>p_leg <span class="ot">&lt;-</span> fish_tib <span class="sc">%&gt;%</span> </span>
+<span id="cb148-2"><a href="supplementary-figure-1.html#cb148-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb148-3"><a href="supplementary-figure-1.html#cb148-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">05</span>, <span class="dv">24</span>), <span class="at">expand =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb148-4"><a href="supplementary-figure-1.html#cb148-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="dv">0</span>,</span>
+<span id="cb148-5"><a href="supplementary-figure-1.html#cb148-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">fill =</span> short, </span>
+<span id="cb148-6"><a href="supplementary-figure-1.html#cb148-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="fu">after_scale</span>(prismatic<span class="sc">::</span><span class="fu">clr_darken</span>(fill, .<span class="dv">25</span>))),</span>
+<span id="cb148-7"><a href="supplementary-figure-1.html#cb148-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">width =</span> key_sz, <span class="at">height =</span> key_sz, <span class="at">size =</span> .<span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb148-8"><a href="supplementary-figure-1.html#cb148-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> x <span class="sc">+</span> .<span class="dv">6</span>, <span class="at">y =</span> <span class="dv">0</span>,</span>
+<span id="cb148-9"><a href="supplementary-figure-1.html#cb148-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">label =</span> <span class="fu">str_c</span>(sp_fam[short], <span class="st">&quot;. &quot;</span>, sp_names[short])), </span>
+<span id="cb148-10"><a href="supplementary-figure-1.html#cb148-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">fontface =</span> <span class="st">&quot;italic&quot;</span>, <span class="at">size =</span> plot_text_size <span class="sc">/</span> ggplot2<span class="sc">:::</span>.pt) <span class="sc">+</span></span>
+<span id="cb148-11"><a href="supplementary-figure-1.html#cb148-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pmap</span>(fish_tib, plot_fish_lwd, <span class="at">width =</span> <span class="dv">1</span>, <span class="at">height =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb148-12"><a href="supplementary-figure-1.html#cb148-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> clr, <span class="at">guide =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb148-13"><a href="supplementary-figure-1.html#cb148-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code></pre></div>
 <p>Then, by running the function <code>pca_plot_no_fish()</code> one on each location, the figure can be assembled.</p>
-<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="supplementary-figure-1.html#cb150-1" aria-hidden="true" tabindex="-1"></a>p_done <span class="ot">&lt;-</span> cowplot<span class="sc">::</span><span class="fu">plot_grid</span>((<span class="fu">tibble</span>(<span class="at">loc =</span> <span class="fu">c</span>(<span class="st">&quot;bel.&quot;</span>, <span class="st">&quot;hon.&quot;</span>, <span class="st">&quot;pan.&quot;</span>), </span>
-<span id="cb150-2"><a href="supplementary-figure-1.html#cb150-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">mode =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;subset_non_diverged&quot;</span>), <span class="dv">3</span>),</span>
-<span id="cb150-3"><a href="supplementary-figure-1.html#cb150-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">pc1 =</span> <span class="dv">1</span>,</span>
-<span id="cb150-4"><a href="supplementary-figure-1.html#cb150-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">pc2 =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb150-5"><a href="supplementary-figure-1.html#cb150-5" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">pmap</span>(pca_plot_no_fish) <span class="sc">%&gt;%</span> </span>
-<span id="cb150-6"><a href="supplementary-figure-1.html#cb150-6" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">wrap_plots</span>(<span class="at">ncol =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb150-7"><a href="supplementary-figure-1.html#cb150-7" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">plot_annotation</span>(<span class="at">tag_levels =</span> <span class="st">&quot;a&quot;</span>) <span class="sc">&amp;</span> </span>
-<span id="cb150-8"><a href="supplementary-figure-1.html#cb150-8" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_blank</span>())),</span>
-<span id="cb150-9"><a href="supplementary-figure-1.html#cb150-9" aria-hidden="true" tabindex="-1"></a>                     p_leg,</span>
-<span id="cb150-10"><a href="supplementary-figure-1.html#cb150-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">1</span> ,</span>
-<span id="cb150-11"><a href="supplementary-figure-1.html#cb150-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>,.<span class="dv">1</span>))</span></code></pre></div>
-<p><img src="plot_SF1_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="supplementary-figure-1.html#cb149-1" aria-hidden="true" tabindex="-1"></a>p_done <span class="ot">&lt;-</span> cowplot<span class="sc">::</span><span class="fu">plot_grid</span>((<span class="fu">tibble</span>(<span class="at">loc =</span> <span class="fu">c</span>(<span class="st">&quot;bel.&quot;</span>, <span class="st">&quot;hon.&quot;</span>, <span class="st">&quot;pan.&quot;</span>), </span>
+<span id="cb149-2"><a href="supplementary-figure-1.html#cb149-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">mode =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;subset_non_diverged&quot;</span>), <span class="dv">3</span>),</span>
+<span id="cb149-3"><a href="supplementary-figure-1.html#cb149-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">pc1 =</span> <span class="dv">1</span>,</span>
+<span id="cb149-4"><a href="supplementary-figure-1.html#cb149-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">pc2 =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb149-5"><a href="supplementary-figure-1.html#cb149-5" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">pmap</span>(pca_plot_no_fish) <span class="sc">%&gt;%</span> </span>
+<span id="cb149-6"><a href="supplementary-figure-1.html#cb149-6" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">wrap_plots</span>(<span class="at">ncol =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb149-7"><a href="supplementary-figure-1.html#cb149-7" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">plot_annotation</span>(<span class="at">tag_levels =</span> <span class="st">&quot;a&quot;</span>) <span class="sc">&amp;</span> </span>
+<span id="cb149-8"><a href="supplementary-figure-1.html#cb149-8" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_blank</span>())),</span>
+<span id="cb149-9"><a href="supplementary-figure-1.html#cb149-9" aria-hidden="true" tabindex="-1"></a>                     p_leg,</span>
+<span id="cb149-10"><a href="supplementary-figure-1.html#cb149-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="dv">1</span> ,</span>
+<span id="cb149-11"><a href="supplementary-figure-1.html#cb149-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="dv">1</span>,.<span class="dv">1</span>))</span></code></pre></div>
 <p>Finally, we can export Figure S1.</p>
-<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="supplementary-figure-1.html#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hypo_save</span>(p_done, <span class="at">filename =</span> <span class="st">&#39;figures/SF1.pdf&#39;</span>,</span>
-<span id="cb151-2"><a href="supplementary-figure-1.html#cb151-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> f_width,</span>
-<span id="cb151-3"><a href="supplementary-figure-1.html#cb151-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> f_width <span class="sc">*</span> .<span class="dv">38</span>,</span>
-<span id="cb151-4"><a href="supplementary-figure-1.html#cb151-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">device =</span> cairo_pdf,</span>
-<span id="cb151-5"><a href="supplementary-figure-1.html#cb151-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">bg =</span> <span class="st">&quot;transparent&quot;</span>,</span>
-<span id="cb151-6"><a href="supplementary-figure-1.html#cb151-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">comment =</span> plot_comment)</span></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="supplementary-figure-1.html#cb150-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hypo_save</span>(p_done, <span class="at">filename =</span> <span class="st">&#39;figures/SF1.pdf&#39;</span>,</span>
+<span id="cb150-2"><a href="supplementary-figure-1.html#cb150-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> f_width,</span>
+<span id="cb150-3"><a href="supplementary-figure-1.html#cb150-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> f_width <span class="sc">*</span> .<span class="dv">38</span>,</span>
+<span id="cb150-4"><a href="supplementary-figure-1.html#cb150-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">device =</span> cairo_pdf,</span>
+<span id="cb150-5"><a href="supplementary-figure-1.html#cb150-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">bg =</span> <span class="st">&quot;transparent&quot;</span>,</span>
+<span id="cb150-6"><a href="supplementary-figure-1.html#cb150-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">comment =</span> plot_comment)</span></code></pre></div>
 
 </div>
 </div>

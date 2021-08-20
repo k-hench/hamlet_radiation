@@ -171,16 +171,6 @@ inboth <- intersect(inboth, spdata$sp[which(!is.na(spdata$tv.lambda))])
 latvals <- latvals[inboth]
 
 edvr <- getEventData(vx, eventdata_vr, burnin=0)
-#> Reading event datafile:  ressources/Rabosky_etal_2018/dataFiles/bamm_results/12k_tv1/event_data_thinned.csv 
-#> 		...........
-#> Read a total of 1000 samples from posterior
-#> 
-#> Discarded as burnin: GENERATIONS <  1
-#> Analyzing  1000  samples from posterior
-#> 
-#> Setting recursive sequence on tree...
-#> 
-#> Done with recursive sequence
 ```
 
 At this point we diverge from the original script and define our own subset of interest, which covers all available species of the Serraninae subfamily.
@@ -296,7 +286,7 @@ grob_grad <- rasterGrob(grad_mat,
                         interpolate = TRUE)
 ```
 
-<img src="plot_F1_files/figure-html/unnamed-chunk-15-1.png" width="192" style="display: block; margin: auto;" />
+
 
 Then, we create a black hamlet to add to the annotation.
 
@@ -309,7 +299,7 @@ blank_hamlet <- hypoimg::hypo_outline %>%
   theme_void()
 ```
 
-<img src="plot_F1_files/figure-html/unnamed-chunk-17-1.png" width="288" style="display: block; margin: auto;" />
+
 
 At this point we have all pieces to assemble panel a of the figure.
 
@@ -344,7 +334,7 @@ p_tree <- ggplot() +
         legend.justification = c(0, 0))
 ```
 
-<img src="plot_F1_files/figure-html/unnamed-chunk-19-1.png" width="432" style="display: block; margin: auto;" />
+
 
 ### Genetic differentiation boxplots
 
@@ -470,7 +460,7 @@ p_net <- cowplot::plot_grid(
   cowplot::as_grob()
 ```
 
-<img src="plot_F1_files/figure-html/unnamed-chunk-28-1.png" width="576" style="display: block; margin: auto;" />
+
 
 At this point we can create panel b.
 
@@ -518,15 +508,6 @@ p2 <- fst_data_gather %>%
 ```
 
 
-```
-#> Warning in if (!expand) {: the condition has length > 1 and only the first
-#> element will be used
-
-#> Warning in if (!expand) {: the condition has length > 1 and only the first
-#> element will be used
-```
-
-<img src="plot_F1_files/figure-html/unnamed-chunk-30-1.png" width="288" style="display: block; margin: auto;" />
 
 ### Principal Component Analyses
 
@@ -569,7 +550,7 @@ Then we create the individual PCA plots using the function `GenomicOriginsScript
 pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
 ```
 
-<img src="plot_F1_files/figure-html/unnamed-chunk-34-1.png" width="288" style="display: block; margin: auto;" />
+
 
 ### Legend and Final Figure
 
@@ -626,7 +607,7 @@ p_done <- cowplot::plot_grid(p_combined, p_leg,
                              ncol = 1, rel_heights = c(1,.06))
 ```
 
-<img src="plot_F1_files/figure-html/unnamed-chunk-39-1.png" width="648" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure 1.
 

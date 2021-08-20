@@ -1,17 +1,19 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF9.R 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support 2_analysis/ibd/no_outgr_direct_10.ibd.tsv
+# Rscript --vanilla R/fig/plot_F4.R \
+#     2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support \
+#     2_analysis/ibd/no_outgr_direct_10.ibd.tsv
 # ===============================================================
-# This script produces Suppl. Figure 9 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Figure 4 of the study "Rapid radiation in a highly
+# diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support",
 #           "2_analysis/ibd/no_outgr_direct_10.ibd.tsv")
-# script_name <- "R/fig/plot_SF9.R"
+# script_name <- "R/fig/plot_F4.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -149,7 +151,7 @@ p_done <- (p1 + p2) / guide_area() +
         legend.text.align = 0)
 
 hypo_save(plot = p_done,
-          filename = "figures/SF9.png",
+          filename = "figures/F4.png",
           width = GenomicOriginsScripts::f_width,
           height = GenomicOriginsScripts::f_width * .42,
           bg = "transparent",
@@ -157,11 +159,7 @@ hypo_save(plot = p_done,
           dpi = 600,
           comment = plot_comment)
 
-system("convert figures/SF9.png figures/SF9.pdf")
-# hypo_save(plot = p_done,
-#           filename = "figures/SF9.pdf",
-#           width = 7.5 * scl,
-#           height = 4 * scl,
-#           device = cairo_pdf,
-#           bg = "transparent",
-#           comment = plot_comment)
+system("convert figures/F4.png figures/F4.pdf")
+system("rm figures/F4.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/F4.pdf")
+system(create_metadata)

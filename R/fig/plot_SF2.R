@@ -1,10 +1,17 @@
-### Evolutionary rate analysis of Serraninae
-### ----------------------------------------
-
-### Code adapted from bamm-project.org and Rabosky et al. 2018 (Nature)
-### Data from Rabosky et al. 2018 (Nature) -- Dryad: https://doi. org/10.5061/dryad.fc71cp4)
-### Jul 30, 2021, Martin Helmkampf & Kosmas Hench
-
+#!/usr/bin/env Rscript
+# run from terminal:
+# Rscript --vanilla R/fig/plot_SF2.R \
+#     ressources/Rabosky_etal_2018/
+# ===============================================================
+# This script produces Suppl. Figure 2 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
+# ---------------------------------------------------------------
+# ===============================================================
+# args <- c( "ressources/Rabosky_etal_2018/" )
+# script_name <- "R/fig/plot_SF2.R"
+args <- commandArgs(trailingOnly = FALSE)
+# setup -----------------------
+renv::activate()
 library(BAMMtools)
 library(GenomicOriginsScripts)
 library(ggplotify)
@@ -12,8 +19,26 @@ library(patchwork)
 library(ggforce)
 library(glue)
 library(ggtext)
+library(hypoimg)
 
-basepath <- "ressources/Rabosky_etal_2018/"
+cat('\n')
+script_name <- args[5] %>%
+  str_remove(.,'--file=')
+
+plot_comment <- script_name %>%
+  str_c('mother-script = ',getwd(),'/',.)
+
+cli::rule( left = str_c(crayon::bold('Script: '),crayon::red(script_name)))
+args = args[7:length(args)]
+cat(' ')
+cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
+cli::rule(right = getwd())
+# config -----------------------
+basepath <-  as.character(args[1])
+
+### Evolutionary rate analysis of Serraninae
+### ----------------------------------------
+### Code adapted from bamm-project.org and Rabosky et al. 2018 (Nature)
 
 source(paste(basepath, "scripts/supporting_fxns/PlottingFunctions.R", sep=""))
 
@@ -56,13 +81,6 @@ bamm_serrn_abbr$tip.label <- bamm_serrn$tip.label %>%
   str_replace(pattern = "P.", "Pa.") %>%
   str_replace(pattern = "Z.", "Pl.") %>%
   ggplot2:::parse_safe()
-
-# plot(bamm_serrn_abbr, method = "phylogram", spex = "s", breaksmethod = "linear", logcolor = TRUE, lwd = 3, labels = TRUE, legend = TRUE)
-
-
-## Number of rate shifts
-# summary(bamm_serrn)
-
 
 ## Credible sets of shift configurations
 css <- credibleShiftSet(bamm_serrn_abbr, expectedNumberOfShifts = 1, threshold = 5, set.limit = 0.95)
@@ -153,7 +171,10 @@ cohorts(cmat, bamm_serrn,
           panel.background = element_blank(),
           plot.background = element_blank()))
 
-ggsave("figures/SFx7.pdf", 
-       plot = p_done, device = cairo_pdf,
-       width = f_width, height = f_width*.5,
+hypo_save("figures/SF2.pdf", 
+       plot = p_done,
+       width = f_width,
+       height = f_width*.5,
+       comment = plot_comment,
+       device = cairo_pdf,
        bg = "transparent")

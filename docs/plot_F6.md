@@ -150,7 +150,7 @@ annotation_grobs$LG12_3 <- hypo_recolor_svg(annotation_grobs$LG12_3,
                                               clr_desaturate %>% clr_lighten(.25))
 ```
 
-<img src="plot_F6_files/figure-html/unnamed-chunk-8-1.png" width="329.28" style="display: block; margin: auto;" />
+
 
 For the correct distribution of the annotations across the ggplot facets, the annotations are stored within a tibble that also holds the respective outlier ID $\times$ trait combinations.
 
@@ -219,7 +219,7 @@ p_done <- data %>%
 ```
 
 
-<img src="plot_F6_files/figure-html/unnamed-chunk-12-1.png" width="329.28" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure 6.
 

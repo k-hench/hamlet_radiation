@@ -233,7 +233,7 @@ p_net <- cowplot::plot_grid(
 ) %>% cowplot::as_grob()
 ```
 
-<img src="plot_SF2_files/figure-html/unnamed-chunk-11-1.png" width="329.28" style="display: block; margin: auto;" />
+
 
 We can now also plot the second panel.
 
@@ -288,7 +288,7 @@ p_done <- plot_grid(p_net, p, ncol = 1,
                     label_size = plot_text_size)
 ```
 
-<img src="plot_SF2_files/figure-html/unnamed-chunk-14-1.png" width="329.28" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S2.
 

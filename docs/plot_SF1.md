@@ -116,7 +116,7 @@ p_leg <- fish_tib %>%
   theme_void()
 ```
 
-<img src="plot_SF1_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" />
+
 
 Then, by running the function `pca_plot_no_fish()` one on each location, the figure can be assembled.
 
@@ -135,7 +135,7 @@ p_done <- cowplot::plot_grid((tibble(loc = c("bel.", "hon.", "pan."),
   rel_heights = c(1,.1))
 ```
 
-<img src="plot_SF1_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S1.
 

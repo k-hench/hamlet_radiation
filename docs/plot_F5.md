@@ -358,7 +358,7 @@ p_pomo1 <- pomo_data$tree[[1]] %>%
             open_angle = 168)
 ```
 
-<img src="plot_F5_files/figure-html/unnamed-chunk-19-1.png" width="329.28" style="display: block; margin: auto;" />
+
 
 
 ```r
@@ -417,7 +417,7 @@ p_single <- outlier_table %>%
                      label_size = plot_text_size)
 ```
 
-<img src="plot_F5_files/figure-html/unnamed-chunk-23-1.png" width="1344" style="display: block; margin: auto;" />
+
 
 At this point all that we miss is the figure legend.
 So, for the $F_{ST}$, $d_{XY}$ and genotype $\times$ phenotype color schemes we create two dummy plots from where we can export the legends.
@@ -483,7 +483,7 @@ p_leg <- cowplot::plot_grid(p_leg1,
                             rel_widths = c(.6, 1))
 ```
 
-<img src="plot_F5_files/figure-html/unnamed-chunk-26-1.png" width="1344" style="display: block; margin: auto;" />
+
 
 After adding the legend to the main part, Figure 5 is complete.
 
@@ -495,7 +495,7 @@ p_done <- cowplot::plot_grid(p_single, p_leg,
                              rel_heights = c(1, .17))
 ```
 
-<img src="plot_F5_files/figure-html/unnamed-chunk-28-1.png" width="1344" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure 5.
 

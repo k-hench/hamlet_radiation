@@ -1,18 +1,19 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F6.R \
-#    2_analysis/summaries/fst_outliers_998.tsv \
-#    2_analysis/geva/ 2_analysis/GxP/bySNP/
+# Rscript --vanilla R/fig/plot_SF18.R \
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     2_analysis/geva/ \
+#     2_analysis/GxP/bySNP/
 # ===============================================================
-# This script produces Suppl. Figure X of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 18 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( "2_analysis/summaries/fst_outliers_998.tsv", "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
-# script_name <- "R/fig/plot_SFx4.R"
+# script_name <- "R/fig/plot_SF18.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -56,9 +57,6 @@ data <- data1 %>%
   bind_rows(data4) %>% 
   bind_rows(data5) %>% 
   bind_rows(data6)
-
-# data <- outlier_data %>% # [c(2, 13, 14),] %>%
-#   pmap_dfr(get_gxp_and_geva)
 
 xrange <- c(100, 10^6)
 color <- rgb(1, 0.5, 0.16)
@@ -153,7 +151,7 @@ p_done <- cowplot::plot_grid( complete_p(p_1) +
                     complete_p(p_2) + theme(legend.box.margin = unit(c(7,0,7,0),"pt")))
 
 hypo_save(plot = p_done,
-          filename = "figures/SFx4_v2.pdf",
+          filename = "figures/SF18.pdf",
           width = f_width,
           height = f_width,
           comment = plot_comment,

@@ -267,7 +267,7 @@ p_done <- data2 %>%
         plot.background = element_blank())
 ```
 
-<img src="plot_F3_files/figure-html/unnamed-chunk-11-1.png" width="349.44" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure 3.
 

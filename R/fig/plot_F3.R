@@ -1,21 +1,24 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_F2.R \
-#    2_analysis/msmc/output/ 2_analysis/cross_coalescence/output/ \
-#    2_analysis/msmc/setup/msmc_grouping.txt 2_analysis/msmc/setup/msmc_cc_grouping.txt \
-#    2_analysis/summaries/fst_globals.txt
+# Rscript --vanilla R/fig/plot_F3.R \
+#     2_analysis/msmc/output/ \
+#     2_analysis/cross_coalescence/output/ \
+#     2_analysis/msmc/setup/msmc_grouping.txt \
+#     2_analysis/msmc/setup/msmc_cc_grouping.txt \
+#     2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Figure 2 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
+# This script produces Figure 3 of the study "Rapid radiation in a highly
+# diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
 # '2_analysis/msmc/setup/msmc_grouping.txt', '2_analysis/msmc/setup/msmc_cc_grouping.txt',
 # '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_F2.R"
+# script_name <- "R/fig/plot_F3.R"
 # ----------------------------------------
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -59,7 +62,7 @@ cc_data <- cc_files %>%
   mutate( run = factor(run, levels = levels(fst_globals$run)))
 
 # color adjustments for line plots (replace white by gray)
-clr_alt <- clr
+clr_alt <- clr[!(names(clr) %in% c("flo","tor","tab"))]
 clr_alt['uni'] <- rgb(.8,.8,.8)
 clr_ticks <- 'lightgray'
 
@@ -160,16 +163,15 @@ p_cc <- cc_data %>%
 p_done <- p_msmc / 
   p_cc  +
   plot_annotation(tag_levels = c('a')) & 
-  theme(#legend.position = "bottom", 
-    legend.text = element_text(size = plot_text_size_small),
-    legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"),
-    panel.grid.major = element_line(size = plot_lwd),
-    axis.ticks.x = element_blank(),
-    panel.background = element_blank(),
-    plot.background = element_blank())
+  theme(legend.text = element_text(size = plot_text_size_small),
+        legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"),
+        panel.grid.major = element_line(size = plot_lwd),
+        axis.ticks.x = element_blank(),
+        panel.background = element_blank(),
+        plot.background = element_blank())
 
 # export figure 2
-hypo_save(plot = p_done, filename = 'figures/F2.pdf',
+hypo_save(plot = p_done, filename = 'figures/F3.pdf',
           width = f_width_half,
           height = f_width_half * .95,
           comment = plot_comment,

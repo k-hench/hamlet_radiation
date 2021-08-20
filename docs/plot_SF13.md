@@ -208,7 +208,7 @@ p_ad <- c("LG04_1", "LG12_3", "LG12_4") %>% purrr::map(adm_plot, data = data)
 p_ad[[3]] # not part of the actual script
 ```
 
-<img src="plot_SF13_files/figure-html/unnamed-chunk-15-1.png" width="1382.4" style="display: block; margin: auto;" />
+
 
 Next, we create a dummy plot to extract the legend for the phenotypes.
 
@@ -273,7 +273,7 @@ p_spec <- pheno_plot_data %>%
         axis.text.x = element_blank())
 ```
 
-<img src="plot_SF13_files/figure-html/unnamed-chunk-19-1.png" width="1382.4" style="display: block; margin: auto;" />
+
 
 Similarly to the species affiliation, we create a second plot to indicate the sampling location.
 
@@ -299,7 +299,7 @@ p_loc <- pheno_plot_data %>%
         axis.text.x = element_blank())
 ```
 
-<img src="plot_SF13_files/figure-html/unnamed-chunk-21-1.png" width="1382.4" style="display: block; margin: auto;" />
+
 
 Then, we compose the figure legend from individual sub-legends.
 
@@ -312,7 +312,7 @@ p_l <- (get_legend(p_phno) %>% ggdraw()) +
   plot_layout(nrow = 1)
 ```
 
-<img src="plot_SF13_files/figure-html/unnamed-chunk-23-1.png" width="1382.4" style="display: block; margin: auto;" />
+
 
 At this point, we can assemble the final figure.
 Yet, due to the positioning of the trait images with **ggtext** we need to crop the left margin a little (hence we need `p_done`).
@@ -336,7 +336,7 @@ p_prep <- p_ad[[1]] +
 p_done <- ggdraw(p_prep, xlim = c(.023,1))
 ```
 
-<img src="plot_SF13_files/figure-html/unnamed-chunk-26-1.png" width="1382.4" style="display: block; margin: auto;" />
+
 
 Finally, we can export Figure S13.
 

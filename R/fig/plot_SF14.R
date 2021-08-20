@@ -1,20 +1,21 @@
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF11.R 2_analysis/raxml/lg04.1_155N.raxml.support \
-#    2_analysis/raxml/lg12.3_155N.raxml.support \
-#    2_analysis/raxml/lg12.4_155N.raxml.support
+# Rscript --vanilla R/fig/plot_SF14.R \
+#     2_analysis/raxml/lg04.1_155N.raxml.support \
+#     2_analysis/raxml/lg12.3_155N.raxml.support \
+#     2_analysis/raxml/lg12.4_155N.raxml.support
 # ===============================================================
-# This script produces Suppl. Figure 11 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 14 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c("2_analysis/raxml/lg04.1_155N.raxml.support",
 #           "2_analysis/raxml/lg12.3_155N.raxml.support",
 #           "2_analysis/raxml/lg12.4_155N.raxml.support")
-# script_name <- "R/fig/plot_SF11.R"
+# script_name <- "R/fig/plot_SF14.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -30,7 +31,6 @@ plot_comment <- script_name %>%
   str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
-
 # config -----------------------
 tree_file_lg04_1 <- as.character(args[1])
 tree_file_lg12_3 <- as.character(args[2])
@@ -62,11 +62,10 @@ p3 <- plot_outl_tree(tree_data[[3]], show_legend = FALSE)
 
 p_done <- p1 + p2 + p3 + plot_annotation(tag_levels = 'a') + plot_layout(ncol = 1)
 
-scl <- 2
 hypo_save(plot = p_done,
-          filename = "figures/SF11.pdf",
-          width = f_width_half * scl,
-          height = f_width_half * 1.5 * scl,
+          filename = "figures/SF14.pdf",
+          width = f_width,
+          height = f_width * 1.5,
           device = cairo_pdf,
           bg = "transparent",
           comment = plot_comment)

@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench and Martin Helmkampf" />
 
 
-<meta name="date" content="2021-04-23" />
+<meta name="date" content="2021-08-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -64,6 +64,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
@@ -474,12 +475,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">34.1</span> Summary</h2>
 <p>This is the accessory documentation of Figure S12.
 The Figure can be recreated by running the <strong>R</strong> script <code>plot_SF12.R</code>:</p>
-<div class="sourceCode" id="cb280"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb280-1"><a href="supplementary-figure-12.html#cb280-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
-<span id="cb280-2"><a href="supplementary-figure-12.html#cb280-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb280-3"><a href="supplementary-figure-12.html#cb280-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> --vanilla R/fig/plot_SF12.R <span class="kw">\</span></span>
-<span id="cb280-4"><a href="supplementary-figure-12.html#cb280-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/lg04.1_hySN.raxml.support</span> <span class="kw">\</span></span>
-<span id="cb280-5"><a href="supplementary-figure-12.html#cb280-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/lg12.3_hySN.raxml.support</span> <span class="kw">\</span></span>
-<span id="cb280-6"><a href="supplementary-figure-12.html#cb280-6" aria-hidden="true" tabindex="-1"></a>  <span class="ex">2_analysis/raxml/lg12.4_hySN.raxml.support</span></span></code></pre></div>
+<div class="sourceCode" id="cb279"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb279-1"><a href="supplementary-figure-12.html#cb279-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb279-2"><a href="supplementary-figure-12.html#cb279-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb279-3"><a href="supplementary-figure-12.html#cb279-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF12.R <span class="dt">\</span></span>
+<span id="cb279-4"><a href="supplementary-figure-12.html#cb279-4" aria-hidden="true" tabindex="-1"></a>  2_analysis/raxml/lg04.1_hySN.raxml.support <span class="dt">\</span></span>
+<span id="cb279-5"><a href="supplementary-figure-12.html#cb279-5" aria-hidden="true" tabindex="-1"></a>  2_analysis/raxml/lg12.3_hySN.raxml.support <span class="dt">\</span></span>
+<span id="cb279-6"><a href="supplementary-figure-12.html#cb279-6" aria-hidden="true" tabindex="-1"></a>  2_analysis/raxml/lg12.4_hySN.raxml.support</span></code></pre></div>
 </div>
 <div id="details-of-plot_sf12.r" class="section level2" number="34.2">
 <h2><span class="header-section-number">34.2</span> Details of <code>plot_SF12.R</code></h2>
@@ -488,94 +489,92 @@ It is an executable R script that depends on the accessory R package <a href="ht
 <div id="config-17" class="section level3" number="34.2.1">
 <h3><span class="header-section-number">34.2.1</span> Config</h3>
 <p>The scripts start with a header that contains copy &amp; paste templates to execute or debug the script:</p>
-<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="supplementary-figure-12.html#cb281-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
-<span id="cb281-2"><a href="supplementary-figure-12.html#cb281-2" aria-hidden="true" tabindex="-1"></a><span class="co"># run from terminal:</span></span>
-<span id="cb281-3"><a href="supplementary-figure-12.html#cb281-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Rscript --vanilla R/fig/plot_SF12.R 2_analysis/raxml/lg04.1_hySN.raxml.support \</span></span>
-<span id="cb281-4"><a href="supplementary-figure-12.html#cb281-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    2_analysis/raxml/lg12.3_hySN.raxml.support \</span></span>
-<span id="cb281-5"><a href="supplementary-figure-12.html#cb281-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    2_analysis/raxml/lg12.4_hySN.raxml.support</span></span>
-<span id="cb281-6"><a href="supplementary-figure-12.html#cb281-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
-<span id="cb281-7"><a href="supplementary-figure-12.html#cb281-7" aria-hidden="true" tabindex="-1"></a><span class="co"># This script produces Suppl. Figure 12 of the study &quot;Ancestral variation,</span></span>
-<span id="cb281-8"><a href="supplementary-figure-12.html#cb281-8" aria-hidden="true" tabindex="-1"></a><span class="co"># hybridization and modularity fuel a marine radiation&quot;</span></span>
-<span id="cb281-9"><a href="supplementary-figure-12.html#cb281-9" aria-hidden="true" tabindex="-1"></a><span class="co"># by Hench, Helmkampf, McMillan and Puebla</span></span>
-<span id="cb281-10"><a href="supplementary-figure-12.html#cb281-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------------</span></span>
-<span id="cb281-11"><a href="supplementary-figure-12.html#cb281-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
-<span id="cb281-12"><a href="supplementary-figure-12.html#cb281-12" aria-hidden="true" tabindex="-1"></a><span class="co"># args &lt;- c(&quot;2_analysis/raxml/lg04.1_hySN.raxml.support&quot;,</span></span>
-<span id="cb281-13"><a href="supplementary-figure-12.html#cb281-13" aria-hidden="true" tabindex="-1"></a><span class="co">#           &quot;2_analysis/raxml/lg12.3_hySN.raxml.support&quot;,</span></span>
-<span id="cb281-14"><a href="supplementary-figure-12.html#cb281-14" aria-hidden="true" tabindex="-1"></a><span class="co">#           &quot;2_analysis/raxml/lg12.4_hySN.raxml.support&quot;)</span></span>
-<span id="cb281-15"><a href="supplementary-figure-12.html#cb281-15" aria-hidden="true" tabindex="-1"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF12.R&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="supplementary-figure-12.html#cb280-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb280-2"><a href="supplementary-figure-12.html#cb280-2" aria-hidden="true" tabindex="-1"></a><span class="co"># run from terminal:</span></span>
+<span id="cb280-3"><a href="supplementary-figure-12.html#cb280-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Rscript --vanilla R/fig/plot_SF12.R 2_analysis/raxml/lg04.1_hySN.raxml.support \</span></span>
+<span id="cb280-4"><a href="supplementary-figure-12.html#cb280-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    2_analysis/raxml/lg12.3_hySN.raxml.support \</span></span>
+<span id="cb280-5"><a href="supplementary-figure-12.html#cb280-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    2_analysis/raxml/lg12.4_hySN.raxml.support</span></span>
+<span id="cb280-6"><a href="supplementary-figure-12.html#cb280-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
+<span id="cb280-7"><a href="supplementary-figure-12.html#cb280-7" aria-hidden="true" tabindex="-1"></a><span class="co"># This script produces Suppl. Figure 12 of the study &quot;Ancestral variation,</span></span>
+<span id="cb280-8"><a href="supplementary-figure-12.html#cb280-8" aria-hidden="true" tabindex="-1"></a><span class="co"># hybridization and modularity fuel a marine radiation&quot;</span></span>
+<span id="cb280-9"><a href="supplementary-figure-12.html#cb280-9" aria-hidden="true" tabindex="-1"></a><span class="co"># by Hench, Helmkampf, McMillan and Puebla</span></span>
+<span id="cb280-10"><a href="supplementary-figure-12.html#cb280-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------------</span></span>
+<span id="cb280-11"><a href="supplementary-figure-12.html#cb280-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ===============================================================</span></span>
+<span id="cb280-12"><a href="supplementary-figure-12.html#cb280-12" aria-hidden="true" tabindex="-1"></a><span class="co"># args &lt;- c(&quot;2_analysis/raxml/lg04.1_hySN.raxml.support&quot;,</span></span>
+<span id="cb280-13"><a href="supplementary-figure-12.html#cb280-13" aria-hidden="true" tabindex="-1"></a><span class="co">#           &quot;2_analysis/raxml/lg12.3_hySN.raxml.support&quot;,</span></span>
+<span id="cb280-14"><a href="supplementary-figure-12.html#cb280-14" aria-hidden="true" tabindex="-1"></a><span class="co">#           &quot;2_analysis/raxml/lg12.4_hySN.raxml.support&quot;)</span></span>
+<span id="cb280-15"><a href="supplementary-figure-12.html#cb280-15" aria-hidden="true" tabindex="-1"></a><span class="co"># script_name &lt;- &quot;R/fig/plot_SF12.R&quot;</span></span></code></pre></div>
 <p>The next section processes the input from the command line.
 It stores the arguments in the vector <code>args</code>.
 The needed R packages are loaded and the script name and the current working directory are stored inside variables (<code>script_name</code>, <code>plot_comment</code>).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.</p>
 <p>Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.</p>
-<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="supplementary-figure-12.html#cb282-1" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb282-2"><a href="supplementary-figure-12.html#cb282-2" aria-hidden="true" tabindex="-1"></a><span class="co"># setup -----------------------</span></span>
-<span id="cb282-3"><a href="supplementary-figure-12.html#cb282-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicOriginsScripts)</span>
-<span id="cb282-4"><a href="supplementary-figure-12.html#cb282-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypoimg)</span>
-<span id="cb282-5"><a href="supplementary-figure-12.html#cb282-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypogen)</span>
-<span id="cb282-6"><a href="supplementary-figure-12.html#cb282-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ape)</span>
-<span id="cb282-7"><a href="supplementary-figure-12.html#cb282-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggtree)</span>
-<span id="cb282-8"><a href="supplementary-figure-12.html#cb282-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb282-9"><a href="supplementary-figure-12.html#cb282-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(phangorn)</span>
-<span id="cb282-10"><a href="supplementary-figure-12.html#cb282-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb282-11"><a href="supplementary-figure-12.html#cb282-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
-<span id="cb282-12"><a href="supplementary-figure-12.html#cb282-12" aria-hidden="true" tabindex="-1"></a>script_name <span class="ot">&lt;-</span> args[<span class="dv">5</span>] <span class="sc">%&gt;%</span></span>
-<span id="cb282-13"><a href="supplementary-figure-12.html#cb282-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(., <span class="st">&#39;--file=&#39;</span>)</span>
-<span id="cb282-14"><a href="supplementary-figure-12.html#cb282-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb282-15"><a href="supplementary-figure-12.html#cb282-15" aria-hidden="true" tabindex="-1"></a>plot_comment <span class="ot">&lt;-</span> script_name <span class="sc">%&gt;%</span></span>
-<span id="cb282-16"><a href="supplementary-figure-12.html#cb282-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>, <span class="fu">getwd</span>(), <span class="st">&#39;/&#39;</span>, .)</span>
-<span id="cb282-17"><a href="supplementary-figure-12.html#cb282-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb282-18"><a href="supplementary-figure-12.html#cb282-18" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">process_input</span>(script_name, args)</span></code></pre></div>
-<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="supplementary-figure-12.html#cb283-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ── Script: R/fig/plot_SF12.R ────────────────────────────────────────────</span></span>
-<span id="cb283-2"><a href="supplementary-figure-12.html#cb283-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters read:</span></span>
-<span id="cb283-3"><a href="supplementary-figure-12.html#cb283-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 1: 2_analysis/raxml/lg04.1_hySN.raxml.support</span></span>
-<span id="cb283-4"><a href="supplementary-figure-12.html#cb283-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 2: 2_analysis/raxml/lg12.3_hySN.raxml.support</span></span>
-<span id="cb283-5"><a href="supplementary-figure-12.html#cb283-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 3: 2_analysis/raxml/lg12.4_hySN.raxml.support</span></span>
-<span id="cb283-6"><a href="supplementary-figure-12.html#cb283-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ────────────────────────────────────────── /current/working/directory ───</span></span></code></pre></div>
+<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="supplementary-figure-12.html#cb281-1" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb281-2"><a href="supplementary-figure-12.html#cb281-2" aria-hidden="true" tabindex="-1"></a><span class="co"># setup -----------------------</span></span>
+<span id="cb281-3"><a href="supplementary-figure-12.html#cb281-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicOriginsScripts)</span>
+<span id="cb281-4"><a href="supplementary-figure-12.html#cb281-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypoimg)</span>
+<span id="cb281-5"><a href="supplementary-figure-12.html#cb281-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hypogen)</span>
+<span id="cb281-6"><a href="supplementary-figure-12.html#cb281-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ape)</span>
+<span id="cb281-7"><a href="supplementary-figure-12.html#cb281-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggtree)</span>
+<span id="cb281-8"><a href="supplementary-figure-12.html#cb281-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb281-9"><a href="supplementary-figure-12.html#cb281-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(phangorn)</span>
+<span id="cb281-10"><a href="supplementary-figure-12.html#cb281-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb281-11"><a href="supplementary-figure-12.html#cb281-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb281-12"><a href="supplementary-figure-12.html#cb281-12" aria-hidden="true" tabindex="-1"></a>script_name <span class="ot">&lt;-</span> args[<span class="dv">5</span>] <span class="sc">%&gt;%</span></span>
+<span id="cb281-13"><a href="supplementary-figure-12.html#cb281-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(., <span class="st">&#39;--file=&#39;</span>)</span>
+<span id="cb281-14"><a href="supplementary-figure-12.html#cb281-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb281-15"><a href="supplementary-figure-12.html#cb281-15" aria-hidden="true" tabindex="-1"></a>plot_comment <span class="ot">&lt;-</span> script_name <span class="sc">%&gt;%</span></span>
+<span id="cb281-16"><a href="supplementary-figure-12.html#cb281-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="st">&#39;mother-script = &#39;</span>, <span class="fu">getwd</span>(), <span class="st">&#39;/&#39;</span>, .)</span>
+<span id="cb281-17"><a href="supplementary-figure-12.html#cb281-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb281-18"><a href="supplementary-figure-12.html#cb281-18" aria-hidden="true" tabindex="-1"></a>args <span class="ot">&lt;-</span> <span class="fu">process_input</span>(script_name, args)</span></code></pre></div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="supplementary-figure-12.html#cb282-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ── Script: R/fig/plot_SF12.R ────────────────────────────────────────────</span></span>
+<span id="cb282-2"><a href="supplementary-figure-12.html#cb282-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters read:</span></span>
+<span id="cb282-3"><a href="supplementary-figure-12.html#cb282-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 1: 2_analysis/raxml/lg04.1_hySN.raxml.support</span></span>
+<span id="cb282-4"><a href="supplementary-figure-12.html#cb282-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 2: 2_analysis/raxml/lg12.3_hySN.raxml.support</span></span>
+<span id="cb282-5"><a href="supplementary-figure-12.html#cb282-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ★ 3: 2_analysis/raxml/lg12.4_hySN.raxml.support</span></span>
+<span id="cb282-6"><a href="supplementary-figure-12.html#cb282-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ────────────────────────────────────────── /current/working/directory ───</span></span></code></pre></div>
 <p>The paths the phyplogenic trees are received and stored inside more descriptive variable.</p>
-<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="supplementary-figure-12.html#cb284-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config -----------------------</span></span>
-<span id="cb284-2"><a href="supplementary-figure-12.html#cb284-2" aria-hidden="true" tabindex="-1"></a>tree_file_lg04_1 <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">1</span>])</span>
-<span id="cb284-3"><a href="supplementary-figure-12.html#cb284-3" aria-hidden="true" tabindex="-1"></a>tree_file_lg12_3 <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">2</span>])</span>
-<span id="cb284-4"><a href="supplementary-figure-12.html#cb284-4" aria-hidden="true" tabindex="-1"></a>tree_file_lg12_4 <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">3</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="supplementary-figure-12.html#cb283-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config -----------------------</span></span>
+<span id="cb283-2"><a href="supplementary-figure-12.html#cb283-2" aria-hidden="true" tabindex="-1"></a>tree_file_lg04_1 <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">1</span>])</span>
+<span id="cb283-3"><a href="supplementary-figure-12.html#cb283-3" aria-hidden="true" tabindex="-1"></a>tree_file_lg12_3 <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">2</span>])</span>
+<span id="cb283-4"><a href="supplementary-figure-12.html#cb283-4" aria-hidden="true" tabindex="-1"></a>tree_file_lg12_4 <span class="ot">&lt;-</span> <span class="fu">as.character</span>(args[<span class="dv">3</span>])</span></code></pre></div>
 <p>Then, the trees are being read in and rooted using the Serranus samples as outgroup.</p>
-<div class="sourceCode" id="cb285"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb285-1"><a href="supplementary-figure-12.html#cb285-1" aria-hidden="true" tabindex="-1"></a>trees <span class="ot">&lt;-</span> <span class="fu">c</span>(tree_file_lg04_1, tree_file_lg12_3, tree_file_lg12_4) <span class="sc">%&gt;%</span> </span>
-<span id="cb285-2"><a href="supplementary-figure-12.html#cb285-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="at">.f =</span> <span class="cf">function</span>(file){</span>
-<span id="cb285-3"><a href="supplementary-figure-12.html#cb285-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">read.tree</span>(file) <span class="sc">%&gt;%</span></span>
-<span id="cb285-4"><a href="supplementary-figure-12.html#cb285-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">root</span>(<span class="at">phy =</span> ., <span class="at">outgroup =</span> <span class="fu">c</span>(<span class="st">&quot;28393torpan&quot;</span>, <span class="st">&quot;s_tort_3torpan&quot;</span>, <span class="st">&quot;20478tabhon&quot;</span> )) <span class="sc">%&gt;%</span> </span>
-<span id="cb285-5"><a href="supplementary-figure-12.html#cb285-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">midpoint</span>()}</span>
-<span id="cb285-6"><a href="supplementary-figure-12.html#cb285-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="supplementary-figure-12.html#cb284-1" aria-hidden="true" tabindex="-1"></a>trees <span class="ot">&lt;-</span> <span class="fu">c</span>(tree_file_lg04_1, tree_file_lg12_3, tree_file_lg12_4) <span class="sc">%&gt;%</span> </span>
+<span id="cb284-2"><a href="supplementary-figure-12.html#cb284-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="at">.f =</span> <span class="cf">function</span>(file){</span>
+<span id="cb284-3"><a href="supplementary-figure-12.html#cb284-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">read.tree</span>(file) <span class="sc">%&gt;%</span></span>
+<span id="cb284-4"><a href="supplementary-figure-12.html#cb284-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">root</span>(<span class="at">phy =</span> ., <span class="at">outgroup =</span> <span class="fu">c</span>(<span class="st">&quot;28393torpan&quot;</span>, <span class="st">&quot;s_tort_3torpan&quot;</span>, <span class="st">&quot;20478tabhon&quot;</span> )) <span class="sc">%&gt;%</span> </span>
+<span id="cb284-5"><a href="supplementary-figure-12.html#cb284-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">midpoint</span>()}</span>
+<span id="cb284-6"><a href="supplementary-figure-12.html#cb284-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p>Next, the default tree layout is defined and the default tree color is set.</p>
-<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="supplementary-figure-12.html#cb286-1" aria-hidden="true" tabindex="-1"></a>clr_neutral <span class="ot">&lt;-</span> <span class="fu">rgb</span>(.<span class="dv">6</span>, .<span class="dv">6</span>, .<span class="dv">6</span>)</span>
-<span id="cb286-2"><a href="supplementary-figure-12.html#cb286-2" aria-hidden="true" tabindex="-1"></a>lyout <span class="ot">&lt;-</span> <span class="st">&#39;circular&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb285"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb285-1"><a href="supplementary-figure-12.html#cb285-1" aria-hidden="true" tabindex="-1"></a>clr_neutral <span class="ot">&lt;-</span> <span class="fu">rgb</span>(.<span class="dv">6</span>, .<span class="dv">6</span>, .<span class="dv">6</span>)</span>
+<span id="cb285-2"><a href="supplementary-figure-12.html#cb285-2" aria-hidden="true" tabindex="-1"></a>lyout <span class="ot">&lt;-</span> <span class="st">&#39;circular&#39;</span></span></code></pre></div>
 <p>Now, the support values of the tree are transformed into discrete support classes.</p>
-<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="supplementary-figure-12.html#cb287-1" aria-hidden="true" tabindex="-1"></a>tree_data <span class="ot">&lt;-</span> trees <span class="sc">%&gt;%</span> </span>
-<span id="cb287-2"><a href="supplementary-figure-12.html#cb287-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="at">.f =</span> <span class="cf">function</span>(tree_in){</span>
-<span id="cb287-3"><a href="supplementary-figure-12.html#cb287-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">open_tree</span>(<span class="fu">ggtree</span>(tree_in, </span>
-<span id="cb287-4"><a href="supplementary-figure-12.html#cb287-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">layout =</span> lyout), <span class="dv">180</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb287-5"><a href="supplementary-figure-12.html#cb287-5" aria-hidden="true" tabindex="-1"></a>      .<span class="sc">$</span>data <span class="sc">%&gt;%</span> </span>
-<span id="cb287-6"><a href="supplementary-figure-12.html#cb287-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">spec =</span> <span class="fu">ifelse</span>(isTip, <span class="fu">str_sub</span>(label, <span class="sc">-</span><span class="dv">6</span>, <span class="sc">-</span><span class="dv">4</span>), <span class="st">&quot;ungrouped&quot;</span>),</span>
-<span id="cb287-7"><a href="supplementary-figure-12.html#cb287-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">support =</span> <span class="fu">as.numeric</span>(label),</span>
-<span id="cb287-8"><a href="supplementary-figure-12.html#cb287-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">support_class =</span> <span class="fu">cut</span>(support, <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">70</span>,<span class="dv">90</span>,<span class="dv">100</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb287-9"><a href="supplementary-figure-12.html#cb287-9" aria-hidden="true" tabindex="-1"></a>               <span class="fu">as.character</span>() <span class="sc">%&gt;%</span> <span class="fu">factor</span>(<span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;(0,50]&quot;</span>, <span class="st">&quot;(50,70]&quot;</span>, <span class="st">&quot;(70,90]&quot;</span>, <span class="st">&quot;(90,100]&quot;</span>))</span>
-<span id="cb287-10"><a href="supplementary-figure-12.html#cb287-10" aria-hidden="true" tabindex="-1"></a>      )}</span>
-<span id="cb287-11"><a href="supplementary-figure-12.html#cb287-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="supplementary-figure-12.html#cb286-1" aria-hidden="true" tabindex="-1"></a>tree_data <span class="ot">&lt;-</span> trees <span class="sc">%&gt;%</span> </span>
+<span id="cb286-2"><a href="supplementary-figure-12.html#cb286-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="at">.f =</span> <span class="cf">function</span>(tree_in){</span>
+<span id="cb286-3"><a href="supplementary-figure-12.html#cb286-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">open_tree</span>(<span class="fu">ggtree</span>(tree_in, </span>
+<span id="cb286-4"><a href="supplementary-figure-12.html#cb286-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">layout =</span> lyout), <span class="dv">180</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb286-5"><a href="supplementary-figure-12.html#cb286-5" aria-hidden="true" tabindex="-1"></a>      .<span class="sc">$</span>data <span class="sc">%&gt;%</span> </span>
+<span id="cb286-6"><a href="supplementary-figure-12.html#cb286-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">spec =</span> <span class="fu">ifelse</span>(isTip, <span class="fu">str_sub</span>(label, <span class="sc">-</span><span class="dv">6</span>, <span class="sc">-</span><span class="dv">4</span>), <span class="st">&quot;ungrouped&quot;</span>),</span>
+<span id="cb286-7"><a href="supplementary-figure-12.html#cb286-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">support =</span> <span class="fu">as.numeric</span>(label),</span>
+<span id="cb286-8"><a href="supplementary-figure-12.html#cb286-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">support_class =</span> <span class="fu">cut</span>(support, <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">70</span>,<span class="dv">90</span>,<span class="dv">100</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb286-9"><a href="supplementary-figure-12.html#cb286-9" aria-hidden="true" tabindex="-1"></a>               <span class="fu">as.character</span>() <span class="sc">%&gt;%</span> <span class="fu">factor</span>(<span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;(0,50]&quot;</span>, <span class="st">&quot;(50,70]&quot;</span>, <span class="st">&quot;(70,90]&quot;</span>, <span class="st">&quot;(90,100]&quot;</span>))</span>
+<span id="cb286-10"><a href="supplementary-figure-12.html#cb286-10" aria-hidden="true" tabindex="-1"></a>      )}</span>
+<span id="cb286-11"><a href="supplementary-figure-12.html#cb286-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p>After this, the individual trees are being drawn one by one.</p>
-<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="supplementary-figure-12.html#cb288-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">plot_outl_tree_s</span>(tree_data[[<span class="dv">1</span>]])</span>
-<span id="cb288-2"><a href="supplementary-figure-12.html#cb288-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">plot_outl_tree_s</span>(tree_data[[<span class="dv">2</span>]], <span class="at">show_legend =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb288-3"><a href="supplementary-figure-12.html#cb288-3" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">plot_outl_tree_s</span>(tree_data[[<span class="dv">3</span>]], <span class="at">show_legend =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<p><img src="plot_SF12_files/figure-html/unnamed-chunk-8-1.png" width="658.56" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="supplementary-figure-12.html#cb287-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">plot_outl_tree_s</span>(tree_data[[<span class="dv">1</span>]])</span>
+<span id="cb287-2"><a href="supplementary-figure-12.html#cb287-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">plot_outl_tree_s</span>(tree_data[[<span class="dv">2</span>]], <span class="at">show_legend =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb287-3"><a href="supplementary-figure-12.html#cb287-3" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">plot_outl_tree_s</span>(tree_data[[<span class="dv">3</span>]], <span class="at">show_legend =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>All three trees are combined to create the final figure.</p>
-<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="supplementary-figure-12.html#cb289-1" aria-hidden="true" tabindex="-1"></a>p_done <span class="ot">&lt;-</span> p1 <span class="sc">+</span> p2 <span class="sc">+</span> p3 <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">tag_levels =</span> <span class="st">&#39;a&#39;</span>) <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">1</span>)</span></code></pre></div>
-<p><img src="plot_SF12_files/figure-html/unnamed-chunk-10-1.png" width="658.56" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="supplementary-figure-12.html#cb288-1" aria-hidden="true" tabindex="-1"></a>p_done <span class="ot">&lt;-</span> p1 <span class="sc">+</span> p2 <span class="sc">+</span> p3 <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">tag_levels =</span> <span class="st">&#39;a&#39;</span>) <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p>Finally, we can export Figure S12.</p>
-<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="supplementary-figure-12.html#cb290-1" aria-hidden="true" tabindex="-1"></a>scl <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb290-2"><a href="supplementary-figure-12.html#cb290-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hypo_save</span>(<span class="at">plot =</span> p_done,</span>
-<span id="cb290-3"><a href="supplementary-figure-12.html#cb290-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">filename =</span> <span class="st">&quot;figures/SF12.pdf&quot;</span>,</span>
-<span id="cb290-4"><a href="supplementary-figure-12.html#cb290-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> f_width_half <span class="sc">*</span> scl,</span>
-<span id="cb290-5"><a href="supplementary-figure-12.html#cb290-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> f_width_half <span class="sc">*</span> <span class="fl">1.5</span> <span class="sc">*</span> scl,</span>
-<span id="cb290-6"><a href="supplementary-figure-12.html#cb290-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">device =</span> cairo_pdf,</span>
-<span id="cb290-7"><a href="supplementary-figure-12.html#cb290-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">bg =</span> <span class="st">&quot;transparent&quot;</span>,</span>
-<span id="cb290-8"><a href="supplementary-figure-12.html#cb290-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">comment =</span> plot_comment)</span></code></pre></div>
+<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="supplementary-figure-12.html#cb289-1" aria-hidden="true" tabindex="-1"></a>scl <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb289-2"><a href="supplementary-figure-12.html#cb289-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hypo_save</span>(<span class="at">plot =</span> p_done,</span>
+<span id="cb289-3"><a href="supplementary-figure-12.html#cb289-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">filename =</span> <span class="st">&quot;figures/SF12.pdf&quot;</span>,</span>
+<span id="cb289-4"><a href="supplementary-figure-12.html#cb289-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> f_width_half <span class="sc">*</span> scl,</span>
+<span id="cb289-5"><a href="supplementary-figure-12.html#cb289-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> f_width_half <span class="sc">*</span> <span class="fl">1.5</span> <span class="sc">*</span> scl,</span>
+<span id="cb289-6"><a href="supplementary-figure-12.html#cb289-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">device =</span> cairo_pdf,</span>
+<span id="cb289-7"><a href="supplementary-figure-12.html#cb289-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">bg =</span> <span class="st">&quot;transparent&quot;</span>,</span>
+<span id="cb289-8"><a href="supplementary-figure-12.html#cb289-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">comment =</span> plot_comment)</span></code></pre></div>
 <hr />
 
 </div>

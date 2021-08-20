@@ -126,7 +126,7 @@ p_done <- data %>%
   theme_hypo()
 ```
 
-<img src="plot_SF14_files/figure-html/unnamed-chunk-7-1.png" width="1056" style="display: block; margin: auto;" />
+
 
 
 Finally, we can export Figure S14.
