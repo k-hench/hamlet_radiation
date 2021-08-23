@@ -1,10 +1,10 @@
-# Code repository for: *Ancestral variation, hybridization and modularity fuel a marine radiation*
+# Code repository for: *Rapid radiation in a highly diverse marine environment*
 
 <!-- badges: start -->
 [![DOI](https://zenodo.org/badge/145688309.svg)](https://zenodo.org/badge/latestdoi/145688309)
 <!-- badges: end -->
 
-This repository contains the original bioinformatic analysis behind the paper *Ancestral variation, hybridization and modularity fuel a marine radiation* by Hench, Helmkampf, McMillan and Puebla.
+This repository contains the original bioinformatic analysis behind the paper *Rapid radiation in a highly diverse marine environment* by Hench, Helmkampf, McMillan and Puebla.
 
 It covers all steps from genotyping based on raw sequencing data, over population genetic analysis to the final plotting of the figures used within the publication.
 
@@ -57,7 +57,10 @@ In case you are looking for specific parts referenced in the *Materials and Meth
 - *git 12.x*: [`nf/12_analysis_fst_signif/analysis_fst_sign.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/12_analysis_fst_signif/analysis_fst_sign.nf)
 - *git 13.x*: [`nf/13_analysis_phylo_whg/analysis_phylo_whg.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/13_analysis_phylo_whg/analysis_phylo_whg.nf)
 - *git 14.x*: [`nf/14_analysis_phylo_regions/analysis_phylo_regions.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/14_analysis_phylo_regions/analysis_phylo_regions.nf)
-- *git 15*: [`sh/create_figures.sh`](https://github.com/k-hench/hamlet_radiation/blob/master/sh/create_figures.sh)
+- *git 15.x*: [`nf/15_analysis_pi/analysis_pi.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/15_analysis_pi/analysis_pi.nf)
+- *git 16.x*: [`nf/16_analysis_ibd/analysis_ibd.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/16_analysis_ibd/analysis_ibd.nf)
+- *git 17.x*: [`nf/17_analysis_dstats/analysis_dstats.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/17_analysis_dstats/analysis_dstats.nf)
+- *git 18.x*: [`sh/create_figures.sh`](https://github.com/k-hench/hamlet_radiation/blob/master/sh/create_figures.sh)
 
 Again, please refer to the [docs](https://k-hench.github.io/hamlet_radiation/) for a more in depth documentation.
 
