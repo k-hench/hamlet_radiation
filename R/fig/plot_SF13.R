@@ -37,7 +37,7 @@ outlier_regions <- read_tsv(outlier_file)
 
 hap_to_perc <- 100 / (166 * 165)
 iterations <- c(str_c("2/5*10^",6:3," BP"),"25/10 kb","10/5 kb","7-5/3 kb","15/7.5 kb")
-itteration_names <-   c(str_c("10-",6:3),"7","8","9","10")
+itteration_names <- c(str_c("10-",6:3),"7","8","9","10")
 
 plot_network <- function(n_zeros, filtmode = "direct", filt = 0){
   clr2 <- GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))]

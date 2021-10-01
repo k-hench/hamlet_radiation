@@ -7,7 +7,7 @@ Channel
 
 Channel
 	.from(["LG_M", "unplaced"])
-	.set( lg_mode )
+	.set{ lg_mode }
 
 // git 18.2
 // actual genotyping step (including invariant sites)
@@ -92,7 +92,7 @@ process joint_genotype_snps {
 /* produce metrics table to determine filtering thresholds - ups forgot to extract SNPS first*/
 process joint_genotype_metrics {
 	label 'L_28g5h_genotype_metrics'
-	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'move'
+	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
 
 	input:
 	set file( vcf ), file( tbi ), val( mode )  from all_bp_non_lg_1
