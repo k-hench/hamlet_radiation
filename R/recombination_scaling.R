@@ -42,9 +42,10 @@ hypo_map2_bp <- as.character(args[5])
 segment_file <- as.character(args[6])
 summary_file <- as.character(args[7])
 
-truffle_idx <- segment_file %>% 
-  str_extract("[0-9]*.segments.tsv") %>% 
-  str_remove(".segments.tsv")
+truffle_conv <- segment_file %>% str_replace(pattern = ".segments.tsv", replacement = ".converted.tsv") %>% str_remove(".*/")
+truffle_sum <- segment_file %>% str_replace(pattern = ".segments.tsv", replacement = ".conv_summary.tsv") %>% str_remove(".*/")
+truffle_filt <- segment_file %>% str_replace(pattern = ".segments.tsv", replacement = ".conv_filterd.tsv") %>% str_remove(".*/")
+
 # custom functions ----------------
 read_maps <- function(cm_file, bp_file){
   read_tsv(cm_file) %>% 
@@ -119,7 +120,12 @@ interpol_data <- function(lg, ...){
     mutate(interpol_cM = pmap_dbl(cur_data(), bin_rescaler)) 
 }
 
-na_to_zero <- function(x){x[is.na(x)] <- 0}
+na_to_zero <- function(x){
+  x_type <- typeof(x)
+  if_else(is.na(x), as(0,Class = x_type), x) %>% 
+    as.double() %>% as(Class = x_type)
+
+  }
 
 convert_bp_to_cm <- function(data, lg = "LG08", gmap = gmap1){
   gmap_in <- deparse(substitute(gmap))
@@ -376,10 +382,10 @@ control <- converted_segments %>%
             cm_length_m1 = sum(length_cM_m1),
             cm_length_m2 = sum(length_cM_m2)) %>%
   ungroup() %>%
-  pivot_wider(id_cols = PAIR, names_from = TYPE, values_from = seq_length:cm_length_m2) %>% 
-  left_join(segments_summary, .) %>% 
-  mutate(n_mark_IBD2 = na_to_zero(n_mark_IBD2),
-         IBD0_manual = (NMARK - (n_mark_IBD1 + n_mark_IBD2)) / NMARK,
+  pivot_wider(id_cols = PAIR, names_from = TYPE, values_from = seq_length:cm_length_m2, values_fill = 0) %>% 
+  left_join(segments_summary, .,  ) %>% 
+  mutate(across(.cols = seq_length_IBD1:cm_length_m2_IBD2, .fns = na_to_zero)) %>% 
+  mutate(IBD0_manual = (NMARK - (n_mark_IBD1 + n_mark_IBD2)) / NMARK,
          IBD1_manual = n_mark_IBD1 / NMARK,
          IBD2_manual = n_mark_IBD2 / NMARK,
          icheck_0 = IBD0_manual - IBD0,
@@ -408,15 +414,15 @@ summary_filterd <- converted_segments %>%
             cm_length_m1 = sum(length_cM_m1),
             cm_length_m2 = sum(length_cM_m2)) %>%
   ungroup() %>%
-  pivot_wider(id_cols = PAIR, names_from = TYPE, values_from = seq_length:cm_length_m2) %>% 
-  left_join(segments_summary, .) %>% 
-  mutate(n_mark_IBD2 = na_to_zero(n_mark_IBD2),
-         IBD0_manual = (NMARK - (n_mark_IBD1 + n_mark_IBD2)) / NMARK,
+  pivot_wider(id_cols = PAIR, names_from = TYPE, values_from = seq_length:cm_length_m2, values_fill = 0) %>% 
+  left_join(segments_summary, .,  ) %>% 
+  mutate(across(.cols = seq_length_IBD1:cm_length_m2_IBD2, .fns = na_to_zero)) %>% 
+  mutate(IBD0_manual = (NMARK - (n_mark_IBD1 + n_mark_IBD2)) / NMARK,
          IBD1_manual = n_mark_IBD1 / NMARK,
          IBD2_manual = n_mark_IBD2 / NMARK,
          icheck_0 = IBD0_manual - IBD0,
          icheck_1 = IBD1_manual - IBD1,
-         icheck_2 = IBD2 - IBD2,
+         icheck_2 = IBD2 - IBD2_manual,
          # compile ibd by sequence map
          ibd0_bp = (hypo_bp_length - (seq_length_IBD1 + seq_length_IBD2)) / hypo_bp_length,
          ibd1_bp = seq_length_IBD1 / hypo_bp_length,
@@ -435,9 +441,6 @@ control_subplot <- function(x,y,c, data){
     geom_point(aes_string(x = x, y = y, color = str_c("'", c, "'")),
                alpha = .4)
 }
-
-control_subplot("IBD0", "IBD0_manual", "IBD0") +
-  control_subplot("IBD1", "IBD1_manual", "IBD1") 
 
 replacer <-  function(str, ibd){str_replace(str, pattern = "([IBDibd]{3})X", replacement = str_c("\\1",ibd))}
 control_plot <- function(x, y, cl, data){
@@ -460,19 +463,27 @@ control_plot <- function(x, y, cl, data){
 
 to_check <- c("IBDX", "IBDX_manual", "ibdX_bp", "ibdX_cM_m1", "ibdX_cM_m2")
 
+# 
+# control_plot(to_check[1], to_check[2], to_check[2], data = control)/
+# control_plot(to_check[1], to_check[3], to_check[3], data = control)/
+# control_plot(to_check[1], to_check[4], to_check[4], data = control)/
+# control_plot(to_check[1], to_check[5], to_check[5], data = control) 
+# 
+# ggsave("~/Desktop/ibd_comparisons.pdf", width = 8, height = 8, device = cairo_pdf)
+# ggsave("~/Desktop/ibd_comparisons.png", width = 8, height = 8, type = "cairo")
+# 
+# control_plot(to_check[1], to_check[2], to_check[2], data = summary_filterd)/
+#   control_plot(to_check[1], to_check[3], to_check[3], data = summary_filterd)/
+#   control_plot(to_check[1], to_check[4], to_check[4], data = summary_filterd)/
+#   control_plot(to_check[1], to_check[5], to_check[5], data = summary_filterd) +
+#   plot_annotation(title = glue::glue("IBD segments filtered by length > {cM_treshold}"))
+# 
+# ggsave("~/Desktop/ibd_comparisons_filtered.png", width = 8, height = 8, type = "cairo")
 
-control_plot(to_check[1], to_check[2], to_check[2], data = control)/
-control_plot(to_check[1], to_check[3], to_check[3], data = control)/
-control_plot(to_check[1], to_check[4], to_check[4], data = control)/
-control_plot(to_check[1], to_check[5], to_check[5], data = control) 
+# ====================
 
-ggsave("~/Desktop/ibd_comparisons.pdf", width = 8, height = 8, device = cairo_pdf)
-ggsave("~/Desktop/ibd_comparisons.png", width = 8, height = 8, type = "cairo")
+dir.create(path = glue::glue("2_analysis/ibd/cM_converted/"))
+write_tsv(x = converted_segments, file = glue::glue("2_analysis/ibd/cM_converted/{truffle_conv}"))
+write_tsv(x = control, file = glue::glue("2_analysis/ibd/cM_converted/{truffle_sum}"))
+write_tsv(x = summary_filterd, file = glue::glue("2_analysis/ibd/cM_converted/{truffle_filt}"))
 
-control_plot(to_check[1], to_check[2], to_check[2], data = summary_filterd)/
-  control_plot(to_check[1], to_check[3], to_check[3], data = summary_filterd)/
-  control_plot(to_check[1], to_check[4], to_check[4], data = summary_filterd)/
-  control_plot(to_check[1], to_check[5], to_check[5], data = summary_filterd) +
-  plot_annotation(title = glue::glue("IBD segments filtered by length > {cM_treshold}"))
-
-ggsave("~/Desktop/ibd_comparisons_filtered.png", width = 8, height = 8, type = "cairo")
