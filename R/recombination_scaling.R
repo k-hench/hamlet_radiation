@@ -277,6 +277,8 @@ hypo_all_starts <- hypo_karyotype %>%
   left_join(bounds_gmap2 %>% 
               dplyr::select(CHROM, GSTART_cM_m2 = GSTART_cM, GEND_cM_m2 = GEND_cM))
 
+# write_tsv(x = hypo_all_starts, file = "ressources/hypo_all_starts.tsv")
+
 converted_segments <- lgs %>% 
   map_dfr(convert_bp_to_cm, data = segments_individual) %>% 
   left_join( lgs %>% 

@@ -1,6 +1,7 @@
 library(tidyverse)
 
 data <- read_delim('1_genotyping/1_raw_vcfs/raw_var_sites.vcf.gz.table.txt.gz', delim='\t') %>% mutate(logFS = log10(FS))
+data <- read_delim('1_genotyping/2_raw_vcfs/all_sites.LG_M.vcf.gz.LG_M.table.txt', delim='\t') %>% mutate(logFS = log10(FS))
 
 names(data)
 
@@ -28,7 +29,7 @@ plotting <- function( data, var, rng, thres ){
 }
 
 plts <- purrr::pmap(.l = tibble(var = vars,rng = rngs, thres = thresholds),
-                      .f = plotting,data=data)
+                      .f = plotting, data = data)
 p1 <- cowplot::plot_grid(plotlist = plts,ncol = 1)
 
 A4 <- c(210, 297)
