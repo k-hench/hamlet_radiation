@@ -46,7 +46,7 @@ process segment_windows {
 
 // Subset ALL vcf files (also allBP) by missingnes (max. 10%)
 process filter_vcf_missingnes {
-	label 'L_32g1h_filter_missingnes'
+	label 'L_32g12h_filter_missingnes'
 
 	input:
 	set  vcfId, file( vcf ) from vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
@@ -68,7 +68,7 @@ process filter_vcf_missingnes {
 
 // Coverage of SNPs vcf for SNPdensity, allBP for Ns
 process compute_coverage {
-	label 'L_32g1h_coverage'
+	label 'L_32g12h_coverage'
 	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy' 
 
 	input:
