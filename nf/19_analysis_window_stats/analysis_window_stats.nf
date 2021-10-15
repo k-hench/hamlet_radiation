@@ -138,10 +138,10 @@ process complie_window_stats {
 
 	library(tidyverse)
 
-	data_SNPs <- read_tsv("test_sub3.${kb_size}kb_cov.tsv.gz",
+	data_SNPs <- read_tsv("phased_mac2.${kb_size}kb_cov.tsv.gz ",
 						  col_names = c("CHROM", "START", "END", "COV_SNP"))
 
-	data_allBPs <- read_tsv("test_sub3_allBP.${kb_size}kb_cov.tsv.gz", 
+	data_allBPs <- read_tsv("filterd.allBP.${kb_size}kb_cov.tsv.gz", 
 						    col_names = c("CHROM", "START", "END", "COV_ALL"))
 
 	data <- data_SNPs %>%
