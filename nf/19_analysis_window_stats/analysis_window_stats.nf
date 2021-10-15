@@ -78,6 +78,7 @@ process filter_vcf_missingnes {
 }*/
 
 // Subset ALL vcf files (also allBP) by missingnes (max. 10%)
+/*
 process filter_vcf_missingnes {
 	label 'L_32g48h_filter_missingnes'
 
@@ -98,14 +99,15 @@ process filter_vcf_missingnes {
 	tabix ${vcfId}_filtered.vcf.gz
 	"""
 }
-
+*/
 // Coverage of SNPs vcf for SNPdensity, allBP for Ns
 process compute_coverage {
 	label 'L_32g48h_coverage'
 	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy' 
 
 	input:
-	set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
+	//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
+	set  val( vcfId ), file( vcf ), val( kb_size ), file( window ) from vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}.combine( windows_ch )
 	
 	output:
 	set val( kb_size ), file( "${vcfId}.${kb_size}kb_cov.tsv.gz" ) into coverage_ch
