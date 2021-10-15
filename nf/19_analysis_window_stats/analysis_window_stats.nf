@@ -102,7 +102,7 @@ process filter_vcf_missingnes {
 */
 // Coverage of SNPs vcf for SNPdensity, allBP for Ns
 process compute_coverage {
-	label 'L_32g48h_coverage'
+	label 'L_140g1h_coverage'
 	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy' 
 
 	input:
