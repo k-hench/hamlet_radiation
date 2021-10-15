@@ -44,12 +44,45 @@ process segment_windows {
 	"""
 }
 
+
+/*
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.set{ lg_ch }
+
+Channel
+	.from( "filterd.allBP" )
+	set{ vcfId_allbp_ch }
+
+
 // Subset ALL vcf files (also allBP) by missingnes (max. 10%)
 process filter_vcf_missingnes {
 	label 'L_32g12h_filter_missingnes'
 
 	input:
-	set  vcfId, file( vcf ) from vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
+	set  val( vcfId ), val( lg ) from vcfId_allbp_ch.combine( lg_ch )
+	
+	output:
+	set val( "${vcfId}.LG${lg}" ),  file( "*_filtered.vcf.gz*" ) into vcf_snps_filterd_ch
+
+	script:
+	"""
+	vcftools \
+		--gzvcf \BASE_DIR/1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG${lg}.vcf.gz \
+		--max-missing 0.9 \
+		--recode \
+		--stdout | bgzip > ${vcfId}.LG${lg}_filtered.vcf.gz
+	
+	tabix ${vcfId}.LG${lg}_filtered.vcf.gz
+	"""
+}*/
+
+// Subset ALL vcf files (also allBP) by missingnes (max. 10%)
+process filter_vcf_missingnes {
+	label 'L_32g48h_filter_missingnes'
+
+	input:
+	set  val( vcfId ), file( vcf ) from vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
 	
 	output:
 	set val( vcfId ),  file( "*_filtered.vcf.gz*" ) into vcf_snps_filterd_ch
@@ -68,7 +101,7 @@ process filter_vcf_missingnes {
 
 // Coverage of SNPs vcf for SNPdensity, allBP for Ns
 process compute_coverage {
-	label 'L_32g12h_coverage'
+	label 'L_32g48h_coverage'
 	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy' 
 
 	input:
