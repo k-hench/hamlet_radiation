@@ -7,7 +7,7 @@ Channel
 
 // Open the allBP data set (will be expanded x 24 LGs)
 Channel
-	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.vcf.{gz,gz.tbi}")
+	.fromFilePairs("../../1_genotyping/3_gatk_filtered/filterd.allBP.non_ref.vcf.{gz,gz.tbi}")
 	.set{ vcf_allbp_ch }
 
 Channel
@@ -141,7 +141,7 @@ process complie_window_stats {
 	data_SNPs <- read_tsv("phased_mac2.${kb_size}kb_cov.tsv.gz",
 						  col_names = c("CHROM", "START", "END", "COV_SNP"))
 
-	data_allBPs <- read_tsv("filterd.allBP.${kb_size}kb_cov.tsv.gz", 
+	data_allBPs <- read_tsv("filterd.allBP.non_ref.${kb_size}kb_cov.tsv.gz", 
 						    col_names = c("CHROM", "START", "END", "COV_ALL"))
 
 	data <- data_SNPs %>%
