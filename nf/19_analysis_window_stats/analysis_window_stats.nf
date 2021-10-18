@@ -117,6 +117,29 @@ Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
 	.set{ lg_ch }
 
+process subset_allBP {
+	label 'L_140g3h_coverage'
+	publishDir "../../1_genotyping/3_gatk_filtered/non_ref_byLG/", mode: 'copy' 
+
+	input:
+	//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
+	set  val( lg ) from lg_ch
+
+	output:
+	set val( lg ), file( "filterd.allBP.non_ref.LG${lg}.vcf.gz" ), file( "filterd.allBP.non_ref.LG${lg}.vcf.gz.tbi" ) into allbp_non_ref_ch
+
+	script:
+	"""
+	vcftools \
+		--gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered//filterd.allBP.non_ref.vcf.gz \
+		--chr LG${lg} \
+		--recode \
+		--stdout | bgzip > filterd.allBP.non_ref.LG${lg}.vcf.gz
+
+	tabix filterd.allBP.non_ref.LG${lg}.vcf.gz
+	"""
+}
+
 
 //vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
 process compute_coverage_allBP {
@@ -125,7 +148,7 @@ process compute_coverage_allBP {
 
 	input:
 	//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
-	set  val( lg ), val( kb_size ), file( window ) from lg_ch.combine( windows_ch2 )
+	set  val( lg ), file( vcf ), file( tbi ), val( kb_size ), file( window ) from allbp_non_ref_ch.combine( windows_ch2 )
 	
 	output:
 	set val( kb_size ), file( "filterd.allBP.LG${lg}.${kb_size}kb_cov.tsv.gz" ) into coverage_allbp_ch
@@ -139,7 +162,7 @@ process compute_coverage_allBP {
 
 	bedtools coverage \
 		-a bed_LG${lg}.bed.gz \
-		-b \$BASE_DIR/1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG${lg}.vcf.gz \
+		-b ${vcf} \
 		-counts | gzip > filterd.allBP.LG${lg}.${kb_size}kb_cov.tsv.gz
 	"""
 }
