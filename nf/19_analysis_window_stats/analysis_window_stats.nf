@@ -134,7 +134,7 @@ process compute_coverage_allBP {
 	"""
 	echo -e "CHROM\\tSTART\\tEND" > bed_LG${lg}.bed
 
-	grep "LG${lg}" ${window} >> bed_LG${lg}.bed
+	zgrep "LG${lg}" ${window} >> bed_LG${lg}.bed
 	gzip bed_LG${lg}.bed
 
 	bedtools coverage \
