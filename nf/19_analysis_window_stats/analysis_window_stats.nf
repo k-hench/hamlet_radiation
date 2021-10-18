@@ -118,7 +118,7 @@ Channel
 	.set{ lg_ch }
 
 process subset_allBP {
-	label 'L_140g3h_coverage'
+	label 'L_140g10h_coverage'
 	publishDir "../../1_genotyping/3_gatk_filtered/non_ref_byLG/", mode: 'copy' 
 
 	input:
