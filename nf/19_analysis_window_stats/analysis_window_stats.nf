@@ -23,7 +23,7 @@ process segment_windows {
 	val( kb_size ) from window_size_ch
 
 	output:
-	set val( kb_size ), file( "windows_${kb_size}kb.bed.gz" ) into windows_ch
+	set val( kb_size ), file( "windows_${kb_size}kb.bed.gz" ) into ( windows_ch, windows_ch2 )
 
 	script:
 	"""
@@ -46,15 +46,6 @@ process segment_windows {
 
 
 /*
-Channel
-	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
-	.set{ lg_ch }
-
-Channel
-	.from( "filterd.allBP" )
-	set{ vcfId_allbp_ch }
-
-
 // Subset ALL vcf files (also allBP) by missingnes (max. 10%)
 process filter_vcf_missingnes {
 	label 'L_32g12h_filter_missingnes'
@@ -100,6 +91,7 @@ process filter_vcf_missingnes {
 	"""
 }
 */
+
 // Coverage of SNPs vcf for SNPdensity, allBP for Ns
 process compute_coverage {
 	label 'L_140g1h_coverage'
@@ -107,7 +99,7 @@ process compute_coverage {
 
 	input:
 	//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
-	set  val( vcfId ), file( vcf ), val( kb_size ), file( window ) from vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}.combine( windows_ch )
+	set  val( vcfId ), file( vcf ), val( kb_size ), file( window ) from vcf_snps_ch.map{ [it[0].minus(".vcf"), it[1]]}.combine( windows_ch )
 	
 	output:
 	set val( kb_size ), file( "${vcfId}.${kb_size}kb_cov.tsv.gz" ) into coverage_ch
@@ -121,13 +113,45 @@ process compute_coverage {
 	"""
 }
 
+Channel
+	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
+	.set{ lg_ch }
+
+
+//vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
+process compute_coverage_allBP {
+	label 'L_140g1h_coverage'
+	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy' 
+
+	input:
+	//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
+	set  val( lg ), val( kb_size ), file( window ) from lg_ch.combine( windows_ch2 )
+	
+	output:
+	set val( kb_size ), file( "filterd.allBP.LG${lg}.${kb_size}kb_cov.tsv.gz" ) into coverage_allbp_ch
+
+	script:
+	"""
+	echo -e "CHROM\\tSTART\\tEND" > bed_LG${lg}.bed
+
+	grep "LG${lg}" ${window} >> bed_LG${lg}.bed
+	gzip bed_LG${lg}.bed
+
+	bedtools coverage \
+		-a bed_LG${lg}.bed.gz \
+		-b \$BASE_DIR/1_genotyping/3_gatk_filtered/byLG/filterd.allBP.LG${lg}.vcf.gz \
+		-counts | gzip > filterd.allBP.LG${lg}.${kb_size}kb_cov.tsv.gz
+	"""
+}
+
+
 // Compile summary table
 process complie_window_stats {
 	label 'L_20g2h_windows_stats'
 	publishDir "../../2_analysis/window_stats/window_stats/", mode: 'copy' 
 
 	input:
-	set val( kb_size ), file( windows ) from coverage_ch.groupTuple()
+	set val( kb_size ), file( windows ) from coverage_ch.concat( coverage_allbp_ch ).groupTuple()
 
 	output:
 	file( "window_stats.${kb_size}kb.tsv.gz" ) into final_ch
@@ -141,8 +165,9 @@ process complie_window_stats {
 	data_SNPs <- read_tsv("phased_mac2.${kb_size}kb_cov.tsv.gz",
 						  col_names = c("CHROM", "START", "END", "COV_SNP"))
 
-	data_allBPs <- read_tsv("filterd.allBP.non_ref.${kb_size}kb_cov.tsv.gz", 
-						    col_names = c("CHROM", "START", "END", "COV_ALL"))
+	all_bp_files <- dir("filterd.allBP.LG*")
+
+	data_allBPs <- map_dfr(all_bp_files, .f = function(x){read_tsv(x, col_names = c("CHROM", "START", "END", "COV_ALL"))}
 
 	data <- data_SNPs %>%
 		left_join(data_allBPs, by = c(CHROM = "CHROM", START = "START", END = "END"))  %>%
