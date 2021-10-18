@@ -188,9 +188,9 @@ process complie_window_stats {
 	data_SNPs <- read_tsv("phased_mac2.${kb_size}kb_cov.tsv.gz",
 						  col_names = c("CHROM", "START", "END", "COV_SNP"))
 
-	all_bp_files <- dir("filterd.allBP.LG*")
+	all_bp_files <- dir(pattern = "filterd.allBP.LG*")
 
-	data_allBPs <- map_dfr(all_bp_files, .f = function(x){read_tsv(x, col_names = c("CHROM", "START", "END", "COV_ALL"))}
+	data_allBPs <- map_dfr(all_bp_files, .f = function(x){read_tsv(x, col_names = c("CHROM", "START", "END", "COV_ALL"))})
 
 	data <- data_SNPs %>%
 		left_join(data_allBPs, by = c(CHROM = "CHROM", START = "START", END = "END"))  %>%
