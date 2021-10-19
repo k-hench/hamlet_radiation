@@ -106,8 +106,7 @@ process filter_hamlets {
 	"""
 	echo -e "20478tabhon\\n28393torpan\\ns_tort_3torpan" > outgroup.pop
 
-	vcftools \
-		--gzvcf ${vcf[0]} \ 
+	vcftools  --gzvcf ${vcf[0]} \
 		--remove outgroup.pop \
 		--mac 1 \
 		--recode \
