@@ -14,6 +14,7 @@ Channel
 	.from( [ 1, 5, 10, 50 ] )
 	.set{ window_size_ch }
 
+
 // Compile summary table
 process segment_windows {
 	label 'L_loc_slice_windows'
@@ -23,7 +24,7 @@ process segment_windows {
 	val( kb_size ) from window_size_ch
 
 	output:
-	set val( kb_size ), file( "windows_${kb_size}kb.bed.gz" ) into ( windows_ch, windows_ch2 )
+	set val( kb_size ), file( "windows_${kb_size}kb.bed.gz" ) into ( windows_ch, windows_ch2, windows_ch3 )
 
 	script:
 	"""
@@ -92,6 +93,31 @@ process filter_vcf_missingnes {
 }
 */
 
+process filter_hamlets {
+	label 'L_20g2h_outgroup_drop'
+
+	input:
+	set  val( vcfId ), file( vcf ) from vcf_snps_ch2
+
+	output:
+	set val( "hamlets_only" ), file( "hamlets_only.vcf.gz*" ) into vcf_hamlets_ch
+
+	script:
+	"""
+	echo -e "20478tabhon\\n28393torpan\\ns_tort_3torpan" > outgroup.pop
+
+	vcftools \
+		--gzvcf ${vcf[0]} \ 
+		--remove outgroup.pop \
+		--mac 1 \
+		--recode \
+		--stdout | \
+		bgzip > hamlets_only.vcf.gz
+	
+	tabix hamlets_only.vcf.gz
+	"""
+}
+
 // Coverage of SNPs vcf for SNPdensity, allBP for Ns
 process compute_coverage {
 	label 'L_140g1h_coverage'
@@ -99,7 +125,7 @@ process compute_coverage {
 
 	input:
 	//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
-	set  val( vcfId ), file( vcf ), val( kb_size ), file( window ) from vcf_snps_ch.map{ [it[0].minus(".vcf"), it[1]]}.combine( windows_ch )
+	set  val( vcfId ), file( vcf ), val( kb_size ), file( window ) from vcf_snps_ch.concat( vcf_hamlets_ch ).map{ [it[0].minus(".vcf"), it[1]]}.combine( windows_ch )
 	
 	output:
 	set val( kb_size ), file( "${vcfId}.${kb_size}kb_cov.tsv.gz" ) into coverage_ch
@@ -188,11 +214,15 @@ process complie_window_stats {
 	data_SNPs <- read_tsv("phased_mac2.${kb_size}kb_cov.tsv.gz",
 						  col_names = c("CHROM", "START", "END", "COV_SNP"))
 
+	data_HYP <- read_tsv("hamlets_only.${kb_size}kb_cov.tsv.gz",
+						  col_names = c("CHROM", "START", "END", "COV_HYP"))
+
 	all_bp_files <- dir(pattern = "filterd.allBP.LG*")
 
 	data_allBPs <- map_dfr(all_bp_files, .f = function(x){read_tsv(x, col_names = c("CHROM", "START", "END", "COV_ALL"))})
 
 	data <- data_SNPs %>%
+		left_join(data_HYP, by = c(CHROM = "CHROM", START = "START", END = "END"))  %>%
 		left_join(data_allBPs, by = c(CHROM = "CHROM", START = "START", END = "END"))  %>%
 		filter(COV_ALL > 0 ) %>%
 		mutate(SNP_density = round(COV_SNP/ COV_ALL, 2), 
