@@ -3,7 +3,7 @@
 // Open the SNP data set
 Channel
 	.fromFilePairs("../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}")
-	.set{ vcf_snps_ch }
+	.into{ vcf_snps_ch; vcf_snps_ch2 }
 
 // Open the allBP data set (will be expanded x 24 LGs)
 Channel
