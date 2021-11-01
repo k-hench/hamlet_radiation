@@ -91,9 +91,9 @@ p_done <- ggplot() +
 
 scl <- 1.5
 hypo_save(plot = p_done,
-          filename = "figures/SF16.pdf",
-          width = 7.5 * scl,
-          height = 4 * scl,
+          filename = "figures/SFxx2.pdf",
+          width = f_width,
+          height = .7 * f_width,
           device = cairo_pdf,
           bg = "transparent",
           comment = plot_comment)

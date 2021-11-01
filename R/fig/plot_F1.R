@@ -25,6 +25,7 @@ library(ape)
 library(ggraph)
 library(tidygraph)
 library(stringr)
+library(ggtree)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -42,134 +43,57 @@ wdh <- .3          # The width of the boxplots
 scaler <- 20       # the ratio of the Fst and the dxy axis (legacy - not really needed anymore)
 clr_sec <- 'gray'  # the color of the secondary axis (dxy)
 # start script -------------------
-# === fig 1. panel a: modified plugin from ressources/Rabosky_etal_2018/scripts/main figures/Figure3.R =============
-library(BAMMtools)
-library(geiger)
-library(ggplotify)
 
-basepath <- 'ressources/Rabosky_etal_2018/'
-source(paste0(basepath, "scripts/supporting_fxns/PlottingFunctions.R"))
+tree <- read.tree("2_analysis/fotl/concat_R24ed.treefile") 
+tree_rooted <- root(phy = tree, outgroup = "Epinephelus_maculatus")
+clr_neutral <- rgb(.2, .2, .2)
 
-eventdata_vr <- paste0(basepath, "dataFiles/bamm_results/12k_tv1/event_data_thinned.csv")
-eventdata_cr <- paste0(basepath, "dataFiles/bamm_results/12k_tc1/event_data_thinned.csv")
-treefile <- paste0(basepath, "dataFiles/bamm_results/12k_tv1/bigfish_no_outgroup.tre")
-fspdata <- paste0(basepath, "dataFiles/rate_lat_stats_by_sp_fixed0.5.csv")
+### Edit tip labels
+tree_rooted$tip.label <- tree_rooted$tip.label %>% 
+  str_replace(pattern = "20864abehon", "Hypoplectrus_aberrans") %>%
+  str_replace(pattern = "20642gumhon", "Hypoplectrus_gummigutta") %>%
+  str_replace(pattern = "18238indbel", "Hypoplectrus_indigo") %>%
+  str_replace(pattern = "PL17_122maybel", "Hypoplectrus_maya") %>%
+  str_replace(pattern = "18906nigpan", "Hypoplectrus_nigricans") %>%
+  str_replace(pattern = "18434puepan", "Hypoplectrus_puella") %>% 
+  str_replace(pattern = "20613ranhon", "Hypoplectrus_randallorum") %>%
+  str_replace(pattern = "18448unipan", "Hypoplectrus_unicolor") %>%
+  str_replace(pattern = "PL17_160floflo", "Hypoplectrus_floridae") %>%
+  str_replace(pattern = "20478tabhon", "Serranus_tabacarius") %>%
+  str_replace(pattern = "s_tort_3torpan", "Serranus_tortugarum") %>% 
+  #
+  str_replace(pattern = "([A-Z])([a-z])[a-z]*_([a-z]*)", "\\1\\2. \\3") %>%
+  str_replace(pattern = "Za.", "Pl.") %>%
+  str_replace(pattern = "Hy.", "H.") %>% 
+  str_replace(pattern = "Di.", "D.") %>% 
+  str_replace(pattern = "Ep.", "E.")
 
-anadromous <- FALSE
+### Prepare tree, categorize support values and define group
+tree_plus <- ggtree(tree_rooted, layout = "rectangular", ladderize = TRUE, right = TRUE) %>%
+  #flip(25,26) %>%
+  .$data %>%
+  mutate(support = as.numeric(label),
+         support_class = cut(support, c(0,50,70,90,100)) %>% 
+           as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]")))
 
-vx <- read.tree(treefile) 
+hamlets <- tree_plus$label[grepl(pattern = "H. ", tree_plus$label)]
 
-# node rotations for plotting:
-rset <- c(15447, 15708:15719)
-for (i in 1:length(rset)){
-  vx <- rotate(vx, node = rset[i])
-}
+tree_plus <- tree_plus %>% 
+  groupOTU(.node = hamlets)
 
-vx <- read.tree(text = write.tree(vx))
+### Define groups
+our_taxa <- c("H. aberrans", "H. gummigutta", "H. indigo", "H. maya", "H. nigricans", "H. puella", 
+              "H. randallorum", "H. unicolor", "H. floridae", "Se. tabacarius", "Se. tortugarum")
 
-spdata <- read.csv(fspdata, stringsAsFactors = F)
-rownames(spdata) <- spdata$sp
-
-# ---------------------------
-
-latvals <- abs(spdata$lat_centroid)
-names(latvals) <- spdata$sp
-
-inboth <- intersect(spdata$sp, vx$tip.label)
-
-# 1 species is in tree, but was dropped because is synonym to another species in tree according to fishbase (Gadus_ogac matches to Gadus_macrocephalus)
-inboth <- intersect(inboth, spdata$sp[which(!is.na(spdata$tv.lambda))]) 
-
-latvals <- latvals[inboth]
-
-edvr <- getEventData(vx, eventdata_vr, burnin=0)
-
-serranids <- c("Hypoplectrus_gemma", "Hypoplectrus_unicolor", "Hypoplectrus_gummigutta",
-               "Hypoplectrus_chlorurus", "Hypoplectrus_aberrans", "Hypoplectrus_nigricans",
-               "Hypoplectrus_guttavarius", "Hypoplectrus_indigo", "Hypoplectrus_puella",
-               "Serranus_tortugarum", "Serranus_tabacarius", "Schultzea_beta",
-               "Diplectrum_formosum", "Diplectrum_bivittatum", "Diplectrum_pacificum",
-               "Diplectrum_maximum", "Serranus_notospilus", "Serranus_phoebe",
-               "Serranus_psittacinus", "Serranus_baldwini", "Serranus_tigrinus",
-               "Paralabrax_albomaculatus", "Paralabrax_dewegeri", "Paralabrax_callaensis",
-               "Paralabrax_loro", "Paralabrax_auroguttatus", "Paralabrax_clathratus",
-               "Paralabrax_humeralis", "Paralabrax_nebulifer", "Paralabrax_maculatofasciatus",
-               "Zalanthias_kelloggi", "Serranus_cabrilla", "Serranus_atricauda",
-               "Serranus_scriba", "Serranus_hepatus", "Serranus_accraensis",
-               "Centropristis_striata", "Chelidoperca_occipitalis", "Chelidoperca_investigatoris",
-               "Chelidoperca_pleurospilus")
-
-edvr_serr <- edvr %>% 
-  subtreeBAMM(tips = serranids)
-
-label_two_chars <- c(`italic(Z.~kelloggi)` = "italic(Pl.~kelloggi)",
-                     `italic(P.~maculatofasciatus)` = "italic(Pa.~maculatofasciatus)",
-                     `italic(P.~nebulifer)` = "italic(Pa.~nebulifer)",
-                     `italic(P.~humeralis)` = "italic(Pa.~humeralis)",
-                     `italic(P.~clathratus)` = "italic(Pa.~clathratus)",
-                     `italic(P.~auroguttatus)` = "italic(Pa.~auroguttatus)",
-                     `italic(P.~loro)` = "italic(Pa.~loro)",
-                     `italic(P.~callaensis)` = "italic(Pa.~callaensis)",
-                     `italic(P.~dewegeri)` = "italic(Pa.~dewegeri)",
-                     `italic(P.~albomaculatus)` = "italic(Pa.~albomaculatus)",
-                     `italic(S.~'beta')` = "italic(Sc.~'beta')",
-                     `italic(S.~notospilus)` = "italic(Se.~notospilus)",
-                     `italic(S.~phoebe)` = "italic(Se.~phoebe)",
-                     `italic(S.~psittacinus)` = "italic(Se.~psittacinus)",
-                     `italic(S.~baldwini)` = "italic(Se.~baldwini)",
-                     `italic(S.~tigrinus)` = "italic(Se.~tigrinus)",
-                     `italic(S.~cabrilla)` = "italic(Se.~cabrilla)",
-                     `italic(S.~atricauda)` = "italic(Se.~atricauda)",
-                     `italic(S.~scriba)` = "italic(Se.~scriba)",
-                     `italic(S.~hepatus)` = "italic(Se.~hepatus)",
-                     `italic(S.~accraensis)` = "italic(Se.~accraensis)",
-                     `italic(C.~striata)` = "italic(Cp.~striata)",
-                     `italic(C.~occipitalis)` = "italic(Ch.~occipitalis)",
-                     `italic(C.~investigatoris)` = "italic(Ch.~investigatoris)",
-                     `italic(C.~pleurospilus)` = "italic(Ch.~pleurospilus)",
-                     `italic(S.~tabacarius)` = "italic(Se.~tabacarius)",
-                     `italic(S.~tortugarum)` = "italic(Se.~tortugarum)")
-
-edvr_serr_short <- edvr_serr
-edvr_serr_short$tip.label <- edvr_serr$tip.label %>% 
-  str_replace(pattern = "([A-Z])[a-z]*_([a-z]*)", "italic(\\1.~\\2)")%>% 
-  str_replace(pattern = "beta", "'beta'") %>%
-  ifelse(. %in% names(label_two_chars), label_two_chars[.], .) %>% 
-  ggplot2:::parse_safe()
-
-clr_tree <- scico::scico(6, palette = "berlin") %>% 
-  prismatic::clr_desaturate(shift = .4) %>% 
-  prismatic::clr_darken(shift = .2)
-
-
-clr_lab <- rep(c("black","darkgray"), c(9,31))
-# clr_lab <- rep(c("black","darkgray","black","darkgray"), c(21,10,4,5))
-
-p1 <- as.grob(function(){
-  par(mar = c(0,0,0,0))
-  bammplot_k(x = edvr_serr_short,
-             labels = T,
-             lwd = .8,
-             cex = .3,
-             pal = clr_tree,
-             labelcolor = clr_lab)
-  leg_shift_x <- 0
-  text(x = c(21.2, 40.2), y = c(15.6, 33.25),
-       label = "\U2605", family = "DejaVu Sans", col = clr_tree[[6]], cex = .5)
-  lines(x = c(0,25) + leg_shift_x,
-        y = c(1.5, 1.5),
-        col = "darkgray")
-  text(x = 12.5 + leg_shift_x,
-       y = .5,
-       labels = "25 MYR",
-       cex = .4, 
-       col = "darkgray")
-}
-)
+hermaphrodites <- tree_plus %>% filter(node %in% c(60, 65) | label == "Se. hepatus") %>% 
+  mutate(x = x - branch.length / 2, star = "\U2605")
 
 c1 <- "transparent"
-c2 <- rgb(0, 0, 0, .1)
-c3 <- rgb(0, 0, 0, .2)
+# c2 <- rgb(0, 0, 0, .1)
+# c3 <- rgb(0, 0, 0, .2)
+c2 <- prismatic::clr_alpha("firebrick", .1)
+c3 <- prismatic::clr_alpha("firebrick", .2)
+
 grad_mat <- c(c1, c2, c3, c3) 
 dim(grad_mat) <- c(1, length(grad_mat))
 grob_grad <- rasterGrob(grad_mat,
@@ -183,33 +107,53 @@ blank_hamlet <- hypoimg::hypo_outline %>%
   geom_polygon(aes(x, y), color = rgb(0, 0, 0, .5), fill = rgb(1, 1, 1, .3), size = .1)+
   theme_void()
 
-p_tree <- ggplot() +
-  geom_point(data = tibble(v = c(.056, 2.4)),
-             x = .5, y = .5, aes(color = v),alpha = 0)+
-  scale_color_gradientn(colours = clr_tree, limits = c(.056, 2.4))+
+### Draw tree
+(p_tree <- ggtree(tree_plus,
+                 aes(color = clr_neutral), size = .2) +
   annotation_custom(grob = grob_grad,
-                    ymin = 0.01, ymax = .2335,
-                    xmin = .4, xmax = .96)+
+                    ymin = .2, ymax = 12.5,
+                    xmin = .04, xmax = .125)+
   annotation_custom(grob = ggplotGrob(blank_hamlet),
-                    xmin = 0.55, xmax = .75,
-                    ymin = 0.015, ymax = .14)+
-  annotation_custom(grob = p1,
-                    xmin = -.16,
-                    xmax = 1.05,
-                    ymin = -.22,
-                    ymax = 1) +
-  coord_cartesian(xlim = c(0, 1),
-                  ylim = c(0, 1),
-                  expand = 0)+
-  guides(color = guide_colorbar(title = "Speciation Rate",
-                                title.position = "top",
-                                direction = "horizontal",
-                                barheight = unit(3, "pt"),
-                                barwidth = unit(57, "pt"),
-                                ticks.colour = "white")) +
-  theme_void()+
-  theme(legend.position = c(.01, .08),
-        legend.justification = c(0, 0))
+                    xmin = 0.09, xmax = .125,
+                    ymin = 1.2, ymax = 10.5) +
+  geom_tiplab(aes(color = group, label = if_else(label %in% our_taxa, str_c(label,"*"), label)),   # add asterisks to our taxa
+              size = 1.3, hjust = -.1,
+              fontface = 'italic') +
+  ggplot2::xlim(0, 0.12) +   # add extra space for long labels
+  geom_nodepoint(data = tree_plus %>% filter(!is.na(support_class)), 
+                   aes(fill = support_class,
+                     size = support_class),
+                 shape = 21) +
+  geom_text(data = hermaphrodites, aes(x = x, y = y, label = star),
+            family = "DejaVu Sans", color = "firebrick",
+            size = 2, vjust = .35) +
+  scale_color_manual(values = c(clr_neutral, clr_neutral, "firebrick")) +
+  scale_fill_manual(values = c(`(0,50]`   = "transparent",
+                               `(50,70]`  = "white",
+                               `(70,90]`  = "gray",
+                               `(90,100]` = "black"),
+                    drop = FALSE) +
+  scale_size_manual(values = c(`(0,50]`   = 0,
+                               `(50,70]`  = .8,
+                               `(70,90]`  = .8,
+                               `(90,100]` = .8),
+                    na.value = 0,
+                    drop = FALSE) +
+  geom_treescale(color = clr_neutral, 
+                 fontsize = 2, linesize = .2, 
+                 x = 0.045, y = 4) +
+  guides(fill = guide_legend(title = "Node Support Class", title.position = "top", override.aes = list(color = clr_neutral), nrow = 2),
+         size = guide_legend(title = "Node Support Class", title.position = "top", override.aes = list(color = clr_neutral), nrow = 2),
+         color = 'none') +
+    coord_cartesian(xlim = c(-.005,.125), ylim = c(0,45), expand = 0) +
+    theme_void() +
+  theme(legend.position = c(0.05,0.05),
+        legend.justification = c(0,0),
+        legend.title.align = 0,
+        legend.key.height = unit(8,"pt"),
+        legend.key.width = unit(6,"pt"),
+        legend.text = element_text(color = clr_neutral),
+        legend.title = element_text(color = clr_neutral)))
 
 globals <- vroom::vroom(fst_globals, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
@@ -323,7 +267,6 @@ p_leg <- fish_tib %>%
   pmap(fish_tib, plot_fish_lwd, width = 1, height = 1, y = 0) +
   scale_fill_manual(values = clr, guide = FALSE) +
   theme_void()
-
 
 p_combined <- ((wrap_elements(plot = p_tree +
                                 theme(axis.title = element_blank(),
