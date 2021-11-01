@@ -4,8 +4,8 @@
 #     ressources/recombination/ \
 #     MAP1cm.txt MAP1bp.txt \
 #     MAP2cm.txt MAP2bp.txt \
-#     2_analysis/ibd/no_outgr_direct_8.segments.tsv \
-#     2_analysis/ibd/no_outgr_direct_8.ibd.tsv
+#     2_analysis/ibd/no_outgr_bed95_8.segments.tsv \
+#     2_analysis/ibd/no_outgr_bed95_8.ibd.tsv
 # ===============================================================
 # This script produces converts truffle segments based on the
 # hamlet linkage maps

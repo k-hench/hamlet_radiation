@@ -38,22 +38,33 @@ hap_to_perc <- 100 / (166 * 165)
 iterations <- c("25/10 kb","10/5 kb","15/7.5 kb") %>% set_names(value = c("7", "8", "10"))
 idx <- 10
 
-import_map1 <- function(idx, filtmode = "direct"){
+import_map1 <- function(idx, filtmode = "bed95"){
   read_tsv(glue::glue("2_analysis/ibd/cM_converted/no_outgr_{filtmode}_{idx}.conv_filterd.tsv")) %>% 
     mutate(ibd_total = (ibd2_cM_m1 + 0.5*ibd1_cM_m1) / (ibd0_cM_m1 + ibd1_cM_m1 + ibd2_cM_m1)) 
 }
 
-import_map2 <- function(idx, filtmode = "direct"){
+import_map2 <- function(idx, filtmode = "bed95"){
   read_tsv(glue::glue("2_analysis/ibd/cM_converted/no_outgr_{filtmode}_{idx}.conv_filterd.tsv")) %>% 
     mutate(ibd_total = (ibd2_cM_m2 + 0.5*ibd1_cM_m2) / (ibd0_cM_m2 + ibd1_cM_m2 + ibd2_cM_m2)) 
 }
 
-import_bp <- function(idx, filtmode = "direct"){
-  read_tsv(glue::glue("2_analysis/ibd/cM_converted/no_outgr_{filtmode}_{idx}.conv_filterd.tsv")) %>% 
+import_bp <- function(idx, filtmode = "bed95"){
+  # read_tsv(glue::glue("2_analysis/ibd/cM_converted/no_outgr_{filtmode}_{idx}.conv_filterd.tsv")) %>% 
+    read_tsv(glue::glue("2_analysis/ibd/cM_converted/no_outgr_{filtmode}_{idx}.conv_summary.tsv")) %>% 
     mutate(ibd_total = (ibd2_bp + 0.5*ibd1_bp) / (ibd0_bp + ibd1_bp + ibd2_bp)) 
 }
 
-plot_network <- function(idx, filt = 0, import_fun = import_map1, x = "cM_map1", filtmode = "direct"){
+import_truffle <- function(idx, filtmode = "direct"){
+  itteration_names <- c(str_c("10-",6:3),"7","8","9","10")
+  read_tsv(glue::glue("2_analysis/ibd/no_outgr_{filtmode}_{itteration_names[idx]}.ibd.tsv")) %>% 
+    mutate(ibd_total = (IBD2 + 0.5*IBD1) / (IBD0 + IBD1 + IBD2)) 
+}
+
+iterations <- c(str_c("2/5*10^",6:3," BP"),"25/10 kb","10/5 kb","7-5/3 kb","15/7.5 kb")
+
+plot_network <- function(idx, filt = 0, import_fun = import_map1,
+                         x = "cM_map1", filtmode = "direct", 
+                         x_ax = TRUE, y_ax = TRUE, ...){
   clr2 <- GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))]
   clr2["uni"] <- rgb(.9,.9,.9)
   
@@ -61,7 +72,7 @@ plot_network <- function(idx, filt = 0, import_fun = import_map1, x = "cM_map1",
   
   set.seed(42)
   
-  data %>% 
+  p <- data %>% 
     as_tbl_graph() %E>%
     filter(ibd_total > filt) %N>%
     mutate(spec = str_sub(name,-6,-4),
@@ -70,7 +81,7 @@ plot_network <- function(idx, filt = 0, import_fun = import_map1, x = "cM_map1",
     geom_edge_link(aes(alpha = ibd_total), color = rgb(.1,.1,.1), edge_width = .15) +
     geom_node_point(aes(fill = spec,
                         shape = loc, color = after_scale(clr_darken(fill,.3))), size = .7) +
-    labs(y = glue::glue("Seq. Length: {iterations[as.character(idx)]}"),
+    labs(y = glue::glue("Seq. Length: {iterations[idx]}"),
          x = x) +
     scale_fill_manual("Species", values = GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))],
                       labels = GenomicOriginsScripts::sp_labs)+
@@ -81,178 +92,180 @@ plot_network <- function(idx, filt = 0, import_fun = import_map1, x = "cM_map1",
     guides(fill = guide_legend(title.position = "top",
                                nrow = 2, override.aes = list(shape = 21, size = 2.5)),
            shape = guide_legend(title.position = "top",
-                                nrow = 2)) +
+                                nrow = 2, override.aes = list(size = 2.5))) +
     coord_equal()  +
     theme(panel.background = element_blank(),
           axis.title.y = element_text(),
           axis.title.x = element_text())
+  
+  if(!x_ax){ p <- p + theme(axis.title.x = element_blank())}
+  if(!y_ax){ p <- p + theme(axis.title.y = element_blank())}
+  p
 }
 
-p_done <- tibble(idx = rep(c(7,8,10), each = 3), 
+plts_cM <- tibble(idx = rep(c(7, 10, 8), each = 3), 
        import_fun = rep(list(import_bp, import_map1, import_map2), 3),
-       x = rep(c("bp", "cM_map1", "cM_map2"), 3)) %>% 
-  pmap(plot_network) %>% 
-  wrap_plots(guides = "collect") +
+       x = rep(c("bp_cM_filt.", "cM_map1", "cM_map2"), 3),
+       x_ax = rep(c(TRUE, FALSE), c(3, 6)),
+       y_ax = rep(FALSE, 9),
+       filtmode = "bed95") %>% 
+  bind_rows(tibble(idx = rep(c(5, 8, 6), 2), 
+                   import_fun = rep(list(import_truffle), 6),
+                   x = rep(c("truffle", "bed95"), each = 3),
+                   x_ax = rep(rep(c(TRUE, FALSE), 1:2), 2),
+                   y_ax = rep(c(TRUE, FALSE), each = 3),
+                   filtmode = rep(c("direct", "bed95"), each = 3)) ) %>% 
+  left_join(tibble(x = c("truffle", "bed95", "bp_cM_filt.", "cM_map1", "cM_map2"),
+            plot_order = seq_along(x))) %>% 
+  arrange(plot_order) %>% 
+  pmap(plot_network) 
+
+p_done <- plts_cM %>% 
+  wrap_plots(nrow = 3,
+             byrow = FALSE,
+             guides = "collect") +
   plot_annotation(tag_levels = "a") &
   theme(text = element_text(size = plot_text_size),
-        panel.background = element_blank(),
-        plot.background = element_blank(),
         plot.tag.position = c(0, 1),
         legend.position = "bottom",
         legend.key = element_blank(),
+        legend.direction = "horizontal",
+        legend.background = element_blank(),
+        legend.box = "horizontal", 
+        legend.text.align = 0,
+        plot.subtitle = element_text())
+
+hypo_save(plot = p_done,
+          filename = "figures/SFxx1.png",
+          width = f_width,
+          height = .75*f_width,
+          dpi = 600,
+          type = "cairo",
+          bg = "transparent",
+          comment = plot_comment)
+
+system("convert figures/SFxx1.png figures/SFxx1.pdf")
+system("rm figures/SFxx1.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SFxx1.pdf")
+system(create_metadata)
+
+# -------------------------------------------------
+plot_ibd_gw <- function(n_zeros, y_lim = c(0, 4), filtmode = "direct", y_lab = ""){
+  data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_{filtmode}_{itteration_names[n_zeros]}.segments.tsv"),
+                           delim = "\t", col_types = "cccciidcdci") %>% 
+    left_join(hypogen::hypo_chrom_start) %>% 
+    mutate(start = POS * 10^6,
+           end = start + (LENGTH * 10^6),
+           gstart = GSTART + start,
+           gend = start + (LENGTH * 10^6),
+           ibd_hplo = str_remove(TYPE,"IBD") %>%
+             as.integer())
+  data_seg %>%
+    dplyr::select(seqnames = CHROM,start,end,gstart,GSTART,TYPE,ibd_hplo,ID1,ID2) %>%
+    arrange(gstart) %>% 
+    dplyr::select(-gstart) %>% 
+    as_granges() %>% 
+    GenomicRanges::coverage(weight = "ibd_hplo") %>% 
+    plyranges::as_ranges() %>% 
+    as_tibble() %>% 
+    dplyr::select(CHROM = seqnames, start, end, width, score) %>% 
+    left_join(hypogen::hypo_chrom_start) %>% 
+    mutate(gstart = GSTART + start, gend = GSTART + end) %>% 
+    dplyr::select(CHROM, gstart, gend, score) %>% 
+    pivot_longer(gstart:gend,values_to = "GPOS", names_to = "PART") %>% 
+    ggplot() +
+    geom_hypo_LG() +
+    geom_vline(data = outlier_regions, aes(xintercept = gpos), color = rgb(1,0,0,.2), size = .3) +
+    geom_step(aes(x = GPOS, y = score * hap_to_perc, group = CHROM), color = rgb(.3,.3,.3), size = .3) +
+    geom_ribbon(aes(x = GPOS, ymin = 0, ymax = score * hap_to_perc, group = CHROM), fill = rgb(0,0,0,.5)) +
+    scale_hypobg_manual(values = c("transparent",rgb(.9,.9,.9,.9),"red","blue") %>%
+                          set_names(nm = c("even", "odd", "a","b")), guide = "none")+
+    scale_x_hypo_LG() +
+    labs(y = str_c("IBD Score (" , iterations[n_zeros], ")")) +
+    coord_cartesian(ylim = y_lim, expand = 0) +
+    theme_hypo()
+}
+
+data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_direct_10.segments.tsv"),
+                         delim = "\t", col_types = "cccciidcdci") %>%
+  left_join(hypogen::hypo_chrom_start) %>%
+  mutate(start = POS * 10^6,
+         end = start + (LENGTH * 10^6),
+         gstart = GSTART + start,
+         gend = start + (LENGTH * 10^6),
+         ibd_hplo = str_remove(TYPE,"IBD") %>%
+           as.integer())
+
+data_compact <- data_seg %>%
+  dplyr::select(seqnames = CHROM,start,end,gstart,GSTART,TYPE,ibd_hplo,ID1,ID2) %>%
+  arrange(gstart) %>%
+  dplyr::select(-gstart) %>%
+  as_granges() %>%
+  GenomicRanges::coverage(weight = "ibd_hplo") %>%
+  plyranges::as_ranges() %>%
+  as_tibble() %>%
+  dplyr::select(CHROM = seqnames, start, end, width, score) %>%
+  left_join(hypogen::hypo_chrom_start) %>%
+  mutate(gstart = GSTART + start, gend = GSTART + end) %>%
+  dplyr::select(CHROM, gstart, gend, score)
+
+total_cov_lenght <- data_compact %>%
+  mutate(length = gend-gstart) %>% .$length %>% sum()
+
+data_sorted <- data_compact %>%
+  mutate(length = gend-gstart) %>%
+  group_by(score) %>%
+  summarise(length = sum(length)) %>%
+  ungroup() %>%
+  mutate(length = if_else(score == 0,
+                          length + hypo_karyotype$GEND[24]-total_cov_lenght, # attach uncovered chrom ends
+                          length),
+         gend = cumsum(length),
+         gstart = lag(gend,default = 0))
+
+perc_cutoff <- .95
+
+perc_score <- data_sorted %>%
+  filter(gstart < hypo_karyotype$GEND[24] * perc_cutoff,
+         gend > hypo_karyotype$GEND[24] * perc_cutoff) %>%
+  .$score
+
+# tibble(n_zeros = c(5,8,6),
+#        y_lim = list(c(0,26), # .55),
+#                     c(0,26), # 4),
+#                     c(0,26)),
+#        ylab = 
+
+plts <- c(5,8,6) %>%
+  map2(.y = list(c(0,26), # .55),
+                 c(0,26), # 4),
+                 c(0,26)),
+       plot_ibd_gw, filtmode = "direct")
+
+p_done <- (plts[[1]] +
+             plts[[2]] + geom_hline(yintercept = perc_score * hap_to_perc, color = "#11C269", size = .3, alpha = .7) + 
+             plts[[3]] +
+             plot_layout(ncol = 1)) +
+  plot_annotation(tag_levels = "a") &
+  theme(text = element_text(size = plot_text_size),
+        plot.tag.position = c(0, 1),
+        legend.position = "bottom",
+        legend.key = element_blank(),
+        legend.direction = "horizontal",
         legend.background = element_blank(),
         legend.box = "horizontal", 
         legend.text.align = 0)
 
 hypo_save(plot = p_done,
-          filename = "figures/SFx1.png",
-          width = .8*f_width,
-          height = .8*f_width,
-          dpi = 600,
-          type = "cairo",
-          bg = "transparent",
-          comment = plot_comment)
-
-p_filt <- tibble(idx = rep(c(7,8,10), each = 3), 
-                 import_fun = rep(list(import_bp, import_map1, import_map2), 3),
-                 x = rep(c("bp", "cM_map1", "cM_map2"), 3)) %>% 
-  pmap(plot_network, filtmode = "bed95") %>% 
-  wrap_plots(guides = "collect") +
-  plot_annotation(tag_levels = "a") &
-  theme(text = element_text(size = plot_text_size),
-        panel.background = element_blank(),
-        plot.background = element_blank(),
-        plot.tag.position = c(0, 1),
-        legend.position = "bottom",
-        legend.key = element_blank(),
-        legend.background = element_blank(),
-        legend.box = "horizontal", 
-        legend.text.align = 0)
-
-hypo_save(plot = p_filt,
-          filename = "figures/SFx1_filterd.png",
-          width = .8*f_width,
-          height = f_width,
-          dpi = 600,
-          type = "cairo",
-          bg = "transparent",
-          comment = plot_comment)
-# ===========================
-data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/cM_converted/no_outgr_direct_10.conv_filterd.tsv"),
-                         delim = "\t" ) %>%  #, col_types = "cccdddddddddddddddddddddd") %>% 
-  mutate(ibd_hplo = str_remove(TYPE,"IBD") %>%
-           as.integer())
-
-y_lim <- c(0, 13)
-
-p_bp <- data_seg %>%
-  dplyr::select(seqnames = CHROM, start = bp_START, end = bp_END,G_SEG_START,GSTART,TYPE,ibd_hplo,PAIR) %>%
-  arrange(G_SEG_START) %>% 
-  dplyr::select(-G_SEG_START) %>% 
-  as_granges() %>% 
-  GenomicRanges::coverage(weight = "ibd_hplo") %>% 
-  plyranges::as_ranges() %>% 
-  as_tibble() %>% 
-  dplyr::select(CHROM = seqnames, start, end, width, score) %>% 
-  left_join(hypogen::hypo_chrom_start) %>% 
-  mutate(gstart = GSTART + start, gend = GSTART + end) %>% 
-  dplyr::select(CHROM, gstart, gend, score) %>% 
-  pivot_longer(gstart:gend,values_to = "GPOS", names_to = "PART") %>% 
-  ggplot() +
-  geom_hypo_LG() +
-  geom_vline(data = outlier_regions, aes(xintercept = gpos), color = rgb(1,0,0,.2), size = .3) +
-  geom_step(aes(x = GPOS, y = score * hap_to_perc, group = CHROM), color = rgb(.3,.3,.3), size = .3) +
-  geom_ribbon(aes(x = GPOS, ymin = 0, ymax = score * hap_to_perc, group = CHROM), fill = rgb(0,0,0,.5)) +
-  scale_hypobg_manual(values = c("transparent",rgb(.9,.9,.9,.9),"red","blue") %>%
-                        set_names(nm = c("even", "odd", "a","b")), guide = "none")+
-  scale_x_hypo_LG() +
-  labs(y = "IBD Score (bp)") +
-  coord_cartesian(ylim = y_lim, expand = 0) +
-  theme_hypo()
-
-hypo_all_starts <- read_tsv(file = "ressources/hypo_all_starts.tsv") %>%
-  mutate(grp = c("even", "odd")[row_number() %%2 + 1])
-
-cM_digits <- 10^6
-
-p_m1 <- data_seg %>%
-  mutate(start = if_else(interpol_cM_START_m1 < interpol_cM_END_m1, interpol_cM_START_m1, interpol_cM_END_m1) * cM_digits,
-         end = if_else(interpol_cM_START_m1 < interpol_cM_END_m1, interpol_cM_END_m1, interpol_cM_START_m1) * cM_digits) %>% 
-  dplyr::select(seqnames = CHROM, start, end,G_SEG_START_cM_m1,GSTART_cM_m1,TYPE,ibd_hplo,PAIR) %>%
-  arrange(G_SEG_START_cM_m1) %>% 
-  dplyr::select(-G_SEG_START_cM_m1) %>% 
-  as_granges() %>% 
-  GenomicRanges::coverage(weight = "ibd_hplo") %>% 
-  plyranges::as_ranges() %>% 
-  as_tibble() %>% 
-  dplyr::select(CHROM = seqnames, start, end, width, score) %>%
-  mutate(start = start / cM_digits,
-         end = end / cM_digits,
-         width = width / cM_digits) %>% 
-  left_join(hypo_all_starts) %>% 
-  mutate(gstart = GSTART_cM_m1 + start, gend = GSTART_cM_m1 + end) %>% 
-  dplyr::select(CHROM, gstart, gend, score) %>% 
-  pivot_longer(gstart:gend,values_to = "GPOS", names_to = "PART") %>% 
-  ggplot() +
-  geom_rect(data = hypo_all_starts,
-            aes(xmin = GSTART_cM_m1, xmax = GEND_cM_m1, ymin = -Inf, ymax = Inf, fill = grp)) +
-  geom_step(aes(x = GPOS, y = score * hap_to_perc, group = CHROM), color = rgb(.3,.3,.3), size = .3) +
-  geom_ribbon(aes(x = GPOS, ymin = 0, ymax = score * hap_to_perc, group = CHROM), fill = rgb(0,0,0,.5)) +
-  coord_cartesian(ylim = y_lim, expand = 0) +
-  scale_x_continuous(breaks = (hypo_all_starts$GSTART_cM_m1 + hypo_all_starts$GEND_cM_m1)/2,
-                     labels = hypo_all_starts$CHROM %>%
-                       str_remove("LG"),
-                     position = "top",
-                     limits = c(0, max(hypo_all_starts$GEND_cM_m1)),expand = c(0, 0)) +
-  scale_fill_manual(values = c(odd = rgb(.6,.6,.6,.3), even = "transparent"), guide = FALSE) +
-  labs(y = "IBD Score (cM1)") +
-  theme_hypo()
-
-
-p_m2 <- data_seg %>%
-  mutate(start = if_else(interpol_cM_START_m2 < interpol_cM_END_m2, interpol_cM_START_m2, interpol_cM_END_m2) * cM_digits,
-         end = if_else(interpol_cM_START_m2 < interpol_cM_END_m2, interpol_cM_END_m2, interpol_cM_START_m2) * cM_digits) %>% 
-  dplyr::select(seqnames = CHROM, start, end,G_SEG_START_cM_m2,GSTART_cM_m2,TYPE,ibd_hplo,PAIR) %>%
-  arrange(G_SEG_START_cM_m2) %>% 
-  dplyr::select(-G_SEG_START_cM_m2) %>% 
-  as_granges() %>% 
-  GenomicRanges::coverage(weight = "ibd_hplo") %>% 
-  plyranges::as_ranges() %>% 
-  as_tibble() %>% 
-  dplyr::select(CHROM = seqnames, start, end, width, score) %>%
-  mutate(start = start / cM_digits,
-         end = end / cM_digits,
-         width = width / cM_digits) %>% 
-  left_join(hypo_all_starts) %>% 
-  mutate(gstart = GSTART_cM_m2 + start, gend = GSTART_cM_m2 + end) %>% 
-  dplyr::select(CHROM, gstart, gend, score) %>% 
-  pivot_longer(gstart:gend,values_to = "GPOS", names_to = "PART") %>% 
-  ggplot() +
-  geom_rect(data = hypo_all_starts,
-            aes(xmin = GSTART_cM_m2, xmax = GEND_cM_m2, ymin = -Inf, ymax = Inf, fill = grp)) +
-  geom_step(aes(x = GPOS, y = score * hap_to_perc, group = CHROM), color = rgb(.3,.3,.3), size = .3) +
-  geom_ribbon(aes(x = GPOS, ymin = 0, ymax = score * hap_to_perc, group = CHROM), fill = rgb(0,0,0,.5)) +
-  coord_cartesian(ylim = y_lim, expand = 0) +
-  scale_x_continuous(breaks = (hypo_all_starts$GSTART_cM_m2 + hypo_all_starts$GEND_cM_m2)/2,
-                     labels = hypo_all_starts$CHROM %>%
-                       str_remove("LG"),
-                     position = "top",
-                     limits = c(0, max(hypo_all_starts$GEND_cM_m2)), expand = c(0, 0)) +
-  scale_fill_manual(values = c(odd = rgb(.6,.6,.6,.3), even = "transparent"), guide = FALSE) +
-  labs(y = "IBD Score (cM2)") +
-  theme_hypo()
-
-p_gw <- p_bp /
-  p_m1 /
-  p_m2 & 
-  theme(text = element_text(size = plot_text_size))
-
-hypo_save(plot = p_gw,
-          filename = "figures/SFx1_gw_filtered.pdf",
+          filename = "figures/SFxx2.png",
           width = f_width,
-          height = .6*f_width,
-          device = cairo_pdf,
-          # dpi = 600,
-          # type = "cairo",
+          height = .55 * f_width,
+          dpi = 600,
+          type = "cairo",
           bg = "transparent",
           comment = plot_comment)
+
+system("convert figures/SFxx2.png figures/SFxx2.pdf")
+system("rm figures/SFxx2.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SFxx2.pdf")
+system(create_metadata)
