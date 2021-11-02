@@ -1,7 +1,7 @@
 args <- c("ressources/recombination/",
           "MAP1cm.txt", "MAP1bp.txt",
           "MAP2cm.txt", "MAP2bp.txt",
-          "10")
+          "8")
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)

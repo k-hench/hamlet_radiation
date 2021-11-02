@@ -8,8 +8,8 @@
 # diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-args <- c("2_analysis/astral/astral_5000x_5kb_v1_noS.tre",
-          "2_analysis/ibd/cM_converted/no_outgr_bed95_8.conv_filterd.tsv")
+# args <- c("2_analysis/astral/astral_5000x_5kb_v1_noS.tre",
+#           "2_analysis/ibd/cM_converted/no_outgr_bed95_8.conv_filterd.tsv")
 # script_name <- "R/fig/plot_F4.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
@@ -40,7 +40,6 @@ tree$edge.length <- replace(tree$edge.length, tree$edge.length == "NaN", 0.05)  
 
 tree_rooted <- root(phy = tree, outgroup = "PL17_160floflo")
 clr_neutral <- rgb(.2, .2, .2)
-
 
 ### Prepare tree and categorize support values
 tree_plus <- ggtree(tree_rooted) %>%
@@ -132,7 +131,7 @@ tree_plus <- ggtree(tree_rooted) %>%
                       drop = FALSE) +
     # Add scale bar:
     ggtree::geom_treescale(width = .05,
-                           x = .1, y = 130,
+                           x = .13, y = 130,
                            offset = -1,
                            linesize = .2,
                            fontsize = plot_text_size/.pt,
@@ -283,30 +282,35 @@ data_ibd <- read_tsv(ibd_file) %>%
 set.seed(42)
 p2 <- data_ibd %>% 
   as_tbl_graph() %>%
-  mutate(spec = str_sub(name, -6, -4),
+  mutate(spec = factor(str_sub(name, -6, -4), levels = names(clr)[-10:-9]), 
          loc = factor(str_sub(name, -3, -1), levels = c("bel", "hon", "pan", "flo")))  %>% 
   ggraph( layout = 'fr', weights = ibd_total) +
   geom_edge_link(aes(alpha = ibd_total, edge_width = ibd_total), color = rgb(.1,.1,.1)) +
   geom_node_point(aes(fill = spec,
                       shape = loc, color = after_scale(clr_darken(fill,.3))), size = 1.2) +
-  scale_fill_manual("Species", values = GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))],
-                    labels = GenomicOriginsScripts::sp_labs)+
+  scale_fill_manual("Species", values = GenomicOriginsScripts::clr2[!(names(GenomicOriginsScripts::clr2) %in% c( "tor", "tab"))],
+                    labels = GenomicOriginsScripts::sp_labs, drop = FALSE)+
   scale_edge_alpha_continuous(#limits = c(0,.1),
     range = c(0,1), guide = "none") +
   scale_edge_width_continuous(#limits = c(0,.1),
     range = c(.1, .4), guide = "none") +
   scale_shape_manual("Site", values = c(bel = 21, flo = 24, hon = 22, pan = 23),
                      labels = GenomicOriginsScripts::loc_names, drop = FALSE) +
-  guides(fill = guide_legend(nrow = 2, override.aes = list(shape = 21, size = 2.5), title.position = "top"),
+  guides(fill = guide_legend(nrow = 2, override.aes = list(shape = 21, size = 2.5), title.position = "top",label.hjust = 0),
          shape = guide_legend(nrow = 2, title.position = "top")) +
-  coord_equal()  +
+  coord_fixed() +
   theme(text = element_text(size = GenomicOriginsScripts::plot_text_size),
         panel.background = element_blank())
 
-p_done <- cowplot::plot_grid(cowplot::plot_grid(p1, p2 + theme(legend.position = "none"),rel_widths = c(1,.9),
+p_done <- cowplot::plot_grid(cowplot::plot_grid(p1, p2 + theme(legend.position = "none"), rel_widths = c(1,.9),
                                                 labels = c("a", "b"), label_fontface = "plain", label_size = plot_text_size),
-                             cowplot::plot_grid(cowplot::get_legend(t_plot+ theme_minimal(base_size = GenomicOriginsScripts::plot_text_size)),
-                                                cowplot::get_legend(p2 + theme_minimal(base_size = GenomicOriginsScripts::plot_text_size) + theme(legend.position = "bottom")),
+                             cowplot::plot_grid(cowplot::get_legend(t_plot +
+                                                                      theme_minimal(base_size = GenomicOriginsScripts::plot_text_size) +
+                                                                      theme(legend.key.width = unit(3,"pt"))),
+                                                cowplot::get_legend(p2 +
+                                                                      theme_minimal(base_size = GenomicOriginsScripts::plot_text_size) +
+                                                                      theme(legend.position = "bottom",
+                                                                            legend.key.width = unit(3,"pt"))),
                                                 rel_widths = c(.3,1)),
                              rel_heights = c(1,.15),
                              ncol = 1)
@@ -326,15 +330,15 @@ p_done <- cowplot::plot_grid(cowplot::plot_grid(p1, p2 + theme(legend.position =
 #         legend.text.align = 0,panel.background = element_rect(fill = "red"))
 
 hypo_save(plot = p_done,
-          filename = "figures/Fxx1_2.png",
+          filename = "figures/F4.png",
           width = GenomicOriginsScripts::f_width,
           height = GenomicOriginsScripts::f_width * .65,
-          bg = "transparent",
+          bg = "white",
           type = "cairo",
           dpi = 600,
           comment = plot_comment)
 
-system("convert figures/Fxx1.png figures/Fxx1.pdf")
-system("rm figures/Fxx1.png")
-create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/Fxx1.pdf")
+system("convert figures/F4.png figures/F4.pdf")
+system("rm figures/F4.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/F4.pdf")
 system(create_metadata)

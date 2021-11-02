@@ -12,7 +12,8 @@
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt',
-#           '2_analysis/summaries/fst_permutation_summary.tsv')
+#           '2_analysis/summaries/fst_permutation_summary.tsv',
+#           "2_analysis/fotl/concat_R24ed.treefile")
 # script_name <- "R/fig/plot_F1.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
@@ -39,14 +40,17 @@ args <- process_input(script_name, args)
 fst_dir <- as.character(args[1])
 fst_globals <- as.character(args[2])
 fst_permutation_file <- as.character(args[3])
+tree_file <- as.character(args[4])
 wdh <- .3          # The width of the boxplots
 scaler <- 20       # the ratio of the Fst and the dxy axis (legacy - not really needed anymore)
 clr_sec <- 'gray'  # the color of the secondary axis (dxy)
 # start script -------------------
 
-tree <- read.tree("2_analysis/fotl/concat_R24ed.treefile") 
+tree <- read.tree(tree_file) 
 tree_rooted <- root(phy = tree, outgroup = "Epinephelus_maculatus")
 clr_neutral <- rgb(.2, .2, .2)
+clr_highlight <- "gray40" #"#FF8029"
+clr_stars <- "firebrick" 
 
 ### Edit tip labels
 tree_rooted$tip.label <- tree_rooted$tip.label %>% 
@@ -85,14 +89,19 @@ tree_plus <- tree_plus %>%
 our_taxa <- c("H. aberrans", "H. gummigutta", "H. indigo", "H. maya", "H. nigricans", "H. puella", 
               "H. randallorum", "H. unicolor", "H. floridae", "Se. tabacarius", "Se. tortugarum")
 
-hermaphrodites <- tree_plus %>% filter(node %in% c(60, 65) | label == "Se. hepatus") %>% 
-  mutate(x = x - branch.length / 2, star = "\U2605")
+# hermaphrodites <- tree_plus %>% filter(node %in% c(60, 65) | label == "Se. hepatus") %>% 
+#   mutate(x = x - branch.length / 2, star = "\U2605")
+
+hermaphrodites <- tree_plus %>% filter(node %in% c(60, 63)) %>% 
+  mutate(x = if_else(node == 60, x - branch.length, x - branch.length *.5),
+         y = if_else(node == 60, .5 * (y + tree_plus$y[tree_plus$node == 61]), y),
+         star = "\U2605")
 
 c1 <- "transparent"
 # c2 <- rgb(0, 0, 0, .1)
 # c3 <- rgb(0, 0, 0, .2)
-c2 <- prismatic::clr_alpha("firebrick", .1)
-c3 <- prismatic::clr_alpha("firebrick", .2)
+c2 <- prismatic::clr_alpha(clr_highlight, .1)
+c3 <- prismatic::clr_alpha(clr_highlight, .2)
 
 grad_mat <- c(c1, c2, c3, c3) 
 dim(grad_mat) <- c(1, length(grad_mat))
@@ -104,12 +113,12 @@ grob_grad <- rasterGrob(grad_mat,
 blank_hamlet <- hypoimg::hypo_outline %>% 
   ggplot()+
   coord_equal()+
-  geom_polygon(aes(x, y), color = rgb(0, 0, 0, .5), fill = rgb(1, 1, 1, .3), size = .1)+
+  geom_polygon(aes(x, y), color = rgb(0,0,0,.3), fill = rgb(1, 1, 1, .3), size = .1)+
   theme_void()
 
 ### Draw tree
 (p_tree <- ggtree(tree_plus,
-                 aes(color = clr_neutral), size = .2) +
+                 aes(color = group), size = .2) +
   annotation_custom(grob = grob_grad,
                     ymin = .2, ymax = 12.5,
                     xmin = .04, xmax = .125)+
@@ -123,11 +132,11 @@ blank_hamlet <- hypoimg::hypo_outline %>%
   geom_nodepoint(data = tree_plus %>% filter(!is.na(support_class)), 
                    aes(fill = support_class,
                      size = support_class),
-                 shape = 21) +
+                 shape = 21, color = clr_neutral) +
   geom_text(data = hermaphrodites, aes(x = x, y = y, label = star),
-            family = "DejaVu Sans", color = "firebrick",
+            family = "DejaVu Sans", color = clr_stars,
             size = 2, vjust = .35) +
-  scale_color_manual(values = c(clr_neutral, clr_neutral, "firebrick")) +
+  scale_color_manual(values = c(clr_neutral, clr_neutral, clr_highlight)) +
   scale_fill_manual(values = c(`(0,50]`   = "transparent",
                                `(50,70]`  = "white",
                                `(70,90]`  = "gray",
@@ -141,19 +150,20 @@ blank_hamlet <- hypoimg::hypo_outline %>%
                     drop = FALSE) +
   geom_treescale(color = clr_neutral, 
                  fontsize = 2, linesize = .2, 
-                 x = 0.045, y = 4) +
+                 x = 0.045, y = 1.5) +
   guides(fill = guide_legend(title = "Node Support Class", title.position = "top", override.aes = list(color = clr_neutral), nrow = 2),
          size = guide_legend(title = "Node Support Class", title.position = "top", override.aes = list(color = clr_neutral), nrow = 2),
          color = 'none') +
     coord_cartesian(xlim = c(-.005,.125), ylim = c(0,45), expand = 0) +
     theme_void() +
-  theme(legend.position = c(0.05,0.05),
+  theme(legend.position = c(0.05,0),
         legend.justification = c(0,0),
         legend.title.align = 0,
         legend.key.height = unit(8,"pt"),
         legend.key.width = unit(6,"pt"),
         legend.text = element_text(color = clr_neutral),
-        legend.title = element_text(color = clr_neutral)))
+        legend.title = element_text(color = clr_neutral))
+)
 
 globals <- vroom::vroom(fst_globals, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
