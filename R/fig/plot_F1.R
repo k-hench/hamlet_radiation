@@ -66,7 +66,8 @@ tree_rooted$tip.label <- tree_rooted$tip.label %>%
   str_replace(pattern = "20478tabhon", "Serranus_tabacarius") %>%
   str_replace(pattern = "s_tort_3torpan", "Serranus_tortugarum") %>% 
   #
-  str_replace(pattern = "([A-Z])([a-z])[a-z]*_([a-z]*)", "\\1\\2. \\3") %>%
+  str_replace(pattern = "([A-Z])([a-z])[a-z]*_([a-z]*)", "\\1\\2. \\3")  %>%
+  str_replace(pattern = "Ce.", "Cp.")%>%
   str_replace(pattern = "Za.", "Pl.") %>%
   str_replace(pattern = "Hy.", "H.") %>% 
   str_replace(pattern = "Di.", "D.") %>% 

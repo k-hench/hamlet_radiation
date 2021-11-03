@@ -14,7 +14,6 @@ Channel
 	.from( [ 1, 5, 10, 50 ] )
 	.set{ window_size_ch }
 
-
 // Compile summary table
 process segment_windows {
 	label 'L_loc_slice_windows'
@@ -44,7 +43,6 @@ process segment_windows {
 	  write_tsv(file = "windows_${kb_size}kb.bed.gz")
 	"""
 }
-
 
 /*
 // Subset ALL vcf files (also allBP) by missingnes (max. 10%)

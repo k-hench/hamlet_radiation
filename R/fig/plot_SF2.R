@@ -110,7 +110,7 @@ p1 <- as.grob(function(){
   leg_shift_x <- 1.3
   leg_shift_y <- 5
   text(x = c(21.2, 40.2), y = c(15.6, 33.25),
-       label = "\U2605", family = "DejaVu Sans", col = clr_tree[[6]], cex = .5)
+       label = "\U2605", family = "DejaVu Sans", col = clr_shift, cex = .5)
   lines(x = c(0,25) + leg_shift_x,
         y = c(1.5, 1.5) + leg_shift_y,
         col = "darkgray")
@@ -189,3 +189,4 @@ hypo_save("figures/SF2.pdf",
        comment = plot_comment,
        device = cairo_pdf,
        bg = "transparent")
+
