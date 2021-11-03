@@ -47,8 +47,8 @@ tree_plus <- ggtree(tree_s_mid)  %>%
            as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))
   ) 
 
-t_plot <- (ggtree(tr = tree_plus,
-                   layout = 'fan', open.angle = 180,
+(t_plot <- (ggtree(tr = tree_plus,
+                   layout = 'fan', #open.angle = 180,
                       aes(color = spec), size = .2)) + #%>% 
        # ggtree::rotate_tree(angle = -100)) +
     geom_tippoint(aes(color = spec,
@@ -59,10 +59,12 @@ t_plot <- (ggtree(tr = tree_plus,
                        size = support_class),
                    shape = 21,
                    color = clr_neutral) +
-    scale_color_manual(values = c(GenomicOriginsScripts::clr2, ungrouped = "gray60"),
-                       guide = 'none') +
-    scale_shape_manual(values = c(bel = 21, flo = 24, hon = 22, pan = 23), labels = GenomicOriginsScripts::loc_names,
-                       guide = 'none') +
+    scale_color_manual(values = c(GenomicOriginsScripts::clr2, ungrouped = "gray60"), labels = GenomicOriginsScripts::sp_labs
+                       #guide = 'none'
+                       ) +
+    scale_shape_manual(values = c(bel = 21, flo = 24, hon = 22, pan = 23), labels = GenomicOriginsScripts::loc_names#,
+                       #guide = 'none'
+                       ) +
     scale_fill_manual(values = c(`(0,50]`   = "transparent",
                                  `(50,70]`  = "white",
                                  `(70,90]`  = "gray",
@@ -76,7 +78,7 @@ t_plot <- (ggtree(tr = tree_plus,
                       drop = FALSE) +
     # Add scale bar:
     ggtree::geom_treescale(width = 1,
-                           x = .13, y = 170,
+                           x = .13, y = 85.5,
                            offset = -7,
                            linesize = .2,
                            fontsize = plot_text_size/.pt,
@@ -85,14 +87,18 @@ t_plot <- (ggtree(tr = tree_plus,
     # xlim(c(-.05,#-.15,
     #        .265)) +
     guides(fill = guide_legend(title = "Node Support Class", title.position = "top",
-                               nrow = 1),
+                               nrow = 4, label.hjust = 0),
            size = guide_legend(title = "Node Support Class", title.position = "top",
-                               nrow = 1)) +
+                               nrow = 4, label.hjust = 0),
+           shape = guide_legend(title = "Location", title.position = "top",
+                               nrow = 4, label.hjust = 0),
+           color = guide_legend(title = "Species", title.position = "top",
+                               nrow = 4, label.hjust = 0)) +
     theme_void() +
-    theme(#legend.position = 'bottom',
-      legend.title.align = 0.5,
+    theme(legend.position = 'bottom',
+      legend.title.align = 0,
       legend.text = element_text(color = "gray20"),
-      legend.title = element_text(color = "gray20")) 
+      legend.title = element_text(color = "gray20")) )
 
 clado_plus <- ggtree(tree_s_mid, branch.length = 'none',
                      layout = 'fan', open.angle = 180)  %>%
@@ -105,8 +111,8 @@ clado_plus <- ggtree(tree_s_mid, branch.length = 'none',
   ) 
 
 
-c_plot <- ggtree(tr = clado_plus,
-       layout = 'fan', open.angle = 180,
+(c_plot <- ggtree(tr = clado_plus,
+       layout = 'fan', #open.angle = 180,
        aes(color = spec), size = .2)+
   geom_tippoint(aes(color = spec,
                     shape = loc,
@@ -132,12 +138,12 @@ c_plot <- ggtree(tr = clado_plus,
                     na.value = 0,
                     drop = FALSE) +
   # Add scale bar:
-  ggtree::geom_treescale(width = 1,
-                         x = .13, y = 170,
-                         offset = -7,
-                         linesize = .2,
-                         fontsize = plot_text_size/.pt,
-                         color = clr_neutral) +
+  # ggtree::geom_treescale(width = 1,
+  #                        x = .13, y = 170,
+  #                        offset = -7,
+  #                        linesize = .2,
+  #                        fontsize = plot_text_size/.pt,
+  #                        color = clr_neutral) +
   # scale_x_continuous(limits = c(-.05, .26), expand = c(0,0)) +
   # xlim(c(-.05,#-.15,
   #        .265)) +
@@ -149,7 +155,7 @@ c_plot <- ggtree(tr = clado_plus,
   theme(#legend.position = 'bottom',
     legend.title.align = 0.5,
     legend.text = element_text(color = "gray20"),
-    legend.title = element_text(color = "gray20")) 
+    legend.title = element_text(color = "gray20")) )
 
 y_sep <- .5
 x_shift <- .85
@@ -159,7 +165,7 @@ x_shift <- .85
                 ylim = c(0, 1),
                 expand = 0) +
     annotation_custom(grob = ggplotGrob(t_plot + theme(legend.position = "none")),
-                      ymin = -.35 - y_sep , 
+                      ymin = -1 - y_sep , 
                       ymax = .7 + y_sep,
                       xmin = 0 - x_shift,
                       xmax = 1 + x_shift) +
@@ -185,13 +191,15 @@ x_shift <- .85
 #                       xmin = 0, xmax = 1) +
 #     theme_void()
 
+y_sep <- .05
+x_shift <- .05
 p_tdone <- ggplot() +
   coord_equal(xlim = c(0, 1),
               ylim = c(0, 1),
               expand = 0) +
   annotation_custom(grob = ggplotGrob(t_plot + theme(legend.position = "none")),
-                    ymin = -.65 - y_sep , 
-                    ymax = .7 + y_sep,
+                    ymin = 0 - y_sep , 
+                    ymax = 1 + y_sep,
                     xmin = 0 - x_shift,
                     xmax = 1 + x_shift) +
   theme_void()
@@ -201,19 +209,24 @@ p_cdone <- ggplot() +
               ylim = c(0, 1),
               expand = 0) +
   annotation_custom(grob = ggplotGrob(c_plot + theme(legend.position = "none")),
-                    ymin = -.6 - y_sep , 
-                    ymax = .67 + y_sep,
+                    ymin = 0 - y_sep , 
+                    ymax = 1 + y_sep,
                     xmin = 0 - x_shift,
                     xmax = 1 + x_shift) +
   theme_void()
 
 p_done <- cowplot::plot_grid(cowplot::plot_grid(p_tdone, p_cdone,labels = letters[1:2],label_size = plot_text_size, label_fontface = "plain"),
-                   cowplot::get_legend(t_plot + theme_minimal(base_size = plot_text_size) + theme(legend.title.align = .5)),ncol = 1,rel_heights = c(1,.1))
+                             cowplot::get_legend(t_plot +
+                                                   theme_minimal(base_size = plot_text_size) + 
+                                                   theme(legend.position = "bottom",
+                                                         legend.title.align =0,
+                                                         legend.key.height = unit(7,"pt"))),
+                             ncol = 1, rel_heights = c(1,.2))
 
 scl <- .75
 hypo_save(p_done, filename = 'figures/SFxx3_2.pdf',
-          width = 1.5 * f_width,
-          height = .4 * f_width,
+          width = f_width,
+          height = .6 * f_width,
           device = cairo_pdf,
           bg = "transparent",
           comment = plot_comment)
