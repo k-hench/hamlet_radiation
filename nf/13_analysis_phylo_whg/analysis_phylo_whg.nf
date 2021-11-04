@@ -125,7 +125,7 @@ process subset_allBP {
 }
 
 // git 13.9
-//vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
+// vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
 process compute_coverage_allBP {
 	label 'L_140g1h_coverage'
 	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy' 
@@ -192,7 +192,7 @@ process complie_window_stats {
 
 // ----------------------- DISCLAIMER ----------------------
 // form here on, this pipeline was not actually run using
-//  nextflow, but managed manually
+// nextflow, but managed manually
 // ---------------------------------------------------------
 
 // git 13.11
