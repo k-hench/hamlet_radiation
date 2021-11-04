@@ -24,6 +24,7 @@ ch_LG_ids.combine( vcf_cohort ).set{ vcf_lg_combo }
 // actual genotyping step (including invariant sites)
 process joint_genotype_snps {
 	label "L_O88g90h_LGs_genotype"
+	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
 
 	input:
 	set val( lg ), vcfId, file( vcf ) from vcf_lg_combo
