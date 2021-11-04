@@ -278,7 +278,6 @@ window_extract_loop.collect().map{ [ it ] }.set{ window_extract_ch1, window_extr
 
 // git 13.15
 // Remove samples (all / noS data sets)
-// !!!! should "_noS.vcf.gz" be "v1_noS.vcf.gz" ?
 process remove_samples {
 	label 'L_20g2h_remove_samples'
 
@@ -308,7 +307,7 @@ process remove_samples {
 			--gzvcf window_"\$i"*.vcf.gz \
 			--remove samples_Serr.txt \
 			--recode \
-			--stdout | bgzip > window_"\$i"_noS.vcf.gz
+			--stdout | bgzip > window_"\$i"_v1_noS.vcf.gz
 	done
 	"""
 }
