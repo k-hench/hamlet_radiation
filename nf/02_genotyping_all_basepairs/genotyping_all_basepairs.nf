@@ -34,7 +34,7 @@ process joint_genotype_snps {
 	script:
 	if( mode == 'unplaced' )
 	"""
-	atk --java-options "-Xmx85g" \
+	gatk --java-options "-Xmx85g" \
 		GenotypeGVCFs \
 		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
 		-XL=LG01 \
