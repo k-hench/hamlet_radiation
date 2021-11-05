@@ -1,13 +1,13 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF17.R \
-#     2_analysis/GxP/50000/
+#     2_analysis/astral/astral_5000x_5kb_v1_all.tre
 # ===============================================================
 # This script produces Suppl. Figure 17 of the study "Rapid radiation in a
 # highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/GxP/50000/')
+# args <- c("2_analysis/astral/astral_5000x_5kb_v1_all.tre")
 # script_name <- "R/fig/plot_SF17.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
@@ -15,56 +15,112 @@ renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
+library(ape)
+library(ggtree)
+library(tidygraph)
+library(ggraph)
+library(patchwork)
 
 cat('\n')
 script_name <- args[5] %>%
-  str_remove(.,'--file=')
+  str_remove(., '--file=')
 
 plot_comment <- script_name %>%
-  str_c('mother-script = ',getwd(),'/',.)
+  str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
 # config -----------------------
-gxp_path <- as.character(args[1])
+tree_hypo_file <- as.character(args[1])
+tree <- read.tree(tree_hypo_file)
+tree$edge.length <- replace(tree$edge.length, tree$edge.length == "NaN", 0.05)   # Set terminal branches to 0.05
+tree$edge.length[c( 81, 83)] <- tree$edge.length[c( 81, 83)] * 0.1
+# which(tree$edge.length > 1)
 
-# configure which gxp data to load
-trait_tib  <- tibble(file = dir(gxp_path) %>% .[str_detect(.,"Bars|Peduncle|Snout")]) %>%
-  mutate(prep = file) %>%
-  separate(prep , into = c("trait", "model_type", "win", "step", "filetype", "zip"),
-           sep = "\\.") %>%
-  select(file, trait, model_type) %>%
-  mutate(path = gxp_path)
 
-# load gxp data
-data <- pmap_dfr(trait_tib,get_gxp_both_models)
+tree_rooted <- root(phy = tree, outgroup = c("s_tort_3torpan", "20478tabhon", "28393torpan"))
+# tree_s_mid <- phangorn::midpoint(tree_rooted)
+clr_neutral <- rgb(.2, .2, .2)
 
-# compose final figure
-p_done <- data %>%
-  ggplot(aes(x = gpos, y = AVG_p_wald))+
-  # add gray/white LGs background
-  geom_hypo_LG()+
-  # add gxp data points
-  geom_point(color = plot_clr, size = .3)+
-  # set axis layout
-  scale_x_hypo_LG()+
-  scale_fill_hypo_LG_bg()+
-  # set axis titles
-  labs(y = expression(G~x~P~(average~italic(p)[wald])))+
-  # general plot structure separated by model type and trait
-  facet_grid(trait+model_type ~ ., scales = "free_y")+
-  # general plot layout
-  theme_hypo()
+### Prepare tree and categorize support values
+tree_plus <- ggtree(tree_rooted)  %>%
+  .$data %>%
+  mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
+         loc = ifelse(isTip, str_sub(label, -3, -1), "ungrouped"),
+         support = as.numeric(label) * 100,
+         support_class = cut(support, c(0,50,70,90,100)) %>% 
+           as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]")),
+          `branch.length` = if_else(node %in% c( 212, 213), `branch.length` * .0001, `branch.length`),
+          branch_type = if_else(node %in% c(212, 213), "broken", "whole")
+         )
 
-# export final figure
-hypo_save(filename = "figures/SF17.png",
-       plot = p_done,
-       width = 11,
-       height = 7,
-       dpi = 600,
-       type = "cairo",
-       comment = plot_comment)
+t_plot <- (ggtree(tr = tree_plus,
+                   layout = 'fan',
+                      aes(color = spec, linetype = branch_type), size = .2)) + #%>% 
+    geom_tippoint(aes(color = spec,
+                      shape = loc,
+                      fill = after_scale(color)), size = .5) +
+    geom_nodepoint(data = tree_plus %>% filter(!isTip, support_class != "(0,50]"),   # Apply to nodes with support >50 only
+                   aes(fill = support_class,
+                       size = support_class),
+                   shape = 21,
+                   color = clr_neutral) +
+    scale_color_manual(values = c(GenomicOriginsScripts::clr2, ungrouped = "gray60"), labels = GenomicOriginsScripts::sp_labs) +
+    scale_shape_manual(values = c(bel = 21, flo = 24, hon = 22, pan = 23), labels = GenomicOriginsScripts::loc_names) +
+    scale_fill_manual(values = c(`(0,50]`   = "transparent",
+                                 `(50,70]`  = "white",
+                                 `(70,90]`  = "gray",
+                                 `(90,100]` = "black"),
+                      drop = FALSE) +
+    scale_size_manual(values = c(`(0,50]`   = 0,
+                                 `(50,70]`  = .8,
+                                 `(70,90]`  = .8,
+                                 `(90,100]` = .8),
+                      na.value = 0,
+                      drop = FALSE) +
+    scale_linetype_manual(values = c(whole = 1, broken = 3), guide = "none") +
+    # Add scale bar:
+    ggtree::geom_treescale(width = .2,
+                           x = .13, y = 85.5,
+                           offset = -7,
+                           linesize = .2,
+                           fontsize = plot_text_size/.pt,
+                           color = clr_neutral) +
+    guides(fill = guide_legend(title = "Node Support Class", title.position = "top",
+                               nrow = 2, label.hjust = 0),
+           size = guide_legend(title = "Node Support Class", title.position = "top",
+                               nrow = 2, label.hjust = 0),
+           shape = guide_legend(title = "Location", title.position = "top",
+                               nrow = 2, label.hjust = 0),
+           color = guide_legend(title = "Species", title.position = "top",
+                               ncol = 2, label.hjust = 0)) +
+    theme_void() +
+    theme(legend.position = 'bottom',
+      legend.title.align = 0,
+      legend.text = element_text(color = "gray20"),
+      legend.title = element_text(color = "gray20"))
 
-system("convert figures/SF17.png figures/SF17.pdf")
-system("rm figures/SF17.png")
-create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF17.pdf")
-system(create_metadata)
+y_sep <- .1
+x_shift <- .1
+p_tdone <- ggplot() +
+  coord_equal(xlim = c(0, 1),
+              ylim = c(0, 1),
+              expand = 0) +
+  annotation_custom(grob = ggplotGrob(t_plot + theme(legend.position = "none")),
+                    ymin = 0 - y_sep , 
+                    ymax = 1 + y_sep,
+                    xmin = 0 - x_shift,
+                    xmax = 1 + x_shift) +
+  theme_void()
+
+p_done <- cowplot::plot_grid(p_tdone, cowplot::get_legend(t_plot +
+                                                  theme_minimal(base_size = plot_text_size) + 
+                                                  theme(legend.position = "right",
+                                                        legend.title.align =0,
+                                                        legend.key.height = unit(7,"pt"))),rel_widths = c(1,.5))
+scl <- .75
+hypo_save(p_done, filename = 'figures/SF17.pdf',
+          width = f_width,
+          height = .6 * f_width,
+          device = cairo_pdf,
+          bg = "transparent",
+          comment = plot_comment)

@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF2.R \
-#     ressources/Rabosky_etal_2018/
+#     ressources/Rabosky_etal_2018/ 
 # ===============================================================
 # This script produces Suppl. Figure 2 of the study "Rapid radiation in a
 # highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla

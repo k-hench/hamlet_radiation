@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F4.R \
-#     2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support \
-#     2_analysis/ibd/no_outgr_direct_10.ibd.tsv
+#     2_analysis/astral/astral_5000x_5kb_v1_noS.tre \
+#     2_analysis/ibd/cM_converted/no_outgr_bed95_8.conv_filterd.tsv
 # ===============================================================
 # This script produces Figure 4 of the study "Rapid radiation in a highly
 # diverse marine environment" by Hench, Helmkampf, McMillan and Puebla

@@ -1,13 +1,15 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF19.R \
-#     2_analysis/pi/50k/
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     2_analysis/geva/ \
+#     2_analysis/GxP/bySNP/
 # ===============================================================
 # This script produces Suppl. Figure 19 of the study "Rapid radiation in a
 # highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/pi/50k/')
+# args <- c( "2_analysis/summaries/fst_outliers_998.tsv", "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
 # script_name <- "R/fig/plot_SF19.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
@@ -16,6 +18,11 @@ library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
 library(ggtext)
+library(ggpointdensity)
+library(scales)
+library(grid)
+library(prismatic)
+library(patchwork)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -24,103 +31,129 @@ script_name <- args[5] %>%
 plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
-args <- process_input(script_name, args)
+cli::rule( left = str_c(crayon::bold('Script: '),crayon::red(script_name)))
+args = args[7:length(args)]
+cat(' ')
+cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
+cli::rule(right = getwd())
+
 # config -----------------------
-pi_path <- as.character(args[1])
+outlier_file <- as.character(args[1])
+geva_path <- as.character(args[2])
+gxp_path <- as.character(args[3])
 
-# locate pi data files
-files <- dir(pi_path, pattern = '^pi.[a-z]{6}.50k')
-# load pi data
-data <- str_c(pi_path, files) %>%
-  purrr::map(get_pi) %>%
-  bind_rows()
+outlier_data <- read_tsv(outlier_file)
 
-# create table for the indication of genome wide average pi in the plot background
-# (rescale covered pi range to the extent of the genome)
-global_bar <- data %>%
-  # filter to non-overlaping windows only
-  filter( BIN_START %% 50000 == 1) %>%
-  select(N_SITES, PI, spec) %>%
-  group_by(spec) %>%
-  summarise(genome_wide_pi = sum(N_SITES*PI)/sum(N_SITES)) %>%
-  arrange(genome_wide_pi) %>%
-  ungroup() %>%
-  mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
-         scaled_pi = genome_wide_pi/max(genome_wide_pi))
+data1 <- outlier_data[1:3,] %>% pmap_dfr(get_gxp_and_geva)
+data2 <- outlier_data[4:6,] %>% pmap_dfr(get_gxp_and_geva)
+data3 <- outlier_data[7:9,] %>% pmap_dfr(get_gxp_and_geva)
+data4 <- outlier_data[10:12,] %>% pmap_dfr(get_gxp_and_geva)
+data5 <- outlier_data[13:15,] %>% pmap_dfr(get_gxp_and_geva)
+data6 <- outlier_data[16:18,] %>% pmap_dfr(get_gxp_and_geva)
 
-global_bar %>% write_tsv("2_analysis/summaries/pi_globals.tsv")
+data <- data1 %>% 
+  bind_rows(data2) %>% 
+  bind_rows(data3) %>% 
+  bind_rows(data4) %>% 
+  bind_rows(data5) %>% 
+  bind_rows(data6)
 
-# prepare plot annotaton images
-grob_tibble <- global_bar$spec %>%
-  purrr::map(fish_plot) %>%
-  bind_rows()
+xrange <- c(100, 10^6)
+color <- rgb(1, 0.5, 0.16)
 
-# prepare plotting elements --------
-# pre-define secondary x-axis breaks
-sc_ax <- scales::cbreaks(c(0,max(global_bar$genome_wide_pi)),
-                         scales::pretty_breaks(4))
+base_length <- 8
+base_lwd <- .15
+base_line_clr <- "black"
 
-# pre-define secondary x-axis labels
-labels <- str_c(c("", sc_ax$breaks[2:6]*1000),
-                c("0", rep("\u00B710^-3",5)))
+splitage <- tibble(intercept = 5000)
 
-# sort pair-wise population comparisons by average genome wide pi
-data <- data %>%
-  mutate(spec = factor(spec, levels = levels(global_bar$spec)))
+gid_label <- outlier_data$gid
+gid_label[c(2, 13, 14)] <- c( LG04_1 = "LG04 (A)", LG12_3 = "LG12 (B)", LG12_4 = "LG12 (C)" )
 
-# compose final figure
-p_done <- ggplot()+
-  # general plot structure separated by run
-  facet_wrap( .~spec, as.table = TRUE, ncol = 1, dir = 'v')+
-  # add genome wide average pi in the background
-  geom_rect(data = global_bar %>% mutate(xmax = scaled_pi * hypo_karyotype$GEND[24]),
-            aes(xmin = 0, xmax = xmax, ymin = -Inf, ymax = Inf),
-            color = rgb(1,1,1,0),
-            fill = clr_below)+
-  # add LG borders
-  geom_vline(data = hypogen::hypo_karyotype,aes(xintercept = GEND),color = hypo_clr_lg)+
-  # add pi data points
-  geom_point(data = data, aes(x = gpos, y = PI),
-             size=.2, color = plot_clr) +
-  # add fish images
-  geom_hypo_grob2(data = grob_tibble,
-                  aes(grob = grob, rel_x = .975, rel_y = .5),
-                  angle = 0, height = .8, width = .12)+
-  # set axis layout
-  scale_x_hypo_LG(sec.axis =  sec_axis(~ ./hypo_karyotype$GEND[24],
-                                       breaks = (sc_ax$breaks/max(global_bar$genome_wide_pi)),
-                                       labels = labels,
-                                       name = "Genomic position/ Genome wide *\u03C0*"))+
-  scale_y_continuous(name = "*\u03C0*", breaks = c(0,.01,.02))+
-  # set plot extent
-  coord_cartesian(xlim = c(0, hypo_karyotype$GEND[24]*1.06))+
-  # general plot layout
-  theme_hypo()+
-  theme(strip.text = element_blank(),
-        legend.position = 'none',
-        axis.title.x = element_markdown(),
-        axis.title.y = element_markdown(),
-        axis.text.x.bottom = element_markdown(colour = 'darkgray'))
+gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
+  darken(factor = .95) %>%
+  set_names(., nm = c("Bars", "Snout", "Peduncle"))
 
-# export final figure
-hypo_save(filename = 'figures/SF19.png',
-          plot = p_done,
-          width = 8,
-          height = 8,
-          dpi = 600,
-          type = "cairo",
-          comment = plot_comment)
+annotation_grobs <- tibble(svg = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c( 'Snout', 'Bars', 'Peduncle')],
+                           layer = c(4,3,7),
+                           color = gxp_clr[c(1,3,2)]) %>%
+  purrr::pmap(.l = ., .f = hypo_recolor_svg) %>%
+  set_names(nm = c( "LG12_3","LG12_4","LG04_1"))
 
-system("convert figures/SF19.png figures/SF19.pdf")
-system("rm figures/SF19.png")
-create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF19.pdf")
-system(create_metadata)
+annotation_grobs$LG12_3 <- hypo_recolor_svg(annotation_grobs$LG12_3,
+                                            layer = 7, color = gxp_clr[[1]] %>% 
+                                              clr_desaturate %>% clr_lighten(.25))
 
-# export S.Tab. 4
-global_bar %>% 
-  dplyr::select(- scaled_pi) %>% 
-  mutate(loc = loc_names[str_sub(spec, -3,-1)],
-         spec = str_c("H. ", sp_names[str_sub(spec, 1,3)]),
-         genome_wide_pi = sprintf("%.5f",genome_wide_pi)) %>% 
-  pivot_wider(names_from = spec, values_from = genome_wide_pi, values_fill = "-") %>% 
-  knitr::kable(format = "latex")
+annotation_grobs_tib <- tibble(gid = names(annotation_grobs),
+                               grob = annotation_grobs) %>%
+  mutate( gid_label = gid_label[gid],
+          trait = factor( c( "Bars", "Peduncle", "Snout"),
+                          levels = c("Snout", "Bars", "Peduncle")))
+
+highlight_rects <- tibble(trait = factor( c(NA, "Snout", rep(NA, 10), "Bars", "Peduncle", rep(NA, 4)),
+                                          levels = c("Snout", "Bars", "Peduncle")),
+                          gid_label = gid_label)
+
+p_1 <- data %>%
+  pivot_longer(names_to = "trait",
+               values_to = "p_wald",
+               cols = Bars:Snout) %>%
+  mutate(trait = factor(trait, levels = c("Snout", "Bars", "Peduncle")),
+         gid_label = gid_label[gid]) %>%
+  filter(Clock == "J",
+         Filtered == 1,
+          gid %in% outlier_data$gid[1:9],
+         !(gid %in% outlier_data$gid[2])) %>%
+  ggplot()
+
+p_2 <- data %>%
+  pivot_longer(names_to = "trait",
+               values_to = "p_wald",
+               cols = Bars:Snout) %>%
+  mutate(trait = factor(trait, levels = c("Snout", "Bars", "Peduncle")),
+         gid_label = gid_label[gid]) %>%
+  filter(Clock == "J",
+         Filtered == 1,
+         gid %in% outlier_data$gid[10:18],
+         !(gid %in% outlier_data$gid[c(13:14)])) %>%
+  ggplot() 
+
+complete_p <- function(p){
+  p +
+    geom_pointdensity(size = plot_size,
+                      aes(x = PostMedian,y = p_wald)) +
+    facet_grid(gid ~ trait, scales = "free_y"
+    ) +
+    scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+    scale_y_continuous(trans = reverselog_trans(10), #limits = c(10^0, 10^-90),
+                       labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+    scale_color_viridis_c("Density",  option = "B", limits = c(0,750)#, limits = c(0,1100)
+    ) +
+    labs(y = "G x P *p* value <sub>Wald</sub>",
+         x  = "Derived allele age (generations)") +
+    guides(color = guide_colorbar(title.position = "top",
+                                  barwidth = unit(.4, "npc"),
+                                  barheight = unit(3, "pt"))) +
+    theme_minimal() +
+    theme(text = element_text(size = plot_text_size),
+          axis.title.y = element_markdown(),
+          legend.position = "bottom",
+          plot.subtitle = element_markdown(),
+          axis.line = element_line(colour = base_line_clr,
+                                   size = base_lwd), 
+          strip.background = element_blank(), 
+          panel.grid.minor = element_blank(),
+          panel.grid.major = element_line(size = plot_lwd))
+}
+
+p_done <- cowplot::plot_grid( complete_p(p_1) +
+                      theme(legend.position = "none"),
+                    complete_p(p_2) + theme(legend.box.margin = unit(c(7,0,7,0),"pt")))
+
+hypo_save(plot = p_done,
+          filename = "figures/SF19.pdf",
+          width = f_width,
+          height = f_width,
+          comment = plot_comment,
+          device = cairo_pdf,
+          bg = "transparent")

@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF16.R \
-#     2_analysis/admixture/ \
-#     metadata/phenotypes.sc
+    # 2_analysis/admixture/ \
+    # metadata/phenotypes.sc
 # ===============================================================
 # This script produces Suppl. Figure 16 of the study "Rapid radiation in a
 # highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla

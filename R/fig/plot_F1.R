@@ -5,7 +5,10 @@
 #
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F1.R \
-#     2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt 2_analysis/summaries/fst_permutation_summary.tsv
+#   2_analysis/fst/50k/ \
+#   2_analysis/summaries/fst_globals.txt \
+#   2_analysis/summaries/fst_permutation_summary.tsv \
+#   2_analysis/fotl/concat_R24ed.treefile
 # ===============================================================
 # This script produces Figure 1 of the study "Rapid radiation in a highly
 # diverse marine environment" by Hench, Helmkampf, McMillan and Puebla

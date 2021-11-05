@@ -1,15 +1,16 @@
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F6.R \
-#     2_analysis/summaries/fst_outliers_998.tsv \
-#     2_analysis/geva/ \
-#     2_analysis/GxP/bySNP/
+    # 2_analysis/summaries/fst_outliers_998.tsv \
+    # 2_analysis/geva/ \
+    # 2_analysis/GxP/bySNP/
 # ===============================================================
 # This script produces Figure 6 of the study "Rapid radiation in a highly
 # diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c( "2_analysis/summaries/fst_outliers_998.tsv", "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
+# args <- c( "2_analysis/summaries/fst_outliers_998.tsv",
+#            "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
 # script_name <- "R/fig/plot_F6.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
