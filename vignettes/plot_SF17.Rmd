@@ -18,6 +18,21 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c("2_analysis/astral/astral_5000x_5kb_v1_all.tre")
+
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(ape)
+library(ggtree)
+library(tidygraph)
+library(ggraph)
+library(patchwork)
+
+tree_hypo_file <- as.character(args[1])
+tree <- read.tree(tree_hypo_file)
+tree$edge.length <- replace(tree$edge.length, tree$edge.length == "NaN", 0.05)   # Set terminal branches to 0.05
+tree$edge.length[c( 81, 83)] <- tree$edge.length[c( 81, 83)] * 0.1
 ```
 
 ## Summary
@@ -28,8 +43,8 @@ The Figure can be recreated by running the **R** script `plot_SF17.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF17.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF17.R \
+    2_analysis/astral/astral_5000x_5kb_v1_all.tre
 ```
 
 ## Details of `plot_SF17.R`
@@ -41,38 +56,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF17.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF17.R \
@@ -85,6 +69,16 @@ Also the default color scheme is updated and the size of the hamlet ann.
 # args <- c("2_analysis/astral/astral_5000x_5kb_v1_all.tre")
 # script_name <- "R/fig/plot_SF17.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -104,18 +98,34 @@ plot_comment <- script_name %>%
   str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_SF17.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/astral/astral_5000x_5kb_v1_all.tre
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 tree_hypo_file <- as.character(args[1])
 tree <- read.tree(tree_hypo_file)
 tree$edge.length <- replace(tree$edge.length, tree$edge.length == "NaN", 0.05)   # Set terminal branches to 0.05
 tree$edge.length[c( 81, 83)] <- tree$edge.length[c( 81, 83)] * 0.1
-# which(tree$edge.length > 1)
+```
 
 
+```{r, message = FALSE, warning = FALSE}
 tree_rooted <- root(phy = tree, outgroup = c("s_tort_3torpan", "20478tabhon", "28393torpan"))
-# tree_s_mid <- phangorn::midpoint(tree_rooted)
 clr_neutral <- rgb(.2, .2, .2)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 ### Prepare tree and categorize support values
 tree_plus <- ggtree(tree_rooted)  %>%
   .$data %>%
@@ -127,7 +137,10 @@ tree_plus <- ggtree(tree_rooted)  %>%
           `branch.length` = if_else(node %in% c( 212, 213), `branch.length` * .0001, `branch.length`),
           branch_type = if_else(node %in% c(212, 213), "broken", "whole")
          )
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 t_plot <- (ggtree(tr = tree_plus,
                    layout = 'fan',
                       aes(color = spec, linetype = branch_type), size = .2)) + #%>%
@@ -173,7 +186,10 @@ t_plot <- (ggtree(tr = tree_plus,
       legend.title.align = 0,
       legend.text = element_text(color = "gray20"),
       legend.title = element_text(color = "gray20"))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 y_sep <- .1
 x_shift <- .1
 p_tdone <- ggplot() +
@@ -186,7 +202,10 @@ p_tdone <- ggplot() +
                     xmin = 0 - x_shift,
                     xmax = 1 + x_shift) +
   theme_void()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_done <- cowplot::plot_grid(p_tdone, cowplot::get_legend(t_plot +
                                                   theme_minimal(base_size = plot_text_size) +
                                                   theme(legend.position = "right",

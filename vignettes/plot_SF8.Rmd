@@ -18,6 +18,17 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c('2_analysis/dxy/50k/','2_analysis/fst/50k/multi_fst.50k.tsv.gz',
+'2_analysis/GxP/50000/', '2_analysis/summaries/fst_outliers_998.tsv',
+'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
+'2_analysis/twisst/weights/', 'ressources/plugin/trees/',
+'2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
+
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+
+
 ```
 
 ## Summary
@@ -28,8 +39,16 @@ The Figure can be recreated by running the **R** script `plot_SF8.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF8.R \
+    2_analysis/dxy/50k/ \
+    2_analysis/fst/50k/multi_fst.50k.tsv.gz \
+    2_analysis/GxP/50000/ \
+    2_analysis/summaries/fst_outliers_998.tsv \
+    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+    2_analysis/twisst/weights/ \
+    ressources/plugin/trees/ \
+    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
+    2_analysis/summaries/fst_globals.txt
 ```
 
 ## Details of `plot_SF8.R`
@@ -41,38 +60,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF8.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF8.R \
@@ -97,6 +85,16 @@ Also the default color scheme is updated and the size of the hamlet ann.
 # '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
 # script_name <- "R/fig/plot_SF8.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -110,7 +108,27 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
 
+```r
+#> ── Script: R/fig/plot_SF8.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/dxy/50k/
+#> ★ 2: 2_analysis/fst/50k/multi_fst.50k.tsv.gz
+#> ★ 3: 2_analysis/GxP/50000/
+#> ★ 4: 2_analysis/summaries/fst_outliers_998.tsv
+#> ★ 5: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
+#> ★ 6: 2_analysis/twisst/weights/
+#> ★ 7: ressources/plugin/trees/
+#> ★ 8: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+#> ★ 9: 2_analysis/summaries/fst_globals.txt
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 dxy_dir <- as.character(args[1])
 fst_file <- as.character(args[2])
@@ -122,7 +140,10 @@ d_path <- as.character(args[7])
 recombination_file <- as.character(args[8])
 global_fst_file <- as.character(args[9])
 source(twisst_script)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # start script -------------------
 # import fst data
 fst_data <- vroom::vroom(fst_file, delim = '\t') %>%
@@ -132,10 +153,16 @@ fst_data <- vroom::vroom(fst_file, delim = '\t') %>%
   select(GPOS, fst) %>%
   setNames(., nm = c('GPOS','value')) %>%
   mutate(window = str_c('bold(',project_case('a'),'):joint~italic(F[ST])'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # locate dxy data files
 dxy_files <- dir(dxy_dir)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import dxy data
 dxy_data <-  str_c(dxy_dir,dxy_files) %>%
   purrr::map(get_dxy) %>%
@@ -143,7 +170,10 @@ dxy_data <-  str_c(dxy_dir,dxy_files) %>%
   select(N_SITES:GPOS, run) %>%
   mutate(pop1 = str_sub(run,1,6),
          pop2 = str_sub(run,8,13))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compute delta dxy
 dxy_summary <- dxy_data %>%
   group_by(GPOS) %>%
@@ -157,28 +187,42 @@ dxy_summary <- dxy_data %>%
                      str_c('bold(',project_case('e'),'):\u0394~italic(\u03C0)'))) %>%
   gather(key = 'window', value = 'value',2:4) %>%
   filter(window == str_c('bold(',project_case('e'),'):\u0394~italic(d[xy])'))
+```
 
 
+```{r, message = FALSE, warning = FALSE}
 # set G x P traits to be imported
 traits <- c("Bars.lm.50k.5k.txt.gz", "Peduncle.lm.50k.5k.txt.gz", "Snout.lm.50k.5k.txt.gz")
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set trait figure panels
 trait_panels <- c(Bars = str_c('bold(',project_case('h'),')'),
                   Peduncle = str_c('bold(',project_case('i'),')'),
                   Snout = str_c('bold(',project_case('j'),')'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import G x P data
 gxp_data <- str_c(gxp_dir,traits) %>%
   purrr::map(get_gxp) %>%
   join_list() %>%
   gather(key = 'window', value = 'value',2:4)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import genome wide Fst data summary  --------
 globals <- vroom::vroom(global_fst_file, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
   mutate(run = str_c(str_sub(run,1,3),loc,'-',str_sub(run,5,7),loc),
          run = fct_reorder(run,weighted))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # dxy and pi are only shown for one exemplary population (/pair)
 # select dxy pair run (15 is one of the two central runs of the 28 pairs)
 # here, the 15th lowest fst value is identified as "selector"
@@ -186,17 +230,26 @@ selectors_dxy <- globals %>%
   arrange(weighted) %>%
   .$weighted %>%
   .[15]
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # the dxy population pair corresponding to the selector is identified
 select_dxy_runs <- globals %>%
   filter(weighted %in% selectors_dxy) %>%
   .$run %>% as.character()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # then thne dxy data is subset based on the selector
 dxy_select <- dxy_data %>%
   filter(run %in% select_dxy_runs) %>%
   mutate(window = str_c('bold(',project_case('b'),'): italic(d[XY])'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # the pi data is filtered on a similar logic to the dxy data
 # first a table with the genome wide average pi for each population is compiled
 # (based on the first populations from the dxy data table
@@ -206,7 +259,10 @@ pi_summary_1 <- dxy_data %>%
   summarise(avg_pi = mean(PI_POP1)) %>%
   ungroup() %>%
   purrr::set_names(., nm = c('pop','run','avg_pi'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # the mean genome wide average pi is compiled for all the second populations
 # from the dxy data
 # then, the average of all the comparisons is computed for each population
@@ -223,7 +279,10 @@ pi_summary <- dxy_data %>%
             max_pi = max(avg_pi),
             sd_pi = sd(avg_pi)) %>%
   arrange(n)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # one of the central populations with respect to average genome
 # wide pi is identified
 # for this, the 7th lowest pi value of the 14 populations is
@@ -232,12 +291,18 @@ selectors_pi <- pi_summary %>%
   .$mean_pi %>%
   sort() %>%
   .[7]
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # the respective population is identified
 select_pi_pops <- pi_summary %>%
   filter(mean_pi %in% selectors_pi) %>%
   .$pop %>% as.character()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # then the dxy data is subset by that population and the average pi over
 # all pair-wise runs is calculated for each window
 pi_data_select <- dxy_data %>%
@@ -254,33 +319,54 @@ pi_data_select <- dxy_data %>%
             sd_pi = sd(pi)) %>%
   filter(pop %in% select_pi_pops) %>%
   mutate(window = str_c('bold(',project_case('c'),'):~\u03C0'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import recombination data
 recombination_data <- vroom::vroom(recombination_file,delim = '\t') %>%
   add_gpos() %>%
   mutate(window = str_c('bold(',project_case('d'),'):~\u03C1'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import topology weighting data
 twisst_data <- tibble(loc = c('bel','hon'),
                       panel = c('f','g') %>% project_case() %>% str_c('bold(',.,')')) %>%
   purrr::pmap(match_twisst_files) %>%
   bind_rows() %>%
   select(GPOS, topo3,topo_rel,window,weight)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # the "null-weighting" is computed for both locations
 twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~italic(w)[bel]'),
                                  str_c('bold(',project_case('g'),'):~italic(w)[hon]')),
                       weight = c(1/15, 1/105))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # combine data types --------
 data <- bind_rows(dxy_summary, fst_data, gxp_data)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import fst outliers
 outliers <-  vroom::vroom(outlier_table, delim = '\t')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # the focal outlier IDs are set
 outlier_pick <- c('LG04_1', 'LG12_3', 'LG12_4')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # the table for the outlier labels is created
 outlier_label <- outliers %>%
   filter(gid %in% outlier_pick) %>%
@@ -289,17 +375,26 @@ outlier_label <- outliers %>%
          gpos_label = gpos + x_shift_label,
          gpos_label2 = gpos_label - sign(x_shift_label) *.5*10^7,
          window = str_c('bold(',project_case('a'),'):joint~italic(F[ST])'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # the y height of the outlier labels and the corresponding tags is set
 outlier_y <- .45
 outlier_yend <- .475
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # the icons for the traits of the GxP are loaded
 trait_tibble <- tibble(window = c("bold(h):italic(p)[Bars]",
                                   "bold(i):italic(p)[Peduncle]",
                                   "bold(j):italic(p)[Snout]"),
                        grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # finally, the figure is being put together
 p_done <- ggplot()+
   # add gray/white LGs background

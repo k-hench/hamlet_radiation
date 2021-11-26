@@ -2,30 +2,30 @@
 title: "Script repository"
 subtitle: "(Hench *et al.* supplement)"
 author: "Kosmas Hench and Martin Helmkampf"
-date: "2021-08-20"
+date: "2021-11-26"
 documentclass: book
 bibliography: [book.bib]
 biblio-style: apalike
 link-citations: yes
 github-repo: k-hench/bookdown
-description: "Scripts used to produce Figures and Supplementary Figures of 'Ancestral variation, hybridization and modularity fuel a marine radiation' by Hench, Helmkampf, McMillan an Puebla"
+description: "Scripts used to produce Figures and Supplementary Figures of 'Rapid radiation in a highly diverse marine environment' by Hench, Helmkampf, McMillan an Puebla"
 ---
 
 # Intro
 
 
 
-<span style="color:#FF0000">**Disclaimer:** We are currently still in the process of updating the documentation after the last round of revisions. Some sections are thus still not up to date.</span> 
+<span style="color:#FF0000">**Disclaimer:** We are currently still in the process of updating the documentation after the last round of revisions. Some sections are thus still not up to date.</span>
 
 
-[This repository](https://github.com/k-hench/chapter2) contains the complete workflow used in the paper "*Ancestral variation, hybridization and modularity fuel a marine radiation*".
+[This repository](https://github.com/k-hench/hamlet_radiation) contains the complete workflow used in the paper "*Rapid radiation in a highly diverse marine environment*".
 The individual chapters of this documentation follow the separate main steps of the workflow.
 Each of the chapters thus refers to an individual prefix in the _git x.x_ references of the papers method section.
 The individual steps partly depend on each other - especially git 1 - git 3 should be executed in order and before the other steps.
 
 ## Analysis
 
-A documentation of the data preparation and the data analysis (git 1.x - 14.x) can be found at:
+A documentation of the data preparation and the data analysis (git 1.x - 19.x) can be found at:
 
 - git 1.x: [Genotyping](git-1-genotyping-i-snps-only.html)
 - git 2.x: [Genotyping all base pairs](git-2-genotyping-ii-all-callable-sites.html)
@@ -41,6 +41,11 @@ A documentation of the data preparation and the data analysis (git 1.x - 14.x) c
 - git 12.x: [Analysis (<i>F<sub>ST</sub></i> permutation)](git-12-analysis-x-fst-permutation-test.html)
 - git 13.x: [Analysis (whg phylogeny)](git-13-analysis-xi-whole-genome-phylogenies.html)
 - git 14.x: [Analysis (outlier region phylogeny)](git-14-analysis-xii-outlier-region-phylogenies.html)
+- git 15.x: [Analysis ($\pi$ with/without outlier regions)](git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html)
+- git 16.x: [Analysis (IBD)](git-16-analysis-xiv-identity-by-descent.html)
+- git 17.x: [Analysis (dstats)](git-17-analysis-xv-dstats.html)
+- git 18.x: [Genotyping all base pairs (mtDNA and unplaced Contigs)](git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html)
+- git 19.x: [Analysis (Serraninae phyologeny)](git-19-analysis-xvi-serraninae-phylogeny.html)
 
 ## Prerequesites
 
@@ -55,7 +60,7 @@ Furthermore, external dependencies need to be downloaded and deployed at the exp
 
 ## Figures
 
-The creation of the figures is bundled in a single script (git 15) which can be executed once all `nextflow` scripts have successfully run.
+The creation of the figures is bundled in a single script (git 20) which can be executed once all `nextflow` scripts have successfully run.
 
 ```sh
 cd $BASE_DIR
@@ -76,8 +81,9 @@ as well as for all the supplementary figures:
 [SF4](supplementary-figure-4.html), [SF5](supplementary-figure-5.html), [SF6](supplementary-figure-6.html),
 [SF7](supplementary-figure-7.html), [SF8](supplementary-figure-8.html), [SF9](supplementary-figure-9.html),
 [SF10](supplementary-figure-10.html), [SF11](supplementary-figure-11.html), [SF12](supplementary-figure-12.html),
-[SF13](supplementary-figure-13.html), [SF14](supplementary-figure-14.html), [SF15](supplementary-figure-15.html)
-and [SF16](supplementary-figure-16.html).
+[SF13](supplementary-figure-13.html), [SF14](supplementary-figure-14.html), [SF15](supplementary-figure-15.html),
+[SF16](supplementary-figure-16.html), [SF17](supplementary-figure-17.html), [SF18](supplementary-figure-18.html),
+[SF19](supplementary-figure-19.html), [SF20](supplementary-figure-20.html) and [SF21](supplementary-figure-21.html).
 
 ## R setup
 
@@ -114,7 +120,7 @@ sessionInfo()
 ```
 ## R version 4.0.3 (2020-10-10)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04.2 LTS
+## Running under: Ubuntu 20.04.3 LTS
 ## 
 ## Matrix products: default
 ## BLAS:   /usr/local/lib/R/lib/libRblas.so

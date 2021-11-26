@@ -34,11 +34,8 @@ tree_hypo_file <- as.character(args[1])
 tree <- read.tree(tree_hypo_file)
 tree$edge.length <- replace(tree$edge.length, tree$edge.length == "NaN", 0.05)   # Set terminal branches to 0.05
 tree$edge.length[c( 81, 83)] <- tree$edge.length[c( 81, 83)] * 0.1
-# which(tree$edge.length > 1)
-
 
 tree_rooted <- root(phy = tree, outgroup = c("s_tort_3torpan", "20478tabhon", "28393torpan"))
-# tree_s_mid <- phangorn::midpoint(tree_rooted)
 clr_neutral <- rgb(.2, .2, .2)
 
 ### Prepare tree and categorize support values
@@ -47,7 +44,7 @@ tree_plus <- ggtree(tree_rooted)  %>%
   mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
          loc = ifelse(isTip, str_sub(label, -3, -1), "ungrouped"),
          support = as.numeric(label) * 100,
-         support_class = cut(support, c(0,50,70,90,100)) %>% 
+         support_class = cut(support, c(0,50,70,90,100)) %>%
            as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]")),
           `branch.length` = if_else(node %in% c( 212, 213), `branch.length` * .0001, `branch.length`),
           branch_type = if_else(node %in% c(212, 213), "broken", "whole")
@@ -55,7 +52,7 @@ tree_plus <- ggtree(tree_rooted)  %>%
 
 t_plot <- (ggtree(tr = tree_plus,
                    layout = 'fan',
-                      aes(color = spec, linetype = branch_type), size = .2)) + #%>% 
+                      aes(color = spec, linetype = branch_type), size = .2)) + #%>%
     geom_tippoint(aes(color = spec,
                       shape = loc,
                       fill = after_scale(color)), size = .5) +
@@ -106,14 +103,14 @@ p_tdone <- ggplot() +
               ylim = c(0, 1),
               expand = 0) +
   annotation_custom(grob = ggplotGrob(t_plot + theme(legend.position = "none")),
-                    ymin = 0 - y_sep , 
+                    ymin = 0 - y_sep ,
                     ymax = 1 + y_sep,
                     xmin = 0 - x_shift,
                     xmax = 1 + x_shift) +
   theme_void()
 
 p_done <- cowplot::plot_grid(p_tdone, cowplot::get_legend(t_plot +
-                                                  theme_minimal(base_size = plot_text_size) + 
+                                                  theme_minimal(base_size = plot_text_size) +
                                                   theme(legend.position = "right",
                                                         legend.title.align =0,
                                                         legend.key.height = unit(7,"pt"))),rel_widths = c(1,.5))

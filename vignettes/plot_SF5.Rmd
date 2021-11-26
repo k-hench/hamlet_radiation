@@ -18,6 +18,16 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
+
+library(GenomicOriginsScripts)
+library(ggforce)
+library(hypoimg)
+library(hypogen)
+library(vroom)
+
+data_dir <- as.character(args[1])
+globals_file <- as.character(args[2])
 ```
 
 ## Summary
@@ -28,8 +38,9 @@ The Figure can be recreated by running the **R** script `plot_SF5.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF5.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF5.R \
+    2_analysis/fst/50k/ \
+    2_analysis/summaries/fst_globals.txt
 ```
 
 ## Details of `plot_SF5.R`
@@ -41,38 +52,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF5.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF5.R \
@@ -86,6 +66,16 @@ Also the default color scheme is updated and the size of the hamlet ann.
 # args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
 # script_name <- "R/fig/plot_SF5.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -102,21 +92,45 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_SF5.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/fst/50k/
+#> ★ 2: 2_analysis/summaries/fst_globals.txt
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 data_dir <- as.character(args[1])
 globals_file <- as.character(args[2])
+```
+
+
+```{r, message = FALSE, warning = FALSE}
 # script -----------------------
 
 # locate data files
 files <- dir(path = data_dir, pattern = '.50k.windowed.weir.fst.gz')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load genome wide average fst data
 globals <- vroom::vroom(globals_file, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
   mutate(run = str_c(loc,'-',run) %>%
            reformat_run_name()
   )
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # prepare data import settings within a data table (tibble)
 import_table <- list(file = str_c(data_dir,files),
                      fst_threshold = c(.5,.4,.3,.2,.1,.05,.02,.01)) %>%
@@ -125,7 +139,10 @@ import_table <- list(file = str_c(data_dir,files),
             str_remove('^.*/') %>%
             str_sub(.,1,11) %>%
             reformat_run_name())
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import dxy data and compute threshold stats
 get_fst_fixed <- function(file, run, fst_threshold,...){
 
@@ -167,12 +184,18 @@ get_fst_fixed <- function(file, run, fst_threshold,...){
                        threshold_value = treshold_value[1])
   }
 }
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load data and compute statistics based on fixed fst threshold
 data <- purrr::pmap_dfr(import_table, get_fst_fixed) %>%
   left_join(globals) %>%
   mutate(run = fct_reorder(run, weighted))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # pre-format labels
 data2 <- data %>%
   select(threshold_value,weighted,n,avg_length,overal_length) %>%
@@ -187,10 +210,16 @@ data2 <- data %>%
          variable = factor(variable, levels = c('atop(Number~of,Regions)',
                                                 'atop(Average~Region,Length~(kb))',
                                                 'atop(Cum.~Region,Length~(Mb))')))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set font size
 base_line_clr <- "black"
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compile plot
 p_done <- data2 %>%
   # select thresholds of interest

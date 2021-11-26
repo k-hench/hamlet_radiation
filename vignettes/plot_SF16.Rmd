@@ -18,6 +18,17 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
+
+library(paletteer)
+library(patchwork)
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(ggtext)
+
+admx_path <- as.character(args[1])
+pheno_file <- as.character(args[2])
 ```
 
 ## Summary
@@ -28,8 +39,9 @@ The Figure can be recreated by running the **R** script `plot_SF16.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF16.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF16.R \
+    2_analysis/admixture/ \
+    metadata/phenotypes.sc
 ```
 
 ## Details of `plot_SF16.R`
@@ -41,8 +53,20 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
+```{r, eval = FALSE}
+#!/usr/bin/env Rscript
+# run from terminal:
+# Rscript --vanilla R/fig/plot_SF16.R \
+#     2_analysis/admixture/ \
+#     metadata/phenotypes.sc
+# ===============================================================
+# This script produces Suppl. Figure 16 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
+# ---------------------------------------------------------------
+# ===============================================================
+# args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
+# script_name <- "R/fig/plot_SF16.R"
+args <- commandArgs(trailingOnly = FALSE)
 ```
 
 The next section processes the input from the command line.
@@ -53,39 +77,6 @@ This information will later be written into the meta data of the figure to help 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF16.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF16.R \
-    # 2_analysis/admixture/ \
-    # metadata/phenotypes.sc
-# ===============================================================
-# This script produces Suppl. Figure 16 of the study "Rapid radiation in a
-# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
-# script_name <- "R/fig/plot_SF16.R"
-args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 renv::activate()
 library(paletteer)
@@ -107,47 +98,84 @@ args = args[7:length(args)]
 cat(' ')
 cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
 cli::rule(right = getwd())
+```
 
+```r
+#> ── Script: R/fig/plot_SF16.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/admixture/
+#> ★ 2: metadata/phenotypes.sc
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 admx_path <- as.character(args[1])
 pheno_file <- as.character(args[2])
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load outlier window IDs (crop from admixture result file names)
 gids <- dir(admx_path,
             pattern = "pop.*15.txt") %>%
   str_remove("pop.") %>%
   str_remove(".15.txt")
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load phenotype data
 pheno_data <- read_sc(pheno_file) %>%
   select(id, Bars, Peduncle, Snout) %>%
   filter(!is.na(Bars))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load admixture data
 data <- gids %>%
   map_dfr(data_amdx, admx_path = admx_path,
           k = 2)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # associate phenotypic trait with outlier region
 pheno_facet <- tibble( trait = c("Snout","Bars",  "Peduncle"),
                        gid = c("LG04_1", "LG12_3", "LG12_4")) %>%
   mutate(facet_label = str_c(gid, " / ", trait))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set outlier region labels
 gid_labels <-  c(LG04_1 = "LG04 (A)",
                  LG12_3 = "LG12 (B)",
                  LG12_4 = "LG12 (C)")
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set outlier region phenotypic traits
 gid_traits <-  c(LG04_1 = "Snout",
                  LG12_3 = "Bars",
                  LG12_4 = "Peduncle")
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set path to trait images
 trait_icons <- c(LG04_1 = "<img src='ressources/img/snout_c.png' width='60' />   ",
                LG12_3 = "<img src='ressources/img/bars_c.png' width='60' />    ",
                LG12_4 = "<img src='ressources/img/peduncle_c.png' width='60' />    ")
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # format phenotype data
 pheno_plot_data <- data %>%
   filter(!duplicated(id)) %>%
@@ -159,15 +187,24 @@ pheno_plot_data <- data %>%
                values_to = "phenotype",
                cols = Bars:Snout) %>%
   left_join(pheno_facet)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # helper for consistent sample order across all panels
 sample_order <- pheno_plot_data %>%
   filter(!duplicated(id)) %>%
   select(id, ord_nr)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create plot panels a-c
 p_ad <- c("LG04_1", "LG12_3", "LG12_4") %>% purrr::map(adm_plot, data = data)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create dummy plot for the phenotype legend
 p_phno <- pheno_plot_data %>%
   ggplot(aes(x = ord_nr))+
@@ -180,13 +217,19 @@ p_phno <- pheno_plot_data %>%
   theme_minimal()+
   theme(legend.title = element_markdown(hjust = .5),
     legend.position = "bottom")
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # prepare table with fish annotations for the species indication
 tib_drawing <- pheno_plot_data %>%
   group_by(spec) %>%
   summarise(pos = (min(ord_nr)+max(ord_nr))*.5) %>%
   ungroup()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create sub-plot for species indication
 p_spec <- pheno_plot_data %>%
   group_by(spec) %>%
@@ -214,7 +257,10 @@ p_spec <- pheno_plot_data %>%
         axis.title = element_blank(),
         axis.ticks = element_blank(),
         axis.text.x = element_blank())
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create sub-plot for samplong location indication
 p_loc <- pheno_plot_data %>%
   ggplot(aes(x = factor(ord_nr)))+
@@ -233,13 +279,19 @@ p_loc <- pheno_plot_data %>%
         axis.title = element_blank(),
         axis.ticks = element_blank(),
         axis.text.x = element_blank())
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compose legend from individual legend parts
 p_l <- (get_legend(p_phno) %>% ggdraw()) +
   (get_legend(p_spec) %>% ggdraw()) +
   (get_legend(p_loc) %>% ggdraw()) +
   plot_layout(nrow = 1)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # finalize figure
 p_prep <- p_ad[[1]] +
   p_ad[[2]] +
@@ -248,7 +300,10 @@ p_prep <- p_ad[[1]] +
   plot_layout(ncol = 1, heights = c(.4,.4,.4,.08,.02,.1)) &
   theme(legend.position = "none",
         axis.text = element_text(size = 12))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # crop final figure (remove whitespace on left margin)
 p_done <- ggdraw(p_prep, xlim = c(.023,1))
 ```

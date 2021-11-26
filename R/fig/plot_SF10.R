@@ -37,7 +37,7 @@ data <- str_c(dxy_path,files) %>%
   purrr::set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
 
-genoe_wide_avg <- data %>% 
+genome_wide_avg <- data %>% 
   group_by(run) %>%
   summarise(avg_dxy = mean(dxy)) %>%
   ungroup() %>%
@@ -56,8 +56,7 @@ model_data <- data %>%
   bind_cols(., summarise_model(.))
 
 dxy_subplot <- function(select_idx){
-  #run_select <- genoe_wide_avg$run[c(1,7,14,21,28)]
-  run_select <- genoe_wide_avg$run[select_idx]
+  run_select <- genome_wide_avg$run[select_idx]
   
   plt_data <- data %>%
     filter(run %in% run_select) %>%

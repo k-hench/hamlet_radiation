@@ -7,6 +7,9 @@ editor_options:
 
 
 
+
+
+
 ## Summary
 
 This is the accessory documentation of Figure S1.
@@ -15,14 +18,14 @@ The Figure can be recreated by running the **R** script `plot_SF1.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF1.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF1.R \
+    ressources/Rabosky_etal_2018/dataFiles/ratemat_enhanced.csv
 ```
 
 ## Details of `plot_SF1.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/) 
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
 
 ### Config
 
@@ -32,15 +35,16 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```r
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF1.R 2_analysis/pca/
+# Rscript --vanilla R/fig/plot_SF1.R \
+#     ressources/Rabosky_etal_2018/dataFiles/ratemat_enhanced.csv
 # ===============================================================
-# This script produces Suppl. Figure 1 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 1 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("2_analysis/pca/")
+# args <- c( "ressources/Rabosky_etal_2018/dataFiles/ratemat_enhanced.csv" )
 # script_name <- "R/fig/plot_SF1.R"
+args <- commandArgs(trailingOnly = FALSE)
 ```
 
 The next section processes the input from the command line.
@@ -52,26 +56,29 @@ Then we drop all the imported information besides the arguments following the sc
 
 
 ```r
-args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
-library(patchwork)
 library(hypoimg)
-library(hypogen)
+
 cat('\n')
 script_name <- args[5] %>%
-  str_remove(., '--file=')
+  str_remove(.,'--file=')
 
 plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
+  str_c('mother-script = ',getwd(),'/',.)
 
-args <- process_input(script_name, args)
+cli::rule( left = str_c(crayon::bold('Script: '),crayon::red(script_name)))
+args = args[7:length(args)]
+cat(' ')
+cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
+cli::rule(right = getwd())
 ```
 
 ```r
 #> ── Script: R/fig/plot_SF1.R ────────────────────────────────────────────
 #> Parameters read:
-#> ★ 1: 2_analysis/pca/
+#> ★ 1: ressources/Rabosky_etal_2018/dataFiles/ratemat_enhanced.csv
 #> ────────────────────────────────────────── /current/working/directory ──
 ```
 
@@ -81,70 +88,48 @@ Also the default color scheme is updated and the size of the hamlet ann.
 
 ```r
 # config -----------------------
-pca_dir <- as.character(args[1])
-clr_alt <- clr
-clr_alt[["uni"]] <- "lightgray"
+rate_file <- as.character(args[1])
 ```
 
-Then the layout of the legend elements, labels and patch sizes are pre-configured.
 
 
 ```r
-fish_tib <- tibble(short = names(clr)[!names(clr) %in% c("flo", "tab", "tor")],
-                   x = c(0.5,  3.5,  7,  9.7, 12.25, 15.25, 18, 21.5))
+### Tip-specific speciation rates across Fish Tree of Life
+### ------------------------------------------------------
+## Import FToL data
+rates <- read_csv(file = rate_file)
 
-key_sz <- .75
-sp_fam <- rep(c("H", "S", "H"), c(8, 2, 1)) %>% set_names(nm = names(sp_names))
+p_done <- ggplot(rates, aes(lambda.tv)) +
+  geom_histogram(binwidth = 0.25, colour="grey20", fill="grey80", size = .2) +
+  labs(x = "Mean speciation rate", y = "Number of species") +
+  geom_segment(aes(x = 2.5 , y = 200, xend = 2.5, yend = 1500),
+               size = 0.2, color = "#0976BA") +
+  annotate("text", x = 2.5, y = 1750, label = "Hamlets",
+           size =  plot_text_size / ggplot2:::.pt, color = "#0976BA") +
+  geom_segment(aes(x = 3.5 , y = 200, xend = 3.5, yend = 1500),
+               size = 0.2, color = "grey60") +
+  annotate("text", x = 3.5, y = 2150, label = "Haplo-\nchromines",
+           size =  plot_text_size / ggplot2:::.pt, color = "grey60") +
+  geom_segment(aes(x = 4.5 , y = 200, xend = 4.5, yend = 1500),
+               size = 0.2, color = "grey60") +
+  annotate("text", x = 4.5, y = 1750, label = "Labeobarbus",
+           size = plot_text_size / ggplot2:::.pt, color = "grey60") +
+  coord_cartesian(xlim = c(-.2, 5.1),
+                  ylim = c(-200, 8400),
+                  expand = 0) +
+  theme_bw(base_size = plot_text_size) +
+  theme(panel.grid.minor = element_blank())
 ```
-
-Now, the legend is created.
-
-
-```r
-p_leg <- fish_tib %>% 
-  ggplot() +
-  coord_equal(xlim = c(-.05, 24), expand = 0) +
- geom_tile(aes(x = x, y = 0,
-                fill = short, 
-                color = after_scale(prismatic::clr_darken(fill, .25))),
-            width = key_sz, height = key_sz, size = .3) +
-  geom_text(aes(x = x + .6, y = 0,
-                label = str_c(sp_fam[short], ". ", sp_names[short])), 
-            hjust = 0, fontface = "italic", size = plot_text_size / ggplot2:::.pt) +
-  pmap(fish_tib, plot_fish_lwd, width = 1, height = 1, y = 0) +
-  scale_fill_manual(values = clr, guide = FALSE) +
-  theme_void()
-```
-
-
-
-Then, by running the function `pca_plot_no_fish()` one on each location, the figure can be assembled.
-
-
-```r
-p_done <- cowplot::plot_grid((tibble(loc = c("bel.", "hon.", "pan."), 
-                              mode = rep(c("subset_non_diverged"), 3),
-                              pc1 = 1,
-                              pc2 = 2) %>% 
-                        pmap(pca_plot_no_fish) %>% 
-                        wrap_plots(ncol = 3) +
-                        plot_annotation(tag_levels = "a") & 
-                        theme(plot.background = element_blank())),
-                     p_leg,
-  ncol = 1 ,
-  rel_heights = c(1,.1))
-```
-
-
 
 Finally, we can export Figure S1.
 
 
 ```r
-hypo_save(p_done, filename = 'figures/SF1.pdf',
-          width = f_width,
-          height = f_width * .38,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
+hypo_save("figures/SF1.pdf",
+       plot = p_done,
+       width = f_width_half,
+       height = f_width_half * .6,
+       comment = plot_comment,
+       device = cairo_pdf,
+       bg = "transparent")
 ```

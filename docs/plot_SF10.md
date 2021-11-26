@@ -7,6 +7,9 @@ editor_options:
 
 
 
+
+
+
 ## Summary
 
 This is the accessory documentation of Figure S10.
@@ -15,14 +18,14 @@ The Figure can be recreated by running the **R** script `plot_SF10.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF10.R 2_analysis/pi/50k/
-
+Rscript --vanilla R/fig/plot_SF10.R \
+    2_analysis/dxy/50k/
 ```
 
 ## Details of `plot_SF10.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**ggtext**](https://wilkelab.org/ggtext/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
 
 ### Config
 
@@ -32,15 +35,16 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```r
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF10.R 2_analysis/pi/50k/
+# Rscript --vanilla R/fig/plot_SF10.R \
+#     2_analysis/dxy/50k/
 # ===============================================================
-# This script produces Suppl. Figure 10 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 10 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/pi/50k/')
+# args <- c("2_analysis/dxy/50k/")
 # script_name <- "R/fig/plot_SF10.R"
+args <- commandArgs(trailingOnly = FALSE)
 ```
 
 The next section processes the input from the command line.
@@ -52,13 +56,12 @@ Then we drop all the imported information besides the arguments following the sc
 
 
 ```r
-args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
-library(hypoimg)
 library(hypogen)
-library(ggtext)
-
+library(hypoimg)
+library(patchwork)
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -72,144 +75,147 @@ args <- process_input(script_name, args)
 ```r
 #> ── Script: R/fig/plot_SF10.R ────────────────────────────────────────────
 #> Parameters read:
-#> ★ 1: 2_analysis/pi/50k/
-#> ────────────────────────────────────────── /current/working/directory ───
+#> ★ 1: 2_analysis/dxy/50k/
+#> ────────────────────────────────────────── /current/working/directory ──
 ```
 
-The path containing the $\pi$ data is received and stored inside a more descriptive variable.
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
 
 
 ```r
 # config -----------------------
-pi_path <- as.character(args[1])
+dxy_path <- as.character(args[1])
 ```
-
-This path is then screened for input files.
-
-
-```r
-# locate pi data files
-files <- dir(pi_path, pattern = '^[a-z]{6}.50k')
-```
-
-All $\pi$ data files are loaded and compiled into a single data frame.
-
-
-```r
-# load pi data
-data <- str_c(pi_path, files) %>%
-  purrr::map(get_pi) %>%
-  bind_rows()
-```
-
-To be able to indicate the genome wide average $\pi$ in the background of the plot, we summarize the data for each population and store the summary in a new table.
 
 
 
 ```r
-# create table for the indication of genome wide average pi in the plot background
-# (rescale covered pi range to the extent of the genome)
-global_bar <- data %>%
-  # filter to non-overlaping windows only
-  filter( BIN_START %% 50000 == 1) %>%
-  select(N_VARIANTS, PI, spec) %>%
-  group_by(spec) %>%
-  summarise(genome_wide_pi = sum(N_VARIANTS*PI)/sum(N_VARIANTS)) %>%
-  arrange(genome_wide_pi) %>%
+# locate dxy data files
+files <- dir(dxy_path)
+```
+
+
+
+```r
+# load dxy data
+data <- str_c(dxy_path,files) %>%
+  purrr::map(get_dxy) %>%
+  bind_rows() %>%
+  purrr::set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
+                      'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
+```
+
+
+
+```r
+genome_wide_avg <- data %>%
+  group_by(run) %>%
+  summarise(avg_dxy = mean(dxy)) %>%
   ungroup() %>%
-  mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
-         scaled_pi = genome_wide_pi/max(genome_wide_pi))
+  arrange(avg_dxy)
 ```
-
-For the hamlet illustrations, we also create a table in which we assign each illustration to the matching population.
-
-
-```r
-# prepare plot annotaton images
-grob_tibble <- global_bar$spec %>%
-  purrr::map(fish_plot) %>%
-  bind_rows()
-```
-
-The genome wide average $\pi$ indicated in the plot background uses a secondary x-axis. 
-As a preparation for this, we create the desired breaks and labels for the secondary axis.
 
 
 
 ```r
-# prepare plotting elements --------
-# pre-define secondary x-axis breaks
-sc_ax <- scales::cbreaks(c(0,max(global_bar$genome_wide_pi)),
-                         scales::pretty_breaks(4))
-
-# pre-define secondary x-axis labels
-labels <- str_c(c("", sc_ax$breaks[2:6]*1000),
-                c("0", rep("\u00B710^-3",5)))
+model_data <- data %>%
+  pivot_longer(cols = starts_with("pi_pop"),
+               names_to = "pi_pop",
+               values_to= "pi") %>%
+  mutate(pop = str_remove(pi_pop,"pi_pop") %>% str_c("Pop. ",.))  %>%
+  # filter fst data to "non-overlapping" windows
+  filter(start %% 50000 == 1 ) %>%
+  group_by(run, pop) %>%
+  nest() %>%
+  mutate(mod =  map(data, function(data){lm(pi ~ dxy, data = data)})) %>%
+  bind_cols(., summarise_model(.))
 ```
 
-
-Instead of ordering the populations by alphabet, we want them to be sorted by genome wide average $\pi$.
-For this we turn the populations into a factor.
 
 
 ```r
-# sort pair-wise population comparisons by average genome wide pi
-data <- data %>%
-  mutate(spec = factor(spec, levels = levels(global_bar$spec)))
+dxy_subplot <- function(select_idx){
+  run_select <- genome_wide_avg$run[select_idx]
+
+  plt_data <- data %>%
+    filter(run %in% run_select) %>%
+    pivot_longer(cols = starts_with("pi_pop"),
+                 names_to = "pi_pop",
+                 values_to= "pi") %>%
+    mutate(pop = str_remove(pi_pop,"pi_pop") %>%
+             str_c("Pop. ",.))
+
+  base_lwd <- .15
+  base_line_clr <- "black"
+
+  p <- plt_data %>%
+    ggplot(aes(x = dxy, y = pi))+
+    facet_grid(pop ~ run,switch = "y")+
+    geom_hex(bins = 30, color = rgb(0,0,0,.3),
+             aes(fill=log10(..count..)))+
+    # add regression line
+    geom_abline(data = model_data %>%
+                  filter(run %in% run_select),
+                color = rgb(1,1,1,.8),
+                linetype = 2,
+                aes(intercept = intercept, slope = slope)) +
+    # add R^2 label
+    geom_text(data = model_data%>%
+                filter(run %in% run_select), x = 0, y = .022,
+              parse = TRUE, hjust = 0, vjust = 1, size = 3,
+              aes(label = str_c('italic(R)^2:~',round(r.squared, 3)))) +
+    scale_y_continuous("\U03C0",
+                       breaks = c(0,.01,.02),labels = c("0", "0.01", "0.02"))+
+    scale_x_continuous(expression(italic(d[XY])),
+                       breaks = c(0,.01,.02),labels = c("0", "0.01", "0.02"))+
+    scico::scale_fill_scico(palette = 'berlin', limits = c(0,4.2))+
+    guides(fill = guide_colorbar(direction = 'horizontal',
+                                 title.position = 'top',
+                                 barheight = unit(7,'pt'),
+                                 barwidth = unit(130,'pt')))+
+    # general plot layout
+    theme_minimal()+
+    theme(legend.position = "bottom",
+          axis.title.y = element_text(face = "italic"),
+          strip.placement = "outside",
+          strip.background.x = element_rect(fill = rgb(.95,.95,.95),
+                                            colour = base_line_clr,size = base_lwd),
+          panel.border = element_rect(size = base_lwd,
+                                      color = base_line_clr %>%
+                                        clr_lighten(factor = .8), fill = rgb(1,1,1,0))
+    )
+  p
+}
 ```
 
-Then we can put together the final plot.
 
 
 ```r
-# compose final figure
-p_done <- ggplot()+
-  # general plot structure separated by run
-  facet_wrap( .~spec, as.table = TRUE, ncol = 1, dir = 'v')+
-  # add genome wide average pi in the background
-  geom_rect(data = global_bar %>% mutate(xmax = scaled_pi * hypo_karyotype$GEND[24]),
-            aes(xmin = 0, xmax = xmax, ymin = -Inf, ymax = Inf),
-            color = rgb(1,1,1,0),
-            fill = clr_below)+
-  # add LG borders
-  geom_vline(data = hypogen::hypo_karyotype,aes(xintercept = GEND),color = hypo_clr_lg)+
-  # add pi data points
-  geom_point(data = data, aes(x = gpos, y = PI),
-             size=.2, color = plot_clr) +
-  # add fish images
-  geom_hypo_grob2(data = grob_tibble,
-                  aes(grob = grob, rel_x = .975, rel_y = .5),
-                  angle = 0, height = .8, width = .12)+
-  # set axis layout
-  scale_x_hypo_LG(sec.axis =  sec_axis(~ ./hypo_karyotype$GEND[24],
-                                       breaks = (sc_ax$breaks/max(global_bar$genome_wide_pi)),
-                                       labels = labels,
-                                       name = "Genomic position/ Genome wide *\u03C0*"))+
-  scale_y_continuous(name = "*\u03C0*", breaks = c(0,.006,.012))+
-  # set plot extent
-  coord_cartesian(xlim = c(0, hypo_karyotype$GEND[24]*1.06))+
-  # general plot layout
-  theme_hypo()+
-  theme(strip.text = element_blank(),
-        legend.position = 'none',
-        axis.title.x = element_markdown(),
-        axis.title.y = element_markdown(),
-        axis.text.x.bottom = element_markdown(colour = 'darkgray'))
+ps <- list(1:7, 8:14, 15:21, 22:28) %>% map(dxy_subplot)
 ```
 
 
+
+```r
+p_done <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = element_blank()),
+          ps[[2]] + theme(legend.position = "none", axis.title.x = element_blank()),
+          ps[[3]] + theme(legend.position = "none", axis.title.x = element_blank()),
+          ps[[4]] + theme(legend.position = "none"),
+          ps[[4]]  %>% get_legend(),
+          ncol = 1, rel_heights = c(1,1,1,1,.3))
+```
 
 Finally, we can export Figure S10.
 
 
 ```r
 # export final figure
-hypo_save(filename = 'figures/SF10.png',
+scl <- 1.2
+hypo_save(filename = 'figures/SF10.pdf',
           plot = p_done,
-          width = 8,
-          height = 8,
-          type = "cairo",
+          width = f_width * scl,
+          height = f_width * 1.15 * scl,
+          device = cairo_pdf,
           comment = plot_comment)
 ```
-
----

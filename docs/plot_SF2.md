@@ -7,6 +7,9 @@ editor_options:
 
 
 
+
+
+
 ## Summary
 
 This is the accessory documentation of Figure S2.
@@ -15,14 +18,14 @@ The Figure can be recreated by running the **R** script `plot_SF2.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF2.R 
-
+Rscript --vanilla R/fig/plot_SF2.R \
+    ressources/Rabosky_etal_2018/
 ```
 
 ## Details of `plot_SF2.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
 
 ### Config
 
@@ -33,15 +36,15 @@ The scripts start with a header that contains copy & paste templates to execute 
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF2.R \
-#    2_analysis/dxy/50k/ 2_analysis/fst/50k/ 2_analysis/summaries/fst_globals.txt
+#     ressources/Rabosky_etal_2018/
 # ===============================================================
-# This script produces Suppl. Figure 2 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 2 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c('2_analysis/dxy/50k/', '2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt')
+# args <- c( "ressources/Rabosky_etal_2018/" )
 # script_name <- "R/fig/plot_SF2.R"
+args <- commandArgs(trailingOnly = FALSE)
 ```
 
 The next section processes the input from the command line.
@@ -53,251 +56,238 @@ Then we drop all the imported information besides the arguments following the sc
 
 
 ```r
-args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
+renv::activate()
+library(BAMMtools)
 library(GenomicOriginsScripts)
-library(hypoimg)
-library(hypogen)
+library(ggplotify)
 library(patchwork)
+library(ggforce)
+library(glue)
+library(ggtext)
+library(hypoimg)
 
 cat('\n')
 script_name <- args[5] %>%
-  str_remove(., '--file=')
+  str_remove(.,'--file=')
 
 plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
+  str_c('mother-script = ',getwd(),'/',.)
 
-args <- process_input(script_name, args)
+cli::rule( left = str_c(crayon::bold('Script: '),crayon::red(script_name)))
+args = args[7:length(args)]
+cat(' ')
+cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
+cli::rule(right = getwd())
 ```
 
 ```r
 #> ── Script: R/fig/plot_SF2.R ────────────────────────────────────────────
 #> Parameters read:
-#>  ★ 1: 2_analysis/dxy/50k/
-#>  ★ 2: 2_analysis/fst/50k/
-#>  ★ 3: 2_analysis/summaries/fst_globals.txt
+#> ★ 1: ressources/Rabosky_etal_2018/
 #> ────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directories containing the $F_{ST}$ and $d_{XY}$ data, as well as the file containing the genome wide average  $F_{ST}$ values are received and stored in respective variables. Also, we set a few parameters for the plot layout:
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
 
 
 ```r
 # config -----------------------
-dxy_dir <- as.character(args[1])
-fst_dir <- as.character(args[2])
-fst_globals <- as.character(args[3])
-wdh <- .3          # The width of the boxplots
-scaler <- 20       # the ratio of the Fst and the dxy axis
-clr_sec <- 'gray'  # the color of the secondary axis (dxy)
+basepath <-  as.character(args[1])
+
+### Evolutionary rate analysis of Serraninae
+### ----------------------------------------
+### Code adapted from bamm-project.org and Rabosky et al. 2018 (Nature)
+
+source(paste(basepath, "scripts/supporting_fxns/PlottingFunctions.R", sep = ""))
 ```
 
-
-Then we start with the data import for the $F_{ST}$ data.
-First all file names are collected, then all files are imporeted and combined into a single tibble.
 
 
 ```r
-# start script -------------------
-# import Fst
-fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
-
-fst_data <- str_c(fst_dir,fst_files) %>%
-  purrr::map(summarize_fst) %>%
-  bind_rows()
+## Import FToL data
+eventfile_vr <- paste(basepath, "dataFiles/bamm_results/12k_tv1/event_data_thinned.csv", sep="")
+treefile <- paste(basepath, "dataFiles/bamm_results/12k_tv1/bigfish_no_outgroup.tre", sep="")
 ```
 
-The same data import approach is used for the $d_{XY}$ data.
 
 
 ```r
-# lookup dxy files
-dxy_files <- dir(dxy_dir)
+tree_ftol <- read.tree(treefile)
 
-# import dxy
-dxy_data <-  str_c(dxy_dir,dxy_files) %>%
-  purrr::map(summarize_dxy) %>%
-  bind_rows()
+## Map event data onto time-calibrated tree
+bamm_ftol <- getEventData(tree_ftol, eventfile_vr, burnin = 0)
 ```
 
-The rank of the pair-wise species comparisons according to their $F_{ST}$ determined.
 
 
 ```r
-# determine fst ranking
-fst_order <- fst_data %>%
-  select(run, `mean_weighted-fst`) %>%
-  mutate(run = fct_reorder(run, `mean_weighted-fst`))
+## Extract Serraninae subtree
+Serraninae <- c("Hypoplectrus_gemma", "Hypoplectrus_unicolor", "Hypoplectrus_gummigutta", "Hypoplectrus_chlorurus", "Hypoplectrus_aberrans", "Hypoplectrus_nigricans",
+                "Hypoplectrus_guttavarius", "Hypoplectrus_indigo", "Hypoplectrus_puella", "Serranus_tortugarum", "Serranus_tabacarius", "Schultzea_beta",
+                "Diplectrum_formosum", "Diplectrum_bivittatum", "Diplectrum_pacificum", "Diplectrum_maximum", "Serranus_notospilus", "Serranus_phoebe",
+                "Serranus_psittacinus", "Serranus_baldwini", "Serranus_tigrinus", "Paralabrax_albomaculatus", "Paralabrax_dewegeri", "Paralabrax_callaensis",
+                "Paralabrax_loro", "Paralabrax_auroguttatus", "Paralabrax_clathratus", "Paralabrax_humeralis", "Paralabrax_nebulifer", "Paralabrax_maculatofasciatus",
+                "Zalanthias_kelloggi", "Serranus_cabrilla", "Serranus_atricauda", "Serranus_scriba", "Serranus_hepatus", "Serranus_accraensis", "Centropristis_striata",
+                "Chelidoperca_occipitalis", "Chelidoperca_investigatoris", "Chelidoperca_pleurospilus")
+
+Hamlets <- c("Hypoplectrus_gemma", "Hypoplectrus_unicolor", "Hypoplectrus_gummigutta", "Hypoplectrus_chlorurus", "Hypoplectrus_aberrans", "Hypoplectrus_nigricans",
+             "Hypoplectrus_guttavarius", "Hypoplectrus_indigo", "Hypoplectrus_puella")
 ```
 
-Then the $F_{ST}$ and $d_{XY}$ data are merged (this is due to the legacy of this script on by now makes little sense since the $F_{ST}$ is not plotted anymore).
 
 
 ```r
-# merge fst and dxy cc_data
-# (large parts of this code are now unnecessary after the separation of dxy and
-#  fst plots into separate panels b & c)
-data <- left_join(fst_data, dxy_data) %>%
-  select(c(8,1:7,9:15)) %>%
-  # reformat table to enable parallel plotting (with secondary axis)
-  gather(key = 'stat', value = 'val', 2:15) %>%
-  # sumstat contains the values needed to plot the boxplots (quartiles, etc)
-  separate(stat, into = c('sumstat', 'popstat'), sep = '_') %>%
-  # duplicate dxy values scaled to fst range
-  mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
-  unite(temp, val, val_scaled) %>%
-  # separate th eoriginal values from the scales ons (scaled = secondary axis)
-  spread(.,key = 'sumstat',value = 'temp') %>%
-  separate(mean, into = c('mean','mean_scaled'),sep = '_', convert = TRUE) %>%
-  separate(median, into = c('median','median_scaled'), sep = '_', convert = TRUE) %>%
-  separate(sd, into = c('sd','sd_scaled'),sep = '_', convert = TRUE) %>%
-  separate(lower, into = c('lower','lower_scaled'), sep = '_', convert = TRUE) %>%
-  separate(upper, into = c('upper','upper_scaled'), sep = '_', convert = TRUE) %>%
-  separate(lowpoint, into = c('lowpoint','lowpoint_scaled'), sep = '_', convert = TRUE) %>%
-  separate(highpoint, into = c('highpoint','highpoint_scaled'), sep = '_', convert = TRUE) %>%
-  # include "dodge"-positions for side-by-side plotting (secondary axis)
-  mutate(loc = str_sub(run,4,6),
-         run = factor(run, levels = levels(fst_order$run)),
-         x = as.numeric(run) ,
-         x_dodge = ifelse(popstat == 'dxy', x + .25, x - .25),
-         x_start_dodge = x_dodge - wdh/2,
-         x_end_dodge = x_dodge + wdh/2,
-         popstat_loc = str_c(popstat,'[',loc,']'))
+bamm_serrn <- subtreeBAMM(bamm_ftol, tips = Serraninae)
+tree_serrn <- as.phylo(bamm_serrn)
 ```
 
-For the network plots we need a *long-format* version of the  $F_{ST}$ data though (another legacy piece).
 
 
 ```r
-# sort run by average genome wide Fst
-fst_data_gather <- data %>%
-  filter(popstat == "weighted-fst")  %>% 
-  gather(key = 'stat', value = 'val', -run) %>%
-  # sumstat contains the values needed to plot the boxplots (quartiles, etc)
-  separate(stat, into = c('sumstat', 'popstat'), sep = '_') %>%
-  # duplicate dxy values scaled to fst range
-  mutate(val_scaled = ifelse(popstat == 'dxy', val * scaler , val)) %>%
-  unite(temp, val, val_scaled) %>%
-  # separate th eoriginal values from the scales ons (scaled = secondary axis)
-  spread(.,key = 'sumstat',value = 'temp') %>%
-  separate(mean, into = c('mean','mean_scaled'),sep = '_', convert = TRUE) %>%
-  separate(median, into = c('median','median_scaled'), sep = '_', convert = TRUE) %>%
-  separate(sd, into = c('sd','sd_scaled'),sep = '_', convert = TRUE) %>%
-  separate(lower, into = c('lower','lower_scaled'), sep = '_', convert = TRUE) %>%
-  separate(upper, into = c('upper','upper_scaled'), sep = '_', convert = TRUE) %>%
-  separate(lowpoint, into = c('lowpoint','lowpoint_scaled'), sep = '_', convert = TRUE) %>%
-  separate(highpoint, into = c('highpoint','highpoint_scaled'), sep = '_', convert = TRUE) %>%
-  # include "dodge"-positions for side-by-side plotting (secondary axis)
-  mutate(loc = str_sub(run,4,6),
-         run = factor(run, levels = levels(fst_order$run)),
-         x = as.numeric(run) ,
-         x_dodge = ifelse(popstat == 'dxy', x + .25, x - .25),
-         x_start_dodge = x_dodge - wdh/2,
-         x_end_dodge = x_dodge + wdh/2,
-         popstat_loc = str_c(popstat,'[',loc,']'))
-
-run_ord <- tibble(run = levels(data$run),
-                  run_ord = 1:length(levels(data$run)))
+## Mean phylorate plot
+bamm_serrn_abbr <- bamm_serrn
+bamm_serrn_abbr$tip.label <- bamm_serrn$tip.label %>%
+  str_replace(pattern = "([A-Z])[a-z]*_([a-z]*)", "italic(\\1.~\\2)") %>%
+  str_replace(pattern = "C.", "Ch.") %>%
+  str_replace(pattern = "Ch.~striata", "Cp.~striata") %>%
+  str_replace(pattern = "S.", "Se.") %>%
+  str_replace(pattern = "Se.~beta", "Sc.~'beta'") %>%
+  str_replace(pattern = "P.", "Pa.") %>%
+  str_replace(pattern = "Z.", "Pl.") %>%
+  ggplot2:::parse_safe()
 ```
 
-At this point we can prepare the plotting of the network panel.
-This starts by creating a tibble with the configurations of each individualnetwork.
 
 
 ```r
-# assemble panel a
-networx <- tibble( loc = c('bel','hon', 'pan'),
-                   n = c(5, 6, 3),
-                   label = list(str_c(c('ind','may','nig','pue','uni'),'bel'),
-                                str_c(c('abe','gum','nig','pue','ran','uni'),'hon'),
-                                str_c(c('nig','pue','uni'),'pan')),
-                   weight = c(1,1.45,1)) %>%
-  purrr::pmap_dfr(network_layout) %>%
-  mutate(edges = map(edges, function(x){x %>% left_join(fst_data_gather %>% filter(popstat == "weighted-fst") %>% select(run, median, mean)) }))
+## Credible sets of shift configurations
+css <- credibleShiftSet(bamm_serrn_abbr, expectedNumberOfShifts = 1, threshold = 5, set.limit = 0.95)
+summary(css)
 ```
 
-Then we can plot the networks by running `plot_network()` and combine them using `cowplot::plot_grid()`.
 
 
 ```r
-plot_list <- networx %>%
-  purrr::pmap(plot_network, node_lab_shift = .2)
+clr_tree <- scico::scico(6, palette = "berlin") %>%
+  prismatic::clr_desaturate(shift = .4) %>%
+  prismatic::clr_darken(shift = .2)
 
-p_net <- cowplot::plot_grid(
-  grid::textGrob('Belize', gp = gpar(fontsize = plot_text_size, col = clr_loc[["bel"]])),
-  grid::textGrob('Honduras', gp = gpar(fontsize = plot_text_size, col = clr_loc[["hon"]])),
-  grid::textGrob('Panama', gp = gpar(fontsize = plot_text_size, col = clr_loc[["pan"]])),
-  plot_list[[1]] + theme(legend.position = "none"), plot_list[[2]] + theme(legend.position = "none"), plot_list[[3]] + theme(legend.position = "none"),
-  ncol = 3, 
-  rel_heights = c(.1,1)
-) %>% cowplot::as_grob()
+clr_tree2 <- colorRampPalette(RColorBrewer::brewer.pal(9,"RdYlBu"))(64) %>% rev()
+
+clr_shift <- "red"
+
+css2 <- css
+css2$marg.probs["47"] <- .1
 ```
 
-
-
-We can now also plot the second panel.
 
 
 ```r
-# assemble panel b
-p <- data %>%
-  filter(popstat == "dxy") %>%
-  ggplot(aes(color = loc)) +
-  geom_segment(aes(x = x, xend = x,
-                   y = lowpoint, yend = highpoint),
-               lwd = plot_lwd)+
-  geom_rect(aes(xmin = x - wdh, xmax = x + wdh,
-                ymin = lower, ymax = upper),
-            fill = 'white',
-            size = plot_lwd)+
-  geom_segment(aes(x = x - wdh,
-                   xend = x + wdh,
-                   y = median,
-                   yend = median),
-               lwd = plot_lwd)+
-  geom_point(aes(x = x, y = mean),
-             shape = 21, size = .7, fill = 'white')+
-  scale_x_continuous(breaks = 1:28) +
-  scale_y_continuous( expression(italic(d[XY])),
-                      breaks = c(0,.0025,.005,.0075,.01),
-                      limits = c(0,.01))+
-  scale_color_manual(values = c(make_faint_clr('bel'),
-                                make_faint_clr('hon'),
-                                make_faint_clr('pan'))[c(2,4,6)])+
-  coord_cartesian(xlim = c(0,29),
-                  expand = c(0,0))+
-  theme_minimal()+
-  theme(text = element_text(size = plot_text_size),
-        axis.title.x = element_blank(),
-        legend.position = 'none',
-        strip.placement = 'outside',
-        strip.text = element_text(size = 12),
-        axis.text.y.right = element_text(color = clr_sec),
-        axis.title.y.right = element_text(color = clr_sec))
+p1 <- as.grob(function(){
+  par(mar = c(0,0,0,0))
+  plot.credibleshiftset(css2, logcolor = TRUE,
+                        add.freq.text = FALSE,
+                        border = FALSE,
+                        shiftColor = clr_shift,
+                        lwd = 2,
+                        labels = TRUE,
+                        legend = FALSE,
+                        pal = clr_tree, cex = .5)
+
+  leg_shift_x <- 1.3
+  leg_shift_y <- 5
+  text(x = c(21.2, 40.2), y = c(15.6, 33.25),
+       label = "\U2605", family = "DejaVu Sans", col = clr_shift, cex = .5)
+  lines(x = c(0,25) + leg_shift_x,
+        y = c(1.5, 1.5) + leg_shift_y,
+        col = "darkgray")
+  text(x = 12.5 + leg_shift_x,
+       y = .5 + leg_shift_y,
+       labels = "25 MYR",
+       cex = .4,
+       col = "darkgray")
+})
 ```
 
-To create the final Figure S2.
 
 
 ```r
-# merge panel a & b
-p_done <- plot_grid(p_net, p, ncol = 1,
-                    rel_heights = c(.4, 1),
-                    labels = letters[1:2],
-                    label_fontface = "plain",
-                    label_size = plot_text_size)
+## Macroevolutionary cohort analysis
+cmat <- getCohortMatrix(bamm_serrn)
+p2 <- as.grob(function(){
+cohorts(cmat, bamm_serrn,
+        lwd = 1.5,
+        labels = FALSE,
+        legend = FALSE,
+        ofs = 0,
+        use.plot.bammdata = TRUE,
+        pal = clr_tree,
+        col = clr_tree2,
+        cex.axis = 0.1)
+})
 ```
 
 
+
+```r
+p_done <- (ggplot() +
+              geom_point(data = tibble(v = c(.056, 2.4)),
+                         x = .5, y = .5, aes(color = v),alpha = 0) +
+              scale_color_gradientn("Speciation Rate",
+                                    colours = clr_tree,
+                                    limits = c(.056, 2.4)) +
+              geom_richtext(data = tibble(x = -.05,
+                                          y = .12,
+                                          lab = glue("Posterior Frequency: {css$frequency}<br>Marginal Shift Prob.: {css$marg.probs['47']}")),
+                            aes(x = x, y = y, label = lab),
+                            size = plot_text_size_small / .pt,
+                            color = clr_shift,
+                            hjust = 0,
+                            label.size = 0,
+                            label.color = "transparent")+
+              geom_bezier0(data = tibble(x = c(.62,.5,.32), y = c(.185,.12,.12)),
+                           aes(x,y, group = 1),
+                           size = .3,
+                           color = prismatic::clr_alpha(clr_shift,.3))+
+              annotation_custom(p1,xmin = -.3, ymin = -.2,
+                                xmax = 1.1, ymax = 1.13)  +
+    (ggplot() +
+       geom_point(data = tibble(v = c(0, 1)),
+                  x = .5, y = .5, aes(color = v),alpha = 0)+
+       scale_color_gradientn("Pairwise Correlation", colours = clr_tree2, limits = c(0, 1))+
+       annotation_custom(p2, xmin = -.2, ymin = -.25,
+                         xmax = 1.2, ymax = 1.075) )  &
+    plot_annotation(tag_levels = "a") &
+    coord_cartesian(xlim = c(0,1),
+                    ylim = c(0,1)) &
+      guides(color = guide_colorbar(title.position = "top",
+                                    direction = "horizontal",
+                                    barheight = unit(3, "pt"),
+                                    barwidth = unit(100, "pt"),
+                                    ticks.colour = "white"))) &
+    theme_minimal(base_size = plot_text_size) &
+    theme(legend.position = c(.5, -.03),
+          legend.justification = c(.5, 0),
+          legend.background = element_blank(),
+          panel.grid = element_blank(),
+          axis.title = element_blank(),
+          axis.text = element_blank(),
+          plot.tag = element_text(hjust = 0),
+          panel.background = element_blank(),
+          plot.background = element_blank())
+```
 
 Finally, we can export Figure S2.
 
 
 ```r
-# export figure 1
-hypo_save(p_done, 
-          filename = 'figures/SF2.pdf',
-          width = f_width * .5, 
-          height =  f_width * .5,
-          comment = plot_comment)
+hypo_save("figures/SF2.pdf",
+       plot = p_done,
+       width = f_width,
+       height = f_width*.5,
+       comment = plot_comment,
+       device = cairo_pdf,
+       bg = "transparent")
 ```

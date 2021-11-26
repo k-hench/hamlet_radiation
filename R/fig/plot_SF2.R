@@ -135,8 +135,7 @@ cohorts(cmat, bamm_serrn,
         cex.axis = 0.1)
 })
 
-
-(p_done <- (ggplot() +
+p_done <- (ggplot() +
               geom_point(data = tibble(v = c(.056, 2.4)),
                          x = .5, y = .5, aes(color = v),alpha = 0) +
               scale_color_gradientn("Speciation Rate",
@@ -180,7 +179,7 @@ cohorts(cmat, bamm_serrn,
           axis.text = element_blank(),
           plot.tag = element_text(hjust = 0),
           panel.background = element_blank(),
-          plot.background = element_blank()))
+          plot.background = element_blank())
 
 hypo_save("figures/SF2.pdf", 
        plot = p_done,

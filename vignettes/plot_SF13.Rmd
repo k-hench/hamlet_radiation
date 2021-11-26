@@ -18,6 +18,20 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c("2_analysis/summaries/fst_outliers_998.tsv")
+
+library(GenomicOriginsScripts)
+library(tidygraph)
+library(ggraph)
+library(prismatic)
+library(patchwork)
+library(IRanges)
+library(plyranges)
+library(hypogen)
+library(hypoimg)
+
+outlier_file <- as.character(args[1])
+outlier_regions <- read_tsv(outlier_file)
 ```
 
 ## Summary
@@ -28,8 +42,8 @@ The Figure can be recreated by running the **R** script `plot_SF13.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF13.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF13.R \
+    2_analysis/summaries/fst_outliers_998.tsv
 ```
 
 ## Details of `plot_SF13.R`
@@ -41,38 +55,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF13.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF13.R \
@@ -85,6 +68,16 @@ Also the default color scheme is updated and the size of the hamlet ann.
 # args <- c("2_analysis/summaries/fst_outliers_998.tsv")
 # script_name <- "R/fig/plot_SF13.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -105,14 +98,33 @@ plot_comment <- script_name %>%
   str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_SF13.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/summaries/fst_outliers_998.tsv
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 outlier_file <- as.character(args[1])
 outlier_regions <- read_tsv(outlier_file)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 hap_to_perc <- 100 / (166 * 165)
 iterations <- c("25/10 kb","10/5 kb","15/7.5 kb") %>% set_names(value = c("7", "8", "10"))
 idx <- 10
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 import_map1 <- function(idx, filtmode = "bed95"){
   read_tsv(glue::glue("2_analysis/ibd/cM_converted/no_outgr_{filtmode}_{idx}.conv_filterd.tsv")) %>%
     mutate(ibd_total = (ibd2_cM_m1 + 0.5*ibd1_cM_m1) / (ibd0_cM_m1 + ibd1_cM_m1 + ibd2_cM_m1))
@@ -133,8 +145,11 @@ import_truffle <- function(idx, filtmode = "direct"){
   read_tsv(glue::glue("2_analysis/ibd/no_outgr_{filtmode}_{itteration_names[idx]}.ibd.tsv")) %>%
     mutate(ibd_total = (IBD2 + 0.5*IBD1) / (IBD0 + IBD1 + IBD2))
 }
+```
 
-iterations <- c(str_c("2/5*10^",6:3," BP"),"25/10 kb","10/5 kb","7-5/3 kb","15/7.5 kb")
+
+```{r, message = FALSE, warning = FALSE}
+iterations <- c(str_c("2/5*10^",6:3," BP"), "25/10 kb", "10/5 kb", "7-5/3 kb", "15/7.5 kb")
 
 plot_network <- function(idx, filt = 0, import_fun = import_map1,
                          x = "cM_map1", filtmode = "direct",
@@ -175,7 +190,10 @@ plot_network <- function(idx, filt = 0, import_fun = import_map1,
   if(!y_ax){ p <- p + theme(axis.title.y = element_blank())}
   p
 }
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 plts_cM <- tibble(idx = rep(c(7, 10, 8), each = 3),
        import_fun = rep(list(import_bp, import_map1, import_map2), 3),
        x = rep(c("bp_cM_filt.", "cM_map1", "cM_map2"), 3),
@@ -192,7 +210,10 @@ plts_cM <- tibble(idx = rep(c(7, 10, 8), each = 3),
             plot_order = seq_along(x))) %>%
   arrange(plot_order) %>%
   pmap(plot_network)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_done <- plts_cM %>%
   wrap_plots(nrow = 3,
              byrow = FALSE,

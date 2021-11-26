@@ -7,25 +7,27 @@ editor_options:
 
 
 
+
+
+
 ## Summary
 
-This is the accessory documentation of Supplementary Figure 6.
+This is the accessory documentation of Figure S6.
 The Figure can be recreated by running the **R** script `plot_SF6.R`:
 
 ```sh
 cd $BASE_DIR
 
 Rscript --vanilla R/fig/plot_SF6.R \
-  2_analysis/summaries/fst_globals.txt \
-  2_analysis/fst/50k/ \
-  2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
-
+    2_analysis/summaries/fst_globals.txt \
+    2_analysis/fst/50k/ \
+    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 ```
 
 ## Details of `plot_SF6.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) as well as the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen), [**furrr**](https://furrr.futureverse.org/), [**ggtext**](https://wilkelab.org/ggtext/) and [**vroom**](https://vroom.r-lib.org/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
 
 ### Config
 
@@ -36,32 +38,32 @@ The scripts start with a header that contains copy & paste templates to execute 
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF6.R \
-#   2_analysis/summaries/fst_globals.txt \
-#   2_analysis/fst/50k/ \
-#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+#     2_analysis/summaries/fst_globals.txt \
+#     2_analysis/fst/50k/ \
+#     2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
-# This script produces Suppl. Figure 6 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 6 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
 # args <- c( '2_analysis/summaries/fst_globals.txt',
 #            '2_analysis/fst/50k/',
 #            '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 # script_name <- "R/fig/plot_SF6.R"
+args <- commandArgs(trailingOnly = FALSE)
 ```
 
 The next section processes the input from the command line.
 It stores the arguments in the vector `args`.
-The R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) is loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 
 ```r
-args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -91,8 +93,8 @@ cli::rule(right = getwd())
 #> ────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directories containing the $F_{ST}$ and $\rho$ data, and the file containing the genome wide $F_{ST}$ averages are
-received and stored in a variable.
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
 
 
 ```r
@@ -102,7 +104,6 @@ fst_dir <- as.character(args[2])
 rho_dir <- as.character(args[3])
 ```
 
-Initially, the genome wide average $F_{ST}$ values are loaded.
 
 
 ```r
@@ -114,7 +115,6 @@ fst_globals <- vroom::vroom(global_fst_file, delim = '\t',
          run = fct_reorder(run,weighted_fst))
 ```
 
-Then, the files containing the windowed $F_{ST}$ data are located.
 
 
 ```r
@@ -122,7 +122,6 @@ Then, the files containing the windowed $F_{ST}$ data are located.
 fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
 ```
 
-Next, these files are loaded.
 
 
 ```r
@@ -132,7 +131,6 @@ fst_data <- str_c(fst_dir,fst_files) %>%
   mutate(run = factor(run, levels = levels(fst_globals$run)))
 ```
 
-After this, also the recombination data is loaded.
 
 
 ```r
@@ -141,7 +139,6 @@ rho_data <- vroom::vroom(rho_dir, delim = '\t') %>%
   select(-BIN_END)
 ```
 
-The $F_{ST}$ and $\rho$ data frames are merged based on the genomic position and subset to only contain non-overlapping windows.
 
 
 ```r
@@ -161,8 +158,6 @@ combined_data <- fst_data %>%
          run_label = fct_reorder(run_label,weighted_fst))
 ```
 
-Then, the combined data frame is nested based on the pair wise species comparison and for each comparison, $F_{ST}$ is regressed on $\rho$.
-The summary statistics of these regressions are added as separate columns of the nested data frame.
 
 
 ```r
@@ -180,9 +175,6 @@ model_data <- combined_data %>%
   mutate(run_label = factor(run_label, levels = levels(combined_data$run_label)))
 ```
 
-Now, we can create the individual panels of the figure.
-
-We start with panel __a__:
 
 
 ```r
@@ -221,9 +213,6 @@ p1 <- combined_data %>%
 
 
 
-Then we plot the slopes of the regression within panel __b__.
-
-
 ```r
 # create subplot b (slopes)
 p2 <- model_data %>%
@@ -235,9 +224,6 @@ p2 <- model_data %>%
   theme_minimal()
 ```
 
-
-
-And finally the $R^2$ values in panel __c__.
 
 
 ```r
@@ -253,9 +239,6 @@ p3 <- model_data %>%
 
 
 
-The final figure is created by combining the three sub panels.
-
-
 ```r
 # compose final figure
 p_done <- plot_grid(p1,
@@ -264,12 +247,10 @@ p_done <- plot_grid(p1,
                          labels = letters[2:3] %>%
                            project_case()),
           ncol = 1,
-          rel_heights = c(1,.3),labels = project_case(c("a")))
+          rel_heights = c(1,.3), labels = project_case(c("a")))
 ```
 
-
-
-Finally, we can export Figure SF6.
+Finally, we can export Figure S6.
 
 
 ```r
@@ -280,5 +261,3 @@ hypo_save(filename = 'figures/SF6.pdf',
           height = 16,
           comment = plot_comment)
 ```
-
----

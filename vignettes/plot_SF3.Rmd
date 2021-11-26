@@ -18,6 +18,16 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c("2_analysis/pca/")
+
+library(GenomicOriginsScripts)
+library(patchwork)
+library(hypoimg)
+library(hypogen)
+
+pca_dir <- as.character(args[1])
+clr_alt <- clr
+clr_alt[["uni"]] <- "lightgray"
 ```
 
 ## Summary
@@ -28,8 +38,8 @@ The Figure can be recreated by running the **R** script `plot_SF3.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF3.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF3.R \
+    2_analysis/pca/
 ```
 
 ## Details of `plot_SF3.R`
@@ -41,38 +51,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF3.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF3.R \
@@ -84,7 +63,17 @@ Also the default color scheme is updated and the size of the hamlet ann.
 # ===============================================================
 # args <- c("2_analysis/pca/")
 # script_name <- "R/fig/plot_SF3.R"
-args <- commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -99,12 +88,27 @@ plot_comment <- script_name %>%
   str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
+```
 
+```r
+#> ── Script: R/fig/plot_SF3.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/pca/
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 pca_dir <- as.character(args[1])
 clr_alt <- clr
 clr_alt[["uni"]] <- "lightgray"
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 fish_tib <- tibble(short = names(clr)[!names(clr) %in% c("flo", "tab", "tor")],
                    x = c(0.5,  3.5,  7,  9.7, 12.25, 15.25, 18, 21.5))
 
@@ -113,7 +117,11 @@ sp_fam <- rep(c("H", "S", "H"), c(8, 2, 1)) %>% set_names(nm = names(sp_names))
 p_leg <- fish_tib %>%
   ggplot() +
   coord_equal(xlim = c(-.05, 24), expand = 0) +
- geom_tile(aes(x = x, y = 0,
+ geom_tile(aes(x = x, y = 0,library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(vroom)
+library(ggtext)
                 fill = short,
                 color = after_scale(prismatic::clr_darken(fill, .25))),
             width = key_sz, height = key_sz, size = .3) +

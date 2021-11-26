@@ -7,6 +7,9 @@ editor_options:
 
 
 
+
+
+
 ## Summary
 
 This is the accessory documentation of Figure S4.
@@ -15,14 +18,16 @@ The Figure can be recreated by running the **R** script `plot_SF4.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF4.R 2_analysis/newhyb/nh_input/NH.Results/
-
+Rscript --vanilla R/fig/plot_SF4.R \
+    2_analysis/fst/50k/ \
+    2_analysis/summaries/fst_outliers_998.tsv \
+    2_analysis/summaries/fst_globals.txt
 ```
 
 ## Details of `plot_SF4.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hyponen), [**paletteer**](https://emilhvitfeldt.github.io/paletteer/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
 
 ### Config
 
@@ -32,15 +37,20 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```r
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF4.R 2_analysis/newhyb/nh_input/NH.Results/
+# Rscript --vanilla R/fig/plot_SF4.R \
+#     2_analysis/fst/50k/ \
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Suppl. Figure 4 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 4 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("2_analysis/newhyb/nh_input/NH.Results/")
+# args <- c('2_analysis/fst/50k/',
+#           '2_analysis/summaries/fst_outliers_998.tsv',
+#           '2_analysis/summaries/fst_globals.txt')
 # script_name <- "R/fig/plot_SF4.R"
+args <- commandArgs(trailingOnly = FALSE)
 ```
 
 The next section processes the input from the command line.
@@ -52,15 +62,14 @@ Then we drop all the imported information besides the arguments following the sc
 
 
 ```r
-args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
-library(prismatic)
-library(paletteer)
-library(patchwork)
-library(ggtext)
 library(hypoimg)
 library(hypogen)
+library(vroom)
+library(ggtext)
+
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -68,75 +77,155 @@ script_name <- args[5] %>%
 plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
-cli::rule( left = str_c(crayon::bold('Script: '),crayon::red(script_name)))
-args = args[7:length(args)]
-cat(' ')
-cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
-cli::rule(right = getwd())
+args <- process_input(script_name, args)
 ```
 
 ```r
 #> ── Script: R/fig/plot_SF4.R ────────────────────────────────────────────
 #> Parameters read:
-#> ★ 1: 2_analysis/newhyb/nh_input/NH.Results/
+#> ★ 1: 2_analysis/fst/50k/
+#> ★ 2: 2_analysis/summaries/fst_outliers_998.tsv
+#> ★ 3: 2_analysis/summaries/fst_globals.txt
 #> ────────────────────────────────────────── /current/working/directory ──
 ```
 
-The directory containing the hybridization data is received and stored in a variable.
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
 
 
 ```r
 # config -----------------------
-base_dir <- as.character(args[1])
+data_path <- as.character(args[1])
+outlier_file <- as.character(args[2])
+globals_file <- as.character(args[3])
 ```
 
-All the hybridization-subfolders are located (there is one per pair wise `newhybrids` run).
 
 
 ```r
-# locate hybridization data files
-folders <- dir(base_dir)
+# load data -------------------
+# locate fst data files
+files <- dir(data_path,pattern = '.50k.windowed.weir.fst.gz')
 ```
 
-Then we run the high-level function `GenomicOriginsScripts::plot_loc()` which
-reads in all the hybridization data of a given sampling location and creates the respective figure panel.
 
 
 ```r
-# load data and create plots by location
-p_loc <- c("bel", "hon", "pan") %>%
-  map(plot_loc)
+# extract run names from data file names
+run_files <- files %>%
+  str_sub(.,1,11) %>%
+  str_replace(.,pattern = '([a-z]{3})-([a-z]{3})-([a-z]{3})', '\\2\\1-\\3\\1')
 ```
 
-As an example we can have a look at the result for `plot_loc("pan")`:
-
-
-
-All three panels are collected and the final Figure is composed using the package [**patchwork**](https://patchwork.data-imaginist.com/):
 
 
 ```r
-# compose figure from the individual panels
-p_done <- (p_loc[[1]] +  guides(fill = guide_legend(title = "Hybrid Class")) + theme_hyb(legend.position = c(1,1)) ) +
-  (p_loc[[2]] + theme_hyb() ) +
-  (p_loc[[3]] + theme_hyb() )  +
-  plot_layout(ncol = 1, heights = c(10,15,3) %>% label_spacer())+
-  plot_annotation(tag_levels = 'a')
+# load genome wide average fst values for each run
+globals <- vroom::vroom(globals_file, delim = '\t',
+                        col_names = c('loc','run','mean','weighted')) %>%
+  separate(run, into = c('pop1','pop2')) %>%
+  mutate(run = str_c(pop1,loc,'-',pop2,loc),
+         run = fct_reorder(run,weighted))
 ```
 
 
+
+```r
+# load all windowed fst data and collapse in to a single data frame
+data <- purrr::pmap(tibble(file = str_c(data_path,files),
+                           run = run_files),
+                    hypo_import_windows) %>%
+  bind_rows() %>%
+  purrr::set_names(., nm = c('CHROM', 'BIN_START', 'BIN_END', 'N_VARIANTS',
+                      'WEIGHTED_FST', 'MEAN_FST', 'GSTART', 'POS', 'GPOS', 'run')) %>%
+  mutate(pop1 = str_sub(run,1,3),
+         pop2 = str_sub(run,8,10),
+         loc = str_sub(run,4,6),
+         run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ))
+```
+
+
+
+```r
+# create table for the indication of genome wide average fst in the plot background
+# (rescale covered fst range to the extent of the genome)
+global_bar <- globals %>%
+  select(weighted,run) %>%
+  mutate(run = as.character(run)) %>%
+  setNames(.,nm = c('fst','run')) %>%
+  pmap(.,fst_bar_row_run) %>%
+  bind_rows() %>%
+  mutate(pop1 = str_sub(run,1,3),
+         pop2 = str_sub(run,8,10),
+         loc = str_sub(run,4,6),
+         run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ),
+         run_label = fct_reorder(run_label,xmax_org))
+```
+
+
+
+```r
+# pre-calculate secondary x-axis breaks
+sc_ax <- scales::cbreaks(c(0,max(globals$weighted)),
+                         scales::pretty_breaks(4))
+```
+
+
+
+```r
+# compose final figure
+p_done <- ggplot()+
+  # general plot structure separated by run
+  facet_grid( run_label ~ ., as.table = TRUE) +
+  # add genome wide average fst in the background
+  geom_rect(data = global_bar %>%
+              mutate(xmax = xmax * hypo_karyotype$GEND[24]),
+            aes(xmin = 0, xmax = xmax,
+                ymin = -Inf, ymax = Inf),
+            color = rgb(1,1,1,0),
+            fill = clr_below) +
+  # add LG borders
+  geom_vline(data = hypogen::hypo_karyotype,
+             aes(xintercept = GEND),
+             color = hypo_clr_lg) +
+  # add fst data points
+  geom_point(data = data  %>%
+                      mutate(run_label = factor(run_label,
+                                                levels = levels(global_bar$run_label))),
+              aes(x = GPOS, y = WEIGHTED_FST),
+              size=.2,color = plot_clr) +
+  # axis layout
+  scale_x_hypo_LG(sec.axis =  sec_axis(~ ./hypo_karyotype$GEND[24],
+                                       breaks = (sc_ax$breaks/max(globals$weighted)),
+                                       labels = sprintf("%.2f", sc_ax$breaks),
+                                       name = expression(Genomic~position/~Genome~wide~weighted~italic(F[ST])))) +
+  scale_y_continuous(name = expression(italic('F'[ST])),
+                     limits = c(-.1,1),
+                     breaks = c(0,.5,1)) +
+  # general plot layout
+  theme_hypo() +
+  theme(strip.text.y = element_markdown(angle = 0),
+        strip.background = element_blank(),
+        legend.position = 'none',
+        axis.title.x = element_text(),
+        axis.text.x.bottom = element_text(colour = 'darkgray'))
+```
 
 Finally, we can export Figure S4.
 
 
 ```r
-# export the final figure
-hypo_save(filename = "figures/SF4.pdf",
-       plot = p_done,
-       height = 16,
-       width = 10,
-       device = cairo_pdf,
-       comment = plot_comment)
-```
+# export final figure
+hypo_save(filename = 'figures/SF4.png',
+          plot = p_done,
+          width = 8,
+          height = 12,
+          dpi = 600,
+          type = "cairo",
+          comment = plot_comment)
 
----
+system("convert figures/SF4.png figures/SF4.pdf")
+system("rm figures/SF4.png")
+create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF4.pdf")
+system(create_metadata)
+```

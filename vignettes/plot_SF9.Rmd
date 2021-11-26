@@ -18,6 +18,16 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c('2_analysis/pi/50k/',
+          '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
+
+library(GenomicOriginsScripts)
+library(vroom)
+library(hypoimg)
+library(hypogen)
+
+pi_path <- as.character(args[1])
+rho_path <- as.character(args[2])
 ```
 
 ## Summary
@@ -28,8 +38,9 @@ The Figure can be recreated by running the **R** script `plot_SF9.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF9.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF9.R \
+    2_analysis/pi/50k/ \
+    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 ```
 
 ## Details of `plot_SF9.R`
@@ -40,17 +51,6 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 ### Config
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
-
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 ```{r, eval = FALSE}
 #!/usr/bin/env Rscript
@@ -67,6 +67,16 @@ Then we drop all the imported information besides the arguments following the sc
 #           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 # script_name <- "R/fig/plot_SF9.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -81,18 +91,38 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_SF9.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/pi/50k/
+#> ★ 1: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+```{r, eval = FALSE}
 # config -----------------------
 pi_path <- as.character(args[1])
 rho_path <- as.character(args[2])
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # locate pi data files
 files <- dir(pi_path, pattern = '^pi.[a-z]{6}.50k')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load pi data
 data <- str_c(pi_path, files) %>%
   purrr::map(get_pi) %>%
   bind_rows()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compute genome wide average pi for the subplot order
 global_bar <- data %>%
   filter( BIN_START %% 50000 == 1) %>%
@@ -103,11 +133,17 @@ global_bar <- data %>%
   ungroup() %>%
   mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
          scaled_pi = genome_wide_pi/max(genome_wide_pi))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load recombination data
 rho_data <- vroom(rho_path, delim = '\t') %>%
   select(-BIN_END)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # merge pi and recombination data
 combined_data <- data %>%
   # filter pi data to "non-overlapping" windows
@@ -116,12 +152,18 @@ combined_data <- data %>%
   mutate(spec = factor(spec, levels = levels(global_bar$spec))) %>%
   # merge with recombination data
   left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create table with fish annotations
 grob_tibble2 <- global_bar$spec %>%
   purrr::map(fish_plot2) %>%
   bind_rows()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compose final figure
 p <- combined_data %>%
   ggplot()+

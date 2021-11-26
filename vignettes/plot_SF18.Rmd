@@ -18,6 +18,20 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c("2_analysis/summaries/fst_outliers_998.tsv")
+
+library(GenomicOriginsScripts)
+library(tidygraph)
+library(ggraph)
+library(prismatic)
+library(patchwork)
+library(IRanges)
+library(plyranges)
+library(hypogen)
+library(hypoimg)
+
+outlier_file <- as.character(args[1])
+outlier_regions <- read_tsv(outlier_file)
 ```
 
 ## Summary
@@ -28,8 +42,8 @@ The Figure can be recreated by running the **R** script `plot_SF18.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF18.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF18.R \
+    2_analysis/summaries/fst_outliers_998.tsv
 ```
 
 ## Details of `plot_SF18.R`
@@ -41,38 +55,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF18.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF18.R \
@@ -85,6 +68,16 @@ Also the default color scheme is updated and the size of the hamlet ann.
 # args <- c("2_analysis/summaries/fst_outliers_998.tsv")
 # script_name <- "R/fig/plot_SF18.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -105,14 +98,33 @@ plot_comment <- script_name %>%
   str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_SF18.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/summaries/fst_outliers_998.tsv
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 outlier_file <- as.character(args[1])
 outlier_regions <- read_tsv(outlier_file)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 hap_to_perc <- 100 / (166 * 165)
 iterations <- c(str_c("2/5*10^",6:3," BP"),"25/10 kb","10/5 kb","7-5/3 kb","15/7.5 kb")
 itteration_names <- c(str_c("10-",6:3),"7","8","9","10")
-# -------------------------------------------------
+```
+
+
+```{r, message = FALSE, warning = FALSE}
 plot_ibd_gw <- function(n_zeros, y_lim = c(0, 4), filtmode = "direct", y_lab = ""){
   data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_{filtmode}_{itteration_names[n_zeros]}.segments.tsv"),
                            delim = "\t", col_types = "cccciidcdci") %>%
@@ -148,7 +160,10 @@ plot_ibd_gw <- function(n_zeros, y_lim = c(0, 4), filtmode = "direct", y_lab = "
     coord_cartesian(ylim = y_lim, expand = 0) +
     theme_hypo()
 }
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_direct_10.segments.tsv"),
                          delim = "\t", col_types = "cccciidcdci") %>%
   left_join(hypogen::hypo_chrom_start) %>%
@@ -158,7 +173,10 @@ data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_direct_10.segments.
          gend = start + (LENGTH * 10^6),
          ibd_hplo = str_remove(TYPE,"IBD") %>%
            as.integer())
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 data_compact <- data_seg %>%
   dplyr::select(seqnames = CHROM,start,end,gstart,GSTART,TYPE,ibd_hplo,ID1,ID2) %>%
   arrange(gstart) %>%
@@ -171,10 +189,16 @@ data_compact <- data_seg %>%
   left_join(hypogen::hypo_chrom_start) %>%
   mutate(gstart = GSTART + start, gend = GSTART + end) %>%
   dplyr::select(CHROM, gstart, gend, score)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 total_cov_lenght <- data_compact %>%
   mutate(length = gend-gstart) %>% .$length %>% sum()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 data_sorted <- data_compact %>%
   mutate(length = gend-gstart) %>%
   group_by(score) %>%
@@ -185,20 +209,29 @@ data_sorted <- data_compact %>%
                           length),
          gend = cumsum(length),
          gstart = lag(gend,default = 0))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 perc_cutoff <- .95
 
 perc_score <- data_sorted %>%
   filter(gstart < hypo_karyotype$GEND[24] * perc_cutoff,
          gend > hypo_karyotype$GEND[24] * perc_cutoff) %>%
   .$score
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 plts <- c(5,8,6) %>%
   map2(.y = list(c(0,26), # .55),
                  c(0,26), # 4),
                  c(0,26)),
        plot_ibd_gw, filtmode = "direct")
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_done <- (plts[[1]] +
              plts[[2]] + geom_hline(yintercept = perc_score * hap_to_perc, color = "#11C269", size = .3, alpha = .7) +
              plts[[3]] +

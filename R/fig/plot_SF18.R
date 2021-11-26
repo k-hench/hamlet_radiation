@@ -37,11 +37,11 @@ outlier_regions <- read_tsv(outlier_file)
 hap_to_perc <- 100 / (166 * 165)
 iterations <- c(str_c("2/5*10^",6:3," BP"),"25/10 kb","10/5 kb","7-5/3 kb","15/7.5 kb")
 itteration_names <- c(str_c("10-",6:3),"7","8","9","10")
-# -------------------------------------------------
+
 plot_ibd_gw <- function(n_zeros, y_lim = c(0, 4), filtmode = "direct", y_lab = ""){
   data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_{filtmode}_{itteration_names[n_zeros]}.segments.tsv"),
-                           delim = "\t", col_types = "cccciidcdci") %>% 
-    left_join(hypogen::hypo_chrom_start) %>% 
+                           delim = "\t", col_types = "cccciidcdci") %>%
+    left_join(hypogen::hypo_chrom_start) %>%
     mutate(start = POS * 10^6,
            end = start + (LENGTH * 10^6),
            gstart = GSTART + start,
@@ -50,17 +50,17 @@ plot_ibd_gw <- function(n_zeros, y_lim = c(0, 4), filtmode = "direct", y_lab = "
              as.integer())
   data_seg %>%
     dplyr::select(seqnames = CHROM,start,end,gstart,GSTART,TYPE,ibd_hplo,ID1,ID2) %>%
-    arrange(gstart) %>% 
-    dplyr::select(-gstart) %>% 
-    as_granges() %>% 
-    GenomicRanges::coverage(weight = "ibd_hplo") %>% 
-    plyranges::as_ranges() %>% 
-    as_tibble() %>% 
-    dplyr::select(CHROM = seqnames, start, end, width, score) %>% 
-    left_join(hypogen::hypo_chrom_start) %>% 
-    mutate(gstart = GSTART + start, gend = GSTART + end) %>% 
-    dplyr::select(CHROM, gstart, gend, score) %>% 
-    pivot_longer(gstart:gend,values_to = "GPOS", names_to = "PART") %>% 
+    arrange(gstart) %>%
+    dplyr::select(-gstart) %>%
+    as_granges() %>%
+    GenomicRanges::coverage(weight = "ibd_hplo") %>%
+    plyranges::as_ranges() %>%
+    as_tibble() %>%
+    dplyr::select(CHROM = seqnames, start, end, width, score) %>%
+    left_join(hypogen::hypo_chrom_start) %>%
+    mutate(gstart = GSTART + start, gend = GSTART + end) %>%
+    dplyr::select(CHROM, gstart, gend, score) %>%
+    pivot_longer(gstart:gend,values_to = "GPOS", names_to = "PART") %>%
     ggplot() +
     geom_hypo_LG() +
     geom_vline(data = outlier_regions, aes(xintercept = gpos), color = rgb(1,0,0,.2), size = .3) +
@@ -125,7 +125,7 @@ plts <- c(5,8,6) %>%
        plot_ibd_gw, filtmode = "direct")
 
 p_done <- (plts[[1]] +
-             plts[[2]] + geom_hline(yintercept = perc_score * hap_to_perc, color = "#11C269", size = .3, alpha = .7) + 
+             plts[[2]] + geom_hline(yintercept = perc_score * hap_to_perc, color = "#11C269", size = .3, alpha = .7) +
              plts[[3]] +
              plot_layout(ncol = 1)) +
   plot_annotation(tag_levels = "a") &
@@ -135,7 +135,7 @@ p_done <- (plts[[1]] +
         legend.key = element_blank(),
         legend.direction = "horizontal",
         legend.background = element_blank(),
-        legend.box = "horizontal", 
+        legend.box = "horizontal",
         legend.text.align = 0)
 
 hypo_save(plot = p_done,

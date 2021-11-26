@@ -16,7 +16,7 @@ This pipeline can be executed as follows:
 
 ```sh
 cd $BASE_DIR/nf/11_analysis_allele_age
-source ../sh/nextflow_alias.sh
+source ../../sh/nextflow_alias.sh
 nf_run_aa
 ```
 
@@ -222,7 +222,7 @@ After this, the outgroup samples are removed from the data and the remaining dat
 </pre>
 </div>
 
-Since a single `GEVA` run can take quite some time, the data is split further into chunks of 25k SNPs 
+Since a single `GEVA` run can take quite some time, the data is split further into chunks of 25k SNPs
 
 
 <div class="sourceCode">

@@ -18,6 +18,14 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c('2_analysis/dxy/50k/')
+
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(ggtext)
+
+dxy_path <- as.character(args[1])
 ```
 
 ## Summary
@@ -28,8 +36,9 @@ The Figure can be recreated by running the **R** script `plot_SF7.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF7.R 2_analysis/pca/
-
+run from terminal:
+Rscript --vanilla R/fig/plot_SF7.R \
+    2_analysis/dxy/50k/
 ```
 
 ## Details of `plot_SF7.R`
@@ -41,38 +50,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF7.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF7.R \
@@ -85,6 +63,16 @@ Also the default color scheme is updated and the size of the hamlet ann.
 # args <- c('2_analysis/dxy/50k/')
 # script_name <- "R/fig/plot_SF7.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -100,20 +88,41 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
 
+```r
+#> ── Script: R/fig/plot_SF7.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/dxy/50k/
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 dxy_path <- as.character(args[1])
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # locate dxy data files
 files <- dir(dxy_path)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load dxy data
 data <- str_c(dxy_path,files) %>%
   purrr::map(get_dxy) %>%
   bind_rows() %>%
   purrr::set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create table for the indication of genome wide average dxy in the plot background
 # (rescale covered dxy range to the extent of the genome)
 global_bar <- data %>%
@@ -126,7 +135,10 @@ global_bar <- data %>%
   ungroup() %>%
   mutate(run = fct_reorder(.f = run, .x = genome_wide_dxy),
          scaled_dxy = genome_wide_dxy/max(genome_wide_dxy))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # prepare plot annotaton images
 grob_tibble <-  global_bar %>%
   mutate(loc = str_sub(run,4,6),
@@ -135,20 +147,32 @@ grob_tibble <-  global_bar %>%
   select(1,4:6) %>%
   pmap(.,plot_pair_run) %>%
   bind_rows()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # prepare plotting elements --------
 # pre-define secondary x-axis breaks
 sc_ax <- scales::cbreaks(c(0,max(global_bar$genome_wide_dxy)),
                          scales::pretty_breaks(4))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # pre-define secondary x-axis labels
 labels <- str_c(c("", sc_ax$breaks[2:5]*1000),
                 c("0", rep("\u00B710^-3",4)))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # sort pair-wise population comparisons by average genome wide dxy
 data <- data %>%
   mutate(run = factor(run, levels = levels(global_bar$run)))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compose final figure
 p_done <- ggplot()+
   # general plot structure separated by run

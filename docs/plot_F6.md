@@ -7,44 +7,50 @@ editor_options:
 
 
 
+
+
+
 ## Summary
 
 This is the accessory documentation of Figure 6.
-The Figure can be recreated by running the **R** script `plot_F6.R`:
+
+The Figure can be recreated by running the **R** script `plot_F6.R` from a (`bash` terminal):
 
 ```sh
 cd $BASE_DIR
 
 Rscript --vanilla R/fig/plot_F6.R \
-   2_analysis/summaries/fst_outliers_998.tsv \
-   2_analysis/geva/ \
-   2_analysis/GxP/bySNP/
+    2_analysis/summaries/fst_outliers_998.tsv \
+    2_analysis/geva/ \
+    2_analysis/GxP/bySNP/
 ```
 
 ## Details of `plot_F6.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen), [**ggtext**](https://wilkelab.org/ggtext/), [**ggpointdensity**](https://github.com/LKremer/ggpointdensity), [**scales**](https://scales.r-lib.org/), [**grid**](https://CRAN.R-project.org/package=grid) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), [**BAMMtools**](https://cran.r-project.org/web/packages/BAMMtools/) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg).
 
 ### Config
 
-The scripts start with a header that contains copy & paste templates to execute or debug the script:
+The scripts start with a header that contains copy & paste templates to execute interactively or debug the script:
 
 
 ```r
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F6.R \
-#    2_analysis/summaries/fst_outliers_998.tsv \
-#    2_analysis/geva/ 2_analysis/GxP/bySNP/
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     2_analysis/geva/ \
+#     2_analysis/GxP/bySNP/
 # ===============================================================
-# This script produces Suppl. Figure X of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Figure 6 of the study "Rapid radiation in a highly
+# diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c( "2_analysis/summaries/fst_outliers_998.tsv", "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
+# args <- c( "2_analysis/summaries/fst_outliers_998.tsv",
+#            "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
 # script_name <- "R/fig/plot_F6.R"
+args <- commandArgs(trailingOnly = FALSE)
 ```
 
 The next section processes the input from the command line.
@@ -56,8 +62,8 @@ Then we drop all the imported information besides the arguments following the sc
 
 
 ```r
-args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -82,15 +88,15 @@ cli::rule(right = getwd())
 ```
 
 ```r
-#> ── Script: R/fig/plot_F6.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_F6.R ──────────────────────────────────────────────
 #> Parameters read:
-#> ★ 1: 2_analysis/summaries/fst_outliers_998.tsv
-#> ★ 2: 2_analysis/geva/
-#> ★ 3: 2_analysis/GxP/bySNP
-#> ────────────────────────────────────────── /current/working/directory ──
+#>  ★ 1: 2_analysis/summaries/fst_outliers_998.tsv
+#>  ★ 2: 2_analysis/geva/
+#>  ★ 3: 2_analysis/GxP/bySNP/
+#> ─────────────────────────────────────────── /current/working/directory ──
 ```
-
-The directories allele age and genotype $\times$ phenotype data, as well as the outlier location file are received and stored in respective variables.
+The directories for the different data types are received and stored in respective variables.
+Also, we set a few parameters for the plot layout:
 
 
 ```r
@@ -100,7 +106,7 @@ geva_path <- as.character(args[2])
 gxp_path <- as.character(args[3])
 ```
 
-Then, the outlier coordinates are loaded and the allele age and G $\times$ P data within those regions are imported.
+### Actual Script Start
 
 
 ```r
@@ -110,8 +116,6 @@ data <- outlier_data[c(2, 13, 14),] %>%
   pmap_dfr(get_gxp_and_geva)
 ```
 
-Next, some settings for the plotting are pre-defined.
-Those include the desire x-range, symbol sizes and the estimated age of the first split within Hypoplectrus.
 
 
 ```r
@@ -121,38 +125,42 @@ color <- rgb(1, 0.5, 0.16)
 base_length <- 8
 base_lwd <- .15
 base_line_clr <- "black"
+```
 
+
+
+```r
 splitage <- tibble(intercept = 5000)
 ```
 
-Also, the outlier labels are formatted and the color scheme of the traits is set (for the G $\times$ P annotation).
 
 
 ```r
 gid_label <- c( LG04_1 = "LG04 (A)", LG12_3 = "LG12 (B)", LG12_4 = "LG12 (C)" )
+```
+
+
+
+```r
 gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
   darken(factor = .95) %>%
   set_names(., nm = c("Bars", "Snout", "Peduncle"))
 ```
 
-Than the annotation images are loaded and the traits are re-colored according to the color scheme.
 
 
 ```r
 annotation_grobs <- tibble(svg = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c( 'Snout', 'Bars', 'Peduncle')],
                            layer = c(4,3,7),
                            color = gxp_clr[c(1,3,2)]) %>%
-    purrr::pmap(.l = ., .f = hypo_recolor_svg) %>%
+  purrr::pmap(.l = ., .f = hypo_recolor_svg) %>%
   set_names(nm = c( "LG12_3","LG12_4","LG04_1"))
 
 annotation_grobs$LG12_3 <- hypo_recolor_svg(annotation_grobs$LG12_3,
-                                            layer = 7, color = gxp_clr[[1]] %>% 
+                                            layer = 7, color = gxp_clr[[1]] %>%
                                               clr_desaturate %>% clr_lighten(.25))
 ```
 
-
-
-For the correct distribution of the annotations across the ggplot facets, the annotations are stored within a tibble that also holds the respective outlier ID $\times$ trait combinations.
 
 
 ```r
@@ -163,7 +171,6 @@ annotation_grobs_tib <- tibble(gid = names(annotation_grobs),
                           levels = c("Snout", "Bars", "Peduncle")))
 ```
 
-Similarly, a tibble for the background highlights is created (compatible with the faceting regime).
 
 
 ```r
@@ -172,7 +179,6 @@ highlight_rects <- tibble(trait = factor( c("Snout", "Bars", "Peduncle"),
                           gid_label = gid_label)
 ```
 
-At this point, we can create Figure 6.
 
 
 ```r
@@ -185,11 +191,11 @@ p_done <- data %>%
   filter(Clock == "J",
          Filtered == 1) %>%
   ggplot() +
-  geom_rect(data = highlight_rects, 
-            aes( xmin = 0, xmax = Inf, 
+  geom_rect(data = highlight_rects,
+            aes( xmin = 0, xmax = Inf,
                  ymin = 0, ymax = Inf),
             color = rgb(.75,.75,.75),
-            size = .4, 
+            size = .4,
             fill = rgb(.9,.9,.9,.5))+
   hypoimg::geom_hypo_grob(inherit.aes = FALSE,
                           data = annotation_grobs_tib,
@@ -199,7 +205,7 @@ p_done <- data %>%
   facet_grid(gid_label ~ trait, scales = "free_y")+
   scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)))+
   scale_y_continuous(trans = reverselog_trans(10),
-                      labels = scales::trans_format("log10", scales::math_format(10^.x)))+
+                     labels = scales::trans_format("log10", scales::math_format(10^.x)))+
   scale_color_viridis_c("Density",  option = "B")+
   labs(y = "G x P *p* value <sub>Wald</sub>",
        x  = "Derived allele age (generations)")+
@@ -211,15 +217,12 @@ p_done <- data %>%
         legend.position = "bottom",
         plot.subtitle = element_markdown(),
         axis.line = element_line(colour = base_line_clr,
-                                 size = base_lwd), 
-        strip.background = element_blank(), 
+                                 size = base_lwd),
+        strip.background = element_blank(),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_line(size = plot_lwd)
-        )
+  )
 ```
-
-
-
 
 Finally, we can export Figure 6.
 
@@ -233,3 +236,5 @@ hypo_save(plot = p_done,
           device = cairo_pdf,
           bg = "transparent")
 ```
+
+---

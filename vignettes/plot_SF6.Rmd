@@ -18,6 +18,16 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c( '2_analysis/summaries/fst_globals.txt',
+           '2_analysis/fst/50k/',
+           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
+
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(vroom)
+library(furrr)
+library(ggtext)
 ```
 
 ## Summary
@@ -28,8 +38,10 @@ The Figure can be recreated by running the **R** script `plot_SF6.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF6.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF6.R \
+    2_analysis/summaries/fst_globals.txt \
+    2_analysis/fst/50k/ \
+    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 ```
 
 ## Details of `plot_SF6.R`
@@ -41,38 +53,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF6.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF6.R \
@@ -89,6 +70,16 @@ Also the default color scheme is updated and the size of the hamlet ann.
 #            '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 # script_name <- "R/fig/plot_SF6.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -109,32 +100,60 @@ args = args[7:length(args)]
 cat(' ')
 cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
 cli::rule(right = getwd())
+```
 
+```r
+#> ── Script: R/fig/plot_SF6.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/summaries/fst_globals.txt
+#> ★ 2: 2_analysis/fst/50k/
+#> ★ 3: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 global_fst_file <- as.character(args[1])
 fst_dir <- as.character(args[2])
 rho_dir <- as.character(args[3])
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load genome wide average fst data
 fst_globals <- vroom::vroom(global_fst_file, delim = '\t',
                             col_names = c('loc','run_prep','mean_fst','weighted_fst')) %>%
   separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
   mutate(run = str_c(pop1,loc,'-',pop2,loc),
          run = fct_reorder(run,weighted_fst))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # locate sliding window fst data files
 fst_files <- dir(fst_dir, pattern = '.50k.windowed.weir.fst.gz')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load sliding window fst data
-
 fst_data <- str_c(fst_dir,fst_files) %>%
   furrr::future_map_dfr(get_fst) %>%
   mutate(run = factor(run, levels = levels(fst_globals$run)))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load recombination rate data
 rho_data <- vroom::vroom(rho_dir, delim = '\t') %>%
   select(-BIN_END)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # merge fst and recombination data
 combined_data <- fst_data %>%
   # filter fst data to "non-overlapping" windows
@@ -149,7 +168,10 @@ combined_data <- fst_data %>%
          loc = str_sub(run,4,6),
          run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ),
          run_label = fct_reorder(run_label,weighted_fst))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # nest data to run linear regression on all runs in one go
 model_data <- combined_data %>%
   group_by(run) %>%
@@ -162,7 +184,10 @@ model_data <- combined_data %>%
          run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" )) %>%
   bind_cols(., summarise_model(.)) %>%
   mutate(run_label = factor(run_label, levels = levels(combined_data$run_label)))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create subplot a (hex-bins)
 p1 <- combined_data %>%
   ggplot()+
@@ -194,7 +219,10 @@ p1 <- combined_data %>%
   theme_minimal()+
   theme(legend.position = c(.8,.08),
         strip.text = element_markdown())
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create subplot b (slopes)
 p2 <- model_data %>%
   ggplot()+
@@ -203,7 +231,10 @@ p2 <- model_data %>%
   labs(x = expression(genome~wide~weighted~mean~italic(F[ST])),
        y = expression(slope~(f(italic(F[ST]))==a~rho+b)))+
   theme_minimal()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create subplot c (R^2s)
 p3 <- model_data %>%
   ggplot()+
@@ -212,7 +243,10 @@ p3 <- model_data %>%
   labs(x = expression(genome~wide~weighted~mean~italic(F[ST])),
        y = expression(italic(R^2)))+
   theme_minimal()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compose final figure
 p_done <- plot_grid(p1,
                plot_grid(p2,p3,
@@ -220,7 +254,7 @@ p_done <- plot_grid(p1,
                          labels = letters[2:3] %>%
                            project_case()),
           ncol = 1,
-          rel_heights = c(1,.3),labels = project_case(c("a")))
+          rel_heights = c(1,.3), labels = project_case(c("a")))
 ```
 
 Finally, we can export Figure S6.

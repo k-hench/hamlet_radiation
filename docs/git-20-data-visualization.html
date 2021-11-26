@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>21 (git 20) Data Visualization | Script repository</title>
+  <meta name="description" content="Scripts used to produce Figures and Supplementary Figures of ‘Rapid radiation in a highly diverse marine environment’ by Hench, Helmkampf, McMillan an Puebla" />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="21 (git 20) Data Visualization | Script repository" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Rapid radiation in a highly diverse marine environment’ by Hench, Helmkampf, McMillan an Puebla" />
+  <meta name="github-repo" content="k-hench/bookdown" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="21 (git 20) Data Visualization | Script repository" />
+  
+  <meta name="twitter:description" content="Scripts used to produce Figures and Supplementary Figures of ‘Rapid radiation in a highly diverse marine environment’ by Hench, Helmkampf, McMillan an Puebla" />
+  
+
+<meta name="author" content="Kosmas Hench and Martin Helmkampf" />
+
+
+<meta name="date" content="2021-11-26" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="git-19-analysis-xvi-serraninae-phylogeny.html"/>
+<link rel="next" href="figure-1.html"/>
+<script src="libs/header-attrs-2.7.6/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<script src="libs/d3-5.7.0/d3.min.js"></script>
+<script src="libs/d3-lasso-0.0.5/d3-lasso.min.js"></script>
+<link href="libs/ggiraphjs-0.2.0/styles.css" rel="stylesheet" />
+<script src="libs/ggiraphjs-0.2.0/ggiraphjs.min.js"></script>
+<script src="libs/girafe-binding-0.7.0/girafe.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="https://github.com/k-hench/chapter2">github repository</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Intro</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#analysis"><i class="fa fa-check"></i><b>1.1</b> Analysis</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#prerequesites"><i class="fa fa-check"></i><b>1.2</b> Prerequesites</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#figures"><i class="fa fa-check"></i><b>1.3</b> Figures</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><b>1.4</b> R setup</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html"><i class="fa fa-check"></i><b>2</b> (git 1) Genotyping I (SNPs only)</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#summary"><i class="fa fa-check"></i><b>2.1</b> Summary</a></li>
+<li class="chapter" data-level="2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#details-of-genotyping.nf"><i class="fa fa-check"></i><b>2.2</b> Details of <code>genotyping.nf</code></a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#data-preparation"><i class="fa fa-check"></i><b>2.2.1</b> Data preparation</a></li>
+<li class="chapter" data-level="2.2.2" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#genotying"><i class="fa fa-check"></i><b>2.2.2</b> Genotying</a></li>
+<li class="chapter" data-level="2.2.3" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#phasing"><i class="fa fa-check"></i><b>2.2.3</b> Phasing</a></li>
+<li class="chapter" data-level="2.2.4" data-path="git-1-genotyping-i-snps-only.html"><a href="git-1-genotyping-i-snps-only.html#indel-masks"><i class="fa fa-check"></i><b>2.2.4</b> Indel masks</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html"><i class="fa fa-check"></i><b>3</b> (git 2) Genotyping II (all callable sites)</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#summary-1"><i class="fa fa-check"></i><b>3.1</b> Summary</a></li>
+<li class="chapter" data-level="3.2" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#details-of-genotyping_all_basepairs.nf"><i class="fa fa-check"></i><b>3.2</b> Details of <code>genotyping_all_basepairs.nf</code></a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="git-2-genotyping-ii-all-callable-sites.html"><a href="git-2-genotyping-ii-all-callable-sites.html#data-preparation-1"><i class="fa fa-check"></i><b>3.2.1</b> Data preparation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html"><i class="fa fa-check"></i><b>4</b> (git 3) Analysis I (<i>F<sub>ST</sub></i> &amp; GxP)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#summary-2"><i class="fa fa-check"></i><b>4.1</b> Summary</a></li>
+<li class="chapter" data-level="4.2" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#details-of-analysis_fst_gxp.nf"><i class="fa fa-check"></i><b>4.2</b> Details of <code>analysis_fst_gxp.nf</code></a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#setup"><i class="fa fa-check"></i><b>4.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
+<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="git-5-analysis-iii-topology-weighting.html"><a href="git-5-analysis-iii-topology-weighting.html"><i class="fa fa-check"></i><b>6</b> (git 5) Analysis III (topology weighting)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="git-5-analysis-iii-topology-weighting.html"><a href="git-5-analysis-iii-topology-weighting.html#summary-4"><i class="fa fa-check"></i><b>6.1</b> Summary</a></li>
+<li class="chapter" data-level="6.2" data-path="git-5-analysis-iii-topology-weighting.html"><a href="git-5-analysis-iii-topology-weighting.html#details-of-analysis_fasttree_twisst.nf"><i class="fa fa-check"></i><b>6.2</b> Details of <code>analysis_fasttree_twisst.nf</code></a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="git-5-analysis-iii-topology-weighting.html"><a href="git-5-analysis-iii-topology-weighting.html#setup-1"><i class="fa fa-check"></i><b>6.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html"><i class="fa fa-check"></i><b>7</b> (git 6) Analysis IV (rho)</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#summary-5"><i class="fa fa-check"></i><b>7.1</b> Summary</a></li>
+<li class="chapter" data-level="7.2" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#details-of-analysis_recombination.nf"><i class="fa fa-check"></i><b>7.2</b> Details of <code>analysis_recombination.nf</code></a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="git-6-analysis-iv-rho.html"><a href="git-6-analysis-iv-rho.html#data-preparation-3"><i class="fa fa-check"></i><b>7.2.1</b> Data preparation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="git-7-analysis-v-principal-component-analysis.html"><a href="git-7-analysis-v-principal-component-analysis.html"><i class="fa fa-check"></i><b>8</b> (git 7) Analysis V (Principal Component Analysis)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="git-7-analysis-v-principal-component-analysis.html"><a href="git-7-analysis-v-principal-component-analysis.html#summary-6"><i class="fa fa-check"></i><b>8.1</b> Summary</a></li>
+<li class="chapter" data-level="8.2" data-path="git-7-analysis-v-principal-component-analysis.html"><a href="git-7-analysis-v-principal-component-analysis.html#details-of-analysis_pca.nf"><i class="fa fa-check"></i><b>8.2</b> Details of <code>analysis_pca.nf</code></a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="git-7-analysis-v-principal-component-analysis.html"><a href="git-7-analysis-v-principal-component-analysis.html#setup-2"><i class="fa fa-check"></i><b>8.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html"><i class="fa fa-check"></i><b>9</b> (git 8) Analysis VI (Demographic History)</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#summary-7"><i class="fa fa-check"></i><b>9.1</b> Summary</a></li>
+<li class="chapter" data-level="9.2" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#details-of-analysis_msmc.nf"><i class="fa fa-check"></i><b>9.2</b> Details of <code>analysis_msmc.nf</code></a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="git-8-analysis-vi-demographic-history.html"><a href="git-8-analysis-vi-demographic-history.html#data-preparation-4"><i class="fa fa-check"></i><b>9.2.1</b> Data preparation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html"><i class="fa fa-check"></i><b>10</b> (git 9) Analysis VII (hybridization)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#summary-8"><i class="fa fa-check"></i><b>10.1</b> Summary</a></li>
+<li class="chapter" data-level="10.2" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#details-of-analysis_hybridization.nf"><i class="fa fa-check"></i><b>10.2</b> Details of <code>analysis_hybridization.nf</code></a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="git-9-analysis-vii-hybridization.html"><a href="git-9-analysis-vii-hybridization.html#data-preparation-5"><i class="fa fa-check"></i><b>10.2.1</b> Data preparation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html"><i class="fa fa-check"></i><b>11</b> (git 10) Analysis VIII (admixture)</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#summary-9"><i class="fa fa-check"></i><b>11.1</b> Summary</a></li>
+<li class="chapter" data-level="11.2" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#details-of-analysis_admixture.nf"><i class="fa fa-check"></i><b>11.2</b> Details of <code>analysis_admixture.nf</code></a>
+<ul>
+<li class="chapter" data-level="11.2.1" data-path="git-10-analysis-viii-admixture.html"><a href="git-10-analysis-viii-admixture.html#data-preparation-6"><i class="fa fa-check"></i><b>11.2.1</b> Data preparation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html"><i class="fa fa-check"></i><b>12</b> (git 11) Analysis IX (Allele Age)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#summary-10"><i class="fa fa-check"></i><b>12.1</b> Summary</a></li>
+<li class="chapter" data-level="12.2" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#details-of-analysis_allele_age.nf"><i class="fa fa-check"></i><b>12.2</b> Details of <code>analysis_allele_age.nf</code></a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="git-11-analysis-ix-allele-age.html"><a href="git-11-analysis-ix-allele-age.html#setup-3"><i class="fa fa-check"></i><b>12.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html"><i class="fa fa-check"></i><b>13</b> (git 12) Analysis X (<i>F<sub>ST</sub></i> Permutation Test)</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#summary-11"><i class="fa fa-check"></i><b>13.1</b> Summary</a></li>
+<li class="chapter" data-level="13.2" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#details-of-analysis_fst_sign.nf"><i class="fa fa-check"></i><b>13.2</b> Details of <code>analysis_fst_sign.nf</code></a>
+<ul>
+<li class="chapter" data-level="13.2.1" data-path="git-12-analysis-x-fst-permutation-test.html"><a href="git-12-analysis-x-fst-permutation-test.html#setup-4"><i class="fa fa-check"></i><b>13.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="git-13-analysis-xi-whole-genome-phylogenies.html"><a href="git-13-analysis-xi-whole-genome-phylogenies.html"><i class="fa fa-check"></i><b>14</b> (git 13) Analysis XI (Whole Genome Phylogenies)</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="git-13-analysis-xi-whole-genome-phylogenies.html"><a href="git-13-analysis-xi-whole-genome-phylogenies.html#summary-12"><i class="fa fa-check"></i><b>14.1</b> Summary</a></li>
+<li class="chapter" data-level="14.2" data-path="git-13-analysis-xi-whole-genome-phylogenies.html"><a href="git-13-analysis-xi-whole-genome-phylogenies.html#details-of-analysis_phylo_whg.nf"><i class="fa fa-check"></i><b>14.2</b> Details of <code>analysis_phylo_whg.nf</code></a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="git-13-analysis-xi-whole-genome-phylogenies.html"><a href="git-13-analysis-xi-whole-genome-phylogenies.html#setup-5"><i class="fa fa-check"></i><b>14.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="git-14-analysis-xii-outlier-region-phylogenies.html"><a href="git-14-analysis-xii-outlier-region-phylogenies.html"><i class="fa fa-check"></i><b>15</b> (git 14) Analysis XII (Outlier Region Phylogenies)</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="git-14-analysis-xii-outlier-region-phylogenies.html"><a href="git-14-analysis-xii-outlier-region-phylogenies.html#summary-13"><i class="fa fa-check"></i><b>15.1</b> Summary</a></li>
+<li class="chapter" data-level="15.2" data-path="git-14-analysis-xii-outlier-region-phylogenies.html"><a href="git-14-analysis-xii-outlier-region-phylogenies.html#details-of-analysis_phylo_regions.nf"><i class="fa fa-check"></i><b>15.2</b> Details of <code>analysis_phylo_regions.nf</code></a>
+<ul>
+<li class="chapter" data-level="15.2.1" data-path="git-14-analysis-xii-outlier-region-phylogenies.html"><a href="git-14-analysis-xii-outlier-region-phylogenies.html#setup-6"><i class="fa fa-check"></i><b>15.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html"><a href="git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html"><i class="fa fa-check"></i><b>16</b> (git 15) Analysis XIII (diversity with and without outlier regions)</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html"><a href="git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html#summary-14"><i class="fa fa-check"></i><b>16.1</b> Summary</a></li>
+<li class="chapter" data-level="16.2" data-path="git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html"><a href="git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html#details-of-analysis_pi.nf"><i class="fa fa-check"></i><b>16.2</b> Details of <code>analysis_pi.nf</code></a>
+<ul>
+<li class="chapter" data-level="16.2.1" data-path="git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html"><a href="git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html#setup-7"><i class="fa fa-check"></i><b>16.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="git-16-analysis-xiv-identity-by-descent.html"><a href="git-16-analysis-xiv-identity-by-descent.html"><i class="fa fa-check"></i><b>17</b> (git 16) Analysis XIV (Identity by Descent)</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="git-16-analysis-xiv-identity-by-descent.html"><a href="git-16-analysis-xiv-identity-by-descent.html#summary-15"><i class="fa fa-check"></i><b>17.1</b> Summary</a></li>
+<li class="chapter" data-level="17.2" data-path="git-16-analysis-xiv-identity-by-descent.html"><a href="git-16-analysis-xiv-identity-by-descent.html#details-of-analysis_ibd.nf"><i class="fa fa-check"></i><b>17.2</b> Details of <code>analysis_ibd.nf</code></a>
+<ul>
+<li class="chapter" data-level="17.2.1" data-path="git-16-analysis-xiv-identity-by-descent.html"><a href="git-16-analysis-xiv-identity-by-descent.html#setup-8"><i class="fa fa-check"></i><b>17.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="git-17-analysis-xv-dstats.html"><a href="git-17-analysis-xv-dstats.html"><i class="fa fa-check"></i><b>18</b> (git 17) Analysis XV (dstats)</a>
+<ul>
+<li class="chapter" data-level="18.1" data-path="git-17-analysis-xv-dstats.html"><a href="git-17-analysis-xv-dstats.html#summary-16"><i class="fa fa-check"></i><b>18.1</b> Summary</a></li>
+<li class="chapter" data-level="18.2" data-path="git-17-analysis-xv-dstats.html"><a href="git-17-analysis-xv-dstats.html#details-of-analysis_dstats.nf"><i class="fa fa-check"></i><b>18.2</b> Details of <code>analysis_dstats.nf</code></a>
+<ul>
+<li class="chapter" data-level="18.2.1" data-path="git-17-analysis-xv-dstats.html"><a href="git-17-analysis-xv-dstats.html#setup-9"><i class="fa fa-check"></i><b>18.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html"><a href="git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html"><i class="fa fa-check"></i><b>19</b> (git 18) Genotyping III (all callable sites for mtDNA and unplaced contigs)</a>
+<ul>
+<li class="chapter" data-level="19.1" data-path="git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html"><a href="git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html#summary-17"><i class="fa fa-check"></i><b>19.1</b> Summary</a></li>
+<li class="chapter" data-level="19.2" data-path="git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html"><a href="git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html#details-of-genotyping_all_basepairs_mt.nf"><i class="fa fa-check"></i><b>19.2</b> Details of <code>genotyping_all_basepairs_mt.nf</code></a>
+<ul>
+<li class="chapter" data-level="19.2.1" data-path="git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html"><a href="git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html#data-preparation-7"><i class="fa fa-check"></i><b>19.2.1</b> Data preparation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="git-19-analysis-xvi-serraninae-phylogeny.html"><a href="git-19-analysis-xvi-serraninae-phylogeny.html"><i class="fa fa-check"></i><b>20</b> (git 19) Analysis XVI (Serraninae Phylogeny)</a>
+<ul>
+<li class="chapter" data-level="20.1" data-path="git-19-analysis-xvi-serraninae-phylogeny.html"><a href="git-19-analysis-xvi-serraninae-phylogeny.html#summary-18"><i class="fa fa-check"></i><b>20.1</b> Summary</a></li>
+<li class="chapter" data-level="20.2" data-path="git-19-analysis-xvi-serraninae-phylogeny.html"><a href="git-19-analysis-xvi-serraninae-phylogeny.html#details-of-analysis_phylo_serraninae.nf"><i class="fa fa-check"></i><b>20.2</b> Details of <code>analysis_phylo_serraninae.nf</code></a>
+<ul>
+<li class="chapter" data-level="20.2.1" data-path="git-19-analysis-xvi-serraninae-phylogeny.html"><a href="git-19-analysis-xvi-serraninae-phylogeny.html#setup-10"><i class="fa fa-check"></i><b>20.2.1</b> Setup</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="21" data-path="git-20-data-visualization.html"><a href="git-20-data-visualization.html"><i class="fa fa-check"></i><b>21</b> (git 20) Data Visualization</a></li>
+<li class="chapter" data-level="22" data-path="figure-1.html"><a href="figure-1.html"><i class="fa fa-check"></i><b>22</b> Figure 1</a>
+<ul>
+<li class="chapter" data-level="22.1" data-path="figure-1.html"><a href="figure-1.html#summary-19"><i class="fa fa-check"></i><b>22.1</b> Summary</a></li>
+<li class="chapter" data-level="22.2" data-path="figure-1.html"><a href="figure-1.html#details-of-plot_f1.r"><i class="fa fa-check"></i><b>22.2</b> Details of <code>plot_F1.R</code></a>
+<ul>
+<li class="chapter" data-level="22.2.1" data-path="figure-1.html"><a href="figure-1.html#config"><i class="fa fa-check"></i><b>22.2.1</b> Config</a></li>
+<li class="chapter" data-level="22.2.2" data-path="figure-1.html"><a href="figure-1.html#actual-script-start"><i class="fa fa-check"></i><b>22.2.2</b> Actual Script Start</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="23" data-path="figure-2.html"><a href="figure-2.html"><i class="fa fa-check"></i><b>23</b> Figure 2</a>
+<ul>
+<li class="chapter" data-level="23.1" data-path="figure-2.html"><a href="figure-2.html#summary-20"><i class="fa fa-check"></i><b>23.1</b> Summary</a></li>
+<li class="chapter" data-level="23.2" data-path="figure-2.html"><a href="figure-2.html#details-of-plot_f2.r"><i class="fa fa-check"></i><b>23.2</b> Details of <code>plot_F2.R</code></a>
+<ul>
+<li class="chapter" data-level="23.2.1" data-path="figure-2.html"><a href="figure-2.html#config-1"><i class="fa fa-check"></i><b>23.2.1</b> Config</a></li>
+<li class="chapter" data-level="23.2.2" data-path="figure-2.html"><a href="figure-2.html#actual-script-start-1"><i class="fa fa-check"></i><b>23.2.2</b> Actual Script Start</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="24" data-path="figure-3.html"><a href="figure-3.html"><i class="fa fa-check"></i><b>24</b> Figure 3</a>
+<ul>
+<li class="chapter" data-level="24.1" data-path="figure-3.html"><a href="figure-3.html#summary-21"><i class="fa fa-check"></i><b>24.1</b> Summary</a></li>
+<li class="chapter" data-level="24.2" data-path="figure-3.html"><a href="figure-3.html#details-of-plot_f3.r"><i class="fa fa-check"></i><b>24.2</b> Details of <code>plot_F3.R</code></a>
+<ul>
+<li class="chapter" data-level="24.2.1" data-path="figure-3.html"><a href="figure-3.html#config-2"><i class="fa fa-check"></i><b>24.2.1</b> Config</a></li>
+<li class="chapter" data-level="24.2.2" data-path="figure-3.html"><a href="figure-3.html#actual-script-start-2"><i class="fa fa-check"></i><b>24.2.2</b> Actual Script Start</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="25" data-path="figure-4.html"><a href="figure-4.html"><i class="fa fa-check"></i><b>25</b> Figure 4</a>
+<ul>
+<li class="chapter" data-level="25.1" data-path="figure-4.html"><a href="figure-4.html#summary-22"><i class="fa fa-check"></i><b>25.1</b> Summary</a></li>
+<li class="chapter" data-level="25.2" data-path="figure-4.html"><a href="figure-4.html#details-of-plot_f4.r"><i class="fa fa-check"></i><b>25.2</b> Details of <code>plot_F4.R</code></a>
+<ul>
+<li class="chapter" data-level="25.2.1" data-path="figure-4.html"><a href="figure-4.html#config-3"><i class="fa fa-check"></i><b>25.2.1</b> Config</a></li>
+<li class="chapter" data-level="25.2.2" data-path="figure-4.html"><a href="figure-4.html#actual-script-start-3"><i class="fa fa-check"></i><b>25.2.2</b> Actual Script Start</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="26" data-path="figure-5.html"><a href="figure-5.html"><i class="fa fa-check"></i><b>26</b> Figure 5</a>
+<ul>
+<li class="chapter" data-level="26.1" data-path="figure-5.html"><a href="figure-5.html#summary-23"><i class="fa fa-check"></i><b>26.1</b> Summary</a></li>
+<li class="chapter" data-level="26.2" data-path="figure-5.html"><a href="figure-5.html#details-of-plot_f5.r"><i class="fa fa-check"></i><b>26.2</b> Details of <code>plot_F5.R</code></a>
+<ul>
+<li class="chapter" data-level="26.2.1" data-path="figure-5.html"><a href="figure-5.html#config-4"><i class="fa fa-check"></i><b>26.2.1</b> Config</a></li>
+<li class="chapter" data-level="26.2.2" data-path="figure-5.html"><a href="figure-5.html#actual-script-start-4"><i class="fa fa-check"></i><b>26.2.2</b> Actual Script Start</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="27" data-path="figure-6.html"><a href="figure-6.html"><i class="fa fa-check"></i><b>27</b> Figure 6</a>
+<ul>
+<li class="chapter" data-level="27.1" data-path="figure-6.html"><a href="figure-6.html#summary-24"><i class="fa fa-check"></i><b>27.1</b> Summary</a></li>
+<li class="chapter" data-level="27.2" data-path="figure-6.html"><a href="figure-6.html#details-of-plot_f6.r"><i class="fa fa-check"></i><b>27.2</b> Details of <code>plot_F6.R</code></a>
+<ul>
+<li class="chapter" data-level="27.2.1" data-path="figure-6.html"><a href="figure-6.html#config-5"><i class="fa fa-check"></i><b>27.2.1</b> Config</a></li>
+<li class="chapter" data-level="27.2.2" data-path="figure-6.html"><a href="figure-6.html#actual-script-start-5"><i class="fa fa-check"></i><b>27.2.2</b> Actual Script Start</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="28" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html"><i class="fa fa-check"></i><b>28</b> Supplementary Figure 1</a>
+<ul>
+<li class="chapter" data-level="28.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#summary-25"><i class="fa fa-check"></i><b>28.1</b> Summary</a></li>
+<li class="chapter" data-level="28.2" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#details-of-plot_sf1.r"><i class="fa fa-check"></i><b>28.2</b> Details of <code>plot_SF1.R</code></a>
+<ul>
+<li class="chapter" data-level="28.2.1" data-path="supplementary-figure-1.html"><a href="supplementary-figure-1.html#config-6"><i class="fa fa-check"></i><b>28.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="29" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html"><i class="fa fa-check"></i><b>29</b> Supplementary Figure 2</a>
+<ul>
+<li class="chapter" data-level="29.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#summary-26"><i class="fa fa-check"></i><b>29.1</b> Summary</a></li>
+<li class="chapter" data-level="29.2" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#details-of-plot_sf2.r"><i class="fa fa-check"></i><b>29.2</b> Details of <code>plot_SF2.R</code></a>
+<ul>
+<li class="chapter" data-level="29.2.1" data-path="supplementary-figure-2.html"><a href="supplementary-figure-2.html#config-7"><i class="fa fa-check"></i><b>29.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="30" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html"><i class="fa fa-check"></i><b>30</b> Supplementary Figure 3</a>
+<ul>
+<li class="chapter" data-level="30.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#summary-27"><i class="fa fa-check"></i><b>30.1</b> Summary</a></li>
+<li class="chapter" data-level="30.2" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#details-of-plot_sf3.r"><i class="fa fa-check"></i><b>30.2</b> Details of <code>plot_SF3.R</code></a>
+<ul>
+<li class="chapter" data-level="30.2.1" data-path="supplementary-figure-3.html"><a href="supplementary-figure-3.html#config-8"><i class="fa fa-check"></i><b>30.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="31" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html"><i class="fa fa-check"></i><b>31</b> Supplementary Figure 4</a>
+<ul>
+<li class="chapter" data-level="31.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#summary-28"><i class="fa fa-check"></i><b>31.1</b> Summary</a></li>
+<li class="chapter" data-level="31.2" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#details-of-plot_sf4.r"><i class="fa fa-check"></i><b>31.2</b> Details of <code>plot_SF4.R</code></a>
+<ul>
+<li class="chapter" data-level="31.2.1" data-path="supplementary-figure-4.html"><a href="supplementary-figure-4.html#config-9"><i class="fa fa-check"></i><b>31.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="32" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html"><i class="fa fa-check"></i><b>32</b> Supplementary Figure 5</a>
+<ul>
+<li class="chapter" data-level="32.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#summary-29"><i class="fa fa-check"></i><b>32.1</b> Summary</a></li>
+<li class="chapter" data-level="32.2" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#details-of-plot_sf5.r"><i class="fa fa-check"></i><b>32.2</b> Details of <code>plot_SF5.R</code></a>
+<ul>
+<li class="chapter" data-level="32.2.1" data-path="supplementary-figure-5.html"><a href="supplementary-figure-5.html#config-10"><i class="fa fa-check"></i><b>32.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="33" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html"><i class="fa fa-check"></i><b>33</b> Supplementary Figure 6</a>
+<ul>
+<li class="chapter" data-level="33.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#summary-30"><i class="fa fa-check"></i><b>33.1</b> Summary</a></li>
+<li class="chapter" data-level="33.2" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#details-of-plot_sf6.r"><i class="fa fa-check"></i><b>33.2</b> Details of <code>plot_SF6.R</code></a>
+<ul>
+<li class="chapter" data-level="33.2.1" data-path="supplementary-figure-6.html"><a href="supplementary-figure-6.html#config-11"><i class="fa fa-check"></i><b>33.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="34" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html"><i class="fa fa-check"></i><b>34</b> Supplementary Figure 7</a>
+<ul>
+<li class="chapter" data-level="34.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#summary-31"><i class="fa fa-check"></i><b>34.1</b> Summary</a></li>
+<li class="chapter" data-level="34.2" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#details-of-plot_sf7.r"><i class="fa fa-check"></i><b>34.2</b> Details of <code>plot_SF7.R</code></a>
+<ul>
+<li class="chapter" data-level="34.2.1" data-path="supplementary-figure-7.html"><a href="supplementary-figure-7.html#config-12"><i class="fa fa-check"></i><b>34.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="35" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html"><i class="fa fa-check"></i><b>35</b> Supplementary Figure 8</a>
+<ul>
+<li class="chapter" data-level="35.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#summary-32"><i class="fa fa-check"></i><b>35.1</b> Summary</a></li>
+<li class="chapter" data-level="35.2" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#details-of-plot_sf8.r"><i class="fa fa-check"></i><b>35.2</b> Details of <code>plot_SF8.R</code></a>
+<ul>
+<li class="chapter" data-level="35.2.1" data-path="supplementary-figure-8.html"><a href="supplementary-figure-8.html#config-13"><i class="fa fa-check"></i><b>35.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="36" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html"><i class="fa fa-check"></i><b>36</b> Supplementary Figure 9</a>
+<ul>
+<li class="chapter" data-level="36.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#summary-33"><i class="fa fa-check"></i><b>36.1</b> Summary</a></li>
+<li class="chapter" data-level="36.2" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#details-of-plot_sf9.r"><i class="fa fa-check"></i><b>36.2</b> Details of <code>plot_SF9.R</code></a>
+<ul>
+<li class="chapter" data-level="36.2.1" data-path="supplementary-figure-9.html"><a href="supplementary-figure-9.html#config-14"><i class="fa fa-check"></i><b>36.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="37" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html"><i class="fa fa-check"></i><b>37</b> Supplementary Figure 10</a>
+<ul>
+<li class="chapter" data-level="37.1" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#summary-34"><i class="fa fa-check"></i><b>37.1</b> Summary</a></li>
+<li class="chapter" data-level="37.2" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#details-of-plot_sf10.r"><i class="fa fa-check"></i><b>37.2</b> Details of <code>plot_SF10.R</code></a>
+<ul>
+<li class="chapter" data-level="37.2.1" data-path="supplementary-figure-10.html"><a href="supplementary-figure-10.html#config-15"><i class="fa fa-check"></i><b>37.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="38" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html"><i class="fa fa-check"></i><b>38</b> Supplementary Figure 11</a>
+<ul>
+<li class="chapter" data-level="38.1" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#summary-35"><i class="fa fa-check"></i><b>38.1</b> Summary</a></li>
+<li class="chapter" data-level="38.2" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#details-of-plot_sf11.r"><i class="fa fa-check"></i><b>38.2</b> Details of <code>plot_SF11.R</code></a>
+<ul>
+<li class="chapter" data-level="38.2.1" data-path="supplementary-figure-11.html"><a href="supplementary-figure-11.html#config-16"><i class="fa fa-check"></i><b>38.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="39" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html"><i class="fa fa-check"></i><b>39</b> Supplementary Figure 12</a>
+<ul>
+<li class="chapter" data-level="39.1" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#summary-36"><i class="fa fa-check"></i><b>39.1</b> Summary</a></li>
+<li class="chapter" data-level="39.2" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#details-of-plot_sf12.r"><i class="fa fa-check"></i><b>39.2</b> Details of <code>plot_SF12.R</code></a>
+<ul>
+<li class="chapter" data-level="39.2.1" data-path="supplementary-figure-12.html"><a href="supplementary-figure-12.html#config-17"><i class="fa fa-check"></i><b>39.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="40" data-path="supplementary-figure-13.html"><a href="supplementary-figure-13.html"><i class="fa fa-check"></i><b>40</b> Supplementary Figure 13</a>
+<ul>
+<li class="chapter" data-level="40.1" data-path="supplementary-figure-13.html"><a href="supplementary-figure-13.html#summary-37"><i class="fa fa-check"></i><b>40.1</b> Summary</a></li>
+<li class="chapter" data-level="40.2" data-path="supplementary-figure-13.html"><a href="supplementary-figure-13.html#details-of-plot_sf13.r"><i class="fa fa-check"></i><b>40.2</b> Details of <code>plot_SF13.R</code></a>
+<ul>
+<li class="chapter" data-level="40.2.1" data-path="supplementary-figure-13.html"><a href="supplementary-figure-13.html#config-18"><i class="fa fa-check"></i><b>40.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="41" data-path="supplementary-figure-14.html"><a href="supplementary-figure-14.html"><i class="fa fa-check"></i><b>41</b> Supplementary Figure 14</a>
+<ul>
+<li class="chapter" data-level="41.1" data-path="supplementary-figure-14.html"><a href="supplementary-figure-14.html#summary-38"><i class="fa fa-check"></i><b>41.1</b> Summary</a></li>
+<li class="chapter" data-level="41.2" data-path="supplementary-figure-14.html"><a href="supplementary-figure-14.html#details-of-plot_sf14.r"><i class="fa fa-check"></i><b>41.2</b> Details of <code>plot_SF14.R</code></a>
+<ul>
+<li class="chapter" data-level="41.2.1" data-path="supplementary-figure-14.html"><a href="supplementary-figure-14.html#config-19"><i class="fa fa-check"></i><b>41.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="42" data-path="supplementary-figure-15.html"><a href="supplementary-figure-15.html"><i class="fa fa-check"></i><b>42</b> Supplementary Figure 15</a>
+<ul>
+<li class="chapter" data-level="42.1" data-path="supplementary-figure-15.html"><a href="supplementary-figure-15.html#summary-39"><i class="fa fa-check"></i><b>42.1</b> Summary</a></li>
+<li class="chapter" data-level="42.2" data-path="supplementary-figure-15.html"><a href="supplementary-figure-15.html#details-of-plot_sf15.r"><i class="fa fa-check"></i><b>42.2</b> Details of <code>plot_SF15.R</code></a>
+<ul>
+<li class="chapter" data-level="42.2.1" data-path="supplementary-figure-15.html"><a href="supplementary-figure-15.html#config-20"><i class="fa fa-check"></i><b>42.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="43" data-path="supplementary-figure-16.html"><a href="supplementary-figure-16.html"><i class="fa fa-check"></i><b>43</b> Supplementary Figure 16</a>
+<ul>
+<li class="chapter" data-level="43.1" data-path="supplementary-figure-16.html"><a href="supplementary-figure-16.html#summary-40"><i class="fa fa-check"></i><b>43.1</b> Summary</a></li>
+<li class="chapter" data-level="43.2" data-path="supplementary-figure-16.html"><a href="supplementary-figure-16.html#details-of-plot_sf16.r"><i class="fa fa-check"></i><b>43.2</b> Details of <code>plot_SF16.R</code></a>
+<ul>
+<li class="chapter" data-level="43.2.1" data-path="supplementary-figure-16.html"><a href="supplementary-figure-16.html#config-21"><i class="fa fa-check"></i><b>43.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="44" data-path="supplementary-figure-17.html"><a href="supplementary-figure-17.html"><i class="fa fa-check"></i><b>44</b> Supplementary Figure 17</a>
+<ul>
+<li class="chapter" data-level="44.1" data-path="supplementary-figure-17.html"><a href="supplementary-figure-17.html#summary-41"><i class="fa fa-check"></i><b>44.1</b> Summary</a></li>
+<li class="chapter" data-level="44.2" data-path="supplementary-figure-17.html"><a href="supplementary-figure-17.html#details-of-plot_sf17.r"><i class="fa fa-check"></i><b>44.2</b> Details of <code>plot_SF17.R</code></a>
+<ul>
+<li class="chapter" data-level="44.2.1" data-path="supplementary-figure-17.html"><a href="supplementary-figure-17.html#config-22"><i class="fa fa-check"></i><b>44.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="45" data-path="supplementary-figure-18.html"><a href="supplementary-figure-18.html"><i class="fa fa-check"></i><b>45</b> Supplementary Figure 18</a>
+<ul>
+<li class="chapter" data-level="45.1" data-path="supplementary-figure-18.html"><a href="supplementary-figure-18.html#summary-42"><i class="fa fa-check"></i><b>45.1</b> Summary</a></li>
+<li class="chapter" data-level="45.2" data-path="supplementary-figure-18.html"><a href="supplementary-figure-18.html#details-of-plot_sf18.r"><i class="fa fa-check"></i><b>45.2</b> Details of <code>plot_SF18.R</code></a>
+<ul>
+<li class="chapter" data-level="45.2.1" data-path="supplementary-figure-18.html"><a href="supplementary-figure-18.html#config-23"><i class="fa fa-check"></i><b>45.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="46" data-path="supplementary-figure-19.html"><a href="supplementary-figure-19.html"><i class="fa fa-check"></i><b>46</b> Supplementary Figure 19</a>
+<ul>
+<li class="chapter" data-level="46.1" data-path="supplementary-figure-19.html"><a href="supplementary-figure-19.html#summary-43"><i class="fa fa-check"></i><b>46.1</b> Summary</a></li>
+<li class="chapter" data-level="46.2" data-path="supplementary-figure-19.html"><a href="supplementary-figure-19.html#details-of-plot_sf19.r"><i class="fa fa-check"></i><b>46.2</b> Details of <code>plot_SF19.R</code></a>
+<ul>
+<li class="chapter" data-level="46.2.1" data-path="supplementary-figure-19.html"><a href="supplementary-figure-19.html#config-24"><i class="fa fa-check"></i><b>46.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="47" data-path="supplementary-figure-20.html"><a href="supplementary-figure-20.html"><i class="fa fa-check"></i><b>47</b> Supplementary Figure 20</a>
+<ul>
+<li class="chapter" data-level="47.1" data-path="supplementary-figure-20.html"><a href="supplementary-figure-20.html#summary-44"><i class="fa fa-check"></i><b>47.1</b> Summary</a></li>
+<li class="chapter" data-level="47.2" data-path="supplementary-figure-20.html"><a href="supplementary-figure-20.html#details-of-plot_sf20.r"><i class="fa fa-check"></i><b>47.2</b> Details of <code>plot_SF20.R</code></a>
+<ul>
+<li class="chapter" data-level="47.2.1" data-path="supplementary-figure-20.html"><a href="supplementary-figure-20.html#config-25"><i class="fa fa-check"></i><b>47.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="48" data-path="supplementary-figure-21.html"><a href="supplementary-figure-21.html"><i class="fa fa-check"></i><b>48</b> Supplementary Figure 21</a>
+<ul>
+<li class="chapter" data-level="48.1" data-path="supplementary-figure-21.html"><a href="supplementary-figure-21.html#summary-45"><i class="fa fa-check"></i><b>48.1</b> Summary</a></li>
+<li class="chapter" data-level="48.2" data-path="supplementary-figure-21.html"><a href="supplementary-figure-21.html#details-of-plot_sf21.r"><i class="fa fa-check"></i><b>48.2</b> Details of <code>plot_SF21.R</code></a>
+<ul>
+<li class="chapter" data-level="48.2.1" data-path="supplementary-figure-21.html"><a href="supplementary-figure-21.html#config-26"><i class="fa fa-check"></i><b>48.2.1</b> Config</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+<li> <image src="logo.svg" alt="Smiley face" style="width:100%; height:100px;"> </li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Script repository</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="git-20-data-visualization" class="section level1" number="21">
+<h1><span class="header-section-number">21</span> (git 20) Data Visualization</h1>
+<p>After all <code>nextflow</code> pipelines are successfully run to completion, each Figure (and Suppl. Figure) of the manuscript can be re-created with its respective <code>R</code> script located under <code>R/fig</code>.
+These are executable <code>R</code> scripts that can be launched from the base directory;</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb25-1"><a href="git-20-data-visualization.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_Fxyz.R input1 input2 ...</span></code></pre></div>
+<p>For convenience, there also exists a <code>bash</code> script that can be used to re-create all Figures in one go (git 15):</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb26-1"><a href="git-20-data-visualization.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$BASE_DIR</span></span>
+<span id="cb26-2"><a href="git-20-data-visualization.html#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> sh/create_figures.sh</span></code></pre></div>
+<p>After running <code>create_figures.sh</code>, Figures 1 - 6 and Suppl. Figures 1 - 21 should be created withing the folder <code>figures/</code>.</p>
+<p>In the remaining documentation, the individual Visualization scripts are going to discussed in detail.</p>
+<p>Below is the bash code that is executed when running <code>create_figures.sh</code>:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb27-1"><a href="git-20-data-visualization.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#/usr/bin/bash</span></span>
+<span id="cb27-2"><a href="git-20-data-visualization.html#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20</span></span>
+<span id="cb27-3"><a href="git-20-data-visualization.html#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="git-20-data-visualization.html#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># preparation for Fig. 1</span></span>
+<span id="cb27-5"><a href="git-20-data-visualization.html#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fst_permutation.R <span class="dt">\</span></span>
+<span id="cb27-6"><a href="git-20-data-visualization.html#cb27-6" aria-hidden="true" tabindex="-1"></a>    2_analysis/fst_signif/random/</span>
+<span id="cb27-7"><a href="git-20-data-visualization.html#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="git-20-data-visualization.html#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Main Figures</span></span>
+<span id="cb27-9"><a href="git-20-data-visualization.html#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------------------------</span></span>
+<span id="cb27-10"><a href="git-20-data-visualization.html#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.1</span></span>
+<span id="cb27-11"><a href="git-20-data-visualization.html#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co"># needs to be run interactively because fonts are not accessible for Rscript</span></span>
+<span id="cb27-12"><a href="git-20-data-visualization.html#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Rscript --vanilla R/fig/plot_F1.R \</span></span>
+<span id="cb27-13"><a href="git-20-data-visualization.html#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">#  2_analysis/fst/50k/ \</span></span>
+<span id="cb27-14"><a href="git-20-data-visualization.html#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co">#  2_analysis/summaries/fst_globals.txt \</span></span>
+<span id="cb27-15"><a href="git-20-data-visualization.html#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co">#  2_analysis/summaries/fst_permutation_summary.tsv \</span></span>
+<span id="cb27-16"><a href="git-20-data-visualization.html#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  2_analysis/fotl/concat_R24ed.treefile</span></span>
+<span id="cb27-17"><a href="git-20-data-visualization.html#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="git-20-data-visualization.html#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.2</span></span>
+<span id="cb27-19"><a href="git-20-data-visualization.html#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_F2.R <span class="dt">\</span></span>
+<span id="cb27-20"><a href="git-20-data-visualization.html#cb27-20" aria-hidden="true" tabindex="-1"></a>    2_analysis/fst/50k/multi_fst.50k.tsv.gz <span class="dt">\</span></span>
+<span id="cb27-21"><a href="git-20-data-visualization.html#cb27-21" aria-hidden="true" tabindex="-1"></a>    2_analysis/GxP/50000/ <span class="dt">\</span></span>
+<span id="cb27-22"><a href="git-20-data-visualization.html#cb27-22" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_outliers_998.tsv <span class="dt">\</span></span>
+<span id="cb27-23"><a href="git-20-data-visualization.html#cb27-23" aria-hidden="true" tabindex="-1"></a>    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R <span class="dt">\</span></span>
+<span id="cb27-24"><a href="git-20-data-visualization.html#cb27-24" aria-hidden="true" tabindex="-1"></a>    2_analysis/twisst/weights/ <span class="dt">\</span></span>
+<span id="cb27-25"><a href="git-20-data-visualization.html#cb27-25" aria-hidden="true" tabindex="-1"></a>    ressources/plugin/trees/ <span class="dt">\</span></span>
+<span id="cb27-26"><a href="git-20-data-visualization.html#cb27-26" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_globals.txt</span>
+<span id="cb27-27"><a href="git-20-data-visualization.html#cb27-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-28"><a href="git-20-data-visualization.html#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.3</span></span>
+<span id="cb27-29"><a href="git-20-data-visualization.html#cb27-29" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_F3.R <span class="dt">\</span></span>
+<span id="cb27-30"><a href="git-20-data-visualization.html#cb27-30" aria-hidden="true" tabindex="-1"></a>    2_analysis/msmc/output/ <span class="dt">\</span></span>
+<span id="cb27-31"><a href="git-20-data-visualization.html#cb27-31" aria-hidden="true" tabindex="-1"></a>    2_analysis/cross_coalescence/output/ <span class="dt">\</span></span>
+<span id="cb27-32"><a href="git-20-data-visualization.html#cb27-32" aria-hidden="true" tabindex="-1"></a>    2_analysis/msmc/setup/msmc_grouping.txt <span class="dt">\</span></span>
+<span id="cb27-33"><a href="git-20-data-visualization.html#cb27-33" aria-hidden="true" tabindex="-1"></a>    2_analysis/msmc/setup/msmc_cc_grouping.txt <span class="dt">\</span></span>
+<span id="cb27-34"><a href="git-20-data-visualization.html#cb27-34" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_globals.txt</span>
+<span id="cb27-35"><a href="git-20-data-visualization.html#cb27-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-36"><a href="git-20-data-visualization.html#cb27-36" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.4</span></span>
+<span id="cb27-37"><a href="git-20-data-visualization.html#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_F4.R <span class="dt">\</span></span>
+<span id="cb27-38"><a href="git-20-data-visualization.html#cb27-38" aria-hidden="true" tabindex="-1"></a>    2_analysis/astral/astral_5000x_5kb_v1_noS.tre <span class="dt">\</span></span>
+<span id="cb27-39"><a href="git-20-data-visualization.html#cb27-39" aria-hidden="true" tabindex="-1"></a>    2_analysis/ibd/cM_converted/no_outgr_bed95_8.conv_filterd.tsv</span>
+<span id="cb27-40"><a href="git-20-data-visualization.html#cb27-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-41"><a href="git-20-data-visualization.html#cb27-41" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.5</span></span>
+<span id="cb27-42"><a href="git-20-data-visualization.html#cb27-42" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_F5.R <span class="dt">\</span></span>
+<span id="cb27-43"><a href="git-20-data-visualization.html#cb27-43" aria-hidden="true" tabindex="-1"></a>    2_analysis/twisst/weights/ <span class="dt">\</span></span>
+<span id="cb27-44"><a href="git-20-data-visualization.html#cb27-44" aria-hidden="true" tabindex="-1"></a>    ressources/plugin/trees/ <span class="dt">\</span></span>
+<span id="cb27-45"><a href="git-20-data-visualization.html#cb27-45" aria-hidden="true" tabindex="-1"></a>    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R <span class="dt">\</span></span>
+<span id="cb27-46"><a href="git-20-data-visualization.html#cb27-46" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_outliers_998.tsv <span class="dt">\</span></span>
+<span id="cb27-47"><a href="git-20-data-visualization.html#cb27-47" aria-hidden="true" tabindex="-1"></a>    2_analysis/dxy/50k/ <span class="dt">\</span></span>
+<span id="cb27-48"><a href="git-20-data-visualization.html#cb27-48" aria-hidden="true" tabindex="-1"></a>    2_analysis/fst/50k/ <span class="dt">\</span></span>
+<span id="cb27-49"><a href="git-20-data-visualization.html#cb27-49" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_globals.txt <span class="dt">\</span></span>
+<span id="cb27-50"><a href="git-20-data-visualization.html#cb27-50" aria-hidden="true" tabindex="-1"></a>    2_analysis/GxP/50000/ <span class="dt">\</span></span>
+<span id="cb27-51"><a href="git-20-data-visualization.html#cb27-51" aria-hidden="true" tabindex="-1"></a>    200 <span class="dt">\</span></span>
+<span id="cb27-52"><a href="git-20-data-visualization.html#cb27-52" aria-hidden="true" tabindex="-1"></a>    5 <span class="dt">\</span></span>
+<span id="cb27-53"><a href="git-20-data-visualization.html#cb27-53" aria-hidden="true" tabindex="-1"></a>    2_analysis/revPoMo/outlier_regions/</span>
+<span id="cb27-54"><a href="git-20-data-visualization.html#cb27-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-55"><a href="git-20-data-visualization.html#cb27-55" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.6</span></span>
+<span id="cb27-56"><a href="git-20-data-visualization.html#cb27-56" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_F6.R <span class="dt">\</span></span>
+<span id="cb27-57"><a href="git-20-data-visualization.html#cb27-57" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_outliers_998.tsv <span class="dt">\</span></span>
+<span id="cb27-58"><a href="git-20-data-visualization.html#cb27-58" aria-hidden="true" tabindex="-1"></a>    2_analysis/geva/ <span class="dt">\</span></span>
+<span id="cb27-59"><a href="git-20-data-visualization.html#cb27-59" aria-hidden="true" tabindex="-1"></a>    2_analysis/GxP/bySNP/</span>
+<span id="cb27-60"><a href="git-20-data-visualization.html#cb27-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-61"><a href="git-20-data-visualization.html#cb27-61" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppl. Figures</span></span>
+<span id="cb27-62"><a href="git-20-data-visualization.html#cb27-62" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------------------------</span></span>
+<span id="cb27-63"><a href="git-20-data-visualization.html#cb27-63" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.7</span></span>
+<span id="cb27-64"><a href="git-20-data-visualization.html#cb27-64" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF1.R <span class="dt">\</span></span>
+<span id="cb27-65"><a href="git-20-data-visualization.html#cb27-65" aria-hidden="true" tabindex="-1"></a>    ressources/Rabosky_etal_2018/dataFiles/ratemat_enhanced.csv</span>
+<span id="cb27-66"><a href="git-20-data-visualization.html#cb27-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-67"><a href="git-20-data-visualization.html#cb27-67" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.8</span></span>
+<span id="cb27-68"><a href="git-20-data-visualization.html#cb27-68" aria-hidden="true" tabindex="-1"></a><span class="co"># needs to be run interactively because fonts are not accessible for Rscript</span></span>
+<span id="cb27-69"><a href="git-20-data-visualization.html#cb27-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Rscript --vanilla R/fig/plot_SF2.R \</span></span>
+<span id="cb27-70"><a href="git-20-data-visualization.html#cb27-70" aria-hidden="true" tabindex="-1"></a><span class="co">#    ressources/Rabosky_etal_2018/</span></span>
+<span id="cb27-71"><a href="git-20-data-visualization.html#cb27-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-72"><a href="git-20-data-visualization.html#cb27-72" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.9</span></span>
+<span id="cb27-73"><a href="git-20-data-visualization.html#cb27-73" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF3.R <span class="dt">\</span></span>
+<span id="cb27-74"><a href="git-20-data-visualization.html#cb27-74" aria-hidden="true" tabindex="-1"></a>    2_analysis/pca/</span>
+<span id="cb27-75"><a href="git-20-data-visualization.html#cb27-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-76"><a href="git-20-data-visualization.html#cb27-76" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.10</span></span>
+<span id="cb27-77"><a href="git-20-data-visualization.html#cb27-77" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF4.R <span class="dt">\</span></span>
+<span id="cb27-78"><a href="git-20-data-visualization.html#cb27-78" aria-hidden="true" tabindex="-1"></a>    2_analysis/fst/50k/ <span class="dt">\</span></span>
+<span id="cb27-79"><a href="git-20-data-visualization.html#cb27-79" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_outliers_998.tsv <span class="dt">\</span></span>
+<span id="cb27-80"><a href="git-20-data-visualization.html#cb27-80" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_globals.txt</span>
+<span id="cb27-81"><a href="git-20-data-visualization.html#cb27-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-82"><a href="git-20-data-visualization.html#cb27-82" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.11</span></span>
+<span id="cb27-83"><a href="git-20-data-visualization.html#cb27-83" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF5.R <span class="dt">\</span></span>
+<span id="cb27-84"><a href="git-20-data-visualization.html#cb27-84" aria-hidden="true" tabindex="-1"></a>    2_analysis/fst/50k/ <span class="dt">\</span></span>
+<span id="cb27-85"><a href="git-20-data-visualization.html#cb27-85" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_globals.txt</span>
+<span id="cb27-86"><a href="git-20-data-visualization.html#cb27-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-87"><a href="git-20-data-visualization.html#cb27-87" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.12</span></span>
+<span id="cb27-88"><a href="git-20-data-visualization.html#cb27-88" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF6.R <span class="dt">\</span></span>
+<span id="cb27-89"><a href="git-20-data-visualization.html#cb27-89" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_globals.txt <span class="dt">\</span></span>
+<span id="cb27-90"><a href="git-20-data-visualization.html#cb27-90" aria-hidden="true" tabindex="-1"></a>    2_analysis/fst/50k/ <span class="dt">\</span></span>
+<span id="cb27-91"><a href="git-20-data-visualization.html#cb27-91" aria-hidden="true" tabindex="-1"></a>    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span>
+<span id="cb27-92"><a href="git-20-data-visualization.html#cb27-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-93"><a href="git-20-data-visualization.html#cb27-93" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.13</span></span>
+<span id="cb27-94"><a href="git-20-data-visualization.html#cb27-94" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF7.R <span class="dt">\</span></span>
+<span id="cb27-95"><a href="git-20-data-visualization.html#cb27-95" aria-hidden="true" tabindex="-1"></a>    2_analysis/dxy/50k/</span>
+<span id="cb27-96"><a href="git-20-data-visualization.html#cb27-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-97"><a href="git-20-data-visualization.html#cb27-97" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.14</span></span>
+<span id="cb27-98"><a href="git-20-data-visualization.html#cb27-98" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF8.R <span class="dt">\</span></span>
+<span id="cb27-99"><a href="git-20-data-visualization.html#cb27-99" aria-hidden="true" tabindex="-1"></a>    2_analysis/dxy/50k/ <span class="dt">\</span></span>
+<span id="cb27-100"><a href="git-20-data-visualization.html#cb27-100" aria-hidden="true" tabindex="-1"></a>    2_analysis/fst/50k/multi_fst.50k.tsv.gz <span class="dt">\</span></span>
+<span id="cb27-101"><a href="git-20-data-visualization.html#cb27-101" aria-hidden="true" tabindex="-1"></a>    2_analysis/GxP/50000/ <span class="dt">\</span></span>
+<span id="cb27-102"><a href="git-20-data-visualization.html#cb27-102" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_outliers_998.tsv <span class="dt">\</span></span>
+<span id="cb27-103"><a href="git-20-data-visualization.html#cb27-103" aria-hidden="true" tabindex="-1"></a>    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R <span class="dt">\</span></span>
+<span id="cb27-104"><a href="git-20-data-visualization.html#cb27-104" aria-hidden="true" tabindex="-1"></a>    2_analysis/twisst/weights/ <span class="dt">\</span></span>
+<span id="cb27-105"><a href="git-20-data-visualization.html#cb27-105" aria-hidden="true" tabindex="-1"></a>    ressources/plugin/trees/ <span class="dt">\</span></span>
+<span id="cb27-106"><a href="git-20-data-visualization.html#cb27-106" aria-hidden="true" tabindex="-1"></a>    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz <span class="dt">\</span></span>
+<span id="cb27-107"><a href="git-20-data-visualization.html#cb27-107" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_globals.txt</span>
+<span id="cb27-108"><a href="git-20-data-visualization.html#cb27-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-109"><a href="git-20-data-visualization.html#cb27-109" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.15</span></span>
+<span id="cb27-110"><a href="git-20-data-visualization.html#cb27-110" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF9.R <span class="dt">\</span></span>
+<span id="cb27-111"><a href="git-20-data-visualization.html#cb27-111" aria-hidden="true" tabindex="-1"></a>    2_analysis/pi/50k/ <span class="dt">\</span></span>
+<span id="cb27-112"><a href="git-20-data-visualization.html#cb27-112" aria-hidden="true" tabindex="-1"></a>    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz</span>
+<span id="cb27-113"><a href="git-20-data-visualization.html#cb27-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-114"><a href="git-20-data-visualization.html#cb27-114" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.16</span></span>
+<span id="cb27-115"><a href="git-20-data-visualization.html#cb27-115" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF10.R <span class="dt">\</span></span>
+<span id="cb27-116"><a href="git-20-data-visualization.html#cb27-116" aria-hidden="true" tabindex="-1"></a>    2_analysis/dxy/50k/</span>
+<span id="cb27-117"><a href="git-20-data-visualization.html#cb27-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-118"><a href="git-20-data-visualization.html#cb27-118" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.17</span></span>
+<span id="cb27-119"><a href="git-20-data-visualization.html#cb27-119" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF11.R <span class="dt">\</span></span>
+<span id="cb27-120"><a href="git-20-data-visualization.html#cb27-120" aria-hidden="true" tabindex="-1"></a>    2_analysis/newhyb/nh_input/NH.Results/</span>
+<span id="cb27-121"><a href="git-20-data-visualization.html#cb27-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-122"><a href="git-20-data-visualization.html#cb27-122" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.18</span></span>
+<span id="cb27-123"><a href="git-20-data-visualization.html#cb27-123" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF12.R <span class="dt">\</span></span>
+<span id="cb27-124"><a href="git-20-data-visualization.html#cb27-124" aria-hidden="true" tabindex="-1"></a>    ressources/species_order_alpha.txt <span class="dt">\</span></span>
+<span id="cb27-125"><a href="git-20-data-visualization.html#cb27-125" aria-hidden="true" tabindex="-1"></a>    2_analysis/dstats/hyp_ld05_dtrios_BBAA.txt <span class="dt">\</span></span>
+<span id="cb27-126"><a href="git-20-data-visualization.html#cb27-126" aria-hidden="true" tabindex="-1"></a>    2_analysis/dstats/BBAA_ld05.csv <span class="dt">\</span></span>
+<span id="cb27-127"><a href="git-20-data-visualization.html#cb27-127" aria-hidden="true" tabindex="-1"></a>    2_analysis/dstats/BBAA_sign_ld05.csv</span>
+<span id="cb27-128"><a href="git-20-data-visualization.html#cb27-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-129"><a href="git-20-data-visualization.html#cb27-129" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.19</span></span>
+<span id="cb27-130"><a href="git-20-data-visualization.html#cb27-130" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF13.R <span class="dt">\</span></span>
+<span id="cb27-131"><a href="git-20-data-visualization.html#cb27-131" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_outliers_998.tsv</span>
+<span id="cb27-132"><a href="git-20-data-visualization.html#cb27-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-133"><a href="git-20-data-visualization.html#cb27-133" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.20</span></span>
+<span id="cb27-134"><a href="git-20-data-visualization.html#cb27-134" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF14.R <span class="dt">\</span></span>
+<span id="cb27-135"><a href="git-20-data-visualization.html#cb27-135" aria-hidden="true" tabindex="-1"></a>    2_analysis/raxml/lg04.1_155N.raxml.support <span class="dt">\</span></span>
+<span id="cb27-136"><a href="git-20-data-visualization.html#cb27-136" aria-hidden="true" tabindex="-1"></a>    2_analysis/raxml/lg12.3_155N.raxml.support <span class="dt">\</span></span>
+<span id="cb27-137"><a href="git-20-data-visualization.html#cb27-137" aria-hidden="true" tabindex="-1"></a>    2_analysis/raxml/lg12.4_155N.raxml.support</span>
+<span id="cb27-138"><a href="git-20-data-visualization.html#cb27-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-139"><a href="git-20-data-visualization.html#cb27-139" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.21</span></span>
+<span id="cb27-140"><a href="git-20-data-visualization.html#cb27-140" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF15.R <span class="dt">\</span></span>
+<span id="cb27-141"><a href="git-20-data-visualization.html#cb27-141" aria-hidden="true" tabindex="-1"></a>    2_analysis/raxml/lg04.1_hySN.raxml.support <span class="dt">\</span></span>
+<span id="cb27-142"><a href="git-20-data-visualization.html#cb27-142" aria-hidden="true" tabindex="-1"></a>    2_analysis/raxml/lg12.3_hySN.raxml.support <span class="dt">\</span></span>
+<span id="cb27-143"><a href="git-20-data-visualization.html#cb27-143" aria-hidden="true" tabindex="-1"></a>    2_analysis/raxml/lg12.4_hySN.raxml.support</span>
+<span id="cb27-144"><a href="git-20-data-visualization.html#cb27-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-145"><a href="git-20-data-visualization.html#cb27-145" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.22</span></span>
+<span id="cb27-146"><a href="git-20-data-visualization.html#cb27-146" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF16.R <span class="dt">\</span></span>
+<span id="cb27-147"><a href="git-20-data-visualization.html#cb27-147" aria-hidden="true" tabindex="-1"></a>    2_analysis/admixture/ <span class="dt">\</span></span>
+<span id="cb27-148"><a href="git-20-data-visualization.html#cb27-148" aria-hidden="true" tabindex="-1"></a>    metadata/phenotypes.sc</span>
+<span id="cb27-149"><a href="git-20-data-visualization.html#cb27-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-150"><a href="git-20-data-visualization.html#cb27-150" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.23</span></span>
+<span id="cb27-151"><a href="git-20-data-visualization.html#cb27-151" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF17.R <span class="dt">\</span></span>
+<span id="cb27-152"><a href="git-20-data-visualization.html#cb27-152" aria-hidden="true" tabindex="-1"></a>    2_analysis/astral/astral_5000x_5kb_v1_all.tre</span>
+<span id="cb27-153"><a href="git-20-data-visualization.html#cb27-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-154"><a href="git-20-data-visualization.html#cb27-154" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.24</span></span>
+<span id="cb27-155"><a href="git-20-data-visualization.html#cb27-155" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF18.R <span class="dt">\</span></span>
+<span id="cb27-156"><a href="git-20-data-visualization.html#cb27-156" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_outliers_998.tsv</span>
+<span id="cb27-157"><a href="git-20-data-visualization.html#cb27-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-158"><a href="git-20-data-visualization.html#cb27-158" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.25</span></span>
+<span id="cb27-159"><a href="git-20-data-visualization.html#cb27-159" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF19.R <span class="dt">\</span></span>
+<span id="cb27-160"><a href="git-20-data-visualization.html#cb27-160" aria-hidden="true" tabindex="-1"></a>    2_analysis/summaries/fst_outliers_998.tsv <span class="dt">\</span></span>
+<span id="cb27-161"><a href="git-20-data-visualization.html#cb27-161" aria-hidden="true" tabindex="-1"></a>    2_analysis/geva/ <span class="dt">\</span></span>
+<span id="cb27-162"><a href="git-20-data-visualization.html#cb27-162" aria-hidden="true" tabindex="-1"></a>    2_analysis/GxP/bySNP/</span>
+<span id="cb27-163"><a href="git-20-data-visualization.html#cb27-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-164"><a href="git-20-data-visualization.html#cb27-164" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.26</span></span>
+<span id="cb27-165"><a href="git-20-data-visualization.html#cb27-165" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF20.R <span class="dt">\</span></span>
+<span id="cb27-166"><a href="git-20-data-visualization.html#cb27-166" aria-hidden="true" tabindex="-1"></a>    2_analysis/GxP/50000/</span>
+<span id="cb27-167"><a href="git-20-data-visualization.html#cb27-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-168"><a href="git-20-data-visualization.html#cb27-168" aria-hidden="true" tabindex="-1"></a><span class="co"># git 20.27</span></span>
+<span id="cb27-169"><a href="git-20-data-visualization.html#cb27-169" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> R/fig/plot_SF21.R <span class="dt">\</span></span>
+<span id="cb27-170"><a href="git-20-data-visualization.html#cb27-170" aria-hidden="true" tabindex="-1"></a>    2_analysis/pi/50k/</span>
+<span id="cb27-171"><a href="git-20-data-visualization.html#cb27-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-172"><a href="git-20-data-visualization.html#cb27-172" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------------------------</span></span>
+<span id="cb27-173"><a href="git-20-data-visualization.html#cb27-173" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> Rplots.pdf</span></code></pre></div>
+<hr />
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="git-19-analysis-xvi-serraninae-phylogeny.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="figure-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

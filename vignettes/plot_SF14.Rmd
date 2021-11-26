@@ -18,6 +18,20 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c("2_analysis/raxml/lg04.1_155N.raxml.support",
+          "2_analysis/raxml/lg12.3_155N.raxml.support",
+          "2_analysis/raxml/lg12.4_155N.raxml.support")
+
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(ape)
+library(ggtree)
+library(patchwork)
+
+tree_file_lg04_1 <- as.character(args[1])
+tree_file_lg12_3 <- as.character(args[2])
+tree_file_lg12_4 <- as.character(args[3])
 ```
 
 ## Summary
@@ -28,8 +42,10 @@ The Figure can be recreated by running the **R** script `plot_SF14.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF14.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF14.R \
+    2_analysis/raxml/lg04.1_155N.raxml.support \
+    2_analysis/raxml/lg12.3_155N.raxml.support \
+    2_analysis/raxml/lg12.4_155N.raxml.support
 ```
 
 ## Details of `plot_SF14.R`
@@ -41,38 +57,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_SF14.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF14.R \
@@ -89,6 +74,16 @@ Also the default color scheme is updated and the size of the hamlet ann.
 #           "2_analysis/raxml/lg12.4_155N.raxml.support")
 # script_name <- "R/fig/plot_SF14.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -106,20 +101,44 @@ plot_comment <- script_name %>%
   str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_SF14.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/raxml/lg04.1_155N.raxml.support
+#> ★ 2: 2_analysis/raxml/lg12.3_155N.raxml.support
+#> ★ 3: 2_analysis/raxml/lg12.4_155N.raxml.support
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 tree_file_lg04_1 <- as.character(args[1])
 tree_file_lg12_3 <- as.character(args[2])
 tree_file_lg12_4 <- as.character(args[3])
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 trees <- c(tree_file_lg04_1, tree_file_lg12_3, tree_file_lg12_4) %>%
   map(.f = function(file){
     read.tree(file) %>%
       root(phy = ., outgroup = "PL17_160floflo")}
   )
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 clr_neutral <- rgb(.6, .6, .6)
 lyout <- 'circular'
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 tree_data <- trees %>%
   map(.f = function(tree_in){
     open_tree(ggtree(tree_in, layout = lyout), 180) %>%
@@ -130,11 +149,17 @@ tree_data <- trees %>%
                as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))
       )}
   )
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p1 <- plot_outl_tree(tree_data[[1]])
 p2 <- plot_outl_tree(tree_data[[2]], show_legend = FALSE)
 p3 <- plot_outl_tree(tree_data[[3]], show_legend = FALSE)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_done <- p1 + p2 + p3 + plot_annotation(tag_levels = 'a') + plot_layout(ncol = 1)
 ```
 

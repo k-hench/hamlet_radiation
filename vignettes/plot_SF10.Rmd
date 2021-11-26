@@ -18,6 +18,14 @@ library(ragg)
 
 
 ```{r , include = FALSE}
+args <- c("2_analysis/dxy/50k/")
+
+library(GenomicOriginsScripts)
+library(hypogen)
+library(hypoimg)
+library(patchwork)
+
+dxy_path <- as.character(args[1])
 ```
 
 ## Summary
@@ -28,8 +36,8 @@ The Figure can be recreated by running the **R** script `plot_SF10.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF10.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF10.R \
+    2_analysis/dxy/50k/
 ```
 
 ## Details of `plot_SF10.R`
@@ -41,37 +49,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
-```{r, message = FALSE, warning = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
 ```{r, eval = FALSE}
-```
-
-```r
-#> ── Script: R/fig/plot_SF10.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_SF10.R \
@@ -84,6 +62,16 @@ Also the default color scheme is updated and the size of the hamlet ann.
 # args <- c("2_analysis/dxy/50k/")
 # script_name <- "R/fig/plot_SF10.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -98,25 +86,50 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_SF10.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/dxy/50k/
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the PCA data is received and stored in a variable.
+Also the default color scheme is updated and the size of the hamlet ann.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 dxy_path <- as.character(args[1])
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # locate dxy data files
 files <- dir(dxy_path)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load dxy data
 data <- str_c(dxy_path,files) %>%
   purrr::map(get_dxy) %>%
   bind_rows() %>%
   purrr::set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
+```
 
-genoe_wide_avg <- data %>%
+
+```{r, message = FALSE, warning = FALSE}
+genome_wide_avg <- data %>%
   group_by(run) %>%
   summarise(avg_dxy = mean(dxy)) %>%
   ungroup() %>%
   arrange(avg_dxy)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 model_data <- data %>%
   pivot_longer(cols = starts_with("pi_pop"),
                names_to = "pi_pop",
@@ -128,10 +141,12 @@ model_data <- data %>%
   nest() %>%
   mutate(mod =  map(data, function(data){lm(pi ~ dxy, data = data)})) %>%
   bind_cols(., summarise_model(.))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 dxy_subplot <- function(select_idx){
-  #run_select <- genoe_wide_avg$run[c(1,7,14,21,28)]
-  run_select <- genoe_wide_avg$run[select_idx]
+  run_select <- genome_wide_avg$run[select_idx]
 
   plt_data <- data %>%
     filter(run %in% run_select) %>%
@@ -146,7 +161,6 @@ dxy_subplot <- function(select_idx){
 
   p <- plt_data %>%
     ggplot(aes(x = dxy, y = pi))+
-    #coord_equal()+
     facet_grid(pop ~ run,switch = "y")+
     geom_hex(bins = 30, color = rgb(0,0,0,.3),
              aes(fill=log10(..count..)))+
@@ -183,9 +197,15 @@ dxy_subplot <- function(select_idx){
     )
   p
 }
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 ps <- list(1:7, 8:14, 15:21, 22:28) %>% map(dxy_subplot)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_done <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = element_blank()),
           ps[[2]] + theme(legend.position = "none", axis.title.x = element_blank()),
           ps[[3]] + theme(legend.position = "none", axis.title.x = element_blank()),

@@ -83,7 +83,7 @@ clr <- scales::colour_ramp(colors = RColorBrewer::brewer.pal(5,"RdYlBu")[c(1,2,4
 d_lim <- c(0, .01)
 p_lim <- c(1, p_cap)
 
-(p_done <- data_full %>%
+p_done <- data_full %>%
   filter(p_left != "Outgroup" ) %>%
   mutate(check1 = as.numeric(p_left),
          check2 = as.numeric(p_right)) %>%
@@ -123,7 +123,7 @@ p_lim <- c(1, p_cap)
         panel.grid = element_blank(),
         axis.text.x = element_text(angle = 90, vjust = .5),
         axis.title = element_blank(),
-        legend.title = element_markdown()) )
+        legend.title = element_markdown())
 
 hypoimg::hypo_save(filename = "figures/SF12.pdf",
        width = f_width_half,

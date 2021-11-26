@@ -7,6 +7,9 @@ editor_options:
 
 
 
+
+
+
 ## Summary
 
 This is the accessory documentation of Figure S9.
@@ -15,14 +18,15 @@ The Figure can be recreated by running the **R** script `plot_SF9.R`:
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF9.R 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support
+Rscript --vanilla R/fig/plot_SF9.R \
+    2_analysis/pi/50k/ \
+    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 ```
 
 ## Details of `plot_SF9.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen), [**ape**](http://ape-package.ird.fr/) and [**ggtree**](https://github.com/YuLab-SMU/ggtree).
-
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
 
 ### Config
 
@@ -32,15 +36,18 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```r
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF9.R 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support
+# Rscript --vanilla R/fig/plot_SF9.R \
+#     2_analysis/pi/50k/ \
+#     2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
-# This script produces Suppl. Figure 9 of the study "Ancestral variation,
-# hybridization and modularity fuel a marine radiation"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Suppl. Figure 9 of the study "Rapid radiation in a
+# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support")
+# args <- c('2_analysis/pi/50k/',
+#           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 # script_name <- "R/fig/plot_SF9.R"
+args <- commandArgs(trailingOnly = FALSE)
 ```
 
 The next section processes the input from the command line.
@@ -52,20 +59,18 @@ Then we drop all the imported information besides the arguments following the sc
 
 
 ```r
-args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
+renv::activate()
 library(GenomicOriginsScripts)
+library(vroom)
 library(hypoimg)
 library(hypogen)
-library(ape)
-library(ggtree)
-
 cat('\n')
 script_name <- args[5] %>%
-  str_remove(., '--file=')
+  str_remove(.,'--file=')
 
 plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
+  str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
 ```
@@ -73,145 +78,124 @@ args <- process_input(script_name, args)
 ```r
 #> ── Script: R/fig/plot_SF9.R ────────────────────────────────────────────
 #> Parameters read:
-#> ★ 1: 2_analysis/raxml/hyp155_n_0.33_mac4_5kb.raxml.support
+#> ★ 1: 2_analysis/pi/50k/
+#> ★ 1: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 #> ────────────────────────────────────────── /current/working/directory ──
 ```
-
-The path of the phylogentic tree file is received and stored in a variable.
 
 
 ```r
 # config -----------------------
-tree_hypo_file <- as.character(args[1])
+pi_path <- as.character(args[1])
+rho_path <- as.character(args[2])
 ```
 
-Then, the tree file is read and the tree is rooted with the *H. floriedae* sample as outgroup.
 
 
 ```r
-raxml_tree <- read.tree(tree_hypo_file) 
-raxml_tree_rooted <- root(phy = raxml_tree, outgroup = "PL17_160floflo")
+# locate pi data files
+files <- dir(pi_path, pattern = '^pi.[a-z]{6}.50k')
 ```
 
-Also, the default tree layout is defined and the default tree color is set.
 
 
 ```r
-clr_neutral <- rgb(.6, .6, .6)
-lyout <- 'circular'
+# load pi data
+data <- str_c(pi_path, files) %>%
+  purrr::map(get_pi) %>%
+  bind_rows()
 ```
 
-Based on key nodes of the tree, clades of the tree are grouped when they only contain a single hamlet species.
 
 
 ```r
-raxml_tree_rooted_grouped <- groupClade(raxml_tree_rooted,
-                                        .node = c(298, 302, 187, 179, 171, 159,
-                                                  193, 204, 201, 222, 219, 209,
-                                                  284, 278, 268, 230, 242),
-                                        group_name =  "clade")
+# compute genome wide average pi for the subplot order
+global_bar <- data %>%
+  filter( BIN_START %% 50000 == 1) %>%
+  select(N_SITES, PI, spec) %>%
+  group_by(spec) %>%
+  summarise(genome_wide_pi = sum(N_SITES*PI)/sum(N_SITES)) %>%
+  arrange(genome_wide_pi) %>%
+  ungroup() %>%
+  mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
+         scaled_pi = genome_wide_pi/max(genome_wide_pi))
 ```
 
-Then, the labels for the previously grouped clades are set.
 
 
 ```r
-clade2spec <- c( `0` = "none", `1` = "ran", `2` = "uni", `3` = "ran", `4` = "may",
-                 `5` = "pue", `6` = "ind", `7` = "nig", `8` = "nig", `9` = "ran",
-                 `10` = "abe", `11` = "abe", `12` = "gum", `13` = "uni", `14` = "pue",
-                 `15` = "uni", `16` = "pue", `17` = "nig")
+# load recombination data
+rho_data <- vroom(rho_path, delim = '\t') %>%
+  select(-BIN_END)
 ```
 
-Now, the support values of the tree are transformed into discrete support classes.
 
 
 ```r
-raxml_data <- ggtree(raxml_tree_rooted_grouped, layout = lyout) %>%
-  .$data %>% 
-  mutate(spec = ifelse(isTip, str_sub(label, -6, -4), "ungrouped"),
-         support = as.numeric(label),
-         support_class = cut(support, c(0,50,70,90,100)) %>% 
-           as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))
-           )
+# merge pi and recombination data
+combined_data <- data %>%
+  # filter pi data to "non-overlapping" windows
+  filter(BIN_START %% 50000 == 1 ) %>%
+  # reorder populations by genome wide average pi
+  mutate(spec = factor(spec, levels = levels(global_bar$spec))) %>%
+  # merge with recombination data
+  left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START'))
 ```
 
-At this point, the basic pylogenetic tree can be drawn.
 
 
 ```r
-p_tree <- (open_tree(
-  ggtree(raxml_data, layout = lyout,
-         aes(color = ifelse(clade == 0,
-                            lab2spec(label),
-                            clade2spec[as.character(clade)]))) %>%
-    ggtree::rotate(200), 180))  +
-  geom_tippoint(size = .4) + 
-  geom_tiplab2(aes(color = lab2spec(label), 
-                   label = str_sub(
-                     label, -6, -1)),
-  size = 3, hjust = -.1)+
-  ggtree::geom_treescale(width = .002,
-                         x = -.0007, y = 155, 
-                         offset = -3,fontsize = 3,
-                         color = clr_neutral) +
-  xlim(c(-.0007,.0092)) +
-  ggtree::geom_nodepoint(aes(fill = support_class, 
-                             size = support_class),
-                 shape = 21) +
-  scale_color_manual(values = c(ungrouped = clr_neutral, 
-                                GenomicOriginsScripts::clr2),
-                     guide = FALSE) +
-  scale_fill_manual(values = c(`(0,50]` = "transparent",
-                               `(50,70]` = "white",
-                               `(70,90]` = "gray",
-                               `(90,100]` = "black"),
-                    drop = FALSE) +
-  scale_size_manual(values = c(`(0,50]` = 0,
-                               `(50,70]` = 1.5,
-                               `(70,90]` = 1.5,
-                               `(90,100]` = 1.5),
-                    na.value = 0,
-                    drop = FALSE)+
-  guides(fill = guide_legend(title = "Node Support Class", title.position = "top", ncol = 2),
-         size = guide_legend(title = "Node Support Class",title.position = "top", ncol = 2)) +
-  theme_void()
+# create table with fish annotations
+grob_tibble2 <- global_bar$spec %>%
+  purrr::map(fish_plot2) %>%
+  bind_rows()
 ```
 
-
-
-Unfortunately, the polar coordinate system underlying the circular tree layout introduces a lot of empty space for a open tree that spans 180 degrees.
-In order to crop that empty space, the basic tree is converted into grid object and used as an annotation in a different ggplot.
-This uses cartesian coordinates and is easily cropped to create the final figure.
 
 
 ```r
-y_sep <- .05
-x_shift <- -.03
-p_done <- ggplot() +
-  coord_equal(xlim = c(0, .93),
-              ylim = c(-.01, .54),
-              expand = 0) +
-  annotation_custom(grob = ggplotGrob(p_tree + theme(legend.position = "none")),
-                    ymin = -.6 + (.5 * y_sep), ymax = .6 + (.5 * y_sep),
-                    xmin = -.1, xmax = 1.1) +
-  annotation_custom(grob = cowplot::get_legend(p_tree),
-                    ymin = .35, ymax = .54,
-                    xmin = 0, xmax = .2) +
-  theme_void()
+# compose final figure
+p <- combined_data %>%
+  ggplot()+
+  # add fish annotations
+  geom_hypo_grob2(data = grob_tibble2,
+                  aes(grob = grob, rel_x = .25,rel_y = .75),
+                  angle = 0, height = .5,width = .5)+
+  # add hex-bin desity layer
+  geom_hex(bins = 30,color = rgb(0,0,0,.3),
+           aes(fill=log10(..count..), x = RHO, y = PI))+
+ # general plot structure (separated by run)
+  facet_wrap(spec ~., ncol = 3)+
+  # set axis layout and color scheme
+  scale_x_continuous(name = expression(rho))+
+  scale_y_continuous(name = expression(pi))+
+  scico::scale_fill_scico(palette = 'berlin') +
+  # customize legend
+  guides(fill = guide_colorbar(direction = 'horizontal',
+                               title.position = 'top',
+                               barheight = unit(7,'pt'),
+                               barwidth = unit(130,'pt')))+
+  # general plot layout
+  theme_minimal()+
+  theme(legend.position = c(.84,.01),
+        strip.text = element_blank())
 ```
-
-
 
 Finally, we can export Figure S9.
 
 
 ```r
-scl <- 1.5
-hypo_save(plot = p_done,
-          filename = "figures/SF9.pdf",
-          width = 7.5 * scl,
-          height = 4 * scl,
-          device = cairo_pdf,
-          bg = "transparent",
+# export final figure
+hypo_save(filename = 'figures/SF9.pdf',
+          plot = p,
+          width = 8,
+          height = 10,
           comment = plot_comment)
+
+# ===============
+combined_data %>%
+  filter( BIN_START %% 50000 == 1) %>%
+  group_by(spec) %>%
+  summarise(genom_avg_pi = sum(PI*N_SITES)/sum(N_SITES)) %>%
+  write_tsv("2_analysis/summaries/pi_globals.tsv")
 ```
