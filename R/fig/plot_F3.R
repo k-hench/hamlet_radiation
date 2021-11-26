@@ -23,7 +23,6 @@ library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
 library(patchwork)
-# plot_text_size <- 8
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -112,8 +111,6 @@ p_msmc <- msmc_data %>%
         legend.spacing.y = unit(-5,"pt"),
         legend.spacing.x = unit(3, "pt"),
         axis.title = element_text(face = 'plain'),
-    #   axis.text.x = element_blank(),
-#        axis.title.x = element_blank(),
         legend.title = element_text(face = 'plain'))
 
 p_cc <- cc_data %>%
@@ -170,7 +167,7 @@ p_done <- p_msmc /
         panel.background = element_blank(),
         plot.background = element_blank())
 
-# export figure 2
+# export figure 3
 hypo_save(plot = p_done, filename = 'figures/F3.pdf',
           width = f_width_half,
           height = f_width_half * .95,

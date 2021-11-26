@@ -141,15 +141,6 @@ p_done <- ggplot()+
             size = plot_text_size / ggplot2:::.pt)+
   # the fst, delta dxy and gxp data is plotted
   geom_point(data = data, aes(x = GPOS, y = value),size = plot_size, color = plot_clr) +
-  # the dxy data is plotted
-  # geom_point(data = dxy_select,aes(x = GPOS, y = dxy),size = plot_size, color = plot_clr)+
-  # # the pi data is plotted
-  # geom_point(data = pi_data_select, aes(x = GPOS, y = mean_pi),size = plot_size, color = plot_clr) +
-  # # the roh data is plotted
-  # geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
-  # # the smoothed rho is plotted
-  # geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
-  #               color = 'red', se = FALSE, size = .4) +
   # the topology weighting data is plotted
   geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel), size = .4) +
   # the null weighting is added
@@ -173,8 +164,6 @@ p_done <- ggplot()+
         strip.background = element_blank(),
         strip.placement = 'outside')
 
-# export figure 4
-#scl <- .8
 hypo_save(p_done,
           filename = 'figures/F2.png',
           width = f_width,

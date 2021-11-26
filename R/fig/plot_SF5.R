@@ -172,7 +172,7 @@ p_done <- data2 %>%
         strip.background.y = element_blank(),
         plot.background = element_blank())
 
-# export figure 3
+# export figure 5
 hypo_save(filename = 'figures/SF5.pdf',
           plot = p_done,
           width = f_width,
@@ -180,4 +180,3 @@ hypo_save(filename = 'figures/SF5.pdf',
           device = cairo_pdf,
           comment = plot_comment,
           bg = "transparent")
-    

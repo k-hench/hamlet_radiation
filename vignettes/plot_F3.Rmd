@@ -3,7 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Figure --xx--
+# Figure 3
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
@@ -16,20 +16,43 @@ knitr::opts_knit$set(root.dir = '../')
 library(ragg)
 ```
 
+
+```{r , include = FALSE}
+args <- c('2_analysis/msmc/output/', '2_analysis/cross_coalescence/output/',
+          '2_analysis/msmc/setup/msmc_grouping.txt', '2_analysis/msmc/setup/msmc_cc_grouping.txt',
+          '2_analysis/summaries/fst_globals.txt')
+script_name <- "R/fig/plot_F3.R"
+
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(patchwork)
+# config -----------------------
+msmc_path <- as.character(args[1])
+cc_path <- as.character(args[2])
+msmc_group_file <- as.character(args[3])
+cc_group_file <- as.character(args[4])
+fst_globals_file <- as.character(args[5])
+```
+
 ## Summary
 
-This is the accessory documentation of Figure --xx--.
+This is the accessory documentation of Figure 3.
 
-The Figure can be recreated by running the **R** script `plot_F--xx--.R` from a (`bash` terminal):
+The Figure can be recreated by running the **R** script `plot_F3.R` from a (`bash` terminal):
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_F--xx--.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
-
+Rscript --vanilla R/fig/plot_F3.R \
+    2_analysis/msmc/output/ \
+    2_analysis/cross_coalescence/output/ \
+    2_analysis/msmc/setup/msmc_grouping.txt \
+    2_analysis/msmc/setup/msmc_cc_grouping.txt \
+    2_analysis/summaries/fst_globals.txt
 ```
 
-## Details of `plot_F--xx--.R`
+## Details of `plot_F3.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), [**BAMMtools**](https://cran.r-project.org/web/packages/BAMMtools/) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg).
@@ -39,40 +62,6 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 The scripts start with a header that contains copy & paste templates to execute interactively or debug the script:
 
 ```{r , eval = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
-```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_F--xx--.R ──────────────────────────────────────────────
-#> Parameters read:
-#>  ★ 1:
-#>  ★ 2:
-#>  ★ 3:
-#> ─────────────────────────────────────────── /current/working/directory ──
-```
-The directories for the different data types are received and stored in respective variables.
-Also, we set a few parameters for the plot layout:
-
-```{r}
-# config -----------------------
-... <- as.character(args[1])
-
-```
-
-### Actual Script Start
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F3.R \
@@ -91,14 +80,23 @@ Also, we set a few parameters for the plot layout:
 # '2_analysis/summaries/fst_globals.txt')
 # script_name <- "R/fig/plot_F3.R"
 # ----------------------------------------
-args <- commandArgs(trailingOnly=FALSE)
+args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
 library(patchwork)
-# plot_text_size <- 8
 cat('\n')
 script_name <- args[5] %>%
   str_remove(.,'--file=')
@@ -107,13 +105,33 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_F3.R ──────────────────────────────────────────────
+#> Parameters read:
+#>  ★ 1: 2_analysis/msmc/output/
+#>  ★ 2: 2_analysis/cross_coalescence/output/
+#>  ★ 3: 2_analysis/msmc/setup/msmc_grouping.txt
+#>  ★ 4: 2_analysis/msmc/setup/msmc_cc_grouping.txt
+#>  ★ 5: 2_analysis/summaries/fst_globals.txt
+#> ─────────────────────────────────────────── /current/working/directory ──
+```
+The directories for the different data types are received and stored in respective variables.
+Also, we set a few parameters for the plot layout:
+
+```{r}
 # config -----------------------
 msmc_path <- as.character(args[1])
 cc_path <- as.character(args[2])
 msmc_group_file <- as.character(args[3])
 cc_group_file <- as.character(args[4])
 fst_globals_file <- as.character(args[5])
+```
 
+### Actual Script Start
+
+```{r, message = FALSE, warning = FALSE}
 # actual script =========================================================
 msmc_groups <- read_tsv(msmc_group_file)
 cc_groups <- read_tsv(cc_group_file)
@@ -122,25 +140,40 @@ fst_globals <- vroom::vroom(fst_globals_file,delim = '\t',
   separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
   mutate(run = str_c(pop1,loc,'-',pop2,loc),
          run = fct_reorder(run,weighted_fst))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # locate cross-coalescence results
 msmc_files <- dir(msmc_path, pattern = '.final.txt.gz')
 cc_files <- dir(cc_path, pattern = '.final.txt.gz')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import effective population size data
 msmc_data <- msmc_files %>%
   map_dfr(.f = get_msmc, msmc_path = msmc_path)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import cross-coalescence data
 cc_data <- cc_files %>%
   map_dfr(get_cc, cc_groups = cc_groups, cc_path = cc_path) %>%
   mutate( run = factor(run, levels = levels(fst_globals$run)))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # color adjustments for line plots (replace white by gray)
 clr_alt <- clr[!(names(clr) %in% c("flo","tor","tab"))]
 clr_alt['uni'] <- rgb(.8,.8,.8)
 clr_ticks <- 'lightgray'
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_msmc <- msmc_data %>%
   # remove the two first and last time segments
   filter(!time_index %in% c(0:2,29:31)) %>%
@@ -187,10 +220,11 @@ p_msmc <- msmc_data %>%
         legend.spacing.y = unit(-5,"pt"),
         legend.spacing.x = unit(3, "pt"),
         axis.title = element_text(face = 'plain'),
-    #   axis.text.x = element_blank(),
-#        axis.title.x = element_blank(),
         legend.title = element_text(face = 'plain'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_cc <- cc_data %>%
   # remove the two first and last time segments
   filter( !time_index %in% c(0:2,29:31)) %>%
@@ -233,7 +267,10 @@ p_cc <- cc_data %>%
         axis.title.x = element_blank(),
         axis.text.x = element_blank(),
         legend.title = element_text(face = 'plain'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # combine panels a and b
 p_done <- p_msmc /
   p_cc  +
@@ -244,28 +281,18 @@ p_done <- p_msmc /
         axis.ticks.x = element_blank(),
         panel.background = element_blank(),
         plot.background = element_blank())
+```
 
-# export figure 2
+Finally, we can export Figure 3.
+
+```{r, eval = FALSE}
+# export figure 3
 hypo_save(plot = p_done, filename = 'figures/F3.pdf',
           width = f_width_half,
           height = f_width_half * .95,
           comment = plot_comment,
           bg = "transparent",
           device = cairo_pdf)
-
-
-```
-
-Finally, we can export Figure --xx--.
-
-```{r, eval = FALSE}
-scl <- .75
-hypo_save(p_done, filename = 'figures/F--xx--.pdf',
-          width = 9 * scl,
-          height = 6 * scl,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
 ```
 
 ---

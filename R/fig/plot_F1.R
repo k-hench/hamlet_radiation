@@ -47,8 +47,8 @@ tree_file <- as.character(args[4])
 wdh <- .3          # The width of the boxplots
 scaler <- 20       # the ratio of the Fst and the dxy axis (legacy - not really needed anymore)
 clr_sec <- 'gray'  # the color of the secondary axis (dxy)
-# start script -------------------
 
+# start script -------------------
 tree <- read.tree(tree_file) 
 tree_rooted <- root(phy = tree, outgroup = "Epinephelus_maculatus")
 clr_neutral <- rgb(.2, .2, .2)
@@ -93,17 +93,12 @@ tree_plus <- tree_plus %>%
 our_taxa <- c("H. aberrans", "H. gummigutta", "H. indigo", "H. maya", "H. nigricans", "H. puella", 
               "H. randallorum", "H. unicolor", "H. floridae", "Se. tabacarius", "Se. tortugarum")
 
-# hermaphrodites <- tree_plus %>% filter(node %in% c(60, 65) | label == "Se. hepatus") %>% 
-#   mutate(x = x - branch.length / 2, star = "\U2605")
-
 hermaphrodites <- tree_plus %>% filter(node %in% c(60, 63)) %>% 
   mutate(x = if_else(node == 60, x - branch.length, x - branch.length *.5),
          y = if_else(node == 60, .5 * (y + tree_plus$y[tree_plus$node == 61]), y),
          star = "\U2605")
 
 c1 <- "transparent"
-# c2 <- rgb(0, 0, 0, .1)
-# c3 <- rgb(0, 0, 0, .2)
 c2 <- prismatic::clr_alpha(clr_highlight, .1)
 c3 <- prismatic::clr_alpha(clr_highlight, .2)
 
@@ -240,6 +235,7 @@ p2 <- globals %>%
         panel.grid.minor.y = element_blank(),
         axis.text.y.right = element_text(color = clr_sec),
         axis.title.y.right = element_text(color = clr_sec))
+
 # assemble panel c-e
 clr_alt <- clr
 clr_alt[["uni"]] <- "lightgray"
@@ -266,7 +262,7 @@ pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
 fish_tib <- tibble(short = names(clr)[!names(clr) %in% c("flo", "tab", "tor")],
        x = c(0.5,  3.5,  7,  9.7, 12.25, 15.25, 18, 21.5)
        )
-# ===================
+
 key_sz <- .75
 p_leg <- fish_tib %>% 
   ggplot() +

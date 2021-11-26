@@ -48,34 +48,34 @@ sorter <- read_tsv(species_order_file, col_names = "group")
 p_cap <- 16
 
 data <- read_tsv(bbaa_file) %>%
-  filter(p_adjusted <= .05) %>% 
-  mutate(pair = pmap_chr(.,two_chr_to_sorted_pair)) %>% 
-  group_by(pair) %>% 
+  filter(p_adjusted <= .05) %>%
+  mutate(pair = pmap_chr(.,two_chr_to_sorted_pair)) %>%
+  group_by(pair) %>%
   mutate(p_is_min = p_adjusted == min(p_adjusted)) %>%
-  filter(p_is_min) %>% 
-  mutate(d_is_max = Dstatistic == max(Dstatistic)) %>% 
-  filter(d_is_max) %>% 
-  ungroup() %>% 
-  separate(pair, into = c("p_left", "p_right"), sep = "-", remove = FALSE) %>% 
+  filter(p_is_min) %>%
+  mutate(d_is_max = Dstatistic == max(Dstatistic)) %>%
+  filter(d_is_max) %>%
+  ungroup() %>%
+  separate(pair, into = c("p_left", "p_right"), sep = "-", remove = FALSE) %>%
   mutate(p_adjusted = if_else(p_adjusted < 10^-p_cap,10^-p_cap, p_adjusted ))
 
 data_prep <- data %>%
-  dplyr::select(p_left, p_right, Dstatistic, p_adjusted) %>% 
+  dplyr::select(p_left, p_right, Dstatistic, p_adjusted) %>%
   bind_rows(data %>%
               dplyr::select(p_left = p_right, p_right = p_left,
-                            Dstatistic, p_adjusted)) 
+                            Dstatistic, p_adjusted))
 
-data_full <- cross_df(list(p_left = sorter$group , 
+data_full <- cross_df(list(p_left = sorter$group ,
                            p_right = sorter$group)) %>%
-  left_join(data_prep) %>% 
+  left_join(data_prep) %>%
   mutate(p_left = factor(p_left, levels = sorter$group),
          p_right = factor(p_right, levels = rev(sorter$group)))
 
 data_signif <- read_tsv(signif_file) %>%
-  mutate(pair = pmap_chr(.,two_chr_to_sorted_pair)) %>% 
-  separate(pair, into = c("p_left", "p_right"), sep = "-", remove = FALSE) %>% 
+  mutate(pair = pmap_chr(.,two_chr_to_sorted_pair)) %>%
+  separate(pair, into = c("p_left", "p_right"), sep = "-", remove = FALSE) %>%
   mutate(p_left = factor(p_left, levels = sorter$group),
-         p_right = factor(p_right, levels = rev(sorter$group))) %>% 
+         p_right = factor(p_right, levels = rev(sorter$group))) %>%
   mutate(p_adjusted = if_else(p_adjusted < 10^-p_cap, 10^-p_cap, p_adjusted) )
 
 clr <- scales::colour_ramp(colors = RColorBrewer::brewer.pal(5,"RdYlBu")[c(1,2,4,5)])((1:7)/7) %>% clr_saturate(.1)
@@ -84,13 +84,13 @@ d_lim <- c(0, .01)
 p_lim <- c(1, p_cap)
 
 (p_done <- data_full %>%
-  filter(p_left != "Outgroup" ) %>% 
+  filter(p_left != "Outgroup" ) %>%
   mutate(check1 = as.numeric(p_left),
-         check2 = as.numeric(p_right)) %>% 
-  filter(check2 < 17 - check1) %>% 
+         check2 = as.numeric(p_right)) %>%
+  filter(check2 < 17 - check1) %>%
   ggplot()+
-  geom_tile(aes(x = p_left, 
-                y = p_right, 
+  geom_tile(aes(x = p_left,
+                y = p_right,
                 fill = Dstatistic,
                 color = after_scale(clr_darken(fill))) ) +
   geom_point(data = data_signif %>% filter(p_value < .05),
@@ -100,7 +100,7 @@ p_lim <- c(1, p_cap)
              shape = 1,
              alpha = .4) +
   scale_fill_gradientn(colours = rev(clr),
-                       limits = d_lim, 
+                       limits = d_lim,
                        na.value = rgb(1,1,1,.2)) +
   scale_size(range = c(.1, 6),
              limits = c(1,16),
@@ -131,4 +131,3 @@ hypoimg::hypo_save(filename = "figures/SF12.pdf",
        device = cairo_pdf,
        bg = "transparent",
        comment = plot_comment)
-

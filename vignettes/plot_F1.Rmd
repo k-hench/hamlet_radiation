@@ -3,7 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Figure --xx--
+# Figure 1
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
@@ -16,20 +16,49 @@ knitr::opts_knit$set(root.dir = '../')
 library(ragg)
 ```
 
+```{r , include = FALSE}
+args <- c('2_analysis/fst/50k/', '2_analysis/summaries/fst_globals.txt',
+          '2_analysis/summaries/fst_permutation_summary.tsv',
+          "2_analysis/fotl/concat_R24ed.treefile")
+
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(patchwork)
+library(ape)
+library(ggraph)
+library(tidygraph)
+library(stringr)
+library(ggtree)
+
+fst_dir <- as.character(args[1])
+fst_globals <- as.character(args[2])
+fst_permutation_file <- as.character(args[3])
+tree_file <- as.character(args[4])
+wdh <- .3          # The width of the boxplots
+scaler <- 20       # the ratio of the Fst and the dxy axis (legacy - not really needed anymore)
+clr_sec <- 'gray'  # the color of the secondary axis (dxy)
+```
+
+
+
 ## Summary
 
-This is the accessory documentation of Figure --xx--.
+This is the accessory documentation of Figure 1.
 
-The Figure can be recreated by running the **R** script `plot_F--xx--.R` from a (`bash` terminal):
+The Figure can be recreated by running the **R** script `plot_F1.R` from a (`bash` terminal):
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_F--xx--.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
-
+Rscript --vanilla R/fig/plot_F1.R \
+  2_analysis/fst/50k/ \
+  2_analysis/summaries/fst_globals.txt \
+  2_analysis/summaries/fst_permutation_summary.tsv \
+  2_analysis/fotl/concat_R24ed.treefile
 ```
 
-## Details of `plot_F--xx--.R`
+## Details of `plot_F1.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), [**BAMMtools**](https://cran.r-project.org/web/packages/BAMMtools/) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg).
@@ -39,40 +68,6 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 The scripts start with a header that contains copy & paste templates to execute interactively or debug the script:
 
 ```{r , eval = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
-```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_F--xx--.R ──────────────────────────────────────────────
-#> Parameters read:
-#>  ★ 1:
-#>  ★ 2:
-#>  ★ 3:
-#> ─────────────────────────────────────────── /current/working/directory ──
-```
-The directories for the different data types are received and stored in respective variables.
-Also, we set a few parameters for the plot layout:
-
-```{r}
-# config -----------------------
-... <- as.character(args[1])
-
-```
-
-### Actual Script Start
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 #
 # Context: this script depends on the input file 2_analysis/summaries/fst_permutation_summary.tsv
@@ -94,6 +89,16 @@ Also, we set a few parameters for the plot layout:
 #           "2_analysis/fotl/concat_R24ed.treefile")
 # script_name <- "R/fig/plot_F1.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -114,6 +119,21 @@ plot_comment <- script_name %>%
   str_c('mother-script = ', getwd(), '/', .)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_F1.R ──────────────────────────────────────────────
+#> Parameters read:
+#>  ★ 1: 2_analysis/fst/50k/
+#>  ★ 2: 2_analysis/summaries/fst_globals.txt
+#>  ★ 3: 2_analysis/summaries/fst_permutation_summary.tsv
+#>  ★ 4: 2_analysis/fotl/concat_R24ed.treefile
+#> ─────────────────────────────────────────── /current/working/directory ──
+```
+The directories for the different data types are received and stored in respective variables.
+Also, we set a few parameters for the plot layout:
+
+```{r, eval = FALSE}
 # config -----------------------
 fst_dir <- as.character(args[1])
 fst_globals <- as.character(args[2])
@@ -122,14 +142,21 @@ tree_file <- as.character(args[4])
 wdh <- .3          # The width of the boxplots
 scaler <- 20       # the ratio of the Fst and the dxy axis (legacy - not really needed anymore)
 clr_sec <- 'gray'  # the color of the secondary axis (dxy)
-# start script -------------------
+```
 
+### Actual Script Start
+
+```{r, message = FALSE, warning = FALSE}
+# start script -------------------
 tree <- read.tree(tree_file)
 tree_rooted <- root(phy = tree, outgroup = "Epinephelus_maculatus")
 clr_neutral <- rgb(.2, .2, .2)
 clr_highlight <- "gray40" #"#FF8029"
 clr_stars <- "firebrick"
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 ### Edit tip labels
 tree_rooted$tip.label <- tree_rooted$tip.label %>%
   str_replace(pattern = "20864abehon", "Hypoplectrus_aberrans") %>%
@@ -150,7 +177,10 @@ tree_rooted$tip.label <- tree_rooted$tip.label %>%
   str_replace(pattern = "Hy.", "H.") %>%
   str_replace(pattern = "Di.", "D.") %>%
   str_replace(pattern = "Ep.", "E.")
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 ### Prepare tree, categorize support values and define group
 tree_plus <- ggtree(tree_rooted, layout = "rectangular", ladderize = TRUE, right = TRUE) %>%
   #flip(25,26) %>%
@@ -158,43 +188,62 @@ tree_plus <- ggtree(tree_rooted, layout = "rectangular", ladderize = TRUE, right
   mutate(support = as.numeric(label),
          support_class = cut(support, c(0,50,70,90,100)) %>%
            as.character() %>% factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]")))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 hamlets <- tree_plus$label[grepl(pattern = "H. ", tree_plus$label)]
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 tree_plus <- tree_plus %>%
   groupOTU(.node = hamlets)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 ### Define groups
 our_taxa <- c("H. aberrans", "H. gummigutta", "H. indigo", "H. maya", "H. nigricans", "H. puella",
               "H. randallorum", "H. unicolor", "H. floridae", "Se. tabacarius", "Se. tortugarum")
+```
 
-# hermaphrodites <- tree_plus %>% filter(node %in% c(60, 65) | label == "Se. hepatus") %>%
-#   mutate(x = x - branch.length / 2, star = "\U2605")
 
+```{r, message = FALSE, warning = FALSE}
 hermaphrodites <- tree_plus %>% filter(node %in% c(60, 63)) %>%
   mutate(x = if_else(node == 60, x - branch.length, x - branch.length *.5),
          y = if_else(node == 60, .5 * (y + tree_plus$y[tree_plus$node == 61]), y),
          star = "\U2605")
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 c1 <- "transparent"
-# c2 <- rgb(0, 0, 0, .1)
-# c3 <- rgb(0, 0, 0, .2)
 c2 <- prismatic::clr_alpha(clr_highlight, .1)
 c3 <- prismatic::clr_alpha(clr_highlight, .2)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 grad_mat <- c(c1, c2, c3, c3)
 dim(grad_mat) <- c(1, length(grad_mat))
 grob_grad <- rasterGrob(grad_mat,
                         width = unit(1, "npc"),
                         height = unit(1, "npc"),
                         interpolate = TRUE)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 blank_hamlet <- hypoimg::hypo_outline %>%
   ggplot()+
   coord_equal()+
   geom_polygon(aes(x, y), color = rgb(0,0,0,.3), fill = rgb(1, 1, 1, .3), size = .1)+
   theme_void()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 ### Draw tree
 (p_tree <- ggtree(tree_plus,
                  aes(color = group), size = .2) +
@@ -243,16 +292,25 @@ blank_hamlet <- hypoimg::hypo_outline %>%
         legend.text = element_text(color = clr_neutral),
         legend.title = element_text(color = clr_neutral))
 )
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 globals <- vroom::vroom(fst_globals, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
   mutate(run = str_c(str_sub(run,1,3),loc,'-',str_sub(run,5,7),loc),
          run = fct_reorder(run,weighted))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # sort run by average genome wide Fst
 run_ord <- tibble(run = levels(globals$run),
                   run_ord = seq_along(levels(globals$run)))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load fst permutation results
 fst_sig_attach <- read_tsv(fst_permutation_file) %>%
   filter( subset_type == "whg" ) %>%
@@ -263,7 +321,10 @@ fst_sig_attach <- read_tsv(fst_permutation_file) %>%
          fdr_alpha = .05 / fdr_correction_factor,
          is_sig = p_perm > fdr_alpha) %>%
   ungroup()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # create network annotation
 # underlying structure for the network plots
 networx <- tibble( loc = c('bel','hon', 'pan'),
@@ -274,11 +335,17 @@ networx <- tibble( loc = c('bel','hon', 'pan'),
                    weight = c(1,1.45,1)) %>%
   purrr::pmap_dfr(network_layout) %>%
   mutate(edges = map(edges, function(x){x %>% left_join(globals,by = "run") }))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # plot the individual networks by location
 plot_list <- networx %>%
   purrr::pmap(plot_network, node_lab_shift = .2)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # combine the networks into a single grob
 p_net <- cowplot::plot_grid(
   plot_list[[1]] + theme(legend.position = "none"),
@@ -286,7 +353,10 @@ p_net <- cowplot::plot_grid(
   plot_list[[3]] + theme(legend.position = "none"),
   ncol = 3) %>%
   cowplot::as_grob()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p2 <- globals %>%
   left_join(fst_sig_attach %>% mutate(run = factor(run, levels = levels(globals$run))) ) %>%
   ggplot(aes(color = loc)) +
@@ -315,11 +385,18 @@ p2 <- globals %>%
         panel.grid.minor.y = element_blank(),
         axis.text.y.right = element_text(color = clr_sec),
         axis.title.y.right = element_text(color = clr_sec))
+```
+
+
+```{r, message = FALSE, warning = FALSE}
 # assemble panel c-e
 clr_alt <- clr
 clr_alt[["uni"]] <- "lightgray"
 pca_fish_scale <- 1.15
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 pca_fish_pos <- tibble(pop = GenomicOriginsScripts::pop_levels,
                        short = str_sub(pop, 1, 3),
                        loc = str_sub(pop, 4, 6),
@@ -335,13 +412,21 @@ pca_fish_pos <- tibble(pop = GenomicOriginsScripts::pop_levels,
   select(-pop) %>%
   group_by(loc) %>%
   nest()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 pcas <- c("bel", "hon", "pan") %>% map(pca_plot)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 fish_tib <- tibble(short = names(clr)[!names(clr) %in% c("flo", "tab", "tor")],
        x = c(0.5,  3.5,  7,  9.7, 12.25, 15.25, 18, 21.5)
        )
-# ===================
+```
+
+```{r, message = FALSE, warning = FALSE}
 key_sz <- .75
 p_leg <- fish_tib %>%
   ggplot() +
@@ -356,7 +441,10 @@ p_leg <- fish_tib %>%
   pmap(fish_tib, plot_fish_lwd, width = 1, height = 1, y = 0) +
   scale_fill_manual(values = clr, guide = FALSE) +
   theme_void()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_combined <- ((wrap_elements(plot = p_tree +
                                 theme(axis.title = element_blank(),
                                       text = element_text(size = plot_text_size)),
@@ -367,23 +455,18 @@ p_combined <- ((wrap_elements(plot = p_tree +
                  theme(text = element_text(size = plot_text_size),
                        plot.background = element_rect(fill = "transparent",
                                                       color = "transparent")))
-
-p_done <- cowplot::plot_grid(p_combined, p_leg, ncol = 1, rel_heights = c(1,.06))
-
-scl <- .75
-hypo_save(p_done, filename = 'figures/F1.pdf',
-          width = 9 * scl,
-          height = 6 * scl,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
 ```
 
-Finally, we can export Figure --xx--.
+
+```{r, message = FALSE, warning = FALSE}
+p_done <- cowplot::plot_grid(p_combined, p_leg, ncol = 1, rel_heights = c(1,.06))
+```
+
+Finally, we can export Figure 1.
 
 ```{r, eval = FALSE}
 scl <- .75
-hypo_save(p_done, filename = 'figures/F--xx--.pdf',
+hypo_save(p_done, filename = 'figures/F1.pdf',
           width = 9 * scl,
           height = 6 * scl,
           device = cairo_pdf,

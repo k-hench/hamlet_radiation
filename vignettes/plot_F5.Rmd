@@ -3,7 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Figure --xx--
+# Figure 5
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
@@ -16,20 +16,52 @@ knitr::opts_knit$set(root.dir = '../')
 library(ragg)
 ```
 
+
+```{r , include = FALSE}
+args <- c('2_analysis/twisst/weights/', 'ressources/plugin/trees/',
+          'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
+          '2_analysis/summaries/fst_outliers_998.tsv',
+          '2_analysis/dxy/50k/', '2_analysis/fst/50k/',
+          '2_analysis/summaries/fst_globals.txt',
+          '2_analysis/GxP/50000/', 200, 5,
+          "2_analysis/revPoMo/outlier_regions/")
+
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(furrr)
+library(ggtext)
+library(ape)
+library(ggtree)
+library(patchwork)
+library(phangorn)
+library(igraph)
+```
+
 ## Summary
 
-This is the accessory documentation of Figure --xx--.
+This is the accessory documentation of Figure 5.
 
-The Figure can be recreated by running the **R** script `plot_F--xx--.R` from a (`bash` terminal):
+The Figure can be recreated by running the **R** script `plot_F5.R` from a (`bash` terminal):
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_F--xx--.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
-
+Rscript --vanilla R/fig/plot_F5.R \
+    2_analysis/twisst/weights/ \
+    ressources/plugin/trees/ \
+    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+    2_analysis/summaries/fst_outliers_998.tsv \
+    2_analysis/dxy/50k/ \
+    2_analysis/fst/50k/ \
+    2_analysis/summaries/fst_globals.txt \
+    2_analysis/GxP/50000/ \
+    200 \
+    5 \
+    2_analysis/revPoMo/outlier_regions/
 ```
 
-## Details of `plot_F--xx--.R`
+## Details of `plot_F5.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), [**BAMMtools**](https://cran.r-project.org/web/packages/BAMMtools/) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg).
@@ -39,54 +71,20 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 The scripts start with a header that contains copy & paste templates to execute interactively or debug the script:
 
 ```{r , eval = FALSE}
-
-```
-
-The next section processes the input from the command line.
-It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
-This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
-
-Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
-
-```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_F--xx--.R ──────────────────────────────────────────────
-#> Parameters read:
-#>  ★ 1:
-#>  ★ 2:
-#>  ★ 3:
-#> ─────────────────────────────────────────── /current/working/directory ──
-```
-The directories for the different data types are received and stored in respective variables.
-Also, we set a few parameters for the plot layout:
-
-```{r}
-# config -----------------------
-... <- as.character(args[1])
-
-```
-
-### Actual Script Start
-
-```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
 # Rscript --vanilla R/fig/plot_F5.R \
-    # 2_analysis/twisst/weights/ \
-    # ressources/plugin/trees/ \
-    # https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
-    # 2_analysis/summaries/fst_outliers_998.tsv \
-    # 2_analysis/dxy/50k/ \
-    # 2_analysis/fst/50k/ \
-    # 2_analysis/summaries/fst_globals.txt \
-    # 2_analysis/GxP/50000/ \
-    # 200 \
-    # 5 \
-    # 2_analysis/revPoMo/outlier_regions/
+#     2_analysis/twisst/weights/ \
+#     ressources/plugin/trees/ \
+#     https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     2_analysis/dxy/50k/ \
+#     2_analysis/fst/50k/ \
+#     2_analysis/summaries/fst_globals.txt \
+#     2_analysis/GxP/50000/ \
+#     200 \
+#     5 \
+#     2_analysis/revPoMo/outlier_regions/
 # ===============================================================
 # This script produces Figure 5 of the study "Rapid radiation in a highly
 # diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
@@ -101,6 +99,16 @@ Also, we set a few parameters for the plot layout:
 #           "2_analysis/revPoMo/outlier_regions/")
 # script_name <- "R/fig/plot_F5.R"
 args <- commandArgs(trailingOnly = FALSE)
+```
+
+The next section processes the input from the command line.
+It stores the arguments in the vector `args`.
+The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
+
+Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
+
+```{r, eval = FALSE}
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -122,6 +130,28 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_F5.R ──────────────────────────────────────────────
+#> Parameters read:
+#>  ★ 1: 2_analysis/twisst/weights/
+#>  ★ 2: ressources/plugin/trees/
+#>  ★ 3: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
+#>  ★ 4: 2_analysis/summaries/fst_outliers_998.tsv
+#>  ★ 5: 2_analysis/dxy/50k/
+#>  ★ 6: 2_analysis/fst/50k/
+#>  ★ 7: 2_analysis/summaries/fst_globals.txt
+#>  ★ 8: 2_analysis/GxP/50000/
+#>  ★ 9: 200
+#>  ★ 10: 5
+#>  ★ 11: 2_analysis/revPoMo/outlier_regions/
+#> ─────────────────────────────────────────── /current/working/directory ──
+```
+The directories for the different data types are received and stored in respective variables.
+Also, we set a few parameters for the plot layout:
+
+```{r}
 # config -----------------------
 w_path <- as.character(args[1])
 d_path <- as.character(args[2])
@@ -140,35 +170,58 @@ source(twisst_functions, local = TRUE)
 
 plan(multiprocess)
 window_buffer <- 2.5*10^5
+```
+
+### Actual Script Start
+
+```{r, message = FALSE, warning = FALSE}
 # actual script =========================================================
 # locate dxy data files
 dxy_files <- dir(dxy_dir, pattern = str_c('dxy.*[a-z]{3}.*.', resolution ,'0kb-', resolution ,'kb.tsv.gz'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import dxy data
 dxy_data <- tibble(file = str_c(dxy_dir, dxy_files)) %>%
   purrr::pmap_dfr(get_dxy, kb = str_c(resolution, '0kb'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set traits of interest for GxP
 gxp_traits <- c('Bars', 'Snout', 'Peduncle')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import GxP data
 gxp_data <- str_c(gxp_dir,gxp_traits,'.lm.', resolution ,'0k.', resolution ,'k.txt.gz') %>%
   future_map_dfr(get_gxp_long, kb = 50)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set topology weighting color scheme
 twisst_clr <- c(Blue = "#0140E5", Bars = "#E32210", Butter = "#E4E42E")
 # set GxP color scheme
 gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
   darken(factor = .95) %>%
   set_names(., nm = gxp_traits)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compute genome wide average dxy
 dxy_globals <- dxy_data %>%
   filter(BIN_START %% ( resolution * 10000 ) == 1 ) %>%
   group_by( run ) %>%
   summarise(mean_global_dxy = sum(dxy*N_SITES)/sum(N_SITES)) %>%
   mutate(run = fct_reorder(run,mean_global_dxy))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # import genome wide average fst
 # and order population pairs by genomewide average fst
 fst_globals <- vroom::vroom(fst_globals,delim = '\t',
@@ -176,9 +229,16 @@ fst_globals <- vroom::vroom(fst_globals,delim = '\t',
   separate(run_prep,into = c('pop1','pop2'),sep = '-') %>%
   mutate(run = str_c(pop1,loc,'-', pop2, loc),
          run = fct_reorder(run,weighted_fst))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # locate fst data files
 fst_files <- dir(fst_dir, pattern = str_c('.', resolution ,'0k.windowed.weir.fst.gz'))
+```
+
+
+```{r, message = FALSE, warning = FALSE}
 # import fst data
 fst_data <- str_c(fst_dir, fst_files) %>%
   future_map_dfr(get_fst, kb = str_c(resolution, '0k')) %>%
@@ -186,14 +246,20 @@ fst_data <- str_c(fst_dir, fst_files) %>%
   left_join(fst_globals) %>%
   mutate(run = refactor(., fst_globals),
          BIN_MID = (BIN_START+BIN_END)/2)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # order dxy population pairs by genomewide average fst
 dxy_data <- dxy_data %>%
   left_join(dxy_globals) %>%
   left_join(fst_globals) %>%
   mutate(run = refactor(dxy_data, fst_globals),
          window = 'bold(italic(d[xy]))')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compute delta dxy
 data_dxy_summary <- dxy_data %>%
   group_by(GPOS) %>%
@@ -207,19 +273,31 @@ data_dxy_summary <- dxy_data %>%
             median_dxy = median(dxy),
             sd_dxy = sd(dxy),
             delta_dxy = max(dxy)-min(dxy))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load fst outlier regions
 outlier_table <- vroom::vroom(out_table, delim = '\t') %>%
   setNames(., nm = c("outlier_id","lg", "start", "end", "gstart","gend","gpos"))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set outlier regions of interest
 outlier_pick = c('LG04_1', 'LG12_3', 'LG12_4')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load group-level phylogeny data
 pomo_data <- str_c(pomo_path, pomo_trees) %>%
   purrr::map_dfr(import_tree) %>%
   mutate(rooted_tree = map2(.x = tree,.y = type, .f = root_hamlets))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # select genes to label
 cool_genes <- c('arl3','kif16b','cdx1','hmcn2',
                 'sox10','smarca4',
@@ -229,28 +307,46 @@ cool_genes <- c('arl3','kif16b','cdx1','hmcn2',
                 'hoxc8a','hoxc9','hoxc10a',
                 'hoxc13a','rarga','rarg',
                 'snai1','fam83d','mafb','sws2abeta','sws2aalpha','sws2b','lws','grm8')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load twisst data
 data_tables <- list(bel = prep_data(loc = 'bel'),
                     hon = prep_data(loc = 'hon'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set species sampled in belize
 pops_bel <- c('ind', 'may', 'nig', 'pue', 'uni')
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # set outlier region label
 region_label_tibbles <- tibble(outlier_id = outlier_pick,
                                label = c('A','B','C'))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # load and recolor trait icons
 trait_grob <- tibble(svg = hypoimg::hypo_trait_img$grob_circle[hypoimg::hypo_trait_img$trait %in% gxp_traits],
                      layer = c(4,3,7),
                      color = gxp_clr[gxp_traits %>% sort()])%>%
   pmap(.f = hypo_recolor_svg) %>%
   set_names(nm = gxp_traits %>% sort())
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # recolor second bars-layer
 trait_grob[["Bars"]] <- trait_grob[["Bars"]] %>% hypo_recolor_svg(layer = 7, color = gxp_clr[["Bars"]])
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_pomo1 <- pomo_data$tree[[1]] %>%
   midpoint() %>%
   ggtree::ggtree(layout = "circular") %>%
@@ -295,7 +391,10 @@ p_pomo3 <- pomo_data$tree[[3]] %>%
             open_angle = 168)
 
 plot_list <- list(p_pomo1, p_pomo2, p_pomo3)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compose base figure
 p_single <- outlier_table %>%
   filter(outlier_id %in% outlier_pick) %>%
@@ -309,7 +408,10 @@ p_single <- outlier_table %>%
                      rel_heights = c(1, .18),
                      labels = letters[1:length(outlier_pick)] %>% project_case(),
                      label_size = plot_text_size)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # compile legend
 # dummy plot for fst legend
 p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>%
@@ -318,8 +420,16 @@ p_dummy_fst <- outlier_table %>% filter(row_number() == 1) %>%
                                          barwidth = unit(100, "pt"),
                                          label.position = "top",
                                          ticks.colour = "black"))
+```
+
+
+```{r, message = FALSE, warning = FALSE}
 # dummy plot for  gxp legend
 p_dummy_gxp <- outlier_table %>% filter(row_number() == 1) %>% purrr::pmap(plot_panel_gxp, trait = 'Bars') %>% .[[1]]
+```
+
+
+```{r, message = FALSE, warning = FALSE}
 # fst legend
 p_leg_fst <- (p_dummy_fst+theme(legend.position = 'bottom')) %>% get_legend()
 # gxp legend
@@ -339,7 +449,10 @@ p_leg_pomo <- ((midpoint(pomo_data$tree[[1]]) %>%
                  theme(text = element_text(size = plot_text_size),
                        legend.position = "bottom") ) %>%
   get_legend()
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_leg1 <- cowplot::plot_grid(p_leg_fst,
                              p_leg_gxp,
                              p_leg_pomo,
@@ -359,12 +472,19 @@ p_leg <- cowplot::plot_grid(p_leg1,
                             p_leg2,
                             nrow = 1,
                             rel_widths = c(.6, 1))
+```
 
 
+```{r, message = FALSE, warning = FALSE}
 # finalize figure
 p_done <- cowplot::plot_grid(p_single, p_leg,
                              ncol = 1,
                              rel_heights = c(1, .17))
+```
+
+Finally, we can export Figure 5.
+
+```{r, eval = FALSE}
 # export figure
 hypo_save(plot = p_done,
           filename = 'figures/F5.pdf',
@@ -373,19 +493,6 @@ hypo_save(plot = p_done,
           comment = script_name,
           device = cairo_pdf,
           bg = "transparent")
-  
-```
-
-Finally, we can export Figure --xx--.
-
-```{r, eval = FALSE}
-scl <- .75
-hypo_save(p_done, filename = 'figures/F--xx--.pdf',
-          width = 9 * scl,
-          height = 6 * scl,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
 ```
 
 ---

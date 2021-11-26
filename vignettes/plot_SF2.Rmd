@@ -3,7 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Supplementary Figure --xx--
+# Supplementary Figure 2
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
@@ -16,19 +16,23 @@ knitr::opts_knit$set(root.dir = '../')
 library(ragg)
 ```
 
+
+```{r , include = FALSE}
+```
+
 ## Summary
 
-This is the accessory documentation of Figure S--xx--.
-The Figure can be recreated by running the **R** script `plot_SF--xx--.R`:
+This is the accessory documentation of Figure S2.
+The Figure can be recreated by running the **R** script `plot_SF2.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF--xx--.R 2_analysis/pca/
+Rscript --vanilla R/fig/plot_SF2.R 2_analysis/pca/
 
 ```
 
-## Details of `plot_SF--xx--.R`
+## Details of `plot_SF2.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
@@ -38,17 +42,7 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 The scripts start with a header that contains copy & paste templates to execute or debug the script:
 
 ```{r, message = FALSE, warning = FALSE}
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF--xx--.R
-# ===============================================================
-# This script produces Suppl. Figure --xx-- of the study "Rapid radiation
-# in a highly diverse marine environment"
-# by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c("")
-# script_name <- "R/fig/plot_SF--xx--.R"
+
 ```
 
 The next section processes the input from the command line.
@@ -59,24 +53,11 @@ This information will later be written into the meta data of the figure to help 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 ```{r, eval = FALSE}
-args <- commandArgs(trailingOnly=FALSE)
-# setup -----------------------
-library(GenomicOriginsScripts)
-library(patchwork)
-library(hypoimg)
-library(hypogen)
-cat('\n')
-script_name <- args[5] %>%
-  str_remove(., '--file=')
 
-plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
-
-args <- process_input(script_name, args)
 ```
 
 ```r
-#> ── Script: R/fig/plot_SF--xx--.R ────────────────────────────────────────────
+#> ── Script: R/fig/plot_SF2.R ────────────────────────────────────────────
 #> Parameters read:
 #> ★ 1:
 #> ────────────────────────────────────────── /current/working/directory ──
@@ -275,7 +256,11 @@ cohorts(cmat, bamm_serrn,
           plot.tag = element_text(hjust = 0),
           panel.background = element_blank(),
           plot.background = element_blank()))
+```
 
+Finally, we can export Figure S2.
+
+```{r, eval = FALSE}
 hypo_save("figures/SF2.pdf",
        plot = p_done,
        width = f_width,
@@ -283,15 +268,4 @@ hypo_save("figures/SF2.pdf",
        comment = plot_comment,
        device = cairo_pdf,
        bg = "transparent")
-```
-
-Finally, we can export Figure S--xx--.
-
-```{r, eval = FALSE}
-hypo_save(p_done, filename = 'figures/SF--xx--.pdf',
-          width = f_width,
-          height = f_width * .38,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
 ```

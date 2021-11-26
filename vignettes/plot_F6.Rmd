@@ -3,7 +3,7 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Figure --xx--
+# Figure 6
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
@@ -16,20 +16,42 @@ knitr::opts_knit$set(root.dir = '../')
 library(ragg)
 ```
 
+
+```{r , include = FALSE}
+args <- c( "2_analysis/summaries/fst_outliers_998.tsv",
+           "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
+script_name <- "R/fig/plot_F6.R"
+
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(ggtext)
+library(ggpointdensity)
+library(scales)
+library(grid)
+library(prismatic)
+
+outlier_file <- as.character(args[1])
+geva_path <- as.character(args[2])
+gxp_path <- as.character(args[3])
+```
+
 ## Summary
 
-This is the accessory documentation of Figure --xx--.
+This is the accessory documentation of Figure 6.
 
-The Figure can be recreated by running the **R** script `plot_F--xx--.R` from a (`bash` terminal):
+The Figure can be recreated by running the **R** script `plot_F6.R` from a (`bash` terminal):
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_F--xx--.R 2_analysis/dxy/50k/ 2_analysis/fst/50k/
-
+Rscript --vanilla R/fig/plot_F6.R \
+    2_analysis/summaries/fst_outliers_998.tsv \
+    2_analysis/geva/ \
+    2_analysis/GxP/bySNP/
 ```
 
-## Details of `plot_F--xx--.R`
+## Details of `plot_F6.R`
 
 In the following, the individual steps of the R script are documented.
 It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), [**BAMMtools**](https://cran.r-project.org/web/packages/BAMMtools/) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg).
@@ -39,7 +61,21 @@ It is an executable R script that depends on the accessory R package [**GenomicO
 The scripts start with a header that contains copy & paste templates to execute interactively or debug the script:
 
 ```{r , eval = FALSE}
-
+#!/usr/bin/env Rscript
+# run from terminal:
+# Rscript --vanilla R/fig/plot_F6.R \
+#     2_analysis/summaries/fst_outliers_998.tsv \
+#     2_analysis/geva/ \
+#     2_analysis/GxP/bySNP/
+# ===============================================================
+# This script produces Figure 6 of the study "Rapid radiation in a highly
+# diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
+# ---------------------------------------------------------------
+# ===============================================================
+# args <- c( "2_analysis/summaries/fst_outliers_998.tsv",
+#            "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
+# script_name <- "R/fig/plot_F6.R"
+args <- commandArgs(trailingOnly = FALSE)
 ```
 
 The next section processes the input from the command line.
@@ -50,44 +86,6 @@ This information will later be written into the meta data of the figure to help 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 ```{r, eval = FALSE}
-
-```
-
-```r
-#> ── Script: R/fig/plot_F--xx--.R ──────────────────────────────────────────────
-#> Parameters read:
-#>  ★ 1:
-#>  ★ 2:
-#>  ★ 3:
-#> ─────────────────────────────────────────── /current/working/directory ──
-```
-The directories for the different data types are received and stored in respective variables.
-Also, we set a few parameters for the plot layout:
-
-```{r}
-# config -----------------------
-... <- as.character(args[1])
-
-```
-
-### Actual Script Start
-
-```{r, message = FALSE, warning = FALSE}
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_F6.R \
-    # 2_analysis/summaries/fst_outliers_998.tsv \
-    # 2_analysis/geva/ \
-    # 2_analysis/GxP/bySNP/
-# ===============================================================
-# This script produces Figure 6 of the study "Rapid radiation in a highly
-# diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c( "2_analysis/summaries/fst_outliers_998.tsv",
-#            "2_analysis/geva/", "2_analysis/GxP/bySNP/" )
-# script_name <- "R/fig/plot_F6.R"
-args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
 renv::activate()
 library(GenomicOriginsScripts)
@@ -111,32 +109,64 @@ args = args[7:length(args)]
 cat(' ')
 cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
 cli::rule(right = getwd())
+```
 
+```r
+#> ── Script: R/fig/plot_F6.R ──────────────────────────────────────────────
+#> Parameters read:
+#>  ★ 1: 2_analysis/summaries/fst_outliers_998.tsv
+#>  ★ 2: 2_analysis/geva/
+#>  ★ 3: 2_analysis/GxP/bySNP/
+#> ─────────────────────────────────────────── /current/working/directory ──
+```
+The directories for the different data types are received and stored in respective variables.
+Also, we set a few parameters for the plot layout:
+
+```{r}
 # config -----------------------
 outlier_file <- as.character(args[1])
 geva_path <- as.character(args[2])
 gxp_path <- as.character(args[3])
+```
 
+### Actual Script Start
+
+```{r, message = FALSE, warning = FALSE}
 outlier_data <- read_tsv(outlier_file)
 
 data <- outlier_data[c(2, 13, 14),] %>%
   pmap_dfr(get_gxp_and_geva)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 xrange <- c(100, 10^6)
 color <- rgb(1, 0.5, 0.16)
 
 base_length <- 8
 base_lwd <- .15
 base_line_clr <- "black"
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 splitage <- tibble(intercept = 5000)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 gid_label <- c( LG04_1 = "LG04 (A)", LG12_3 = "LG12 (B)", LG12_4 = "LG12 (C)" )
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 gxp_clr <- c(Bars = "#79009f", Snout = "#E48A00", Peduncle = "#5B9E2D") %>%
   darken(factor = .95) %>%
   set_names(., nm = c("Bars", "Snout", "Peduncle"))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 annotation_grobs <- tibble(svg = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c( 'Snout', 'Bars', 'Peduncle')],
                            layer = c(4,3,7),
                            color = gxp_clr[c(1,3,2)]) %>%
@@ -146,17 +176,26 @@ annotation_grobs <- tibble(svg = hypo_trait_img$grob_circle[hypo_trait_img$trait
 annotation_grobs$LG12_3 <- hypo_recolor_svg(annotation_grobs$LG12_3,
                                             layer = 7, color = gxp_clr[[1]] %>%
                                               clr_desaturate %>% clr_lighten(.25))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 annotation_grobs_tib <- tibble(gid = names(annotation_grobs),
                                grob = annotation_grobs) %>%
   mutate( gid_label = gid_label[gid],
           trait = factor( c( "Bars", "Peduncle", "Snout"),
                           levels = c("Snout", "Bars", "Peduncle")))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 highlight_rects <- tibble(trait = factor( c("Snout", "Bars", "Peduncle"),
                                           levels = c("Snout", "Bars", "Peduncle")),
                           gid_label = gid_label)
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 p_done <- data %>%
   pivot_longer(names_to = "trait",
                values_to = "p_wald",
@@ -197,7 +236,11 @@ p_done <- data %>%
         panel.grid.minor = element_blank(),
         panel.grid.major = element_line(size = plot_lwd)
   )
+```
 
+Finally, we can export Figure 6.
+
+```{r, eval = FALSE}
 hypo_save(plot = p_done,
           filename = "figures/F6.pdf",
           width = f_width_half,
@@ -205,18 +248,6 @@ hypo_save(plot = p_done,
           comment = plot_comment,
           device = cairo_pdf,
           bg = "transparent")
-```
-
-Finally, we can export Figure --xx--.
-
-```{r, eval = FALSE}
-scl <- .75
-hypo_save(p_done, filename = 'figures/F--xx--.pdf',
-          width = 9 * scl,
-          height = 6 * scl,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
 ```
 
 ---
