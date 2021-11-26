@@ -26,7 +26,6 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../')
 ```
 
-
 ```{r, include=FALSE}
 source('R/draw_workflow.R')
 prod_adm <- tibbler(c('admx_log'))
