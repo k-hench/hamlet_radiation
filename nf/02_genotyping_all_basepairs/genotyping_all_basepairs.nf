@@ -8,12 +8,7 @@ Channel
 // git 2.2
 // initialize LG channel
 Channel
-	.from(["_M", "unplaced"])
-	.set{ lg_mode }
-
-Channel
 	.from( ('01'..'09') + ('10'..'19') + ('20'..'24') )
-	.concat( lg_mode )
 	.set{ ch_LG_ids }
 
 // git 2.3
@@ -24,7 +19,6 @@ ch_LG_ids.combine( vcf_cohort ).set{ vcf_lg_combo }
 // actual genotyping step (including invariant sites)
 process joint_genotype_snps {
 	label "L_O88g90h_LGs_genotype"
-	publishDir "../../1_genotyping/2_raw_vcfs/", mode: 'copy'
 
 	input:
 	set val( lg ), vcfId, file( vcf ) from vcf_lg_combo
@@ -33,51 +27,6 @@ process joint_genotype_snps {
 	set val( 'all' ), val( lg ), file( "all_site*.vcf.gz" ), file( "all_site*.vcf.gz.tbi" ) into all_bp_by_location
 
 	script:
-	if( mode == 'unplaced' )
-	"""
-	gatk --java-options "-Xmx85g" \
-		GenotypeGVCFs \
-		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-		-XL=LG01 \
-		-XL=LG02 \
-		-XL=LG03 \
-		-XL=LG04 \
-		-XL=LG05 \
-		-XL=LG06 \
-		-XL=LG07 \
-		-XL=LG08 \
-		-XL=LG09 \
-		-XL=LG10 \
-		-XL=LG11 \
-		-XL=LG12 \
-		-XL=LG13 \
-		-XL=LG14 \
-		-XL=LG15 \
-		-XL=LG16 \
-		-XL=LG17 \
-		-XL=LG18 \
-		-XL=LG19 \
-		-XL=LG20 \
-		-XL=LG21 \
-		-XL=LG22 \
-		-XL=LG23 \
-		-XL=LG24 \
-		-XL=LG_M \
-		-V=${vcf[0]} \
-		-O=intermediate.vcf.gz \
-		--include-non-variant-sites=true \
-		--allow-old-rms-mapping-quality-annotation-data
-
-	gatk --java-options "-Xmx85G" \
-		SelectVariants \
-		-R=\$BASE_DIR/ressources/HP_genome_unmasked_01.fa \
-		-V=intermediate.vcf.gz \
-		--select-type-to-exclude=INDEL \
-		-O=all_sites.${lg}.vcf.gz
-
-	rm intermediate.*
-	"""
-	else
 	"""
 	gatk --java-options "-Xmx85g" \
 		GenotypeGVCFs \
@@ -105,7 +54,7 @@ process merge_genotypes {
 	echo true
 
 	input:
-	set val( dummy ), val( lg ), file( vcf ), file( tbi ) from all_bp_by_location.filter({ it[1] =~/^[0-2].*/ }).groupTuple()
+	set val( dummy ),  val( lg ), file( vcf ), file( tbi ) from all_bp_by_location.groupTuple()
 
 	output:
 	file( "all_sites.vcf.gz" ) into all_bp_merged

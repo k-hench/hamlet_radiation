@@ -13,3 +13,4 @@ alias nf_run_pca="nextflow run analysis_pca.nf -with-dag ../../docs/analysis_pca
 alias nf_run_fstsig="nextflow run analysis_fst_sign.nf -with-dag ../../docs/analysis_fstsig.dot -with-report ../../docs/analysis_fstsig.html -with-timeline ../../docs/analysis_fstsig.html -c nextflow.config -resume"
 alias nf_run_pi="nextflow run analysis_pi.nf -with-dag ../../docs/analysis_pi.dot -with-report ../../docs/analysis_pi.html -with-timeline ../../docs/analysis_pi.html -c nextflow.config -resume"
 alias nf_run_wstats="nextflow run analysis_window_stats.nf -with-dag ../../docs/analysis_wstats.dot -with-report ../../docs/analysis_wstats.html -with-timeline ../../docs/analysis_wstats.html -c nextflow.config -resume"
+alias nf_run_allbp_mt="nextflow run genotyping_all_basepairs_mt.nf -c ../../nextflow.config -resume"

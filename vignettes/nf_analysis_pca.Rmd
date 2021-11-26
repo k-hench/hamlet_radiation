@@ -38,7 +38,7 @@ This pipeline can be executed as follows:
 
 ```sh
 cd $BASE_DIR/nf/07_analysis_pca
-source ../sh/nextflow_alias.sh
+source ../../sh/nextflow_alias.sh
 nf_run_pca
 ```
 
@@ -56,7 +56,7 @@ girafe( ggobj = dot_plot(file = 'docs/analysis_pca.dot',
                          point_types = prod_pca,
                          green_dot = c("p2", "p1"),
                          red_dot = c( "p26", "p22")),
-        width_svg = 9, 
+        width_svg = 9,
         height_svg = 7)
 ```
 </div>
@@ -116,7 +116,7 @@ process subset_vcf_divergence_based {
 	script:
 	"""
 	if [ "${subset_type}" == "subset_non_diverged" ];then
-		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed
 		SUBSET="--exclude-bed diverged_regions.bed"
 	else
 		SUBSET=""
@@ -126,7 +126,7 @@ process subset_vcf_divergence_based {
 		\$SUBSET \
 		--recode \
 		--stdout | bgzip > ${subset_type}.vcf.gz
-	
+
 	tabix ${subset_type}.vcf.gz
 	"""
 }

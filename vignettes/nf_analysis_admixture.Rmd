@@ -38,7 +38,7 @@ This pipeline can be executed as follows:
 
 ```sh
 cd $BASE_DIR/nf/10_analysis_admixture
-source ../sh/nextflow_alias.sh
+source ../../sh/nextflow_alias.sh
 nf_run_admixture
 ```
 

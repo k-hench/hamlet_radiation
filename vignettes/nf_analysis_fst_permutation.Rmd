@@ -39,7 +39,7 @@ This pipeline can be executed as follows:
 
 ```sh
 cd $BASE_DIR/nf/12_analysis_fst_signif
-source ../sh/nextflow_alias.sh
+source ../../sh/nextflow_alias.sh
 nf_run_fstsig
 ```
 
@@ -56,7 +56,7 @@ girafe( ggobj = dot_plot(file = 'docs/analysis_fstsig.dot',
                          point_types = prod_fstsig,
                          green_dot = c("p0", "p5"),
                          red_dot = c("p67", "p50")),
-        width_svg = 16, 
+        width_svg = 16,
         height_svg = 16)
 
 ```
@@ -146,7 +146,7 @@ process subset_vcf_by_location {
 		--mac 3 \
 		--recode \
 		--stdout | bgzip > ${loc}.vcf.gz
-	
+
 	tabix ${loc}.vcf.gz
 	"""
 }
@@ -219,7 +219,7 @@ process fst_run {
 	script:
 	"""
 	if [ "${subset_type}" == "subset_non_diverged" ];then
-		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed
 		SUBSET="--exclude-bed diverged_regions.bed"
 	else
 		SUBSET=""
@@ -238,7 +238,7 @@ process fst_run {
 		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
 	grep ${spec1} ${pop} > pop1.txt
 	grep ${spec2} ${pop} > pop2.txt
-	
+
 	vcftools --gzvcf ${loc}.${subset_type}.vcf.gz \
 		--weir-fst-pop pop1.txt \
 		--weir-fst-pop pop2.txt \
@@ -309,7 +309,7 @@ process random_bodies {
 	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
 	paste idx.txt fst.tsv >> ${run}_random_fst_b${pre}.tsv
 
-	rm fst.tsv fst.log rand.pop col2.pop r_pop1.pop r_pop2.pop tmp.txt 
+	rm fst.tsv fst.log rand.pop col2.pop r_pop1.pop r_pop2.pop tmp.txt
 	done
 	"""
 }
@@ -323,7 +323,7 @@ Finally, the results of all batches are collected and a single output file is co
 // output for each population pair
 process compile_random_results {
 	label 'L_20g2h_compile_rand'
-	publishDir "../../2_analysis/fst_signif/random", mode: 'copy' 
+	publishDir "../../2_analysis/fst_signif/random", mode: 'copy'
 
 	input:
 	set val( run ), file( body ), file( head ) from rand_body_out_ch.groupTuple().join(rand_header_ch, remainder: true)
@@ -405,7 +405,7 @@ process fst_run_adapt {
 		grep ${spec} > ${spec}.pop
 
 	if [ "${subset_type}" == "subset_non_diverged" ];then
-		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed 
+		awk -v OFS="\\t" '{print \$2,\$3,\$4}' ${outlier_tab} > diverged_regions.bed
 		SUBSET="--exclude-bed diverged_regions.bed"
 	else
 		SUBSET=""
@@ -426,7 +426,7 @@ process fst_run_adapt {
 		awk '{print \$1"\\t"substr(\$1, length(\$1)-5, length(\$1))}'  > prep.pop
 	grep ${loc1} ${spec}.pop > pop1.txt
 	grep ${loc2} ${spec}.pop > pop2.txt
-	
+
 	vcftools --gzvcf ${spec}.${subset_type}.vcf.gz \
 		--weir-fst-pop pop1.txt \
 		--weir-fst-pop pop2.txt \
@@ -478,7 +478,7 @@ process random_bodies_adapt {
 	grep "^Weir" fst.log | sed 's/.* //' | paste - - > fst.tsv
 	paste idx.txt fst.tsv >> ${run}_random_fst_b${pre}.tsv
 
-	rm fst.tsv fst.log rand.pop col2.pop r_pop1.pop r_pop2.pop tmp.txt 
+	rm fst.tsv fst.log rand.pop col2.pop r_pop1.pop r_pop2.pop tmp.txt
 	done
 	"""
 }
@@ -492,7 +492,7 @@ Finally, the results are collected and a single output file is compiled.
 // output for each location pair
 process compile_random_results_adapt {
 	label 'L_20g2h_compile_rand'
-	publishDir "../../2_analysis/fst_signif/random/adapt", mode: 'copy' 
+	publishDir "../../2_analysis/fst_signif/random/adapt", mode: 'copy'
 
 	input:
 	set val( run ), file( body ), file( head ) from rand_body_out_adapt_ch.groupTuple().join(rand_header_adapt_ch, remainder: true)

@@ -38,7 +38,7 @@ This pipeline can be executed as follows:
 
 ```sh
 cd $BASE_DIR/nf/02_genotyping_all_basepairs
-source ../sh/nextflow_alias.sh
+source ../../sh/nextflow_alias.sh
 nf_run_allbp
 ```
 
@@ -61,7 +61,7 @@ girafe( ggobj = dot_plot(file = 'docs/genotyping_all_basepairs.dot', git = 2, po
 
 ### Data preparation
 
-The nextflow script starts with a small header and then imports the joint genotyping likelihoods for all samples produced by `genotyping_all_basepairs.nf`.
+The nextflow script starts with a small header and then imports the joint genotyping likelihoods for all samples produced by `genotyping.nf`.
 
 <div class="kclass">
 ```{r , eval = FALSE, hilang = 'nf'}

@@ -37,7 +37,7 @@ This pipeline can be executed as follows:
 
 ```sh
 cd $BASE_DIR/nf/05_analysis_fasttree_twisst
-source ../sh/nextflow_alias.sh
+source ../../sh/nextflow_alias.sh
 nf_run_phylo
 ```
 
