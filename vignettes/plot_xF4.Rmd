@@ -3,35 +3,43 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Supplementary Figure --xx--
+
+# Figure 4
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      collapse = TRUE,
-                      comment = "#>",
-                      dev = "ragg_png",
-                      eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 knitr::opts_knit$set(root.dir = '../')
-
-library(ragg)
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+args <- c('2_analysis/dxy/50k/','2_analysis/fst/50k/multi_fst.50k.tsv.gz',
+'2_analysis/GxP/50000/', '2_analysis/summaries/fst_outliers_998.tsv',
+'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
+'2_analysis/twisst/weights/', 'ressources/plugin/trees/',
+'2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
 ```
 
 ## Summary
 
-This is the accessory documentation of Figure S--xx--.
-The Figure can be recreated by running the **R** script `plot_SF--xx--.R`:
+This is the accessory documentation of Figure 4.
+The Figure can be recreated by running the **R** script `plot_F4.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF--xx--.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_F4.R 2_analysis/dxy/50k/ \
+   2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
+   2_analysis/summaries/fst_outliers_998.tsv \
+   https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+   2_analysis/twisst/weights/ ressources/plugin/trees/ \
+   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
+   2_analysis/summaries/fst_globals.txt
 ```
 
-## Details of `plot_SF--xx--.R`
+## Details of `plot_F4.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the package [**hypoimg**](https://k-hench.github.io/hypoimg) and [**hypogen**](https://k-hench.github.io/hypogen).
 
 ### Config
 
@@ -40,15 +48,24 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF--xx--.R
+# Rscript --vanilla R/fig/plot_F4.R 2_analysis/dxy/50k/ \
+#    2_analysis/fst/50k/multi_fst.50k.tsv.gz 2_analysis/GxP/50000/ \
+#    2_analysis/summaries/fst_outliers_998.tsv \
+#    https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
+#    2_analysis/twisst/weights/ ressources/plugin/trees/ \
+#    2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
+#    2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Suppl. Figure --xx-- of the study "Rapid radiation
-# in a highly diverse marine environment"
-# by Hench, Helmkampf, McMillan and Puebla
+# This script produces Figure 4 of the study "Ancestral variation, hybridization and modularity
+# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("")
-# script_name <- "R/fig/plot_SF--xx--.R"
+# args <- c('2_analysis/dxy/50k/','2_analysis/fst/50k/multi_fst.50k.tsv.gz',
+# '2_analysis/GxP/50000/', '2_analysis/summaries/fst_outliers_998.tsv',
+# 'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
+# '2_analysis/twisst/weights/', 'ressources/plugin/trees/',
+# '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
+# script_name <- "R/fig/plot_F4.R"
 ```
 
 The next section processes the input from the command line.
@@ -59,65 +76,8 @@ This information will later be written into the meta data of the figure to help 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 ```{r, eval = FALSE}
-args <- commandArgs(trailingOnly=FALSE)
-# setup -----------------------
-library(GenomicOriginsScripts)
-library(patchwork)
-library(hypoimg)
-library(hypogen)
-cat('\n')
-script_name <- args[5] %>%
-  str_remove(., '--file=')
-
-plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
-
-args <- process_input(script_name, args)
-```
-
-```r
-#> ── Script: R/fig/plot_SF--xx--.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF8.R \
-#     2_analysis/dxy/50k/ \
-#     2_analysis/fst/50k/multi_fst.50k.tsv.gz \
-#     2_analysis/GxP/50000/ \
-#     2_analysis/summaries/fst_outliers_998.tsv \
-#     https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R \
-#     2_analysis/twisst/weights/ \
-#     ressources/plugin/trees/ \
-#     2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz \
-#     2_analysis/summaries/fst_globals.txt
-# ===============================================================
-# This script produces Figure 8 of the study "Ancestral variation, hybridization and modularity
-# fuel a marine radiation" by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c('2_analysis/dxy/50k/','2_analysis/fst/50k/multi_fst.50k.tsv.gz',
-# '2_analysis/GxP/50000/', '2_analysis/summaries/fst_outliers_998.tsv',
-# 'https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R',
-# '2_analysis/twisst/weights/', 'ressources/plugin/trees/',
-# '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz', '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_SF8.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
-renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -129,7 +89,27 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
 
+```r
+#> ── Script: R/fig/plot_F4.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/dxy/50k/
+#> ★ 2: 2_analysis/fst/50k/multi_fst.50k.tsv.gz
+#> ★ 3: 2_analysis/GxP/50000/
+#> ★ 4: 2_analysis/summaries/fst_outliers_998.tsv
+#> ★ 5: https://raw.githubusercontent.com/simonhmartin/twisst/master/plot_twisst.R
+#> ★ 6: 2_analysis/twisst/weights/
+#> ★ 7: ressources/plugin/trees/
+#> ★ 8: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+#> ★ 9: 2_analysis/summaries/fst_globals.txt
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directories for the different data types are received and stored in respective variables.
+Also, we source an external r script from the [original twisst github repository](https://github.com/simonhmartin/twisst) that we need to import the twisst data:
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 dxy_dir <- as.character(args[1])
 fst_file <- as.character(args[2])
@@ -141,7 +121,26 @@ d_path <- as.character(args[7])
 recombination_file <- as.character(args[8])
 global_fst_file <- as.character(args[9])
 source(twisst_script)
+```
 
+### Data import
+
+Figure 4 contains quite a lot of different data sets.
+The main part of this script is just importing and organizing all of this data:
+In the following we'll go step by step through the import of:
+
+- differentiation data ($F_{ST}$)
+- divergence data ($d_{XY}$, also containing diversity data - $\pi$)
+- genotype $\times$ phenotype association data ($p_{Wald}$)
+- recombination data ($\rho$)
+- topology weighting data
+
+We start with the import of the $F_{ST}$ data, specifically the data set containing the genome wide $F_{ST}$ computed for all populations simultaneously (joint $F_{ST}$).
+
+The data file is read, the columns are renamed and the genomic positions are added.
+Then, only the genomic positions and the $F_{ST}$ columns are selected and a window column is added for faceting in `ggplot()`.
+
+```{r, message = FALSE, warning = FALSE}
 # start script -------------------
 # import fst data
 fst_data <- vroom::vroom(fst_file, delim = '\t') %>%
@@ -151,7 +150,12 @@ fst_data <- vroom::vroom(fst_file, delim = '\t') %>%
   select(GPOS, fst) %>%
   setNames(., nm = c('GPOS','value')) %>%
   mutate(window = str_c('bold(',project_case('a'),'):joint~italic(F[ST])'))
+```
 
+Next, we import the $d_{XY}$ data.
+Here we are importing all 28 pairwise comparisons, so we first collect all the file paths and the iterate the data import over all files.
+
+```{r, message = FALSE, warning = FALSE}
 # locate dxy data files
 dxy_files <- dir(dxy_dir)
 
@@ -162,7 +166,11 @@ dxy_data <-  str_c(dxy_dir,dxy_files) %>%
   select(N_SITES:GPOS, run) %>%
   mutate(pop1 = str_sub(run,1,6),
          pop2 = str_sub(run,8,13))
+```
 
+From this data, we compute the divergence difference ($\Delta d_{XY}$).
+
+```{r, message = FALSE, warning = FALSE}
 # compute delta dxy
 dxy_summary <- dxy_data %>%
   group_by(GPOS) %>%
@@ -176,8 +184,13 @@ dxy_summary <- dxy_data %>%
                      str_c('bold(',project_case('e'),'):\u0394~italic(\u03C0)'))) %>%
   gather(key = 'window', value = 'value',2:4) %>%
   filter(window == str_c('bold(',project_case('e'),'):\u0394~italic(d[xy])'))
+```
 
+Then we import the genotype $\times$ phenotype association data.
+For this, we list all the traits we want to include and then iterate the import function over all traits.
+We combine the data sets and transform the table to *long* format.
 
+```{r, message = FALSE, warning = FALSE}
 # set G x P traits to be imported
 traits <- c("Bars.lm.50k.5k.txt.gz", "Peduncle.lm.50k.5k.txt.gz", "Snout.lm.50k.5k.txt.gz")
 
@@ -191,7 +204,11 @@ gxp_data <- str_c(gxp_dir,traits) %>%
   purrr::map(get_gxp) %>%
   join_list() %>%
   gather(key = 'window', value = 'value',2:4)
+```
 
+Then, we import the genome wide $F_{ST}$ summary for all 28 pair wise comparisons to be able to pick a divergence data set of an intermediately differentiated species pair (the species pair of rank 15, close to 14.5 - the median of rank 1 to 28).
+
+```{r, message = FALSE, warning = FALSE}
 # import genome wide Fst data summary  --------
 globals <- vroom::vroom(global_fst_file, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
@@ -215,7 +232,12 @@ select_dxy_runs <- globals %>%
 dxy_select <- dxy_data %>%
   filter(run %in% select_dxy_runs) %>%
   mutate(window = str_c('bold(',project_case('b'),'): italic(d[XY])'))
+```
 
+The $d_{XY}$ data set includes also $\pi$ of the involved populations.
+We first extract the diversity data for each population (pop1 & pop2), combine them and compute the statistics needed for ranking the populations based on their diversity.
+
+```{r, message = FALSE, warning = FALSE}
 # the pi data is filtered on a similar logic to the dxy data
 # first a table with the genome wide average pi for each population is compiled
 # (based on the first populations from the dxy data table
@@ -242,7 +264,11 @@ pi_summary <- dxy_data %>%
             max_pi = max(avg_pi),
             sd_pi = sd(avg_pi)) %>%
   arrange(n)
+```
 
+Then, we determine an intermediately diverse candidate of our 14 populations (rank 7, again: $7 \approx median(1:14)$) and average over the diversities estimated in all pairwise comparisons this population was involved in.
+
+```{r, message = FALSE, warning = FALSE}
 # one of the central populations with respect to average genome
 # wide pi is identified
 # for this, the 7th lowest pi value of the 14 populations is
@@ -273,12 +299,25 @@ pi_data_select <- dxy_data %>%
             sd_pi = sd(pi)) %>%
   filter(pop %in% select_pi_pops) %>%
   mutate(window = str_c('bold(',project_case('c'),'):~\u03C0'))
+```
 
+The import of the recombination data is pretty straight forward:
+Reading one file, adding genomic position and window column for faceting.
+
+```{r, message = FALSE, warning = FALSE}
 # import recombination data
 recombination_data <- vroom::vroom(recombination_file,delim = '\t') %>%
   add_gpos() %>%
   mutate(window = str_c('bold(',project_case('d'),'):~\u03C1'))
+```
 
+Then we import the topology weighting data.
+This is done once per location, the data sets are combined and specific columns are selected:
+The gnomic position, the topology number (format: three digits with leading zeros, hence "topo3"), relative topology rank ranging from 0 to 1, the faceting column and the actual weight data.
+
+We also create a dummy tibble that contains the null expectation of the topology weight for the two locations (1/n, with n = number of possible topologies - n = 15 for Belize and 105 for Honduras).
+
+```{r, message = FALSE, warning = FALSE}
 # import topology weighting data
 twisst_data <- tibble(loc = c('bel','hon'),
                       panel = c('f','g') %>% project_case() %>% str_c('bold(',.,')')) %>%
@@ -287,13 +326,21 @@ twisst_data <- tibble(loc = c('bel','hon'),
   select(GPOS, topo3,topo_rel,window,weight)
 
 # the "null-weighting" is computed for both locations
-twisst_null <- tibble(window = c(str_c('bold(',project_case('f'),'):~italic(w)[bel]'),
-                                 str_c('bold(',project_case('g'),'):~italic(w)[hon]')),
+twisst_null <- tibble(window = c(str_c('bold(', project_case('f'),'):~italic(w)[bel]'),
+                                 str_c('bold(', project_case('g'),'):~italic(w)[hon]')),
                       weight = c(1/15, 1/105))
+```
 
+We create a single data set for $d_{XY}$, $F_{ST}$ and genotype $\times$ phenotype data.
+
+```{r, message = FALSE, warning = FALSE}
 # combine data types --------
 data <- bind_rows(dxy_summary, fst_data, gxp_data)
+```
 
+Then we load the positions of the the $F_{ST}$ outlier windows, select the focal outliers that will receive individual labels and create a tibble and two parameters for the label placement within the plot.
+
+```{r, message = FALSE, warning = FALSE}
 # import fst outliers
 outliers <-  vroom::vroom(outlier_table, delim = '\t')
 
@@ -312,13 +359,23 @@ outlier_label <- outliers %>%
 # the y height of the outlier labels and the corresponding tags is set
 outlier_y <- .45
 outlier_yend <- .475
+```
 
+We prepare a set of trait annotations for the genotype $\times$ phenotype association panels.
+
+```{r, message = FALSE, warning = FALSE}
 # the icons for the traits of the GxP are loaded
 trait_tibble <- tibble(window = c("bold(h):italic(p)[Bars]",
                                   "bold(i):italic(p)[Peduncle]",
                                   "bold(j):italic(p)[Snout]"),
                        grob = hypo_trait_img$grob_circle[hypo_trait_img$trait %in% c('Bars', 'Peduncle', 'Snout')])
+```
 
+### Plotting
+
+Finally it is time to put the pieces together with one giant `ggplot():`
+
+```{r, message = FALSE, warning = FALSE}
 # finally, the figure is being put together
 p_done <- ggplot()+
   # add gray/white LGs background
@@ -329,13 +386,10 @@ p_done <- ggplot()+
   geom_segment(data = outlier_label,
                aes(x = gpos,
                    xend = gpos_label2, y = outlier_y, yend = outlier_yend),
-               color = alpha(outlr_clr,1),
-               size = .2)+
+               color = alpha(outlr_clr,1),size = .2)+
   # the outlier labels are added
   geom_text(data = outlier_label, aes(x = gpos_label, y = outlier_yend, label = label),
-            color = alpha(outlr_clr,1),
-            fontface = 'bold',
-            size = plot_text_size / ggplot2:::.pt)+
+            color = alpha(outlr_clr,1), fontface = 'bold')+
   # the fst, delta dxy and gxp data is plotted
   geom_point(data = data, aes(x = GPOS, y = value),size = plot_size, color = plot_clr) +
   # the dxy data is plotted
@@ -346,7 +400,7 @@ p_done <- ggplot()+
   geom_point(data = recombination_data, aes(x = GPOS, y = RHO),size = plot_size, color = plot_clr) +
   # the smoothed rho is plotted
   geom_smooth(data = recombination_data, aes(x = GPOS, y = RHO, group = CHROM),
-              color = 'red', se = FALSE, size = .4) +
+                color = 'red', se = FALSE, size = .7) +
   # the topology weighting data is plotted
   geom_line(data = twisst_data, aes(x = GPOS, y = weight, color = topo_rel), size = .4) +
   # the null weighting is added
@@ -369,27 +423,23 @@ p_done <- ggplot()+
         strip.text = element_text(size = plot_text_size),
         strip.background = element_blank(),
         strip.placement = 'outside')
+```
 
-hypo_save(p_done, filename = 'figures/SF8.png',
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = f_width, fig.height = f_width * .9,, dev.args = list(type = "cairo")}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 80, angle = 45)
+```
+
+The final figure is then exported using `hypo_save()`.
+
+```r
+# export figure 4
+hypo_save(p_done, filename = 'figures/F4.png',
           width = f_width,
           height = f_width * .9,
-          dpi = 600,
           type = "cairo",
           comment = plot_comment)
-
-system("convert figures/SF8.png figures/SF8.pdf")
-system("rm figures/SF8.png")
-create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF8.pdf")
-system(create_metadata)
 ```
 
-Finally, we can export Figure S--xx--.
-
-```{r, eval = FALSE}
-hypo_save(p_done, filename = 'figures/SF--xx--.pdf',
-          width = f_width,
-          height = f_width * .38,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
-```
+---

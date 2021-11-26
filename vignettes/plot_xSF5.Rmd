@@ -3,35 +3,40 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Supplementary Figure --xx--
+# Supplementary Figure 5
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      collapse = TRUE,
-                      comment = "#>",
-                      dev = "ragg_png",
-                      eval = FALSE)
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 knitr::opts_knit$set(root.dir = '../')
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(vroom)
+library(ggtext)
 
-library(ragg)
+args <- c('2_analysis/fst/50k/',
+          '2_analysis/summaries/fst_outliers_998.tsv',
+          '2_analysis/summaries/fst_globals.txt')
 ```
 
 ## Summary
 
-This is the accessory documentation of Figure S--xx--.
-The Figure can be recreated by running the **R** script `plot_SF--xx--.R`:
+This is the accessory documentation of Figure S5.
+The Figure can be recreated by running the **R** script `plot_SF5.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF--xx--.R 2_analysis/pca/
+Rscript --vanilla R/fig/plot_SF5.R 2_analysis/fst/50k/ \
+  2_analysis/summaries/fst_outliers_998.tsv \
+  2_analysis/summaries/fst_globals.txt
 
 ```
 
-## Details of `plot_SF--xx--.R`
+## Details of `plot_SF5.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**ggtext**](https://wilkelab.org/ggtext/), [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**vroom**](https://vroom.r-lib.org/).
 
 ### Config
 
@@ -40,15 +45,19 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF--xx--.R
+# Rscript --vanilla R/fig/plot_SF5.R 2_analysis/fst/50k/ \
+#   2_analysis/summaries/fst_outliers_998.tsv \
+#   2_analysis/summaries/fst_globals.txt
 # ===============================================================
-# This script produces Suppl. Figure --xx-- of the study "Rapid radiation
-# in a highly diverse marine environment"
+# This script produces Suppl. Figure 5 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("")
-# script_name <- "R/fig/plot_SF--xx--.R"
+# args <- c('2_analysis/fst/50k/',
+#           '2_analysis/summaries/fst_outliers_998.tsv',
+#           '2_analysis/summaries/fst_globals.txt')
+# script_name <- "R/fig/plot_SF5.R"
 ```
 
 The next section processes the input from the command line.
@@ -61,55 +70,6 @@ Then we drop all the imported information besides the arguments following the sc
 ```{r, eval = FALSE}
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
-library(GenomicOriginsScripts)
-library(patchwork)
-library(hypoimg)
-library(hypogen)
-cat('\n')
-script_name <- args[5] %>%
-  str_remove(., '--file=')
-
-plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
-
-args <- process_input(script_name, args)
-```
-
-```r
-#> ── Script: R/fig/plot_SF--xx--.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF4.R \
-#     2_analysis/fst/50k/ \
-#     2_analysis/summaries/fst_outliers_998.tsv \
-#     2_analysis/summaries/fst_globals.txt
-# ===============================================================
-# This script produces Suppl. Figure 4 of the study "Rapid radiation in a
-# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c('2_analysis/fst/50k/',
-#           '2_analysis/summaries/fst_outliers_998.tsv',
-#           '2_analysis/summaries/fst_globals.txt')
-# script_name <- "R/fig/plot_SF4.R"
-args <- commandArgs(trailingOnly = FALSE)
-# setup -----------------------
-renv::activate()
 library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
@@ -124,26 +84,59 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_SF5.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/fst/50k/
+#> ★ 2: 2_analysis/summaries/fst_outliers_998.tsv
+#> ★ 3: 2_analysis/summaries/fst_globals.txt
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the $F_{ST}$ data, and the files containing the locations
+of the $F_{ST}$ outlier regions and the genome wide $F_{ST}$ averages are
+received and stored in a variable.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 data_path <- as.character(args[1])
 outlier_file <- as.character(args[2])
 globals_file <- as.character(args[3])
+```
+
+The files containing the windowed $F_{ST}$ data are located.
+
+```{r, message = FALSE, warning = FALSE}
 # load data -------------------
 # locate fst data files
-files <- dir(data_path,pattern = '.50k.windowed.weir.fst.gz')
+files <- dir(data_path, pattern = '.50k.windowed.weir.fst.gz')
+```
 
+Based on these data files, the names of the pair wise species comparisons are created.
+
+```{r, message = FALSE, warning = FALSE}
 # extract run names from data file names
 run_files <- files %>%
   str_sub(.,1,11) %>%
   str_replace(.,pattern = '([a-z]{3})-([a-z]{3})-([a-z]{3})', '\\2\\1-\\3\\1')
+```
 
+Then, the genome wide average $F_{ST}$ values are loaded.
+
+```{r, message = FALSE, warning = FALSE}
 # load genome wide average fst values for each run
 globals <- vroom::vroom(globals_file, delim = '\t',
                         col_names = c('loc','run','mean','weighted')) %>%
   separate(run, into = c('pop1','pop2')) %>%
   mutate(run = str_c(pop1,loc,'-',pop2,loc),
          run = fct_reorder(run,weighted))
+```
 
+Next, the windowed $F_{ST}$ data are imported.
+
+```{r, message = FALSE, warning = FALSE}
 # load all windowed fst data and collapse in to a single data frame
 data <- purrr::pmap(tibble(file = str_c(data_path,files),
                            run = run_files),
@@ -155,7 +148,13 @@ data <- purrr::pmap(tibble(file = str_c(data_path,files),
          pop2 = str_sub(run,8,10),
          loc = str_sub(run,4,6),
          run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ))
+```
 
+To be able to indicate the genome wide average $F_{ST}$ in the background of the
+figure, the $F_{ST}$ values are scaled to the extent of  the hamlet reference genome.
+The rescaled $F_{ST}$ values are compiled into a table for plotting.
+
+```{r, message = FALSE, warning = FALSE}
 # create table for the indication of genome wide average fst in the plot background
 # (rescale covered fst range to the extent of the genome)
 global_bar <- globals %>%
@@ -169,11 +168,20 @@ global_bar <- globals %>%
          loc = str_sub(run,4,6),
          run_label = str_c("*H. ", sp_names[pop1],"* - *H. ", sp_names[pop2],"*<br>(",loc_names[loc],")" ),
          run_label = fct_reorder(run_label,xmax_org))
+```
 
+To indicate the genome wide average $F_{ST}$ on a secondary x-axis, the secondary
+x-breakes are pre-computed.
+
+```{r, message = FALSE, warning = FALSE}
 # pre-calculate secondary x-axis breaks
 sc_ax <- scales::cbreaks(c(0,max(globals$weighted)),
                          scales::pretty_breaks(4))
+```
 
+Then, the Supplementary Figure is assembled.
+
+```{r, message = FALSE, warning = FALSE}
 # compose final figure
 p_done <- ggplot()+
   # general plot structure separated by run
@@ -210,29 +218,24 @@ p_done <- ggplot()+
         legend.position = 'none',
         axis.title.x = element_text(),
         axis.text.x.bottom = element_text(colour = 'darkgray'))
+```
 
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 8, fig.height = 12, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
+```
+
+Finally, we can export Figure S5.
+
+```{r, eval = FALSE}
 # export final figure
-hypo_save(filename = 'figures/SF4.png',
+hypo_save(filename = 'figures/SF5.png',
           plot = p_done,
           width = 8,
           height = 12,
-          dpi = 600,
           type = "cairo",
           comment = plot_comment)
-
-system("convert figures/SF4.png figures/SF4.pdf")
-system("rm figures/SF4.png")
-create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF4.pdf")
-system(create_metadata)
 ```
 
-Finally, we can export Figure S--xx--.
-
-```{r, eval = FALSE}
-hypo_save(p_done, filename = 'figures/SF--xx--.pdf',
-          width = f_width,
-          height = f_width * .38,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
-```
+---

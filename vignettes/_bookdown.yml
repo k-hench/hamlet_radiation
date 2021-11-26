@@ -2,16 +2,19 @@ book_filename: "Script repository Hench et al."
 chapter_name: ""
 repo: https://github.com/k-hench/hamlet_radiation
 output_dir: ../docs
-rmd_files: ["index.Rmd", "nf_genotyping.Rmd","nf_genotyping_all_basepairs.Rmd",
-   "nf_analysis_fst_gxp.Rmd","nf_analysis_dxy.Rmd","nf_analysis_phylo.Rmd","nf_analysis_recombination.Rmd",
-   "nf_analysis_pca.Rmd", "nf_analysis_msmc.Rmd", "nf_analysis_hybridization.Rmd", "nf_analysis_admixture.Rmd",
-   "nf_analysis_allele_age.Rmd", "nf_analysis_fst_permutation.Rmd", "nf_analysis_phylo_whg.Rmd", "nf_analysis_phylo_regions.Rmd",
-   "nf_analysis_pi.Rmd", "nf_genotyping_all_basepairs_mt.Rmd",
-   "create_all_plots.Rmd", "plot_F1.Rmd", "plot_F2.Rmd", "plot_F3.Rmd", "plot_F4.Rmd", "plot_F5.Rmd", "plot_F6.Rmd",
+rmd_files: [ "index.Rmd", "nf_genotyping.Rmd","nf_genotyping_all_basepairs.Rmd",
+   "nf_analysis_fst_gxp.Rmd","nf_analysis_dxy.Rmd","nf_analysis_phylo.Rmd",
+   "nf_analysis_recombination.Rmd", "nf_analysis_pca.Rmd", "nf_analysis_msmc.Rmd",
+   "nf_analysis_hybridization.Rmd", "nf_analysis_admixture.Rmd", "nf_analysis_allele_age.Rmd",
+   "nf_analysis_fst_permutation.Rmd", "nf_analysis_phylo_whg.Rmd", "nf_analysis_phylo_regions.Rmd",
+   "nf_analysis_pi.Rmd", "nf_analysis_ibd.Rmd", "nf_analysis_dstats.Rmd",
+   "nf_genotyping_all_basepairs_mt.Rmd", "nf_analysis_phylo_serraninae.Rmd", "create_all_plots.Rmd",
+   "plot_F1.Rmd", "plot_F2.Rmd", "plot_F3.Rmd", "plot_F4.Rmd", "plot_F5.Rmd", "plot_F6.Rmd",
    "plot_SF1.Rmd", "plot_SF2.Rmd", "plot_SF3.Rmd", "plot_SF4.Rmd", "plot_SF5.Rmd",
    "plot_SF6.Rmd", "plot_SF7.Rmd", "plot_SF8.Rmd", "plot_SF9.Rmd",
    "plot_SF10.Rmd", "plot_SF11.Rmd", "plot_SF12.Rmd", "plot_SF13.Rmd",
-   "plot_SF14.Rmd", "plot_SF15.Rmd", "plot_SF16.Rmd"]
+   "plot_SF14.Rmd", "plot_SF15.Rmd", "plot_SF16.Rmd", "plot_SF17.Rmd",
+   "plot_SF18.Rmd", "plot_SF19.Rmd", "plot_SF20.Rmd", "plot_SF21.Rmd" ]
 clean: [packages.bib, bookdown.bbl]
 new_session: yes
 delete_merged_file: True

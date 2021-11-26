@@ -3,35 +3,38 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Supplementary Figure --xx--
+
+# Supplementary Figure 8
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      collapse = TRUE,
-                      comment = "#>",
-                      dev = "ragg_png",
-                      eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE,eval = FALSE)
 knitr::opts_knit$set(root.dir = '../')
-
-library(ragg)
+library(GenomicOriginsScripts)
+library(vroom)
+library(hypoimg)
+library(hypogen)
+args <- c('2_analysis/pi/50k/',
+          '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
 ```
 
 ## Summary
 
-This is the accessory documentation of Figure S--xx--.
-The Figure can be recreated by running the **R** script `plot_SF--xx--.R`:
+This is the accessory documentation of Figure S8.
+The Figure can be recreated by running the **R** script `plot_SF8.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF--xx--.R 2_analysis/pca/
+Rscript --vanilla R/fig/plot_SF8.R \
+  2_analysis/pi/50k/ \
+  2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 
 ```
 
-## Details of `plot_SF--xx--.R`
+## Details of `plot_SF8.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) as well as the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**vroom**](https://vroom.r-lib.org/).
 
 ### Config
 
@@ -40,15 +43,17 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF--xx--.R
+# Rscript --vanilla R/fig/plot_SF8.R 2_analysis/pi/50k/ \
+#   2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
 # ===============================================================
-# This script produces Suppl. Figure --xx-- of the study "Rapid radiation
-# in a highly diverse marine environment"
+# This script produces Suppl. Figure 8 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("")
-# script_name <- "R/fig/plot_SF--xx--.R"
+# args <- c('2_analysis/pi/50k/',
+#           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
+# script_name <- "R/fig/plot_SF8.R"
 ```
 
 The next section processes the input from the command line.
@@ -59,55 +64,8 @@ This information will later be written into the meta data of the figure to help 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 ```{r, eval = FALSE}
-args <- commandArgs(trailingOnly=FALSE)
-# setup -----------------------
-library(GenomicOriginsScripts)
-library(patchwork)
-library(hypoimg)
-library(hypogen)
-cat('\n')
-script_name <- args[5] %>%
-  str_remove(., '--file=')
-
-plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
-
-args <- process_input(script_name, args)
-```
-
-```r
-#> ── Script: R/fig/plot_SF--xx--.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF9.R \
-#     2_analysis/pi/50k/ \
-#     2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
-# ===============================================================
-# This script produces Suppl. Figure 9 of the study "Rapid radiation in a
-# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c('2_analysis/pi/50k/',
-#           '2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz')
-# script_name <- "R/fig/plot_SF9.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
-renv::activate()
 library(GenomicOriginsScripts)
 library(vroom)
 library(hypoimg)
@@ -119,34 +77,71 @@ script_name <- args[5] %>%
 plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
-args <- process_input(script_name, args)
+cli::rule( left = str_c(crayon::bold('Script: '),crayon::red(script_name)))
+args = args[7:length(args)]
+cat(' ')
+cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
+cli::rule(right = getwd())
+```
+
+```r
+#> ── Script: R/fig/plot_SF8.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/pi/50k/
+#> ★ 2: 2_analysis/fasteprr/step4/fasteprr.all.rho.txt.gz
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The paths containing the $\pi$ and $\rho$ data are received and stored inside more descriptive variables.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 pi_path <- as.character(args[1])
 rho_path <- as.character(args[2])
+```
 
+The $\pi$-path is screened for data files in the desired resolution (50 kb windows).
+
+```{r, message = FALSE, warning = FALSE}
 # locate pi data files
-files <- dir(pi_path, pattern = '^pi.[a-z]{6}.50k')
+files <- dir(pi_path, pattern = '^[a-z]{6}.50k')
+```
 
+Then, the $\pi$ data is loaded and compiled into a single table containing all populations.
+
+```{r, message = FALSE, warning = FALSE}
 # load pi data
 data <- str_c(pi_path, files) %>%
   purrr::map(get_pi) %>%
   bind_rows()
+```
 
+To be able to order the subplots of the final figure by the genome wide average $\pi$ of the populations, we create a second data table containing the summary of the $\pi$ data for all populations.
+
+```{r, message = FALSE, warning = FALSE}
 # compute genome wide average pi for the subplot order
 global_bar <- data %>%
   filter( BIN_START %% 50000 == 1) %>%
-  select(N_SITES, PI, spec) %>%
+  select(N_VARIANTS, PI, spec) %>%
   group_by(spec) %>%
-  summarise(genome_wide_pi = sum(N_SITES*PI)/sum(N_SITES)) %>%
+  summarise(genome_wide_pi = sum(N_VARIANTS*PI)/sum(N_VARIANTS)) %>%
   arrange(genome_wide_pi) %>%
   ungroup() %>%
   mutate(spec = fct_reorder(.f = spec, .x = genome_wide_pi),
          scaled_pi = genome_wide_pi/max(genome_wide_pi))
+```
 
+Then, we load the $\rho$ data.
+
+```{r, message = FALSE, warning = FALSE}
 # load recombination data
 rho_data <- vroom(rho_path, delim = '\t') %>%
   select(-BIN_END)
+```
 
+Next, the two data sets are merged based on the window position on the hamlet reference genome.
+
+```{r, message = FALSE, warning = FALSE}
 # merge pi and recombination data
 combined_data <- data %>%
   # filter pi data to "non-overlapping" windows
@@ -155,14 +150,22 @@ combined_data <- data %>%
   mutate(spec = factor(spec, levels = levels(global_bar$spec))) %>%
   # merge with recombination data
   left_join(rho_data, by = c(CHROM = 'CHROM', BIN_START = 'BIN_START'))
+```
 
+To indicate the hamlet population on the sub-plots, hamlet illustrations are loaded.
+
+```{r, message = FALSE, warning = FALSE}
 # create table with fish annotations
 grob_tibble2 <- global_bar$spec %>%
   purrr::map(fish_plot2) %>%
   bind_rows()
+```
 
+Then, the final figure is created.
+
+```{r, message = FALSE, warning = FALSE}
 # compose final figure
-p <- combined_data %>%
+p_done <- combined_data %>%
   ggplot()+
   # add fish annotations
   geom_hypo_grob2(data = grob_tibble2,
@@ -186,29 +189,25 @@ p <- combined_data %>%
   theme_minimal()+
   theme(legend.position = c(.84,.01),
         strip.text = element_blank())
+```
 
+
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 8, fig.height = 12, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 75, angle = 45)
+```
+
+Finally, we can export Figure S8.
+
+```{r, eval = FALSE}
 # export final figure
-hypo_save(filename = 'figures/SF9.pdf',
-          plot = p,
+hypo_save(filename = 'figures/SF8.pdf',
+          plot = p_done,
           width = 8,
           height = 10,
           comment = plot_comment)
 
-# ===============
-combined_data %>%
-  filter( BIN_START %% 50000 == 1) %>%
-  group_by(spec) %>%
-  summarise(genom_avg_pi = sum(PI*N_SITES)/sum(N_SITES)) %>%
-  write_tsv("2_analysis/summaries/pi_globals.tsv")
 ```
 
-Finally, we can export Figure S--xx--.
-
-```{r, eval = FALSE}
-hypo_save(p_done, filename = 'figures/SF--xx--.pdf',
-          width = f_width,
-          height = f_width * .38,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
-```
+---

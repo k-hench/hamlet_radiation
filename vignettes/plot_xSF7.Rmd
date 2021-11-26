@@ -3,35 +3,34 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Supplementary Figure --xx--
+# Supplementary Figure 7
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      collapse = TRUE,
-                      comment = "#>",
-                      dev = "ragg_png",
-                      eval = FALSE)
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 knitr::opts_knit$set(root.dir = '../')
-
-library(ragg)
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(ggtext)
+args <- c('2_analysis/dxy/50k/')
 ```
 
 ## Summary
 
-This is the accessory documentation of Figure S--xx--.
-The Figure can be recreated by running the **R** script `plot_SF--xx--.R`:
+This is the accessory documentation of Figure S7.
+The Figure can be recreated by running the **R** script `plot_SF7.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF--xx--.R 2_analysis/pca/
+Rscript --vanilla R/fig/plot_SF7.R 2_analysis/dxy/50k/
 
 ```
 
-## Details of `plot_SF--xx--.R`
+## Details of `plot_SF7.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts) and on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**ggtext**](https://wilkelab.org/ggtext/).
 
 ### Config
 
@@ -40,15 +39,15 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF--xx--.R
+# Rscript --vanilla R/fig/plot_SF7.R 2_analysis/dxy/50k/
 # ===============================================================
-# This script produces Suppl. Figure --xx-- of the study "Rapid radiation
-# in a highly diverse marine environment"
+# This script produces Suppl. Figure 7 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("")
-# script_name <- "R/fig/plot_SF--xx--.R"
+# args <- c('2_analysis/dxy/50k/')
+# script_name <- "R/fig/plot_SF7.R"
 ```
 
 The next section processes the input from the command line.
@@ -62,51 +61,6 @@ Then we drop all the imported information besides the arguments following the sc
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
 library(GenomicOriginsScripts)
-library(patchwork)
-library(hypoimg)
-library(hypogen)
-cat('\n')
-script_name <- args[5] %>%
-  str_remove(., '--file=')
-
-plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
-
-args <- process_input(script_name, args)
-```
-
-```r
-#> ── Script: R/fig/plot_SF--xx--.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF7.R \
-#     2_analysis/dxy/50k/
-# ===============================================================
-# This script produces Suppl. Figure 7 of the study "Rapid radiation in a
-# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c('2_analysis/dxy/50k/')
-# script_name <- "R/fig/plot_SF7.R"
-args <- commandArgs(trailingOnly = FALSE)
-# setup -----------------------
-renv::activate()
-library(GenomicOriginsScripts)
 library(hypoimg)
 library(hypogen)
 library(ggtext)
@@ -119,20 +73,43 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
 
+```r
+#> ── Script: R/fig/plot_SF7.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/dxy/50k/
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The path containing the $d_{XY}$ data is received and stored inside a more descriptive variable.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 dxy_path <- as.character(args[1])
+```
 
+This data path is then screened for input files.
+
+```{r, message = FALSE, warning = FALSE}
 # locate dxy data files
 files <- dir(dxy_path)
+```
 
+In the next step, all $d_{XY}$ files are read and the data is compiled into a single table.
+
+```{r, message = FALSE, warning = FALSE}
 # load dxy data
 data <- str_c(dxy_path,files) %>%
   purrr::map(get_dxy) %>%
   bind_rows() %>%
   purrr::set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
+```
 
+To be able to indicate the genome wide average $d_{XY}$ in the background of the plot, we summarize the $d_{XY}$ data for each pair wise comparison and store the summary in a new table.
+
+```{r, message = FALSE, warning = FALSE}
 # create table for the indication of genome wide average dxy in the plot background
 # (rescale covered dxy range to the extent of the genome)
 global_bar <- data %>%
@@ -145,7 +122,11 @@ global_bar <- data %>%
   ungroup() %>%
   mutate(run = fct_reorder(.f = run, .x = genome_wide_dxy),
          scaled_dxy = genome_wide_dxy/max(genome_wide_dxy))
+```
 
+For the hamlet illustrations, we also create a table in which we assign each illustration the matching comparison.
+
+```{r, message = FALSE, warning = FALSE}
 # prepare plot annotaton images
 grob_tibble <-  global_bar %>%
   mutate(loc = str_sub(run,4,6),
@@ -154,7 +135,12 @@ grob_tibble <-  global_bar %>%
   select(1,4:6) %>%
   pmap(.,plot_pair_run) %>%
   bind_rows()
+```
 
+The genome wide average $d_{XY}$ indicated in the plot background uses a secondary x-axis. 
+As a preparation for this, we create the desired breaks and labels for the secondary axis.
+
+```{r, message = FALSE, warning = FALSE}
 # prepare plotting elements --------
 # pre-define secondary x-axis breaks
 sc_ax <- scales::cbreaks(c(0,max(global_bar$genome_wide_dxy)),
@@ -163,11 +149,20 @@ sc_ax <- scales::cbreaks(c(0,max(global_bar$genome_wide_dxy)),
 # pre-define secondary x-axis labels
 labels <- str_c(c("", sc_ax$breaks[2:5]*1000),
                 c("0", rep("\u00B710^-3",4)))
+```
 
+Instead of ordering the species pairs by alphabet, we want the comparisons to be sorted by genome wide average $d_{XY}$.
+For this we turn the comparisons into a factor.
+
+```{r, message = FALSE, warning = FALSE}
 # sort pair-wise population comparisons by average genome wide dxy
 data <- data %>%
   mutate(run = factor(run, levels = levels(global_bar$run)))
+```
 
+Then we can put together the final plot.
+
+```{r, message = FALSE, warning = FALSE}
 # compose final figure
 p_done <- ggplot()+
   # general plot structure separated by run
@@ -198,29 +193,24 @@ p_done <- ggplot()+
         legend.position = 'none',
         axis.title.x = element_text(),
         axis.text.x.bottom = element_markdown(colour = 'darkgray'))
+```
 
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 8, fig.height = 12, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 80, angle = 45)
+```
+
+Finally, we can export Figure S7.
+
+```{r, eval = FALSE}
 # export final figure
 hypo_save(filename = 'figures/SF7.png',
           plot = p_done,
           width = 8,
           height = 12,
-          dpi = 600,
           type = "cairo",
           comment = plot_comment)
-
-system("convert figures/SF7.png figures/SF7.pdf")
-system("rm figures/SF7.png")
-create_metadata <- str_c("exiftool -overwrite_original -Description=\"", plot_comment, "\" figures/SF7.pdf")
-system(create_metadata)
 ```
 
-Finally, we can export Figure S--xx--.
-
-```{r, eval = FALSE}
-hypo_save(p_done, filename = 'figures/SF--xx--.pdf',
-          width = f_width,
-          height = f_width * .38,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
-```
+---

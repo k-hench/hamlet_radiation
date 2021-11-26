@@ -3,35 +3,34 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Supplementary Figure --xx--
+# Supplementary Figure 3
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      collapse = TRUE,
-                      comment = "#>",
-                      dev = "ragg_png",
-                      eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 knitr::opts_knit$set(root.dir = '../')
-
-library(ragg)
+library(GenomicOriginsScripts)
+library(hypogen)
+library(hypoimg)
+library(patchwork)
+args <- c("2_analysis/dxy/50k/")
 ```
 
 ## Summary
 
-This is the accessory documentation of Figure S--xx--.
-The Figure can be recreated by running the **R** script `plot_SF--xx--.R`:
+This is the accessory documentation of Figure S3.
+The Figure can be recreated by running the **R** script `plot_SF3.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF--xx--.R 2_analysis/pca/
+Rscript --vanilla R/fig/plot_SF3.R 2_analysis/dxy/50k/
 
 ```
 
-## Details of `plot_SF--xx--.R`
+## Details of `plot_SF3.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**paletteer**](https://emilhvitfeldt.github.io/paletteer/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**prismatic**](https://emilhvitfeldt.github.io/prismatic/).
 
 ### Config
 
@@ -40,15 +39,15 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF--xx--.R
+# Rscript --vanilla R/fig/plot_SF3.R 2_analysis/dxy/50k/
 # ===============================================================
-# This script produces Suppl. Figure --xx-- of the study "Rapid radiation
-# in a highly diverse marine environment"
+# This script produces Suppl. Figure 3 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("")
-# script_name <- "R/fig/plot_SF--xx--.R"
+# args <- c("2_analysis/dxy/50k/")
+# script_name <- "R/fig/plot_SF3.R"
 ```
 
 The next section processes the input from the command line.
@@ -59,53 +58,8 @@ This information will later be written into the meta data of the figure to help 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
 
 ```{r, eval = FALSE}
-args <- commandArgs(trailingOnly=FALSE)
-# setup -----------------------
-library(GenomicOriginsScripts)
-library(patchwork)
-library(hypoimg)
-library(hypogen)
-cat('\n')
-script_name <- args[5] %>%
-  str_remove(., '--file=')
-
-plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
-
-args <- process_input(script_name, args)
-```
-
-```r
-#> ── Script: R/fig/plot_SF--xx--.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF10.R \
-#     2_analysis/dxy/50k/
-# ===============================================================
-# This script produces Suppl. Figure 10 of the study "Rapid radiation in a
-# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c("2_analysis/dxy/50k/")
-# script_name <- "R/fig/plot_SF10.R"
 args <- commandArgs(trailingOnly = FALSE)
 # setup -----------------------
-renv::activate()
 library(GenomicOriginsScripts)
 library(hypogen)
 library(hypoimg)
@@ -118,28 +72,57 @@ plot_comment <- script_name %>%
   str_c('mother-script = ',getwd(),'/',.)
 
 args <- process_input(script_name, args)
+```
+
+```r
+#> ── Script: R/fig/plot_SF3.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/dxy/50k/
+#> ────────────────────────────────────────── /current/working/directory ──
+```
+
+The directory containing the$d_{XY}$ data is received and stored in a variable.
+
+```{r, message = FALSE, warning = FALSE, fig.width = f_width_half, fig.height = f_width_half, dev.args = list(type = "cairo"), fig.align = "center"}
 # config -----------------------
 dxy_path <- as.character(args[1])
+```
 
+Then, all file names of all files within the data folder are gathered...
+
+```{r, message = FALSE, warning = FALSE, fig.width = f_width_half, fig.height = f_width_half, dev.args = list(type = "cairo"), fig.align = "center"}
 # locate dxy data files
 files <- dir(dxy_path)
+```
 
+... and all $d_{XY}$ data is loaded.
+
+```{r, message = FALSE, warning = FALSE, fig.width = f_width_half, fig.height = f_width_half, dev.args = list(type = "cairo"), fig.align = "center"}
 # load dxy data
-data <- str_c(dxy_path,files) %>%
+data <- str_c(dxy_path, files) %>%
   purrr::map(get_dxy) %>%
   bind_rows() %>%
   purrr::set_names(., nm = c('scaffold', 'start', 'end', 'mid', 'sites', 'pi_pop1',
                       'pi_pop2', 'dxy', 'fst', 'GSTART', 'gpos', 'run'))
+```
 
-genoe_wide_avg <- data %>%
+Next, the genome wide average $d_{XY}$ is computed for all species pairs.
+(This is done to be able to later order the sub-plots with decreasing average genome wide $d_{XY}$.)
+
+```{r, message = FALSE, warning = FALSE, fig.width = f_width_half, fig.height = f_width_half, dev.args = list(type = "cairo"), fig.align = "center"}
+genoe_wide_avg <- data %>% 
   group_by(run) %>%
   summarise(avg_dxy = mean(dxy)) %>%
   ungroup() %>%
   arrange(avg_dxy)
+```
 
+Next, a simple linear model is run for all species pairs.
+
+```{r, message = FALSE, warning = FALSE, fig.width = f_width_half, fig.height = f_width_half, dev.args = list(type = "cairo"), fig.align = "center"}
 model_data <- data %>%
   pivot_longer(cols = starts_with("pi_pop"),
-               names_to = "pi_pop",
+               names_to = "pi_pop", 
                values_to= "pi") %>%
   mutate(pop = str_remove(pi_pop,"pi_pop") %>% str_c("Pop. ",.))  %>%
   # filter fst data to "non-overlapping" windows
@@ -148,22 +131,26 @@ model_data <- data %>%
   nest() %>%
   mutate(mod =  map(data, function(data){lm(pi ~ dxy, data = data)})) %>%
   bind_cols(., summarise_model(.))
+```
 
+Then, a wrapper function is created that will allow to plot a subset of all the species pairs in one go.
+The function first subsets the $d_{XY}$ data set and then directly plots them.
+
+```{r, message = FALSE, warning = FALSE, fig.width = f_width_half, fig.height = f_width_half, dev.args = list(type = "cairo"), fig.align = "center"}
 dxy_subplot <- function(select_idx){
-  #run_select <- genoe_wide_avg$run[c(1,7,14,21,28)]
   run_select <- genoe_wide_avg$run[select_idx]
-
+  
   plt_data <- data %>%
     filter(run %in% run_select) %>%
     pivot_longer(cols = starts_with("pi_pop"),
-                 names_to = "pi_pop",
+                 names_to = "pi_pop", 
                  values_to= "pi") %>%
-    mutate(pop = str_remove(pi_pop,"pi_pop") %>%
+    mutate(pop = str_remove(pi_pop,"pi_pop") %>% 
              str_c("Pop. ",.))
-
+  
   base_lwd <- .15
   base_line_clr <- "black"
-
+  
   p <- plt_data %>%
     ggplot(aes(x = dxy, y = pi))+
     #coord_equal()+
@@ -194,42 +181,55 @@ dxy_subplot <- function(select_idx){
     theme_minimal()+
     theme(legend.position = "bottom",
           axis.title.y = element_text(face = "italic"),
-          strip.placement = "outside",
+          strip.placement = "outside", 
           strip.background.x = element_rect(fill = rgb(.95,.95,.95),
                                             colour = base_line_clr,size = base_lwd),
           panel.border = element_rect(size = base_lwd,
-                                      color = base_line_clr %>%
+                                      color = base_line_clr %>% 
                                         clr_lighten(factor = .8), fill = rgb(1,1,1,0))
     )
   p
 }
+```
 
+Now, the individual sub-plot are created.
+
+```{r, message = FALSE, warning = FALSE, fig.width = f_width_half, fig.height = f_width_half, dev.args = list(type = "cairo"), fig.align = "center"}
 ps <- list(1:7, 8:14, 15:21, 22:28) %>% map(dxy_subplot)
+```
 
-p_done <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = element_blank()),
-          ps[[2]] + theme(legend.position = "none", axis.title.x = element_blank()),
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = f_width * 1.2, fig.height = f_width * .5 * 1.2, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(ps[[1]]) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 35, angle = 45)
+```
+
+Form the sub-plots, the final figure is assembled.
+
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = f_width_half, fig.height = f_width_half, dev.args = list(type = "cairo"), fig.align = "center"}
+p_done <- plot_grid(ps[[1]] + theme(legend.position = "none", axis.title.x = element_blank()), 
+          ps[[2]] + theme(legend.position = "none", axis.title.x = element_blank()), 
           ps[[3]] + theme(legend.position = "none", axis.title.x = element_blank()),
           ps[[4]] + theme(legend.position = "none"),
           ps[[4]]  %>% get_legend(),
           ncol = 1, rel_heights = c(1,1,1,1,.3))
+```
 
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = f_width * 1.2, fig.height = f_width * 1.15 * 1.2, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 55, angle = 45)
+```
+
+Finally, we can export Figure S3.
+
+```{r, eval = FALSE}
 # export final figure
 scl <- 1.2
-hypo_save(filename = 'figures/SF10.pdf',
+hypo_save(filename = 'figures/SF3.pdf',
           plot = p_done,
           width = f_width * scl,
           height = f_width * 1.15 * scl,
           device = cairo_pdf,
-          comment = plot_comment)
-```
-
-Finally, we can export Figure S--xx--.
-
-```{r, eval = FALSE}
-hypo_save(p_done, filename = 'figures/SF--xx--.pdf',
-          width = f_width,
-          height = f_width * .38,
-          device = cairo_pdf,
-          bg = "transparent",
           comment = plot_comment)
 ```

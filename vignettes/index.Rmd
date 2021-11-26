@@ -43,12 +43,11 @@ A documentation of the data preparation and the data analysis (git 1.x - 19.x) c
 - git 12.x: [Analysis (<i>F<sub>ST</sub></i> permutation)](git-12-analysis-x-fst-permutation-test.html)
 - git 13.x: [Analysis (whg phylogeny)](git-13-analysis-xi-whole-genome-phylogenies.html)
 - git 14.x: [Analysis (outlier region phylogeny)](git-14-analysis-xii-outlier-region-phylogenies.html)
-
-- git 15.x: [Analysis ($\pi$ with/without outlier regions)](git-14-analysis-xii-outlier-region-phylogenies.html)
-- git 16.x: [Analysis (IBD)](git-14-analysis-xii-outlier-region-phylogenies.html)
-- git 17.x: [Analysis (dstats)](git-14-analysis-xii-outlier-region-phylogenies.html)
-- git 18.x: [Genotyping all base pairs (mtDNA and unplaced Contigs)](git-14-analysis-xii-outlier-region-phylogenies.html)
-- git 19.x: [Analysis (Serraninae phyologeny)](git-14-analysis-xii-outlier-region-phylogenies.html)
+- git 15.x: [Analysis ($\pi$ with/without outlier regions)](git-15-analysis-xiii-diversity-with-and-without-outlier-regions.html)
+- git 16.x: [Analysis (IBD)](git-16-analysis-xiv-identity-by-descent.html)
+- git 17.x: [Analysis (dstats)](git-17-analysis-xv-dstats.html)
+- git 18.x: [Genotyping all base pairs (mtDNA and unplaced Contigs)](git-18-genotyping-iii-all-callable-sites-for-mtdna-and-unplaced-contigs.html)
+- git 19.x: [Analysis (Serraninae phyologeny)](git-19-analysis-xvi-serraninae-phylogeny.html)
 
 ## Prerequesites
 

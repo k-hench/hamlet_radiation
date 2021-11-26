@@ -3,35 +3,38 @@ output: html_document
 editor_options:
   chunk_output_type: console
 ---
-# Supplementary Figure --xx--
+# Supplementary Figure 13
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      collapse = TRUE,
-                      comment = "#>",
-                      dev = "ragg_png",
-                      eval = FALSE)
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 knitr::opts_knit$set(root.dir = '../')
+library(paletteer)
+library(patchwork)
+library(GenomicOriginsScripts)
+library(hypoimg)
+library(hypogen)
+library(ggtext)
 
-library(ragg)
+args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
 ```
 
 ## Summary
 
-This is the accessory documentation of Figure S--xx--.
-The Figure can be recreated by running the **R** script `plot_SF--xx--.R`:
+This is the accessory documentation of Figure S13.
+The Figure can be recreated by running the **R** script `plot_SF13.R`:
 
 ```sh
 cd $BASE_DIR
 
-Rscript --vanilla R/fig/plot_SF--xx--.R 2_analysis/pca/
-
+Rscript --vanilla R/fig/plot_SF13.R\
+  2_analysis/admixture/ \
+  metadata/phenotypes.sc
 ```
 
-## Details of `plot_SF--xx--.R`
+## Details of `plot_SF13.R`
 
 In the following, the individual steps of the R script are documented.
-It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen) and [**patchwork**](https://patchwork.data-imaginist.com/)
+It is an executable R script that depends on the accessory R package [**GenomicOriginsScripts**](https://k-hench.github.io/GenomicOriginsScripts), as well as on the packages [**hypoimg**](https://k-hench.github.io/hypoimg), [**hypogen**](https://k-hench.github.io/hypogen), [**ggtext**](https://wilkelab.org/ggtext/), [**patchwork**](https://patchwork.data-imaginist.com/) and [**paletteer**](https://emilhvitfeldt.github.io/paletteer/).
 
 ### Config
 
@@ -40,20 +43,20 @@ The scripts start with a header that contains copy & paste templates to execute 
 ```{r, message = FALSE, warning = FALSE}
 #!/usr/bin/env Rscript
 # run from terminal:
-# Rscript --vanilla R/fig/plot_SF--xx--.R
+# Rscript --vanilla R/fig/plot_SF13.R 2_analysis/admixture/ metadata/phenotypes.sc
 # ===============================================================
-# This script produces Suppl. Figure --xx-- of the study "Rapid radiation
-# in a highly diverse marine environment"
+# This script produces Suppl. Figure 13 of the study "Ancestral variation,
+# hybridization and modularity fuel a marine radiation"
 # by Hench, Helmkampf, McMillan and Puebla
 # ---------------------------------------------------------------
 # ===============================================================
-# args <- c("")
-# script_name <- "R/fig/plot_SF--xx--.R"
+# args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
+# script_name <- "R/fig/plot_SF13.R"
 ```
 
 The next section processes the input from the command line.
 It stores the arguments in the vector `args`.
-The needed R packages are loaded and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
+The needed R packages are and the script name and the current working directory are stored inside variables (`script_name`, `plot_comment`).
 This information will later be written into the meta data of the figure to help us tracing back the scripts that created the figures in the future.
 
 Then we drop all the imported information besides the arguments following the script name and print the information to the terminal.
@@ -61,52 +64,6 @@ Then we drop all the imported information besides the arguments following the sc
 ```{r, eval = FALSE}
 args <- commandArgs(trailingOnly=FALSE)
 # setup -----------------------
-library(GenomicOriginsScripts)
-library(patchwork)
-library(hypoimg)
-library(hypogen)
-cat('\n')
-script_name <- args[5] %>%
-  str_remove(., '--file=')
-
-plot_comment <- script_name %>%
-  str_c('mother-script = ', getwd(), '/', .)
-
-args <- process_input(script_name, args)
-```
-
-```r
-#> ── Script: R/fig/plot_SF--xx--.R ────────────────────────────────────────────
-#> Parameters read:
-#> ★ 1:
-#> ────────────────────────────────────────── /current/working/directory ──
-```
-
-The directory containing the PCA data is received and stored in a variable.
-Also the default color scheme is updated and the size of the hamlet ann.
-
-```{r, message = FALSE, warning = FALSE}
-# config -----------------------
-... <- as.character(args[1])
-```
-
-
-```{r, message = FALSE, warning = FALSE}
-#!/usr/bin/env Rscript
-# run from terminal:
-# Rscript --vanilla R/fig/plot_SF16.R \
-    # 2_analysis/admixture/ \
-    # metadata/phenotypes.sc
-# ===============================================================
-# This script produces Suppl. Figure 16 of the study "Rapid radiation in a
-# highly diverse marine environment" by Hench, Helmkampf, McMillan and Puebla
-# ---------------------------------------------------------------
-# ===============================================================
-# args <- c( "2_analysis/admixture/", "metadata/phenotypes.sc")
-# script_name <- "R/fig/plot_SF16.R"
-args <- commandArgs(trailingOnly = FALSE)
-# setup -----------------------
-renv::activate()
 library(paletteer)
 library(patchwork)
 library(GenomicOriginsScripts)
@@ -126,47 +83,92 @@ args = args[7:length(args)]
 cat(' ')
 cat(str_c(crayon::green(cli::symbol$star),' ', 1:length(args),': ',crayon::green(args),'\n'))
 cli::rule(right = getwd())
+```
 
+```r
+#> ── Script: R/fig/plot_SF13.R ────────────────────────────────────────────
+#> Parameters read:
+#> ★ 1: 2_analysis/admixture/
+#> ★ 2: metadata/phenotypes.sc
+#> ─────────────────────────────────────────── /current/working/directory ──
+```
+
+The path containing the admixture results and the phenotype data file are received and stored inside more descriptive variables.
+
+```{r, message = FALSE, warning = FALSE}
 # config -----------------------
 admx_path <- as.character(args[1])
 pheno_file <- as.character(args[2])
+```
 
+Then, we extract the outlier region IDs from the admixture data file names for later use.
+
+```{r, message = FALSE, warning = FALSE}
 # load outlier window IDs (crop from admixture result file names)
 gids <- dir(admx_path,
             pattern = "pop.*15.txt") %>%
   str_remove("pop.") %>%
   str_remove(".15.txt")
+```
 
+We start the data import by loading the phenotype data.
+
+```{r, message = FALSE, warning = FALSE}
 # load phenotype data
 pheno_data <- read_sc(pheno_file) %>%
   select(id, Bars, Peduncle, Snout) %>%
   filter(!is.na(Bars))
+```
 
+Then we load all the admixture results that used two clusters (`k = 2`).
+
+```{r, message = FALSE, warning = FALSE}
 # load admixture data
 data <- gids %>%
   map_dfr(data_amdx, admx_path = admx_path,
           k = 2)
+```
 
+We want to indicate the phenotype of each trait under the outlier region that is expected to be most relevant for this trait.
+Therefore we assign each trait to a specific outlier ID.
+
+```{r, message = FALSE, warning = FALSE}
 # associate phenotypic trait with outlier region
 pheno_facet <- tibble( trait = c("Snout","Bars",  "Peduncle"),
                        gid = c("LG04_1", "LG12_3", "LG12_4")) %>%
   mutate(facet_label = str_c(gid, " / ", trait))
+```
 
+Then we format the outlier ID labels for the final plot.
+
+```{r, message = FALSE, warning = FALSE}
 # set outlier region labels
 gid_labels <-  c(LG04_1 = "LG04 (A)",
                  LG12_3 = "LG12 (B)",
                  LG12_4 = "LG12 (C)")
+```
 
+To due the historic development of this script, there is a redundant assignment of outlier ID and trait (both are needed within functions of **GenomicOriginsScripts** `r emo::ji("shrug")`).
+
+```{r, message = FALSE, warning = FALSE}
 # set outlier region phenotypic traits
 gid_traits <-  c(LG04_1 = "Snout",
                  LG12_3 = "Bars",
                  LG12_4 = "Peduncle")
+```
 
+Using the `markdown` functionality of **ggtext**, we store each trait image in the axis labels using `html` syntax.
+
+```{r, message = FALSE, warning = FALSE}
 # set path to trait images
 trait_icons <- c(LG04_1 = "<img src='ressources/img/snout_c.png' width='60' />   ",
                LG12_3 = "<img src='ressources/img/bars_c.png' width='60' />    ",
                LG12_4 = "<img src='ressources/img/peduncle_c.png' width='60' />    ")
+```
 
+Then, we clean and format the phenotype data for plotting.
+
+```{r, message = FALSE, warning = FALSE}
 # format phenotype data
 pheno_plot_data <- data %>%
   filter(!duplicated(id)) %>%
@@ -178,15 +180,40 @@ pheno_plot_data <- data %>%
                values_to = "phenotype",
                cols = Bars:Snout) %>%
   left_join(pheno_facet)
+```
 
+The separate panels of the figure are actually individual plots.
+To assure a consistent sample order, this is defined externally and stored within `sample_order`.
+
+```{r, message = FALSE, warning = FALSE}
 # helper for consistent sample order across all panels
 sample_order <- pheno_plot_data %>%
   filter(!duplicated(id)) %>%
   select(id, ord_nr)
+```
 
+Then, the admixture panels (a - c) are created as three sepearted plots and stored within a list.
+
+```{r, message = FALSE, warning = FALSE}
 # create plot panels a-c
 p_ad <- c("LG04_1", "LG12_3", "LG12_4") %>% purrr::map(adm_plot, data = data)
+```
 
+(Just as an example - here is the plot for panel c)
+
+```{r, eval = FALSE}
+p_ad[[3]] # not part of the actual script
+```
+
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 2.5, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_ad[[3]]) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 20, angle = 45)
+```
+
+Next, we create a dummy plot to extract the legend for the phenotypes.
+
+```{r, message = FALSE, warning = FALSE}
 # create dummy plot for the phenotype legend
 p_phno <- pheno_plot_data %>%
   ggplot(aes(x = ord_nr))+
@@ -199,13 +226,22 @@ p_phno <- pheno_plot_data %>%
   theme_minimal()+
   theme(legend.title = element_markdown(hjust = .5),
     legend.position = "bottom")
+```
 
+Below the panels a - c the species of the samples are indicated.
+To do this, we prepare a small table from the species affiliation of each sample.
+
+```{r, message = FALSE, warning = FALSE}
 # prepare table with fish annotations for the species indication
 tib_drawing <- pheno_plot_data %>%
   group_by(spec) %>%
   summarise(pos = (min(ord_nr)+max(ord_nr))*.5) %>%
   ungroup()
+```
 
+This table is then used to create a small plot.
+
+```{r, message = FALSE, warning = FALSE}
 # create sub-plot for species indication
 p_spec <- pheno_plot_data %>%
   group_by(spec) %>%
@@ -233,7 +269,15 @@ p_spec <- pheno_plot_data %>%
         axis.title = element_blank(),
         axis.ticks = element_blank(),
         axis.text.x = element_blank())
+```
 
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 1.6, dev.args = list(type = "cairo"), fig.align = "center"}
+p_spec
+```
+
+Similarly to the species affiliation, we create a second plot to indicate the sampling location.
+
+```{r, message = FALSE, warning = FALSE}
 # create sub-plot for samplong location indication
 p_loc <- pheno_plot_data %>%
   ggplot(aes(x = factor(ord_nr)))+
@@ -252,13 +296,30 @@ p_loc <- pheno_plot_data %>%
         axis.title = element_blank(),
         axis.ticks = element_blank(),
         axis.text.x = element_blank())
+```
 
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 1, dev.args = list(type = "cairo"), fig.align = "center"}
+p_loc
+```
+
+Then, we compose the figure legend from individual sub-legends.
+
+```{r, message = FALSE, warning = FALSE}
 # compose legend from individual legend parts
 p_l <- (get_legend(p_phno) %>% ggdraw()) +
   (get_legend(p_spec) %>% ggdraw()) +
   (get_legend(p_loc) %>% ggdraw()) +
   plot_layout(nrow = 1)
+```
 
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 2, dev.args = list(type = "cairo"), fig.align = "center"}
+p_l
+```
+
+At this point, we can assemble the final figure.
+Yet, due to the positioning of the trait images with **ggtext** we need to crop the left margin a little (hence we need `p_done`).
+
+```{r, message = FALSE, warning = FALSE}
 # finalize figure
 p_prep <- p_ad[[1]] +
   p_ad[[2]] +
@@ -267,28 +328,31 @@ p_prep <- p_ad[[1]] +
   plot_layout(ncol = 1, heights = c(.4,.4,.4,.08,.02,.1)) &
   theme(legend.position = "none",
         axis.text = element_text(size = 12))
+```
 
+
+```{r, message = FALSE, warning = FALSE}
 # crop final figure (remove whitespace on left margin)
 p_done <- ggdraw(p_prep, xlim = c(.023,1))
+```
 
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.width = 14.4, fig.height = 9, dev.args = list(type = "cairo"), fig.align = "center"}
+ggdraw(p_done) + 
+  draw_plot(hypoimg:::hypo_logo(.4), .1, .1, .8, .8) +
+  draw_label("docs version", color = rgb(0,0,0,.2), size = 85, angle = 45)
+```
+
+Finally, we can export Figure S13.
+
+```{r, eval = FALSE}
 # export final figure
 scl <- .9
-hypo_save("figures/SF16.pdf",
+ggsave("figures/SF13.pdf",
        plot = p_done,
        width = 16*scl,
        height = 10*scl,
-       device = cairo_pdf,
-       bg = "transparent",
-       comment = plot_comment)
+       device = cairo_pdf)
+
 ```
 
-Finally, we can export Figure S--xx--.
-
-```{r, eval = FALSE}
-hypo_save(p_done, filename = 'figures/SF--xx--.pdf',
-          width = f_width,
-          height = f_width * .38,
-          device = cairo_pdf,
-          bg = "transparent",
-          comment = plot_comment)
-```
+---
