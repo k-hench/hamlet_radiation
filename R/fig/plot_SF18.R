@@ -21,6 +21,7 @@ library(IRanges)
 library(plyranges)
 library(hypogen)
 library(hypoimg)
+library(ggtext)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -69,9 +70,10 @@ plot_ibd_gw <- function(n_zeros, y_lim = c(0, 4), filtmode = "direct", y_lab = "
     scale_hypobg_manual(values = c("transparent",rgb(.9,.9,.9,.9),"red","blue") %>%
                           set_names(nm = c("even", "odd", "a","b")), guide = "none")+
     scale_x_hypo_LG() +
-    labs(y = str_c("IBD Score (" , iterations[n_zeros], ")")) +
+    labs(y = str_c("IBD Score <br>(" , iterations[n_zeros], ")") %>% str_replace("kb", "x 10<sup>3</sup> SNPs")) +
     coord_cartesian(ylim = y_lim, expand = 0) +
-    theme_hypo()
+    theme_hypo() +
+    theme(axis.title.y = element_markdown())
 }
 
 data_seg <- vroom::vroom(glue::glue("2_analysis/ibd/no_outgr_direct_10.segments.tsv"),

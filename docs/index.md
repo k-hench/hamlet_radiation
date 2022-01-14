@@ -2,7 +2,7 @@
 title: "Script repository"
 subtitle: "(Hench *et al.* supplement)"
 author: "Kosmas Hench and Martin Helmkampf"
-date: "2021-11-26"
+date: "2022-01-14"
 documentclass: book
 bibliography: [book.bib]
 biblio-style: apalike
@@ -15,7 +15,7 @@ description: "Scripts used to produce Figures and Supplementary Figures of 'Rapi
 
 
 
-<span style="color:#FF0000">**Disclaimer:** We are currently still in the process of updating the documentation after the last round of revisions. Some sections are thus still not up to date.</span>
+<!--<span style="color:#FF0000">**Disclaimer:** We are currently still in the process of updating the documentation after the last round of revisions. Some sections are thus still not up to date.</span>-->
 
 
 [This repository](https://github.com/k-hench/hamlet_radiation) contains the complete workflow used in the paper "*Rapid radiation in a highly diverse marine environment*".

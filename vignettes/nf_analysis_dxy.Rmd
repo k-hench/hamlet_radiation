@@ -32,7 +32,7 @@ source('R/draw_workflow.R')
 prod_dxy <- tibbler(c('pi_50k', 'dxy_random_output_ch', 'random_fst_out', 'dxy_output_ch'))
 ```
 
-# (git 4) Analysis II (<i>d<sub>XY</sub></i> & pi)
+# (git 4) Analysis II (<i>d<sub>XY</sub></i>)
 
 This pipeline can be executed as follows:
 
@@ -44,8 +44,8 @@ nf_run_dxy
 
 ## Summary
 
-The genetic divergence, as well diversity, are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dxy.nf` (located under `$BASE_DIR/nf/04_analysis_dxy/`).
-It takes the _all BP_ data set and computes $d_{XY}$ and $\pi$.
+The genetic divergence is computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dxy.nf` (located under `$BASE_DIR/nf/04_analysis_dxy/`).
+It takes the _all BP_ data set and computes $d_{XY}$.
 Below is an overview of the steps involved in the analysis.
 (The <span style="color:#4DAF4A">green dot</span> indicates the genotype input, <span style="color:#E41A1C">red arrows</span> depict output that is exported for further use.)
 
@@ -422,60 +422,8 @@ process receive_random_tuple {
 	"""
 }
 ```
-
-### $\pi$
-
-Estimating the diversity is quite straight forward:
-We take the prepared population identifier, the data set and the window resolutions and run `VCFtools` on each combination.
-
-```{r , eval = FALSE, hilang = 'nf'}
-// ---------------------------------------------------------------
-// The pi part need to be run AFTER the global fst outlier
-// windows were selected (REMEMBER TO CHECK FST OUTLIER DIRECTORY)
-// ---------------------------------------------------------------
-
-// git 4.19
-// calculate pi per species
-process pi_per_spec {
-	label 'L_32g15h_pi'
-	tag "${spec}"
-	publishDir "../../2_analysis/pi/${kb}0k", mode: 'copy'
-
-	input:
-	set val( spec ), vcfId, file( vcf ), val( kb ) from spec_dxy.combine( vcf_pi_ch ).combine( kb_ch3 )
-
-	output:
-   file( "*.${kb}0k.windowed.pi.gz" ) into pi_50k
-
-	script:
-	"""
-	module load openssl1.0.2
-
-	vcfsamplenames ${vcf[0]} | \
-		grep ${spec} > pop.txt
-
-	vcftools --gzvcf ${vcf[0]} \
-		--keep pop.txt \
-		--window-pi ${kb}0000 \
-		--window-pi-step ${kb}000 \
-		--out ${spec}.${kb}0k 2> ${spec}.pi.log
-	gzip ${spec}.${kb}0k.windowed.pi
-
-	tail -n +2 \$BASE_DIR/2_analysis/summaries/fst_outliers_998.tsv | \
-		cut -f 2,3,4 > outlier.bed
-
-	vcftools --gzvcf ${vcf[0]} \
-		--keep pop.txt \
-		--exclude-bed outlier.bed \
-		--window-pi ${kb}0000 \
-		--window-pi-step ${kb}000\
-		--out ${spec}_no_outlier.${kb}0k 2> ${spec}_${kb}0k_no_outllier.pi.log
-	gzip ${spec}_no_outlier.${kb}0k.windowed.pi
-	"""
-}
-```
 </div>
 
-At this step we are done with divergence and diversity.
+At this step we are done with divergence.
 
 ---

@@ -46,14 +46,14 @@ nf_run_pi
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_pi.nf` (located under `$BASE_DIR/nf/15_analysis_pi/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+The diversity is computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_pi.nf` (located under `$BASE_DIR/nf/15_analysis_pi/`).
+It takes the _all BP_ data set and computes $\pi$.
 
 ## Details of `analysis_pi.nf`
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the genotype data and feeding it into a stream.
 
 :::kclass
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -68,6 +68,7 @@ Channel
 	.set{ vcf_pi_ch }
 ```
 
+To split the analysis by linkage group, we initialize a LG-channel.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 15.2
@@ -77,6 +78,7 @@ Channel
 	.set{ lg_pi_ch }
 ```
 
+We also want to compute the diversity twice, once *as is* and once without the outlier regions.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 15.3
@@ -86,6 +88,7 @@ Channel
 	.set{ outlier_mode_ch }
 ```
 
+Furthermore, we want to analyze diversity at two scales (10kb and 50kb).
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 15.4
@@ -95,6 +98,7 @@ Channel
 	.set{ kb_ch }
 ```
 
+Then we filter the genotypes, depending on population, linkage group and outlier mode.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 15.5
@@ -145,6 +149,7 @@ process recode_genotypes {
 }
 ```
 
+Then we calculate pi for each population.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 15.6
@@ -177,6 +182,7 @@ process pi_per_spec {
 }
 ```
 
+Finally, we merge the output from the individual linkage groups.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 process merge_pi {

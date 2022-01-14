@@ -98,16 +98,18 @@ hermaphrodites <- tree_plus %>% filter(node %in% c(60, 63)) %>%
          y = if_else(node == 60, .5 * (y + tree_plus$y[tree_plus$node == 61]), y),
          star = "\U2605")
 
-c1 <- "transparent"
+# c1 <- "transparent"
 c2 <- prismatic::clr_alpha(clr_highlight, .1)
-c3 <- prismatic::clr_alpha(clr_highlight, .2)
+# c3 <- prismatic::clr_alpha(clr_highlight, .2)
 
-grad_mat <- c(c1, c2, c3, c3) 
-dim(grad_mat) <- c(1, length(grad_mat))
-grob_grad <- rasterGrob(grad_mat,
-                        width = unit(1, "npc"),
-                        height = unit(1, "npc"), 
-                        interpolate = TRUE)
+# grad_mat <- c(c1, c2, c3, c3) 
+# dim(grad_mat) <- c(1, length(grad_mat))
+# grob_grad <- rasterGrob(grad_mat,
+#                         width = unit(1, "npc"),
+#                         height = unit(1, "npc"), 
+#                         interpolate = TRUE)
+
+grob_rect <- rectGrob(gp = grid::gpar(fill = c2, col = "transparent"))
 
 blank_hamlet <- hypoimg::hypo_outline %>% 
   ggplot()+
@@ -118,9 +120,9 @@ blank_hamlet <- hypoimg::hypo_outline %>%
 ### Draw tree
 (p_tree <- ggtree(tree_plus,
                  aes(color = group), size = .2) +
-  annotation_custom(grob = grob_grad,
+  annotation_custom(grob = grob_rect,#grad,
                     ymin = .2, ymax = 12.5,
-                    xmin = .04, xmax = .125)+
+                    xmin = .042, xmax = .125)+
   annotation_custom(grob = ggplotGrob(blank_hamlet),
                     xmin = 0.09, xmax = .125,
                     ymin = 1.2, ymax = 10.5) +

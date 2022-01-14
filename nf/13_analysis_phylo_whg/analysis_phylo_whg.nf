@@ -21,7 +21,7 @@ Channel
 // Compile summary table
 process segment_windows {
 	label 'L_loc_slice_windows'
-	publishDir "../../2_analysis/window_stats/windows/", mode: 'copy' 
+	publishDir "../../2_analysis/window_stats/windows/", mode: 'copy'
 
 	input:
 	val( kb_size ) from window_size_ch
@@ -35,9 +35,9 @@ process segment_windows {
 	library(hypogen)
 
 	x_bp <- ${kb_size} * 1000
-	
+
 	window_non_overlap <- function(CHROM, LENGTH, windowsize = x_bp ){
-	  tibble(CHROM = CHROM, 
+	  tibble(CHROM = CHROM,
 	         START = seq(from = 1, to = LENGTH, by = windowsize) - 1, # (produces overlap of one which is needed for bedtools)
 	         END = lead(START, default = LENGTH) ) }
 
@@ -68,7 +68,7 @@ process filter_hamlets {
 		--recode \
 		--stdout | \
 		bgzip > hamlets_only.vcf.gz
-	
+
 	tabix hamlets_only.vcf.gz
 	"""
 }
@@ -77,12 +77,12 @@ process filter_hamlets {
 // Coverage of SNPs vcf for SNPdensity, allBP for Ns
 process compute_coverage {
 	label 'L_140g1h_coverage'
-	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy' 
+	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy'
 
 	input:
 	//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
 	set  val( vcfId ), file( vcf ), val( kb_size ), file( window ) from vcf_snps_ch.concat( vcf_hamlets_ch ).map{ [it[0].minus(".vcf"), it[1]]}.combine( windows_ch )
-	
+
 	output:
 	set val( kb_size ), file( "${vcfId}.${kb_size}kb_cov.tsv.gz" ) into coverage_ch
 
@@ -103,10 +103,9 @@ Channel
 // git 13.8
 process subset_allBP {
 	label 'L_140g10h_coverage'
-	publishDir "../../1_genotyping/3_gatk_filtered/non_ref_byLG/", mode: 'copy' 
+	publishDir "../../1_genotyping/3_gatk_filtered/non_ref_byLG/", mode: 'copy'
 
 	input:
-	//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
 	set  val( lg ) from lg_ch
 
 	output:
@@ -125,15 +124,13 @@ process subset_allBP {
 }
 
 // git 13.9
-// vcf_snps_ch.concat( vcf_allbp_ch ).map{ [it[0].minus(".vcf"), it[1]]}
 process compute_coverage_allBP {
 	label 'L_140g1h_coverage'
-	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy' 
+	publishDir "../../2_analysis/window_stats/coverages/", mode: 'copy'
 
 	input:
-	//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )
 	set  val( lg ), file( vcf ), file( tbi ), val( kb_size ), file( window ) from allbp_non_ref_ch.combine( windows_ch2 )
-	
+
 	output:
 	set val( kb_size ), file( "filterd.allBP.LG${lg}.${kb_size}kb_cov.tsv.gz" ) into coverage_allbp_ch
 
@@ -155,7 +152,7 @@ process compute_coverage_allBP {
 // Compile summary table
 process complie_window_stats {
 	label 'L_20g2h_windows_stats'
-	publishDir "../../2_analysis/window_stats/window_stats/", mode: 'copy' 
+	publishDir "../../2_analysis/window_stats/window_stats/", mode: 'copy'
 
 	input:
 	set val( kb_size ), file( windows ) from coverage_ch.concat( coverage_allbp_ch ).groupTuple()
@@ -183,9 +180,9 @@ process complie_window_stats {
 		left_join(data_HYP, by = c(CHROM = "CHROM", START = "START", END = "END"))  %>%
 		left_join(data_allBPs, by = c(CHROM = "CHROM", START = "START", END = "END"))  %>%
 		filter(COV_ALL > 0 ) %>%
-		mutate(SNP_density = round(COV_SNP/ COV_ALL, 2), 
+		mutate(SNP_density = round(COV_SNP/ COV_ALL, 2),
 		REL_COV =  round(COV_ALL/ (END-START), 2))
-	
+
 	write_tsv(x = data, file = "window_stats.${kb_size}kb.tsv.gz")
 	"""
 }
@@ -241,7 +238,7 @@ process extract_windows {
 
 	output:
 	file( "*_v1_all.vcf.gz" ) into window_extract_loop
-	
+
 	script:
 	"""
 	PER_TASK=100
@@ -283,10 +280,10 @@ process remove_samples {
 
 	input:
 	set val( idx ), file( vcf ) from loop20_idx_ch.combine( window_extract_ch1 )
-	
+
 	output:
 	file( "*_noS.vcf.gz" ) into samples_removed_loop
-	
+
 	script:
 	"""
 	PER_TASK=250
@@ -300,7 +297,7 @@ process remove_samples {
 		do
 
 		echo This is task ${idx}, run number \$run
-		
+
 		printf -v i "%04d" \$run
 
 		vcftools \
@@ -321,10 +318,10 @@ process fasta_convert {
 
 	input:
 	set val( idx ), file( vcf_noS ), file( vcf_all ) from loop50_idx_ch2.combine( samples_removed_ch ).combine( window_extract_ch2 )
-	
+
 	output:
 	file( "*.fas" ) into fasta_convert_loop
-	
+
 	script:
 	"""
 	PER_TASK=100
@@ -359,10 +356,10 @@ process fasta_align {
 
 	input:
 	set val( idx ), file( fa ) from loop50_idx_ch3.combine( fasta_convert_ch )
-	
+
 	output:
 	file( "*.aln" ) into fasta_align_loop
-	
+
 	script:
 	"""
 	PER_TASK=100
@@ -393,10 +390,10 @@ process local_trees {
 
 	input:
 	set val( idx ), file( aln ) from loop50_idx_ch4.combine( fasta_align_ch )
-	
+
 	output:
 	file( "*.treefile" ) into local_trees_loop
-	
+
 	script:
 	"""
 	PER_TASK=100
@@ -424,14 +421,14 @@ local_trees_loop.collect().map{ [ it ] }.set{ local_trees_ch }
 // Calculate summary tree
 process summary_trees {
 	label 'L_20g2h_summary_trees'
-	publishDir "../../2_analysis/astral/", mode: 'copy' 
+	publishDir "../../2_analysis/astral/", mode: 'copy'
 
 	input:
 	file( tree ) from local_trees_ch
-	
+
 	output:
 	set file( "astral*.tre" ), file( "astral*.log" ) into summary_trees_ch
-	
+
 	script:
 	"""
 	cat ./*_noS.treefile > genetrees_5000x_5kb_v1_noS.tre

@@ -45,15 +45,15 @@ nextflow run analysis_ibd.nf -c ../../nextflow.config -resume
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_.nf` (located under `$BASE_DIR/nf/16_analysis_ibd/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+Identity by descent is computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_ibd.nf` (located under `$BASE_DIR/nf/16_analysis_ibd/`).
+It takes the phased genotypes and computes the IBD segments.
 Below is an overview of the steps involved in the analysis.
 
 ## Details of `analysis_ibd.nf`
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the phased genotypes.
 
 :::kclass
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -67,6 +67,8 @@ Channel
 	.set{ genotypes_raw_ch }
 ```
 
+
+Then, outgroup samples are removed.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 16.2
@@ -92,6 +94,7 @@ process drop_outgroups {
 }
 ```
 
+The IDB analysis is run for several IBD fragment size thresholds, so here we are initializing the different thresholds.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 16.3
@@ -103,6 +106,7 @@ Channel
 	.set{ seq_sizes_ch }
 ```
 
+Also, the IBD analysis is additionally run with specific parts of the genome excluded - here the different exclusion models are initialized.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 16.4
@@ -113,6 +117,7 @@ Channel
 	.set{ filtermode_ch }
 ```
 
+Truffle is run to compute the IBD segments.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 16.5
@@ -184,6 +189,7 @@ process run_truffle {
 }
 ```
 
+Within R, the genomic coordinates of the IBD segments are converted to cM positions.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 16.6

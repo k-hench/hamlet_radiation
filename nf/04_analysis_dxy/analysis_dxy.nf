@@ -287,7 +287,7 @@ process receive_random_tuple {
 /*
 // ---------------------------------------------------------------
 // The pi part need to be run AFTER the global fst outlier
-// windows were selected (REMEMBER TO CHECK FST OUTLIER DIRECTORY)
+// windows were selected
 // ---------------------------------------------------------------
 
 // git 4.19

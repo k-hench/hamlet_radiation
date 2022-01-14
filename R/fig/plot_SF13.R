@@ -21,6 +21,7 @@ library(IRanges)
 library(plyranges)
 library(hypogen)
 library(hypoimg)
+library(ggtext)
 
 cat('\n')
 script_name <- args[5] %>%
@@ -35,7 +36,7 @@ outlier_file <- as.character(args[1])
 outlier_regions <- read_tsv(outlier_file)
 
 hap_to_perc <- 100 / (166 * 165)
-iterations <- c("25/10 kb","10/5 kb","15/7.5 kb") %>% set_names(value = c("7", "8", "10"))
+# iterations <- c("25/10 x 10^3 SNPs","10/5 x 10^3 SNPs","15/7.5 x 10^3 SNPs") %>% set_names(value = c("7", "8", "10"))
 idx <- 10
 
 import_map1 <- function(idx, filtmode = "bed95"){
@@ -59,7 +60,11 @@ import_truffle <- function(idx, filtmode = "direct"){
     mutate(ibd_total = (IBD2 + 0.5*IBD1) / (IBD0 + IBD1 + IBD2)) 
 }
 
-iterations <- c(str_c("2/5*10^",6:3," BP"),"25/10 kb","10/5 kb","7-5/3 kb","15/7.5 kb")
+iterations <- c(str_c("2/5*10^",6:3," BP"),
+                "25/10 x 10^3 SNPs",
+                "10/5 x 10^3 SNPs",
+                "7-5/3 x 10^3 SNPs",
+                "15/7.5 x 10^3 SNPs")
 
 plot_network <- function(idx, filt = 0, import_fun = import_map1,
                          x = "cM_map1", filtmode = "direct", 
@@ -80,7 +85,7 @@ plot_network <- function(idx, filt = 0, import_fun = import_map1,
     geom_edge_link(aes(alpha = ibd_total), color = rgb(.1,.1,.1), edge_width = .15) +
     geom_node_point(aes(fill = spec,
                         shape = loc, color = after_scale(clr_darken(fill,.3))), size = .7) +
-    labs(y = glue::glue("Seq. Length: {iterations[idx]}"),
+    labs(y = iterations[idx],
          x = x) +
     scale_fill_manual("Species", values = GenomicOriginsScripts::clr[!(names(GenomicOriginsScripts::clr) %in% c("flo", "tor", "tab"))],
                       labels = GenomicOriginsScripts::sp_labs)+
@@ -93,7 +98,7 @@ plot_network <- function(idx, filt = 0, import_fun = import_map1,
                                 nrow = 2, override.aes = list(size = 2.5))) +
     coord_equal()  +
     theme(panel.background = element_blank(),
-          axis.title.y = element_text(),
+          axis.title.y = element_markdown(),
           axis.title.x = element_text())
   
   if(!x_ax){ p <- p + theme(axis.title.x = element_blank())}

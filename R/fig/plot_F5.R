@@ -256,12 +256,13 @@ p_leg_pomo <- ((midpoint(pomo_data$tree[[1]]) %>%
                   mutate(support = as.numeric(label),
                          support_class = cut(support, c(0,50,70,90,100)) %>% 
                            as.character() %>%
-                           factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]")))) %>% 
+                           factor(levels = c("(0,50]", "(50,70]", "(70,90]", "(90,100]"))) %>% 
+                  filter(!is.na(support))) %>% 
                  conditional_highlight(tree = ., 
                                        higl_node = 21,
                                        highl = FALSE,
                                        support_guide = TRUE) +
-                 theme(text = element_text(size = plot_text_size),
+                   theme(text = element_text(size = plot_text_size),
                        legend.position = "bottom") ) %>%
   get_legend()
 

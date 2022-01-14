@@ -22,14 +22,14 @@ nf_run_pi
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_pi.nf` (located under `$BASE_DIR/nf/15_analysis_pi/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+The diversity is computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_pi.nf` (located under `$BASE_DIR/nf/15_analysis_pi/`).
+It takes the _all BP_ data set and computes $\pi$.
 
 ## Details of `analysis_pi.nf`
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the genotype data and feeding it into a stream.
 
 :::kclass
 
@@ -48,6 +48,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+To split the analysis by linkage group, we initialize a LG-channel.
 
 
 <div class="sourceCode">
@@ -61,6 +62,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+We also want to compute the diversity twice, once *as is* and once without the outlier regions.
 
 
 <div class="sourceCode">
@@ -74,6 +76,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Furthermore, we want to analyze diversity at two scales (10kb and 50kb).
 
 
 <div class="sourceCode">
@@ -87,6 +90,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Then we filter the genotypes, depending on population, linkage group and outlier mode.
 
 
 <div class="sourceCode">
@@ -141,6 +145,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Then we calculate pi for each population.
 
 
 <div class="sourceCode">
@@ -177,6 +182,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Finally, we merge the output from the individual linkage groups.
 
 
 <div class="sourceCode">

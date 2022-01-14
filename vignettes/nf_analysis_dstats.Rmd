@@ -45,15 +45,15 @@ nextflow run analysis_dstats.nf -c ../../nextflow.config -resume
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dstats.nf` (located under `$BASE_DIR/nf/17_analysis_dstats/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+The dstats are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dstats.nf` (located under `$BASE_DIR/nf/17_analysis_dstats/`).
+It takes the phased genotypes and calculates the dstats.
 Below is an overview of the steps involved in the analysis.
 
 ## Details of `analysis_dstats.nf`
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the phased genotypes.
 
 :::kclass
 ```{r , eval = FALSE, hilang = 'nf'}
@@ -71,6 +71,7 @@ Channel
 	.set{ genotypes_ch }
 ```
 
+Then the Serranid samples are removed.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 17.2
@@ -96,6 +97,7 @@ process drop_serranus {
 }
 ```
 
+Then a ld filter is applied.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 17.4
@@ -120,15 +122,17 @@ process ld_filter {
 }
 ```
 
+Then the configuration for the individual trios is loaded.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 17.5
-// run D trios
+// load trios config
 Channel
 	.fromPath("../../ressources/hyp_sets.txt")
 	.set{ hyp_sets_ch }
 ```
 
+An the D trios are run.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 17.6
@@ -155,6 +159,7 @@ process run_dtrios {
 }
 ```
 
+A list with the desired order of populations is loaded.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 17.7
@@ -164,6 +169,7 @@ Channel
 	.set{ spec_order_ch }
 ```
 
+And finally corrections for multiple testing are applied.
 
 ```{r , eval = FALSE, hilang = 'nf'}
 // git 17.8

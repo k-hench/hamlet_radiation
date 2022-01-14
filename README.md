@@ -60,7 +60,9 @@ In case you are looking for specific parts referenced in the *Materials and Meth
 - *git 15.x*: [`nf/15_analysis_pi/analysis_pi.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/15_analysis_pi/analysis_pi.nf)
 - *git 16.x*: [`nf/16_analysis_ibd/analysis_ibd.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/16_analysis_ibd/analysis_ibd.nf)
 - *git 17.x*: [`nf/17_analysis_dstats/analysis_dstats.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/17_analysis_dstats/analysis_dstats.nf)
-- *git 18.x*: [`sh/create_figures.sh`](https://github.com/k-hench/hamlet_radiation/blob/master/sh/create_figures.sh)
+- *git 18.x*: [`nf/18_genotyping_all_basepairs_mt/genotyping_all_basepairs_mt.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/18_genotyping_all_basepairs_mt/genotyping_all_basepairs_mt.nf)
+- *git 19.x*: [`19_analysis_phylo_serraninae/analysis_phylo_serraninae.nf`](https://github.com/k-hench/hamlet_radiation/blob/master/nf/19_analysis_phylo_serraninae/analysis_phylo_serraninae.nf)
+- *git 20.x*: [`sh/create_figures.sh`](https://github.com/k-hench/hamlet_radiation/blob/master/sh/create_figures.sh)
 
 Again, please refer to the [docs](https://k-hench.github.io/hamlet_radiation/) for a more in depth documentation.
 

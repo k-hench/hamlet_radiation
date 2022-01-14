@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench and Martin Helmkampf" />
 
 
-<meta name="date" content="2021-11-26" />
+<meta name="date" content="2022-01-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -175,12 +175,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.2.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#setup"><i class="fa fa-check"></i><b>4.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a>
+<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy.html"><a href="git-4-analysis-ii-dxy.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i>)</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
-<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a>
+<li class="chapter" data-level="5.1" data-path="git-4-analysis-ii-dxy.html"><a href="git-4-analysis-ii-dxy.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
+<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy.html"><a href="git-4-analysis-ii-dxy.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
+<li class="chapter" data-level="5.2.1" data-path="git-4-analysis-ii-dxy.html"><a href="git-4-analysis-ii-dxy.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="git-5-analysis-iii-topology-weighting.html"><a href="git-5-analysis-iii-topology-weighting.html"><i class="fa fa-check"></i><b>6</b> (git 5) Analysis III (topology weighting)</a>
@@ -570,210 +570,538 @@ We still report the analysis as a <code>.nf</code> script as we believe this is 
 <pre class="sourceCode">
 <code class="sourceCode">#<span class="hl opt">!/</span>usr<span class="hl opt">/</span>bin<span class="hl opt">/</span>env nextflow
 
-<span class="hl slc">// ----------------------- DISCLAIMER ----------------------</span>
-<span class="hl slc">// this pipeline was not actually run using nexflow,</span>
-<span class="hl slc">// but managed manually</span>
-<span class="hl slc">// ---------------------------------------------------------</span>
-
-<span class="hl slc">// Hamlet phylogeny</span>
-<span class="hl slc">// ----------------</span>
-
 <span class="hl slc">// git 13.1</span>
-<span class="hl slc">// open the SNP data set</span>
+<span class="hl slc">// Open the SNP data set</span>
 <span class="hl kwa">Channel</span>
     .fromFilePairs<span class="hl opt">(</span><span class="hl str">&quot;../../1_genotyping/4_phased/phased_mac2.vcf.{gz,gz.tbi}&quot;</span><span class="hl opt">)</span>
-    .into<span class="hl opt">{</span> vcf_hypo_whg_ch<span class="hl opt">;</span> vcf_serr_whg_ch <span class="hl opt">}</span>
+    .into<span class="hl opt">{</span> vcf_snps_ch<span class="hl opt">;</span> vcf_snps_ch2 <span class="hl opt">}</span>
 </code>
 </pre>
 </div>
-<p>Next, also a file containing the sample IDs excluding the samples identified as hybrids in git 9 is loaded.</p>
+<p>We also open the <em>allBP</em> data set (genotypes of SNPS + invariant sites).</p>
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// RAxML analysis, Serranus-rooted</span>
-<span class="hl slc">// -------------------------------</span>
-<span class="hl slc">// git 13.2</span>
-<span class="hl slc">// open the sample-list (excluding hybrid samples)</span>
+<code class="sourceCode"><span class="hl slc">// git 13.2</span>
+<span class="hl slc">// Open the allBP data set (will be expanded x 24 LGs)</span>
 <span class="hl kwa">Channel</span>
-    .fromPath<span class="hl opt">(</span><span class="hl str">&quot;../../ressources/samples_hybrids.txt&quot;</span><span class="hl opt">)</span>
-    .set<span class="hl opt">{</span> hybrids_file <span class="hl opt">}</span>
+    .fromFilePairs<span class="hl opt">(</span><span class="hl str">&quot;../../1_genotyping/3_gatk_filtered/filterd.allBP.non_ref.vcf.{gz,gz.tbi}&quot;</span><span class="hl opt">)</span>
+    .set<span class="hl opt">{</span> vcf_allbp_ch <span class="hl opt">}</span>
 </code>
 </pre>
 </div>
-<p>As a preparation for running <code>raxml</code>, the genotype file is subset to exclude the hybrids.
-Then, heterozygous sites are masked and the data is filtered for minimal allele count and physical distance thresholds.
-Finally, the genotypes a indirectly converted to <code>fasta</code> format.</p>
+<p>Then, we initialize the different window sizes considered (1-50 kb).</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 13.3</span>
-<span class="hl slc">// subset data and convert to fasta for raxml</span>
-<span class="hl kwa">process</span> serr_whg_genotypes <span class="hl opt">{</span>
-    <span class="hl kwb">input</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> vcfId<span class="hl opt">,</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> hybrids <span class="hl opt">)</span> <span class="hl kwa">from</span> vcf_serr_whg_ch.combine<span class="hl opt">(</span> hybrids_file <span class="hl opt">)</span>
-
-    <span class="hl kwb">output</span><span class="hl opt">:</span>
-    <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hyS_n_0.33_mac4_5kb.fas&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> raxml_serr_genotypes_ch
-
-    <span class="hl kwb">script</span><span class="hl opt">:</span>
-    <span class="hl str">&quot;&quot;&quot;</span>
-<span class="hl str">   # Remove hybrids from genotype data (SNPs only)</span>
-<span class="hl str">   vcftools \</span>
-<span class="hl str">     --gzvcf</span>  <span class="hl ipl">${vcf[0]}</span> <span class="hl str">\</span>
-<span class="hl str">     --remove</span> <span class="hl ipl">${hybrids}</span> <span class="hl str">\</span>
-<span class="hl str">     --recode \</span>
-<span class="hl str">     --stdout | \</span>
-<span class="hl str">     gzip &gt; hyS.vcf.gz</span>
-<span class="hl str"></span>
-<span class="hl str">   # Mask heterozygous genotypes as unknown</span>
-<span class="hl str">   zcat &lt; hyS.vcf.gz | \</span>
-<span class="hl str">     sed -e s/&quot;1|0&quot;/&quot;.|.&quot;/g -e s/&quot;0|1&quot;/&quot;.|.&quot;/g | \</span>
-<span class="hl str">     gzip &gt; hyS_n.vcf.gz</span>
-<span class="hl str"></span>
-<span class="hl str">   # Apply missingness, allele count and distance filters</span>
-<span class="hl str">   vcftools \</span>
-<span class="hl str">     --gzvcf hyS_n.vcf.gz \</span>
-<span class="hl str">     --max-missing 0.33 \</span>
-<span class="hl str">     --mac 4 \</span>
-<span class="hl str">     --thin 5000 \</span>
-<span class="hl str">     --recode \</span>
-<span class="hl str">     --out hyS_n_0.33_mac4_5kb</span>
-<span class="hl str"></span>
-<span class="hl str">   # Convert to fasta format (Perl script available at https://github.com/JinfengChen/vcf-tab-to-fasta)</span>
-<span class="hl str">   wget https://raw.githubusercontent.com/JinfengChen/vcf-tab-to-fasta/master/vcf_tab_to_fasta_alignment.pl</span>
-<span class="hl str"></span>
-<span class="hl str">   vcf-to-tab &lt; hyS_n_0.33_mac4_5kb.vcf &gt; hyS_n_0.33_mac4_5kb.tab</span>
-<span class="hl str">   </span>
-<span class="hl str">   perl ~/apps/vcf-tab-to-fasta/vcf_tab_to_fasta_alignment.pl -i hyS_n_0.33_mac4_5kb.tab &gt; hyS_n_0.33_mac4_5kb.fas</span>
-<span class="hl str">   &quot;&quot;&quot;</span>
-<span class="hl opt">}</span>
+<span class="hl kwa">Channel</span>
+    .from<span class="hl opt">( [</span> <span class="hl num">1</span><span class="hl opt">,</span> <span class="hl num">5</span><span class="hl opt">,</span> <span class="hl num">10</span><span class="hl opt">,</span> <span class="hl num">50</span> <span class="hl opt">] )</span>
+    .set<span class="hl opt">{</span> window_size_ch <span class="hl opt">}</span>
 </code>
 </pre>
 </div>
-<p>Then, <code>raxml</code> can be run on the <code>fasta</code> formated genotypes.</p>
+<p>Then we create one bed file per windowsize, containing the window positions.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 13.4</span>
-<span class="hl slc">// run raxml (Serranus-rooted)</span>
-<span class="hl kwa">process</span> serr_whg_raxml <span class="hl opt">{</span>
-    <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/raxml/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span> 
-    
+<span class="hl slc">// Compile summary table</span>
+<span class="hl kwa">process</span> segment_windows <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_loc_slice_windows&#39;</span>
+    <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/window_stats/windows/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span> 
+
     <span class="hl kwb">input</span><span class="hl opt">:</span>
-    <span class="hl kwc">file</span><span class="hl opt">(</span> fas <span class="hl opt">)</span> <span class="hl kwa">from</span> raxml_serr_genotypes_ch
+    <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">)</span> <span class="hl kwa">from</span> window_size_ch
 
     <span class="hl kwb">output</span><span class="hl opt">:</span>
-    <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hyS_n_0.33_mac4_5kb.raxml.support&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> raxml_serr_whg_ch
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;windows_</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb.bed.gz&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> <span class="hl opt">(</span> windows_ch<span class="hl opt">,</span> windows_ch2<span class="hl opt">,</span> windows_ch3 <span class="hl opt">)</span>
 
     <span class="hl kwb">script</span><span class="hl opt">:</span>
     <span class="hl str">&quot;&quot;&quot;</span>
-<span class="hl str">   # Reconstruct phylogeny</span>
-<span class="hl str">   # Note: number of invariant sites for Felsenstein correction was calculated as number of</span>
-<span class="hl str">   # variant sites in alignment (109,660) / genome-wide proportion of variant sites</span>
-<span class="hl str">   # (0.05) * genome-wide proportion of invariant sites (0.95)</span>
-<span class="hl str">   raxml-NG --all \</span>
-<span class="hl str">     --msa hyS_n_0.33_mac4_5kb.fas \</span>
-<span class="hl str">     --model GTR+G+ASC_FELS{2083540} \</span>
-<span class="hl str">     --tree pars{20},rand{20} \</span>
-<span class="hl str">     --bs-trees 100 \</span>
-<span class="hl str">     --threads 24 \</span>
-<span class="hl str">     --worker 4 \</span>
-<span class="hl str">     --seed 123 \</span>
-<span class="hl str">     --prefix hyS_n_0.33_mac4_5kb</span>
+<span class="hl str">   #!/usr/bin/env Rscript</span>
+<span class="hl str">   library(hypogen)</span>
+<span class="hl str"></span>
+<span class="hl str">   x_bp &lt;-</span> <span class="hl ipl">${kb_size}</span> <span class="hl str">* 1000</span>
+<span class="hl str">   </span>
+<span class="hl str">   window_non_overlap &lt;- function(CHROM, LENGTH, windowsize = x_bp ){</span>
+<span class="hl str">     tibble(CHROM = CHROM, </span>
+<span class="hl str">            START = seq(from = 1, to = LENGTH, by = windowsize) - 1, # (produces overlap of one which is needed for bedtools)</span>
+<span class="hl str">            END = lead(START, default = LENGTH) ) }</span>
+<span class="hl str"></span>
+<span class="hl str">   hypo_karyotype %&gt;%</span>
+<span class="hl str">     select(CHROM, LENGTH) %&gt;%</span>
+<span class="hl str">     pmap_dfr(window_non_overlap) %&gt;%</span>
+<span class="hl str">     write_tsv(file = &quot;windows_</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb.bed.gz&quot;)</span>
 <span class="hl str">   &quot;&quot;&quot;</span>
 <span class="hl opt">}</span>
 </code>
 </pre>
 </div>
-<hr />
-<p>The same general aproach is used for the phylogeny excluding the Serranus outgroup samples.
-For this, a different sample list (also excluding the outgroup samples) is loaded.</p>
+<p>We drop the Serranid samples (the outgroup) from the genotypes.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
-<code class="sourceCode"><span class="hl slc">// RAxML analysis, floridae-rooted</span>
-<span class="hl slc">// -------------------------------</span>
-<span class="hl slc">// git 13.5</span>
-<span class="hl slc">// open the sample-list (excluding hybrid and Serranus samples)</span>
-<span class="hl kwa">Channel</span>
-    .fromPath<span class="hl opt">(</span><span class="hl str">&quot;../../ressources/samples_155.txt&quot;</span><span class="hl opt">)</span>
-    .set<span class="hl opt">{</span> hamlet_file <span class="hl opt">}</span>
+<code class="sourceCode"><span class="hl slc">// git 13.5</span>
+<span class="hl kwa">process</span> filter_hamlets <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g2h_outgroup_drop&#39;</span>
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span>  <span class="hl kwc">val</span><span class="hl opt">(</span> vcfId <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">)</span> <span class="hl kwa">from</span> vcf_snps_ch2
+
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> <span class="hl str">&quot;hamlets_only&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hamlets_only.vcf.gz*&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> vcf_hamlets_ch
+
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   echo -e &quot;20478tabhon</span><span class="hl esc">\\</span><span class="hl str">n28393torpan</span><span class="hl esc">\\</span><span class="hl str">ns_tort_3torpan&quot; &gt; outgroup.pop</span>
+<span class="hl str"></span>
+<span class="hl str">   vcftools  --gzvcf</span> <span class="hl ipl">${vcf[0]}</span> <span class="hl str">\</span>
+<span class="hl str">       --remove outgroup.pop \</span>
+<span class="hl str">       --mac 1 \</span>
+<span class="hl str">       --recode \</span>
+<span class="hl str">       --stdout | \</span>
+<span class="hl str">       bgzip &gt; hamlets_only.vcf.gz</span>
+<span class="hl str">   </span>
+<span class="hl str">   tabix hamlets_only.vcf.gz</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
 </code>
 </pre>
 </div>
-<p>Like in git 13.3, the genotypes are subset and converted to <code>fasta</code> format.</p>
+<p>Then, we compute the coverage (n of SNPs) within each window.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 13.6</span>
-<span class="hl slc">// subset data and convert to fasta for raxml</span>
-<span class="hl kwa">process</span> hypo_whg_genotypes <span class="hl opt">{</span>
-    <span class="hl kwb">input</span><span class="hl opt">:</span>
-    <span class="hl kwa">set</span> vcfId<span class="hl opt">,</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> hamlets <span class="hl opt">)</span> <span class="hl kwa">from</span> vcf_hypo_whg_ch.combine<span class="hl opt">(</span>hamlet_file<span class="hl opt">)</span>
+<span class="hl slc">// Coverage of SNPs vcf for SNPdensity, allBP for Ns</span>
+<span class="hl kwa">process</span> compute_coverage <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_140g1h_coverage&#39;</span>
+    <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/window_stats/coverages/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span> 
 
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl slc">//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )</span>
+    <span class="hl kwa">set</span>  <span class="hl kwc">val</span><span class="hl opt">(</span> vcfId <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> window <span class="hl opt">)</span> <span class="hl kwa">from</span> vcf_snps_ch.concat<span class="hl opt">(</span> vcf_hamlets_ch <span class="hl opt">)</span>.map<span class="hl opt">{ [</span>it<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">]</span>.minus<span class="hl opt">(</span><span class="hl str">&quot;.vcf&quot;</span><span class="hl opt">),</span> it<span class="hl opt">[</span><span class="hl num">1</span><span class="hl opt">]]}</span>.combine<span class="hl opt">(</span> windows_ch <span class="hl opt">)</span>
+    
     <span class="hl kwb">output</span><span class="hl opt">:</span>
-    <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hyp155_n_0.33_mac4_5kb.fas&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> raxml_hypo_genotypes_ch
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;</span><span class="hl ipl">${vcfId}</span><span class="hl str">.</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb_cov.tsv.gz&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> coverage_ch
 
     <span class="hl kwb">script</span><span class="hl opt">:</span>
     <span class="hl str">&quot;&quot;&quot;</span>
-<span class="hl str">   # Remove hybrid and Serranus samples from genotype data (SNPs only)</span>
-<span class="hl str">   vcftools \</span>
-<span class="hl str">     --gzvcf</span> <span class="hl ipl">${vcf[0]}</span> <span class="hl str">\</span>
-<span class="hl str">     --remove</span> <span class="hl ipl">${hamlets}</span> <span class="hl str">\</span>
-<span class="hl str">     --recode \</span>
-<span class="hl str">     --stdout | \</span>
-<span class="hl str">     gzip &gt; hyp155.vcf.gz</span>
-<span class="hl str"></span>
-<span class="hl str">   # Mask heterozygous genotypes as unknown</span>
-<span class="hl str">   zcat &lt; hyp155.vcf.gz | \</span>
-<span class="hl str">     sed -e s/&quot;1|0&quot;/&quot;.|.&quot;/g -e s/&quot;0|1&quot;/&quot;.|.&quot;/g | \</span>
-<span class="hl str">     gzip &gt; hyp155_n.vcf.gz</span>
-<span class="hl str"></span>
-<span class="hl str">   # Apply missingness, allele count and distance filters</span>
-<span class="hl str">   vcftools \</span>
-<span class="hl str">     --gzvcf hyp155_n.vcf.gz \</span>
-<span class="hl str">     --max-missing 0.33 \</span>
-<span class="hl str">     --mac 4 \</span>
-<span class="hl str">     --thin 5000 \</span>
-<span class="hl str">     --recode \</span>
-<span class="hl str">     --out hyp155_n_0.33_mac4_5kb</span>
-<span class="hl str"></span>
-<span class="hl str">   # Convert to fasta format (Perl script available at https://github.com/JinfengChen/vcf-tab-to-fasta)</span>
-<span class="hl str">   wget https://raw.githubusercontent.com/JinfengChen/vcf-tab-to-fasta/master/vcf_tab_to_fasta_alignment.pl</span>
-<span class="hl str"></span>
-<span class="hl str">   vcf-to-tab &lt; hyp155_n_0.33_mac4_5kb.vcf &gt; hyp155_n_0.33_mac4_5kb.tab</span>
-<span class="hl str"></span>
-<span class="hl str">   perl ./vcf_tab_to_fasta_alignment.pl -i hyp155_n_0.33_mac4_5kb.tab &gt; hyp155_n_0.33_mac4_5kb.fas</span>
+<span class="hl str">   bedtools coverage \</span>
+<span class="hl str">       -a</span> <span class="hl ipl">${window}</span> <span class="hl str">\</span>
+<span class="hl str">       -b</span> <span class="hl ipl">${vcf[0]}</span> <span class="hl str">\</span>
+<span class="hl str">       -counts | gzip &gt;</span> <span class="hl ipl">${vcfId}</span><span class="hl str">.</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb_cov.tsv.gz</span>
 <span class="hl str">   &quot;&quot;&quot;</span>
 <span class="hl opt">}</span>
 </code>
 </pre>
 </div>
-<p>Finally, again <code>raxml</code> is run (equivalent to git 13.4).</p>
+<p>To split the genotypes by linkage group, we initialize a LG-channel…</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 13.7</span>
-<span class="hl slc">// run raxml (floridae-rooted)</span>
-<span class="hl kwa">process</span> hypo_whg_raxml <span class="hl opt">{</span>
-    <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/raxml/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span> 
-    
+<span class="hl kwa">Channel</span>
+    .from<span class="hl opt">( (</span><span class="hl str">&#39;01&#39;</span>..<span class="hl str">&#39;09&#39;</span><span class="hl opt">) + (</span><span class="hl str">&#39;10&#39;</span>..<span class="hl str">&#39;19&#39;</span><span class="hl opt">) + (</span><span class="hl str">&#39;20&#39;</span>..<span class="hl str">&#39;24&#39;</span><span class="hl opt">) )</span>
+    .set<span class="hl opt">{</span> lg_ch <span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>…and split the genotypes.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.8</span>
+<span class="hl kwa">process</span> subset_allBP <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_140g10h_coverage&#39;</span>
+    <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../1_genotyping/3_gatk_filtered/non_ref_byLG/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span> 
+
     <span class="hl kwb">input</span><span class="hl opt">:</span>
-    <span class="hl kwc">file</span><span class="hl opt">(</span> fas <span class="hl opt">)</span> <span class="hl kwa">from</span> raxml_hypo_genotypes_ch
+    <span class="hl slc">//set vcfId, file( vcf ), val( kb_size ), file( window ) from vcf_snps_filterd_ch.combine( windows_ch )</span>
+    <span class="hl kwa">set</span>  <span class="hl kwc">val</span><span class="hl opt">(</span> lg <span class="hl opt">)</span> <span class="hl kwa">from</span> lg_ch
 
     <span class="hl kwb">output</span><span class="hl opt">:</span>
-    <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;hyp155_n_0.33_mac4_5kb.raxml.support&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> raxml_hypo_whg_ch
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> lg <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;filterd.allBP.non_ref.LG</span><span class="hl ipl">${lg}</span><span class="hl str">.vcf.gz&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;filterd.allBP.non_ref.LG</span><span class="hl ipl">${lg}</span><span class="hl str">.vcf.gz.tbi&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> allbp_non_ref_ch
 
     <span class="hl kwb">script</span><span class="hl opt">:</span>
     <span class="hl str">&quot;&quot;&quot;</span>
-<span class="hl str">   # Infer phylogeny</span>
-<span class="hl str">   # Note: number of invariant sites for Felsenstein correction was calculated as number of</span>
-<span class="hl str">   # variant sites in alignment (105,043) / genome-wide proportion of variant sites </span>
-<span class="hl str">   # (0.05) * genome-wide proportion of invariant sites (0.95)</span>
+<span class="hl str">   vcftools \</span>
+<span class="hl str">       --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered//filterd.allBP.non_ref.vcf.gz \</span>
+<span class="hl str">       --chr LG</span><span class="hl ipl">${lg}</span> <span class="hl str">\</span>
+<span class="hl str">       --recode \</span>
+<span class="hl str">       --stdout | bgzip &gt; filterd.allBP.non_ref.LG</span><span class="hl ipl">${lg}</span><span class="hl str">.vcf.gz</span>
 <span class="hl str"></span>
-<span class="hl str">   raxml-NG --all \</span>
-<span class="hl str">     --msa</span> <span class="hl ipl">${fas}</span> <span class="hl str">\</span>
-<span class="hl str">     --model GTR+G+ASC_FELS{1995817} \</span>
-<span class="hl str">     --tree pars{20},rand{20} \</span>
-<span class="hl str">     --bs-trees 100 \</span>
-<span class="hl str">     --threads 24 \</span>
-<span class="hl str">     --worker 8 \</span>
-<span class="hl str">     --seed 123 \</span>
-<span class="hl str">     --prefix hyp155_n_0.33_mac4_5kb</span>
+<span class="hl str">   tabix filterd.allBP.non_ref.LG</span><span class="hl ipl">${lg}</span><span class="hl str">.vcf.gz</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>Then we also compute the coverage (in terms of callable sites, not just SNPs) within windows.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.9</span>
+<span class="hl kwa">process</span> compute_coverage_allBP <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_140g1h_coverage&#39;</span>
+    <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/window_stats/coverages/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span> 
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span>  <span class="hl kwc">val</span><span class="hl opt">(</span> lg <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> tbi <span class="hl opt">),</span> <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> window <span class="hl opt">)</span> <span class="hl kwa">from</span> allbp_non_ref_ch.combine<span class="hl opt">(</span> windows_ch2 <span class="hl opt">)</span>
+    
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;filterd.allBP.LG</span><span class="hl ipl">${lg}</span><span class="hl str">.</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb_cov.tsv.gz&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> coverage_allbp_ch
+
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   echo -e &quot;CHROM</span><span class="hl esc">\\</span><span class="hl str">tSTART</span><span class="hl esc">\\</span><span class="hl str">tEND&quot; &gt; bed_LG</span><span class="hl ipl">${lg}</span><span class="hl str">.bed</span>
+<span class="hl str"></span>
+<span class="hl str">   zgrep &quot;LG</span><span class="hl ipl">${lg}</span><span class="hl str">&quot;</span> <span class="hl ipl">${window}</span> <span class="hl str">&gt;&gt; bed_LG</span><span class="hl ipl">${lg}</span><span class="hl str">.bed</span>
+<span class="hl str">   gzip bed_LG</span><span class="hl ipl">${lg}</span><span class="hl str">.bed</span>
+<span class="hl str"></span>
+<span class="hl str">   bedtools coverage \</span>
+<span class="hl str">       -a bed_LG</span><span class="hl ipl">${lg}</span><span class="hl str">.bed.gz \</span>
+<span class="hl str">       -b</span> <span class="hl ipl">${vcf}</span> <span class="hl str">\</span>
+<span class="hl str">       -counts | gzip &gt; filterd.allBP.LG</span><span class="hl ipl">${lg}</span><span class="hl str">.</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb_cov.tsv.gz</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>So, now we can merge the coverage information for each window.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.10</span>
+<span class="hl slc">// Compile summary table</span>
+<span class="hl kwa">process</span> complie_window_stats <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g2h_windows_stats&#39;</span>
+    <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/window_stats/window_stats/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span> 
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> windows <span class="hl opt">)</span> <span class="hl kwa">from</span> coverage_ch.concat<span class="hl opt">(</span> coverage_allbp_ch <span class="hl opt">)</span>.groupTuple<span class="hl opt">()</span>
+
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;window_stats.</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb.tsv.gz&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> window_out_ch
+
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   #!/usr/bin/env Rscript</span>
+<span class="hl str"></span>
+<span class="hl str">   library(tidyverse)</span>
+<span class="hl str"></span>
+<span class="hl str">   data_SNPs &lt;- read_tsv(&quot;phased_mac2.</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb_cov.tsv.gz&quot;,</span>
+<span class="hl str">                         col_names = c(&quot;CHROM&quot;, &quot;START&quot;, &quot;END&quot;, &quot;COV_SNP&quot;))</span>
+<span class="hl str"></span>
+<span class="hl str">   data_HYP &lt;- read_tsv(&quot;hamlets_only.</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb_cov.tsv.gz&quot;,</span>
+<span class="hl str">                         col_names = c(&quot;CHROM&quot;, &quot;START&quot;, &quot;END&quot;, &quot;COV_HYP&quot;))</span>
+<span class="hl str"></span>
+<span class="hl str">   all_bp_files &lt;- dir(pattern = &quot;filterd.allBP.LG*&quot;)</span>
+<span class="hl str"></span>
+<span class="hl str">   data_allBPs &lt;- map_dfr(all_bp_files, .f = function(x){read_tsv(x, col_names = c(&quot;CHROM&quot;, &quot;START&quot;, &quot;END&quot;, &quot;COV_ALL&quot;))})</span>
+<span class="hl str"></span>
+<span class="hl str">   data &lt;- data_SNPs %&gt;%</span>
+<span class="hl str">       left_join(data_HYP, by = c(CHROM = &quot;CHROM&quot;, START = &quot;START&quot;, END = &quot;END&quot;))  %&gt;%</span>
+<span class="hl str">       left_join(data_allBPs, by = c(CHROM = &quot;CHROM&quot;, START = &quot;START&quot;, END = &quot;END&quot;))  %&gt;%</span>
+<span class="hl str">       filter(COV_ALL &gt; 0 ) %&gt;%</span>
+<span class="hl str">       mutate(SNP_density = round(COV_SNP/ COV_ALL, 2), </span>
+<span class="hl str">       REL_COV =  round(COV_ALL/ (END-START), 2))</span>
+<span class="hl str">   </span>
+<span class="hl str">   write_tsv(x = data, file = &quot;window_stats.</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb.tsv.gz&quot;)</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>From this point onward, the analysis was actually done manually (we still format it according to nextflow for clarity).</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// ----------------------- DISCLAIMER ----------------------</span>
+<span class="hl slc">// form here on, this pipeline was not actually run using</span>
+<span class="hl slc">// nextflow, but managed manually</span>
+<span class="hl slc">// ---------------------------------------------------------</span>
+</code>
+</pre>
+</div>
+<p>Now, the subset of windows to be considered for the phylogeny was sampled.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.11</span>
+<span class="hl slc">// Subset to 5000 random windows</span>
+<span class="hl kwa">process</span> subset_windows <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_loc_subset_windows&#39;</span>
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> windows <span class="hl opt">)</span> <span class="hl kwa">from</span> window_out_ch.filter<span class="hl opt">({</span> it<span class="hl opt">[</span><span class="hl num">1</span><span class="hl opt">] ==</span> <span class="hl num">5</span> <span class="hl opt">})</span>
+
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> kb_size <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;5000x_</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb_v1.bed&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> window_subset_ch
+
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   #!/usr/bin/env Rscript</span>
+<span class="hl str">   library(hypogen)   # attaches tidyverse automatically</span>
+<span class="hl str"></span>
+<span class="hl str">   ### Draw windows with coverage (sequence contiguity) and SNP-based cutoffs</span>
+<span class="hl str"></span>
+<span class="hl str">   stats5 &lt;- read_tsv(&quot;window_stats.</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb.tsv.gz&quot;)</span>
+<span class="hl str"></span>
+<span class="hl str">   set.seed(64)</span>
+<span class="hl str"></span>
+<span class="hl str">   selected_windows &lt;- stats5 %&gt;%</span>
+<span class="hl str">   filter(REL_COV &gt;= 0.80 &amp;</span>
+<span class="hl str">           COV_HYP &gt;= 50) %&gt;%</span>
+<span class="hl str">   sample_n(5000) %&gt;%</span>
+<span class="hl str">   arrange(CHROM, START)</span>
+<span class="hl str"></span>
+<span class="hl str">   write_tsv(selected_windows %&gt;% select(CHROM, START, END), file = &quot;5000x_</span><span class="hl ipl">${kb_size}</span><span class="hl str">kb_v1.bed&quot;)</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>To parallelize the analysis, several looping-channels are opened.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.12</span>
+<span class="hl slc">// index for sub-channels</span>
+<span class="hl kwa">Channel</span>.from<span class="hl opt">(</span> <span class="hl num">1</span>..50 <span class="hl opt">)</span>.into<span class="hl opt">{</span> loop50_idx_ch1<span class="hl opt">;</span> loop50_idx_ch2<span class="hl opt">;</span> loop50_idx_ch3<span class="hl opt">;</span> loop50_idx_ch4 <span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>For the selected windows, the genotypes are extracted.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.13</span>
+<span class="hl slc">// Extract windows from all BP</span>
+<span class="hl kwa">process</span> extract_windows <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g2h_extract_windows&#39;</span>
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> idx <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> windows <span class="hl opt">)</span> <span class="hl kwa">from</span> loop50_idx_ch1.combine<span class="hl opt">(</span> window_out_ch <span class="hl opt">)</span>
+
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*_v1_all.vcf.gz&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> window_extract_loop
+    
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   PER_TASK=100</span>
+<span class="hl str"></span>
+<span class="hl str">   START_NUM=\$(( (</span><span class="hl ipl">${idx}</span> <span class="hl str">- 1) * \$PER_TASK + 1 ))</span>
+<span class="hl str">   END_NUM=\$((</span> <span class="hl ipl">${idx}</span> <span class="hl str">* \$PER_TASK ))</span>
+<span class="hl str"></span>
+<span class="hl str">   echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, which will do runs \$START_NUM to \$END_NUM</span>
+<span class="hl str"></span>
+<span class="hl str">   for (( run=\$START_NUM ; run&lt;=END_NUM ; run++ ))</span>
+<span class="hl str">       do</span>
+<span class="hl str">       echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, run number \$run</span>
+<span class="hl str">       chr=\$(awk -v line=&quot;\$run&quot; &#39;BEGIN { FS = &quot;</span><span class="hl esc">\\</span><span class="hl str">t&quot; } ; NR==line+1 { print \$1 }&#39; 5000x_5kb_v1.bed)</span>
+<span class="hl str">       sta=\$(awk -v line=&quot;\$run&quot; &#39;BEGIN { FS = &quot;</span><span class="hl esc">\\</span><span class="hl str">t&quot; } ; NR==line+1 { print \$2 }&#39; 5000x_5kb_v1.bed)</span>
+<span class="hl str">       end=\$(awk -v line=&quot;\$run&quot; &#39;BEGIN { FS = &quot;</span><span class="hl esc">\\</span><span class="hl str">t&quot; } ; NR==line+1 { print \$3 }&#39; 5000x_5kb_v1.bed)</span>
+<span class="hl str">       printf -v i &quot;%04d&quot; \$run</span>
+<span class="hl str"></span>
+<span class="hl str">       vcftools \</span>
+<span class="hl str">           --gzvcf \$BASE_DIR/1_genotyping/3_gatk_filtered/byLG/filterd.allBP.&quot;\$chr&quot;.vcf.gz \</span>
+<span class="hl str">           --chr &quot;\$chr&quot; \</span>
+<span class="hl str">           --from-bp &quot;\$sta&quot; \</span>
+<span class="hl str">           --to-bp &quot;\$end&quot; \</span>
+<span class="hl str">           --recode --stdout | \</span>
+<span class="hl str">           grep -v &quot;##&quot; | bgzip &gt; window_&quot;\$i&quot;_v1_all.vcf.gz</span>
+<span class="hl str">   done</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>Again, a channel is created for parallelizing…</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.14</span>
+<span class="hl slc">// index for sub-channels</span>
+<span class="hl kwa">Channel</span>.from<span class="hl opt">(</span> <span class="hl num">1</span>..20 <span class="hl opt">)</span>.set<span class="hl opt">{</span> loop20_idx_ch <span class="hl opt">}</span>
+<span class="hl slc">// bundle the distributed sub-channels</span>
+window_extract_loop.collect<span class="hl opt">()</span>.map<span class="hl opt">{ [</span> it <span class="hl opt">] }</span>.set<span class="hl opt">{</span> window_extract_ch1<span class="hl opt">,</span> window_extract_ch2 <span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>…and again, the outgroup samples are removed from the genoptypes.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.15</span>
+<span class="hl slc">// Remove samples (all / noS data sets)</span>
+<span class="hl kwa">process</span> remove_samples <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g2h_remove_samples&#39;</span>
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> idx <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf <span class="hl opt">)</span> <span class="hl kwa">from</span> loop20_idx_ch.combine<span class="hl opt">(</span> window_extract_ch1 <span class="hl opt">)</span>
+    
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*_noS.vcf.gz&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> samples_removed_loop
+    
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   PER_TASK=250</span>
+<span class="hl str"></span>
+<span class="hl str">   START_NUM=\$(( (</span><span class="hl ipl">${idx}</span> <span class="hl str">- 1) * \$PER_TASK + 1 ))</span>
+<span class="hl str">   END_NUM=\$((</span> <span class="hl ipl">${idx}</span> <span class="hl str">* \$PER_TASK ))</span>
+<span class="hl str"></span>
+<span class="hl str">   echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, which will do runs \$START_NUM to \$END_NUM</span>
+<span class="hl str"></span>
+<span class="hl str">   for (( run=\$START_NUM ; run&lt;=END_NUM ; run++ ))</span>
+<span class="hl str">       do</span>
+<span class="hl str"></span>
+<span class="hl str">       echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, run number \$run</span>
+<span class="hl str">       </span>
+<span class="hl str">       printf -v i &quot;%04d&quot; \$run</span>
+<span class="hl str"></span>
+<span class="hl str">       vcftools \</span>
+<span class="hl str">           --gzvcf window_&quot;\$i&quot;*.vcf.gz \</span>
+<span class="hl str">           --remove samples_Serr.txt \</span>
+<span class="hl str">           --recode \</span>
+<span class="hl str">           --stdout | bgzip &gt; window_&quot;\$i&quot;_v1_noS.vcf.gz</span>
+<span class="hl str">   done</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
+<span class="hl slc">// bundle the distributed sub-channels</span>
+samples_removed_loop.collect<span class="hl opt">()</span>.map<span class="hl opt">{ [</span> it <span class="hl opt">] }</span>.set<span class="hl opt">{</span> samples_removed_ch <span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>Then, we translate the genotypes from vcf to fasta format.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.16</span>
+<span class="hl slc">// Convert to Fasta (IUPAC-encoded)</span>
+<span class="hl kwa">process</span> fasta_convert <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g2h_convert_to_fasta&#39;</span>
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> idx <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf_noS <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> vcf_all <span class="hl opt">)</span> <span class="hl kwa">from</span> loop50_idx_ch2.combine<span class="hl opt">(</span> samples_removed_ch <span class="hl opt">)</span>.combine<span class="hl opt">(</span> window_extract_ch2 <span class="hl opt">)</span>
+    
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.fas&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> fasta_convert_loop
+    
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   PER_TASK=100</span>
+<span class="hl str"></span>
+<span class="hl str">   START_NUM=\$(( (</span><span class="hl ipl">${idx}</span> <span class="hl str">- 1) * \$PER_TASK + 1 ))</span>
+<span class="hl str">   END_NUM=\$((</span> <span class="hl ipl">${idx}</span> <span class="hl str">* \$PER_TASK ))</span>
+<span class="hl str"></span>
+<span class="hl str">   echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, which will do runs \$START_NUM to \$END_NUM</span>
+<span class="hl str"></span>
+<span class="hl str">   for (( run=\$START_NUM ; run&lt;=END_NUM ; run++ ))</span>
+<span class="hl str">       do</span>
+<span class="hl str">       echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, run number \$run</span>
+<span class="hl str">       printf -v i &quot;%04d&quot; \$run</span>
+<span class="hl str">       for j in all noS</span>
+<span class="hl str">           do</span>
+<span class="hl str">               bgzip -cd window_&quot;\$i&quot;_v1_&quot;\$j&quot;.vcf.gz | vcf-to-tab &gt; window_&quot;\$i&quot;_v1_&quot;\$j&quot;.tab</span>
+<span class="hl str"></span>
+<span class="hl str">               perl \$SFTWR/vcf-tab-to-fasta/vcf_tab_to_fasta_alignment.pl -i window_&quot;\$i&quot;_v1_&quot;\$j&quot;.tab &gt; window_&quot;\$i&quot;_v1_&quot;\$j&quot;.fas</span>
+<span class="hl str"></span>
+<span class="hl str">               rm window_&quot;\$i&quot;_v1_&quot;\$j&quot;.tab*</span>
+<span class="hl str">       done</span>
+<span class="hl str">   done</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
+<span class="hl slc">// bundle the distributed sub-channels</span>
+fasta_convert_loop.collect<span class="hl opt">()</span>.map<span class="hl opt">{ [</span> it <span class="hl opt">] }</span>.set<span class="hl opt">{</span> fasta_convert_ch <span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>The fasta sequences are aligned.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.17</span>
+<span class="hl slc">// Align sequences in windows</span>
+<span class="hl kwa">process</span> fasta_align <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g2h_fasta_align&#39;</span>
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> idx <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> fa <span class="hl opt">)</span> <span class="hl kwa">from</span> loop50_idx_ch3.combine<span class="hl opt">(</span> fasta_convert_ch <span class="hl opt">)</span>
+    
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.aln&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> fasta_align_loop
+    
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   PER_TASK=100</span>
+<span class="hl str"></span>
+<span class="hl str">   START_NUM=\$(( (</span><span class="hl ipl">${idx}</span> <span class="hl str">- 1) * \$PER_TASK + 1 ))</span>
+<span class="hl str">   END_NUM=\$((</span> <span class="hl ipl">${idx}</span> <span class="hl str">* \$PER_TASK ))</span>
+<span class="hl str"></span>
+<span class="hl str">   echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, which will do runs \$START_NUM to \$END_NUM</span>
+<span class="hl str"></span>
+<span class="hl str">   for (( run=</span><span class="hl ipl">${idx}</span> <span class="hl str">; run&lt;=END_NUM ; run++ ))</span>
+<span class="hl str">       do</span>
+<span class="hl str">       echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, run number \$run</span>
+<span class="hl str">       printf -v i &quot;%04d&quot; \$run</span>
+<span class="hl str">       for j in all noS</span>
+<span class="hl str">           do</span>
+<span class="hl str">               mafft --auto window_&quot;\$i&quot;_v1_&quot;\$j&quot;.fas &gt; &quot;window_&quot;\$i&quot;_v1_&quot;\$j&quot;.aln</span>
+<span class="hl str">       done</span>
+<span class="hl str">   done</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
+<span class="hl slc">// bundle the distributed sub-channels</span>
+fasta_align_loop.collect<span class="hl opt">()</span>.map<span class="hl opt">{ [</span> it <span class="hl opt">] }</span>.set<span class="hl opt">{</span> fasta_align_ch <span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>Next, the trees are inferred within each window.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.18</span>
+<span class="hl slc">// Infer local trees</span>
+<span class="hl kwa">process</span> local_trees <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g2h_local_trees&#39;</span>
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">val</span><span class="hl opt">(</span> idx <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> aln <span class="hl opt">)</span> <span class="hl kwa">from</span> loop50_idx_ch4.combine<span class="hl opt">(</span> fasta_align_ch <span class="hl opt">)</span>
+    
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;*.treefile&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> local_trees_loop
+    
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   PER_TASK=100</span>
+<span class="hl str"></span>
+<span class="hl str">   START_NUM=$(( (</span><span class="hl ipl">${idx}</span><span class="hl str">- 1) * \$PER_TASK + 1 ))</span>
+<span class="hl str">   END_NUM=$((</span> <span class="hl ipl">${idx}</span> <span class="hl str">* \$PER_TASK ))</span>
+<span class="hl str"></span>
+<span class="hl str">   echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, which will do runs \$START_NUM to \$END_NUM</span>
+<span class="hl str"></span>
+<span class="hl str">   for (( run=</span><span class="hl ipl">${idx}</span> <span class="hl str">; run&lt;=END_NUM ; run++ ))</span>
+<span class="hl str">       do</span>
+<span class="hl str">       echo This is task</span> <span class="hl ipl">${idx}</span><span class="hl str">, run number \$run</span>
+<span class="hl str">       printf -v i &quot;%04d&quot; \$run</span>
+<span class="hl str">       for j in all noS</span>
+<span class="hl str">           do</span>
+<span class="hl str">               iqtree2 -s window_&quot;\$i&quot;_v1_&quot;\$j&quot;.aln  --prefix locus_&quot;\$i&quot;_v1_&quot;\$j&quot; -o PL17_160floflo -T 1</span>
+<span class="hl str">       done</span>
+<span class="hl str">   done</span>
+<span class="hl str">   &quot;&quot;&quot;</span>
+<span class="hl opt">}</span>
+<span class="hl slc">// bundle the distributed sub-channels</span>
+local_trees_loop.collect<span class="hl opt">()</span>.map<span class="hl opt">{ [</span> it <span class="hl opt">] }</span>.set<span class="hl opt">{</span> local_trees_ch <span class="hl opt">}</span>
+</code>
+</pre>
+</div>
+<p>Finally, the individual trees are summarized.</p>
+<div class="sourceCode">
+<pre class="sourceCode">
+<code class="sourceCode"><span class="hl slc">// git 13.19</span>
+<span class="hl slc">// Calculate summary tree</span>
+<span class="hl kwa">process</span> summary_trees <span class="hl opt">{</span>
+    <span class="hl kwb">label</span> <span class="hl str">&#39;L_20g2h_summary_trees&#39;</span>
+    <span class="hl kwb">publishDir</span> <span class="hl str">&quot;../../2_analysis/astral/&quot;</span><span class="hl opt">,</span> mode<span class="hl opt">:</span> <span class="hl str">&#39;copy&#39;</span> 
+
+    <span class="hl kwb">input</span><span class="hl opt">:</span>
+    <span class="hl kwc">file</span><span class="hl opt">(</span> tree <span class="hl opt">)</span> <span class="hl kwa">from</span> local_trees_ch
+    
+    <span class="hl kwb">output</span><span class="hl opt">:</span>
+    <span class="hl kwa">set</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;astral*.tre&quot;</span> <span class="hl opt">),</span> <span class="hl kwc">file</span><span class="hl opt">(</span> <span class="hl str">&quot;astral*.log&quot;</span> <span class="hl opt">)</span> <span class="hl kwa">into</span> summary_trees_ch
+    
+    <span class="hl kwb">script</span><span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">   cat ./*_noS.treefile &gt; genetrees_5000x_5kb_v1_noS.tre</span>
+<span class="hl str">   java -jar \$SFTWR/ASTRAL_5.7.5/astral.5.7.5.jar -i genetrees_5000x_5kb_v1_noS.tre -o astral_5000x_5kb_v1_noS.tre 2&gt; astral_5000x_5kb_v1_noS.log</span>
+<span class="hl str"></span>
+<span class="hl str">   cat ./*_all.treefile &gt; genetrees_5000x_5kb_v1_all.tre</span>
+<span class="hl str">   java -jar \$SFTWR/ASTRAL_5.7.5/astral.5.7.5.jar -i genetrees_5000x_5kb_v1_all.tre -o astral_5000x_5kb_v1_all.tre 2&gt; astral_5000x_5kb_v1_all.log</span>
 <span class="hl str">   &quot;&quot;&quot;</span>
 <span class="hl opt">}</span>
 </code>

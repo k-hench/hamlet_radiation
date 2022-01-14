@@ -24,7 +24,7 @@
 <meta name="author" content="Kosmas Hench and Martin Helmkampf" />
 
 
-<meta name="date" content="2021-11-26" />
+<meta name="date" content="2022-01-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -175,12 +175,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.2.1" data-path="git-3-analysis-i-fst-gxp.html"><a href="git-3-analysis-i-fst-gxp.html#setup"><i class="fa fa-check"></i><b>4.2.1</b> Setup</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i> &amp; pi)</a>
+<li class="chapter" data-level="5" data-path="git-4-analysis-ii-dxy.html"><a href="git-4-analysis-ii-dxy.html"><i class="fa fa-check"></i><b>5</b> (git 4) Analysis II (<i>d<sub>XY</sub></i>)</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
-<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a>
+<li class="chapter" data-level="5.1" data-path="git-4-analysis-ii-dxy.html"><a href="git-4-analysis-ii-dxy.html#summary-3"><i class="fa fa-check"></i><b>5.1</b> Summary</a></li>
+<li class="chapter" data-level="5.2" data-path="git-4-analysis-ii-dxy.html"><a href="git-4-analysis-ii-dxy.html#details-of-analysis_dxy.nf"><i class="fa fa-check"></i><b>5.2</b> Details of <code>analysis_dxy.nf</code></a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="git-4-analysis-ii-dxy-pi.html"><a href="git-4-analysis-ii-dxy-pi.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
+<li class="chapter" data-level="5.2.1" data-path="git-4-analysis-ii-dxy.html"><a href="git-4-analysis-ii-dxy.html#data-preparation-2"><i class="fa fa-check"></i><b>5.2.1</b> Data preparation</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="git-5-analysis-iii-topology-weighting.html"><a href="git-5-analysis-iii-topology-weighting.html"><i class="fa fa-check"></i><b>6</b> (git 5) Analysis III (topology weighting)</a>
@@ -554,15 +554,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb24-2"><a href="git-19-analysis-xvi-serraninae-phylogeny.html#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nextflow</span> run analysis_phylo_serraninae.nf <span class="at">-c</span> ../../nextflow.config <span class="at">-resume</span></span></code></pre></div>
 <div id="summary-18" class="section level2" number="20.1">
 <h2><span class="header-section-number">20.1</span> Summary</h2>
-<p>The <span style="color:red;">…</span> are computed within the <a href="https://www.nextflow.io/"><strong>nextflow</strong></a> script <code>analysis_phylo_serraninae.nf</code> (located under <code>$BASE_DIR/nf/19_analysis_phylo_serraninae/</code>).
-It takes the <span style="color:red;">…</span> and computes <span style="color:red;">…</span>.
+<p>The Serraninae phylogeny is constructed within the <a href="https://www.nextflow.io/"><strong>nextflow</strong></a> script <code>analysis_phylo_serraninae.nf</code> (located under <code>$BASE_DIR/nf/19_analysis_phylo_serraninae/</code>).
+It takes the data from Rabosky <em>et al</em> (2019) and the mtDNA genotypes and computes constructs the phylogeny.
 Below is an overview of the steps involved in the analysis.</p>
 </div>
 <div id="details-of-analysis_phylo_serraninae.nf" class="section level2" number="20.2">
 <h2><span class="header-section-number">20.2</span> Details of <code>analysis_phylo_serraninae.nf</code></h2>
 <div id="setup-10" class="section level3" number="20.2.1">
 <h3><span class="header-section-number">20.2.1</span> Setup</h3>
-<p>The nextflow script starts by <span style="color:red;">…</span></p>
+<p>The nextflow script starts by locating the data from Rabosky <em>et al</em> (2019).</p>
 <div class="kclass">
 <div class="sourceCode">
 <pre class="sourceCode">
@@ -580,6 +580,7 @@ Below is an overview of the steps involved in the analysis.</p>
 </code>
 </pre>
 </div>
+<p>Then the partitions for the individual genes are loaded.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 19.2</span>
@@ -589,6 +590,7 @@ Below is an overview of the steps involved in the analysis.</p>
 </code>
 </pre>
 </div>
+<p>The gene boundaries are obtained…</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 19.3</span>
@@ -623,6 +625,7 @@ Below is an overview of the steps involved in the analysis.</p>
 </code>
 </pre>
 </div>
+<p>…and located within the reference genome.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 19.4</span>
@@ -658,6 +661,7 @@ Below is an overview of the steps involved in the analysis.</p>
 </code>
 </pre>
 </div>
+<p>Then the mtDNA genotypes are loaded.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 19.5</span>
@@ -667,6 +671,7 @@ Below is an overview of the steps involved in the analysis.</p>
 </code>
 </pre>
 </div>
+<p>Individual contigs of interest are extracted from the genotypes.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 19.6</span>
@@ -692,6 +697,7 @@ Below is an overview of the steps involved in the analysis.</p>
 </code>
 </pre>
 </div>
+<p>Then a list with the focal individuals is loaded.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 19.7</span>
@@ -701,6 +707,7 @@ Below is an overview of the steps involved in the analysis.</p>
 </code>
 </pre>
 </div>
+<p>The genoypes of those individuals are extracted and converted to fasta.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 19.8</span>
@@ -783,6 +790,7 @@ Below is an overview of the steps involved in the analysis.</p>
 </code>
 </pre>
 </div>
+<p>All sequences are aligned.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 19.11</span>
@@ -818,6 +826,7 @@ Below is an overview of the steps involved in the analysis.</p>
 </code>
 </pre>
 </div>
+<p>Finally the phylogenetic inference is run.</p>
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 19.12</span>
@@ -843,6 +852,9 @@ Below is an overview of the steps involved in the analysis.</p>
 </pre>
 </div>
 </div>
+<hr />
+<p><strong>References:</strong></p>
+<p>Daniel L Rabosky et al.Rabosky, D. L. et al. (2019). Data from: An inverse latitudinal gradient in speciation rate for marine fishes. Dryad. <a href="https://doi.org/10.5061/DRYAD.FC71CP4" class="uri">https://doi.org/10.5061/DRYAD.FC71CP4</a></p>
 <hr />
 
 </div>

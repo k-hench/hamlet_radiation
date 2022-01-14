@@ -21,15 +21,15 @@ nextflow run analysis_dstats.nf -c ../../nextflow.config -resume
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dstats.nf` (located under `$BASE_DIR/nf/17_analysis_dstats/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+The dstats are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_dstats.nf` (located under `$BASE_DIR/nf/17_analysis_dstats/`).
+It takes the phased genotypes and calculates the dstats.
 Below is an overview of the steps involved in the analysis.
 
 ## Details of `analysis_dstats.nf`
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the phased genotypes.
 
 :::kclass
 
@@ -51,6 +51,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Then the Serranid samples are removed.
 
 
 <div class="sourceCode">
@@ -80,6 +81,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Then a ld filter is applied.
 
 
 <div class="sourceCode">
@@ -108,12 +110,13 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Then the configuration for the individual trios is loaded.
 
 
 <div class="sourceCode">
 <pre class="sourceCode">
 <code class="sourceCode"><span class="hl slc">// git 17.5</span>
-<span class="hl slc">// run D trios</span>
+<span class="hl slc">// load trios config</span>
 <span class="hl kwa">Channel</span>
 	.fromPath<span class="hl opt">(</span><span class="hl str">&quot;../../ressources/hyp_sets.txt&quot;</span><span class="hl opt">)</span>
 	.set<span class="hl opt">{</span> hyp_sets_ch <span class="hl opt">}</span>
@@ -121,6 +124,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+An the D trios are run.
 
 
 <div class="sourceCode">
@@ -151,6 +155,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+A list with the desired order of populations is loaded.
 
 
 <div class="sourceCode">
@@ -164,6 +169,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+And finally corrections for multiple testing are applied.
 
 
 <div class="sourceCode">

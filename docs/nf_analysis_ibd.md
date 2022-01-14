@@ -21,15 +21,15 @@ nextflow run analysis_ibd.nf -c ../../nextflow.config -resume
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_.nf` (located under `$BASE_DIR/nf/16_analysis_ibd/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+Identity by descent is computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_ibd.nf` (located under `$BASE_DIR/nf/16_analysis_ibd/`).
+It takes the phased genotypes and computes the IBD segments.
 Below is an overview of the steps involved in the analysis.
 
 ## Details of `analysis_ibd.nf`
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by opening the phased genotypes.
 
 :::kclass
 
@@ -47,6 +47,8 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+
+Then, outgroup samples are removed.
 
 
 <div class="sourceCode">
@@ -76,6 +78,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+The IDB analysis is run for several IBD fragment size thresholds, so here we are initializing the different thresholds.
 
 
 <div class="sourceCode">
@@ -91,6 +94,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Also, the IBD analysis is additionally run with specific parts of the genome excluded - here the different exclusion models are initialized.
 
 
 <div class="sourceCode">
@@ -105,6 +109,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Truffle is run to compute the IBD segments.
 
 
 <div class="sourceCode">
@@ -180,6 +185,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Within R, the genomic coordinates of the IBD segments are converted to cM positions.
 
 
 <div class="sourceCode">

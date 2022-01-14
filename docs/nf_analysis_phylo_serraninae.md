@@ -21,15 +21,15 @@ nextflow run analysis_phylo_serraninae.nf -c ../../nextflow.config -resume
 
 ## Summary
 
-The <span style="color:red;">...</span> are computed within the [**nextflow**](https://www.nextflow.io/) script `analysis_phylo_serraninae.nf` (located under `$BASE_DIR/nf/19_analysis_phylo_serraninae/`).
-It takes the <span style="color:red;">...</span> and computes <span style="color:red;">...</span>.
+The Serraninae phylogeny is constructed within the [**nextflow**](https://www.nextflow.io/) script `analysis_phylo_serraninae.nf` (located under `$BASE_DIR/nf/19_analysis_phylo_serraninae/`).
+It takes the data from Rabosky *et al* (2019) and the mtDNA genotypes and computes constructs the phylogeny.
 Below is an overview of the steps involved in the analysis.
 
 ## Details of `analysis_phylo_serraninae.nf`
 
 ### Setup
 
-The nextflow script starts by <span style="color:red;">...</span>
+The nextflow script starts by locating the data from Rabosky *et al* (2019).
 
 :::kclass
 
@@ -50,6 +50,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Then the partitions for the individual genes are loaded.
 
 
 <div class="sourceCode">
@@ -62,6 +63,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+The gene boundaries are obtained...
 
 
 <div class="sourceCode">
@@ -99,6 +101,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+...and located within the reference genome.
 
 
 <div class="sourceCode">
@@ -137,6 +140,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Then the mtDNA genotypes are loaded.
 
 
 <div class="sourceCode">
@@ -149,6 +153,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Individual contigs of interest are extracted from the genotypes.
 
 
 <div class="sourceCode">
@@ -177,6 +182,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Then a list with the focal individuals is loaded.
 
 
 <div class="sourceCode">
@@ -189,6 +195,7 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+The genoypes of those individuals are extracted and converted to fasta.
 
 
 <div class="sourceCode">
@@ -276,6 +283,8 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+All sequences are aligned.
+
 
 <div class="sourceCode">
 <pre class="sourceCode">
@@ -313,6 +322,8 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 
+Finally the phylogenetic inference is run.
+
 
 <div class="sourceCode">
 <pre class="sourceCode">
@@ -339,5 +350,12 @@ The nextflow script starts by <span style="color:red;">...</span>
 </pre>
 </div>
 :::
+
+---
+
+**References:**
+
+Daniel L Rabosky et al.Rabosky, D. L. et al. (2019). Data from: An inverse latitudinal gradient in speciation rate for marine fishes. Dryad. https://doi.org/10.5061/DRYAD.FC71CP4
+
 
 ---

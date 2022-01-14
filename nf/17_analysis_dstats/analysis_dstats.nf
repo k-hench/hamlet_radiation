@@ -14,7 +14,7 @@ Channel
 // git 17.2
 // drop serranus
 process drop_serranus {
-	
+
 	input:
 	set vcfId, file( vcf ) from genotypes_ch
 
@@ -36,7 +36,7 @@ process drop_serranus {
 // git 17.4
 // LD filtering
 process ld_filter {
-	
+
 	input:
 	file( vcf ) from no_serranus_ch
 
@@ -55,7 +55,7 @@ process ld_filter {
 }
 
 // git 17.5
-// run D trios
+// load trios config
 Channel
 	.fromPath("../../ressources/hyp_sets.txt")
 	.set{ hyp_sets_ch }
