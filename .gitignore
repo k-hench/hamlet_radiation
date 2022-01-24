@@ -22,6 +22,7 @@ ressources/*
 !ressources/vcf2nh.spid
 !ressources/vcf2gp.spid
 !ressources/avg_rho_by_LG.tsv
+!ressources/recombination
 !ressources/samples_155.txt
 !ressources/samples_hybrids.txt
 ressources/plugin/*
